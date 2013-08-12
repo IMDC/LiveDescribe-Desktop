@@ -1,7 +1,7 @@
 ﻿<Window x:Class="LiveDescribe.View.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="700" Width="1000">
+        Title="MainWindow" Height="700" Width="1000" MinHeight="700" MinWidth="1000">
 
 
     <DockPanel>
@@ -9,26 +9,11 @@
             <MenuItem Header="File">
             </MenuItem>
         </Menu>
-        <Grid DockPanel.Dock="Bottom"  Background="Black">
+        <Grid DockPanel.Dock="Bottom"  Background="White">
 
 
 
             <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
                 <RowDefinition />
                 <RowDefinition />
                 <RowDefinition />
@@ -47,18 +32,29 @@
                 <ColumnDefinition/>
                 <ColumnDefinition />
                 <ColumnDefinition/>
+                <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
+
+            <MediaElement Grid.Row="0" Grid.RowSpan="6" Grid.ColumnSpan="3"/>
+
+            <StackPanel Orientation="Horizontal" Grid.Row="6" Grid.ColumnSpan="2" Grid.Column="1">
+                <Button Margin="9">Record</Button>
+                <Button Margin="9">Rewind</Button>
+                <Button Margin="9">Play</Button>
+                <Button Margin="9">Pause</Button>
+                <Button Margin="9">Fast Forward</Button>
+            </StackPanel>
             
-
-            <ListBox x:Name="itemList" Grid.Row="1" Grid.Column="0" Grid.RowSpan="1" Background="Green" />
-
-
+            <TabControl Grid.Column="3" Grid.RowSpan="6">
+                <TabItem Header="Spaces">
+                </TabItem>
+                <TabItem Header="Descriptions">        
+                </TabItem>
+                <TabItem Header="Extended Descriptions">
+                </TabItem>
+            </TabControl>
         </Grid>
 
     </DockPanel>
-    
-    
-
-
 </Window>
