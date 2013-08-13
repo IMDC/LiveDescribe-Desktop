@@ -5,13 +5,18 @@
 
 
     <DockPanel>
+        <!--Top Menu Bar-->
         <Menu DockPanel.Dock="Top" HorizontalAlignment="Stretch"  Grid.ColumnSpan="3"  >
             <MenuItem Header="File">
+                <MenuItem Header="Import Video" Command="{Binding }">
+                </MenuItem>
             </MenuItem>
         </Menu>
         
+        <!--Main Grid -->
         <Grid DockPanel.Dock="Bottom"  Background="White">
 
+            <!--Main Grid Row Definitions-->    
             <Grid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition />
@@ -28,6 +33,7 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
 
+            <!--Main Grid Column Definitions-->
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition />
@@ -35,21 +41,27 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
                 <ColumnDefinition />
+                <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
+            <!--Media Element-->
             <Border Background="Black" Grid.Row="0" Grid.RowSpan="7" Grid.ColumnSpan="4">
-                <MediaElement Source="C:\Users\Public\Videos\Sample Videos\Wildlife.wmv"/>
+                <MediaElement Name="videoMedia" Source="C:\Users\Public\Videos\Sample Videos\Wildlife.wmv" LoadedBehavior="Manual"/>
             </Border>
 
-            <StackPanel  Orientation="Horizontal" Grid.Row="7" Grid.ColumnSpan="2" Grid.Column="1">
+            <!--Button Controls for Video PLayer-->
+            <StackPanel  Orientation="Horizontal" Grid.Row="7" Grid.ColumnSpan="4" Grid.Column="0">
+                <Button Margin="11" Height="30" Command="{Binding MuteCommand}">Mute</Button>
+                <Slider Value="{Binding Path=Volume, ElementName=videoMedia}" Name="volumeControl" Maximum="1" Minimum="0"  Margin="15"  Grid.Row="7"  Width="100"/>
                 <Button Margin="11" Height="30">Record</Button>
                 <Button Margin="11" Height="30">Rewind</Button>
-                <Button Margin="11" Height="30">Play</Button>
-                <Button Margin="11" Height="30">Pause</Button>
+                <Button Name="playControl" Margin="11" Height="30" Command="{Binding PlayCommand}">Play</Button>
+                <Button Name="pauseControl" Margin="11" Height="30" Command="{Binding PauseCommand}">Pause</Button>
                 <Button Margin="11" Height="30">Fast Forward</Button>
             </StackPanel>
             
-            <TabControl Grid.Column="4" Grid.RowSpan="6" Grid.ColumnSpan="2">
+            <!--Description Information-->
+            <TabControl Grid.Column="4" Grid.RowSpan="6" Grid.ColumnSpan="3">
                 <TabItem Header="Spaces">
                 </TabItem>
                 <TabItem Header="Descriptions">        
@@ -58,12 +70,27 @@
                 </TabItem>
             </TabControl>
             
-            <Border BorderBrush="Black" Grid.ColumnSpan="6"  Grid.Row="8" Grid.RowSpan="5" BorderThickness="2"  VerticalAlignment="Stretch">
+            <!--Timeline-->
+            <Border BorderBrush="Black" Grid.ColumnSpan="7"  Grid.Row="8" Grid.RowSpan="5" BorderThickness="2"  VerticalAlignment="Stretch">
                 <ScrollViewer   HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                     <StackPanel Orientation="Horizontal" Grid.ColumnSpan="6"  Grid.Row="8" Grid.RowSpan="5">
                     </StackPanel>
                 </ScrollViewer>
             </Border>
+
+            <!--Description Text Box-->
+            <TextBox Grid.Column="4" Grid.Row="6" Grid.ColumnSpan="2" Grid.RowSpan="2" ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" Text="Enter Description Text" />
+
+            <!--Text Controls-->
+            <StackPanel Grid.Column="6" Grid.ColumnSpan="1" Grid.Row="6" Grid.RowSpan="2">
+               
+                <Button Margin="10">
+                    Save Text
+                </Button>
+                <Button Margin="10">
+                    Clear
+                </Button>
+            </StackPanel>
             
         </Grid>
 

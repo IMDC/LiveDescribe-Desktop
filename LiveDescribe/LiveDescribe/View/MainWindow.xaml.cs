@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using LiveDescribe.View_Model;
 
 namespace LiveDescribe.View
 {
@@ -23,6 +24,35 @@ namespace LiveDescribe.View
         public MainWindow()
         {
             InitializeComponent();
+
+            VideoControl vc = new VideoControl();
+            DataContext = vc;
+
+            #region Event Listeners
+            //listens for PlayRequested Event
+            vc.PlayRequested += (sender, e) =>
+                {
+                    this.playControl.IsEnabled = false;
+                    this.pauseControl.IsEnabled = true;
+                    this.videoMedia.Play();
+                };
+
+            //listens for PauseRequested Event
+            vc.PauseRequested += (sender, e) =>
+                {
+                    this.pauseControl.IsEnabled = false;
+                    this.playControl.IsEnabled = true;
+                    this.videoMedia.Pause();
+                };
+
+            //listens for MuteRequested Event
+            vc.MuteRequested += (sender, e) =>
+            {
+                this.videoMedia.IsMuted = !this.videoMedia.IsMuted;
+            };
+            #endregion
         }
+
+
     }
 }
