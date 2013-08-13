@@ -43,11 +43,11 @@
             </Border>
 
             <StackPanel Orientation="Horizontal" Grid.Row="7" Grid.ColumnSpan="2" Grid.Column="1">
-                <Button Margin="10">Record</Button>
-                <Button Margin="10">Rewind</Button>
-                <Button Margin="10">Play</Button>
-                <Button Margin="10">Pause</Button>
-                <Button Margin="10">Fast Forward</Button>
+                <Button Margin="11">Record</Button>
+                <Button Margin="11">Rewind</Button>
+                <Button Margin="11">Play</Button>
+                <Button Margin="11">Pause</Button>
+                <Button Margin="11">Fast Forward</Button>
             </StackPanel>
             <TabControl Grid.Column="4" Grid.RowSpan="6" Grid.ColumnSpan="2">
                 <TabItem Header="Spaces">
