@@ -14,7 +14,12 @@
     /// </summary>
     class Video: INotifyPropertyChanged
     {
+        public enum States { Playing, Paused, Recording };
+
         private string _path;
+        private double _duration;
+        private States _currentState;
+        private double _currentTime;
 
         public Video(string path)
         {
@@ -22,6 +27,21 @@
         }
 
         #region Properties
+
+        public States CurrentState 
+        {
+            get
+            {
+                return this._currentState;
+            }
+            set
+            {
+                this._currentState = value;
+                NotifyPropertyChanged("CurrentState");
+
+            }
+        }
+
         public string Path
         {
             set 
@@ -34,7 +54,28 @@
                 return _path; 
             }
         }
+
+        public double CurrentTime
+        {
+            set 
+            {
+                this._currentTime = value; 
+                NotifyPropertyChanged("CurrentTime"); 
+            }
+            get { return this._currentTime; }
+        }
+
+        public double Duration
+        {
+            set
+            {
+                this._duration = value;
+                NotifyPropertyChanged("Duration");
+            }
+            get { return this._duration; }
+        }
         #endregion
+
         #region PropertyChanged
         /// <summary>
         /// An event that notifies a subscriber that a property in this class has been changed.

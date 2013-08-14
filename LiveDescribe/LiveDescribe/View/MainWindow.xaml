@@ -8,7 +8,7 @@
         <!--Top Menu Bar-->
         <Menu DockPanel.Dock="Top" HorizontalAlignment="Stretch"  Grid.ColumnSpan="3"  >
             <MenuItem Header="File">
-                <MenuItem Header="Import Video" Command="{Binding }">
+                <MenuItem Header="Import Video">
                 </MenuItem>
             </MenuItem>
         </Menu>
@@ -72,9 +72,32 @@
             
             <!--Timeline-->
             <Border BorderBrush="Black" Grid.ColumnSpan="7"  Grid.Row="8" Grid.RowSpan="5" BorderThickness="2"  VerticalAlignment="Stretch">
-                <ScrollViewer   HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                    <StackPanel Orientation="Horizontal" Grid.ColumnSpan="6"  Grid.Row="8" Grid.RowSpan="5">
-                    </StackPanel>
+                <ScrollViewer Name="timeLine"  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+
+                       <!-- <StackPanel Grid.ColumnSpan="6"  Grid.Row="8" Grid.RowSpan="5">-->
+
+                        <Border SizeChanged="canvasBorder_SizeChanged_1" Name="audioCanvasBorder" Grid.Row="0" Grid.RowSpan="2"  BorderBrush="Black" BorderThickness="1">
+                            <Canvas Name="audioCanvas" VerticalAlignment="Top" >
+                            
+                            </Canvas>
+                        </Border>
+
+                        <Border Grid.Row="2" Grid.RowSpan="1" BorderBrush="Black" BorderThickness="1" >
+                            <Canvas Name="descriptionCanvas">
+                            
+                            </Canvas>
+                        </Border>
+                        
+                        
+                    <!--</StackPanel>-->
+                    </Grid>
                 </ScrollViewer>
             </Border>
 
