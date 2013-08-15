@@ -23,7 +23,7 @@ namespace LiveDescribe.View
     /// </summary>
     public partial class MainWindow : Window
     {
-        private Marker marker;
+        
 
         private double audioCanvasHeight;
         private double audioCanvasWidth;
@@ -34,12 +34,10 @@ namespace LiveDescribe.View
             InitializeComponent();
 
             MainControl mc = new MainControl();
-            
-
+   
             videoTimer = new DispatcherTimer();
             videoTimer.Tick += new EventHandler(Play_Tick);
 
-            marker = new Marker(audioCanvas);
             DataContext = mc;
            // mc.VideoControl = vc;
 
@@ -84,7 +82,9 @@ namespace LiveDescribe.View
         {
             this.audioCanvasHeight = this.audioCanvasBorder.ActualHeight;
             this.audioCanvasWidth = this.audioCanvasBorder.ActualWidth;
-            marker.draw(50, this.audioCanvasHeight, this.audioCanvasWidth);
+            
+            //the 4th point is the bottom point of the marker, adjusting the y value of this point
+            this.marker.Points[4] = new Point(this.marker.Points[4].X, this.audioCanvasHeight);
         }
     }
 }
