@@ -18,7 +18,7 @@ namespace LiveDescribe.View_Model
         #region Constructors
         public MainControl()
         {
-            
+            this._videocontrol = new VideoControl();
         }
         #endregion
 
@@ -33,10 +33,6 @@ namespace LiveDescribe.View_Model
         #region Binding Properties
         public VideoControl VideoControl
         {
-            set
-            {
-                _videocontrol = value;
-            }
             get
             {
                 return _videocontrol;

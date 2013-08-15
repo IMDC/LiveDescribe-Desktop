@@ -6,9 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using LiveDescribe.Model;
 using Microsoft.TeamFoundation.MVVM;
-using System.Windows.Media;
-using System.Windows.Controls;
-using System.Windows.Threading;
 using System.ComponentModel;
 using Microsoft.Win32;
 
@@ -18,8 +15,8 @@ namespace LiveDescribe.View_Model
     {
         #region Instance Variables
         private Video _video;
-        private MediaElement _videoMedia;
-        private DispatcherTimer _videoTimer;
+       // private MediaElement _videoMedia;
+      //  private DispatcherTimer _videoTimer;
         #endregion
 
         #region Event Handlers
@@ -29,14 +26,9 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Constructors
-        public VideoControl(MediaElement videoMedia)
+        public VideoControl()
         {
             _video = new Video();
-
-            _videoTimer = new DispatcherTimer();
-            _videoTimer.Tick += new EventHandler(Play_Tick);
-            _videoTimer.Interval = new TimeSpan(0, 0, 1);
-
              PlayCommand = new RelayCommand(Play, PlayCheck);
              PauseCommand = new RelayCommand(Pause, PauseCheck);
              MuteCommand = new RelayCommand(Mute, (object param) => true);
@@ -44,9 +36,7 @@ namespace LiveDescribe.View_Model
              RewindCommand = new RelayCommand(Rewind, RewindCheck);
              RecordCommand = new RelayCommand(Record, RecordCheck);
 
-             this._videoMedia = videoMedia;
-
-             ImportVideoCommand = new RelayCommand(OpenVideo, (object param) => true);
+             ImportVideoCommand = new RelayCommand(OpenVideo, ImportCheck);
              this.AddDependencySource("Path", this);
         }
         #endregion
@@ -107,17 +97,6 @@ namespace LiveDescribe.View_Model
         #region Binding Functions
 
         /// <summary>
-        /// EventHandler for the _videoTimer
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Play_Tick(object sender, EventArgs e)
-        {
-            this._video.CurrentTime = this._videoMedia.Position.Seconds;
-            Console.WriteLine("Current Time: " + _video.CurrentTime);
-        }
-
-        /// <summary>
         /// Plays the video
         /// </summary>
         /// <param name="param">params</param>
@@ -130,7 +109,6 @@ namespace LiveDescribe.View_Model
             if (handler != null)
             {
                 _video.CurrentState = Video.States.Playing;
-                _videoTimer.Start();
                 handler(this, EventArgs.Empty);
             }
         }
@@ -148,7 +126,6 @@ namespace LiveDescribe.View_Model
             if (handler != null)
             {
                 _video.CurrentState = Video.States.Paused;
-                _videoTimer.Stop();
                 handler(this, EventArgs.Empty);
             }
         }
@@ -276,6 +253,18 @@ namespace LiveDescribe.View_Model
                 return true;
         }
 
+        /// <summary>
+        /// Used for the RelayCommand "ImportCommand" to check whether importing will work or not
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public bool ImportCheck(object param)
+        {
+            if (_video.CurrentState != Video.States.NotLoaded)
+                return false;
+            else
+                return true;
+        }
         #endregion
 
         #region Binding Properties
@@ -298,19 +287,5 @@ namespace LiveDescribe.View_Model
 
         #endregion
 
-    }
-
-    /// <summary>
-    /// Custom EventArgs class to send the new position of the marker
-    /// </summary>
-    public class PositionUpdateArgs : EventArgs
-    {
-        private double m_X;
-        public PositionUpdateArgs(double X)
-        {
-            this.m_X = X;
-        }
-
-        public double X { get { return m_X; } }
     }
 }

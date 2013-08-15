@@ -7,8 +7,8 @@
     <DockPanel>
         <!--Top Menu Bar-->
         <Menu DockPanel.Dock="Top" HorizontalAlignment="Stretch"  Grid.ColumnSpan="3"  >
-            <MenuItem DataContext="{Binding VideoControl}" Header="File">
-                <MenuItem Header="Import Video" Command="{Binding ImportVideoCommand}">
+            <MenuItem Header="File">
+                <MenuItem DataContext="{Binding VideoControl}" Header="Import Video" Command="{Binding ImportVideoCommand}">
                 </MenuItem>
             </MenuItem>
         </Menu>
