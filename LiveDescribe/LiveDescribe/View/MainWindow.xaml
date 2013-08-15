@@ -47,7 +47,7 @@
 
             <!--Media Element-->
             <Border Background="Black" Grid.Row="0" Grid.RowSpan="7" Grid.ColumnSpan="4">
-                <MediaElement DataContext="{Binding VideoControl}"  Name="videoMedia" Source="{Binding Path}" LoadedBehavior="Manual">
+                <MediaElement DataContext="{Binding VideoControl}"  Name="VideoMedia" Source="{Binding Path}" LoadedBehavior="Manual">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="MediaOpened">
                             <i:InvokeCommandAction Command="{Binding VideoOpened}"/>
@@ -59,11 +59,11 @@
             <!--Button Controls for Video PLayer-->
             <StackPanel  DataContext="{Binding VideoControl}" Orientation="Horizontal" Grid.Row="7" Grid.ColumnSpan="4" Grid.Column="0">
                 <Button Margin="11" Height="30" Command="{Binding MuteCommand}">Mute</Button>
-                <Slider Value="{Binding Path=Volume, ElementName=videoMedia}" Name="volumeControl" Maximum="1" Minimum="0"  Margin="15"  Grid.Row="7"  Width="100"/>
+                <Slider Value="{Binding Path=Volume, ElementName=VideoMedia}" Name="VolumeControl" Maximum="1" Minimum="0"  Margin="15"  Grid.Row="7"  Width="100"/>
                 <Button Command="{Binding RecordCommand}" Margin="11" Height="30">Record</Button>
                 <Button Command="{Binding RewindCommand}" Margin="11" Height="30">Rewind</Button>
-                <Button Name="playControl" Margin="11" Height="30" Command="{Binding PlayCommand}">Play</Button>
-                <Button Name="pauseControl" Margin="11" Height="30" Command="{Binding PauseCommand}">Pause</Button>
+                <Button Name="PlayControl" Margin="11" Height="30" Command="{Binding PlayCommand}">Play</Button>
+                <Button Name="PauseControl" Margin="11" Height="30" Command="{Binding PauseCommand}">Pause</Button>
                 <Button Command="{Binding FastForwardCommand}" Margin="11" Height="30">Fast Forward</Button>
             </StackPanel>
             
@@ -90,16 +90,16 @@
 
                        <!-- <StackPanel Grid.ColumnSpan="6"  Grid.Row="8" Grid.RowSpan="5">-->
 
-                        <Border Name="audioCanvasBorder"  Grid.Row="0" Grid.RowSpan="2"  BorderBrush="Black" BorderThickness="1">
-                            <Canvas Name="audioCanvas" VerticalAlignment="Top" >
-                                <Polyline Points="10,20, 0,0,  20,0, 10,20, 10,187"   RenderOptions.EdgeMode="Aliased" Stroke="Black" Fill="Black" StrokeThickness="2" Width="20"  Canvas.Left="-10" Canvas.Top="0" Name="marker">
+                        <Border Name="AudioCanvasBorder"  Grid.Row="0" Grid.RowSpan="2"  BorderBrush="Black" BorderThickness="1">
+                            <Canvas Name="AudioCanvas" VerticalAlignment="Top" >
+                                <Polyline Points="10,20, 0,0,  20,0, 10,20, 10,187"   RenderOptions.EdgeMode="Aliased" Stroke="Black" Fill="Black" StrokeThickness="2" Width="20"  Canvas.Left="-10" Canvas.Top="0" Name="Marker">
                                     
                                 </Polyline>
                             </Canvas>
                         </Border>
 
-                        <Border Name="descriptionCanvasBorder" Grid.Row="2" Grid.RowSpan="1" BorderBrush="Black" BorderThickness="1" >
-                            <Canvas Name="descriptionCanvas">
+                        <Border Name="DescriptionCanvasBorder" Grid.Row="2" Grid.RowSpan="1" BorderBrush="Black" BorderThickness="1" >
+                            <Canvas Name="DescriptionCanvas">
                             
                             </Canvas>
                         </Border>
