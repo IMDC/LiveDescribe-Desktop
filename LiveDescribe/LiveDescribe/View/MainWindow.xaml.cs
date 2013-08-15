@@ -24,40 +24,55 @@ namespace LiveDescribe.View
     public partial class MainWindow : Window
     {
         private Marker marker;
+
         private double audioCanvasHeight;
         private double audioCanvasWidth;
+        private DispatcherTimer videoTimer;
 
         public MainWindow()
         {
             InitializeComponent();
 
             MainControl mc = new MainControl();
-            VideoControl vc = new VideoControl(this.videoMedia);
             
+
+            videoTimer = new DispatcherTimer();
+            videoTimer.Tick += new EventHandler(Play_Tick);
 
             marker = new Marker(audioCanvas);
             DataContext = mc;
-            mc.VideoControl = vc;
+           // mc.VideoControl = vc;
 
             #region Event Listeners
             //listens for PlayRequested Event
-            vc.PlayRequested += (sender, e) =>
+
+
+
+            mc.VideoControl.PlayRequested += (sender, e) =>
                 {
                     this.videoMedia.Play();
                 };
 
             //listens for PauseRequested Event
-            vc.PauseRequested += (sender, e) =>
+            mc.VideoControl.PauseRequested += (sender, e) =>
                 {
                     this.videoMedia.Pause();
                 };
 
             //listens for MuteRequested Event
-            vc.MuteRequested += (sender, e) =>
+            mc.VideoControl.MuteRequested += (sender, e) =>
             {
                 this.videoMedia.IsMuted = !this.videoMedia.IsMuted;
             };
             #endregion
+        }
+
+        private void Play_Tick(object sender, EventArgs e)
+        {
+            //update marker position from the video controller
+            //something like this mc.VideoControl.CalculateMarkerPosition(TimeToMoveMarkerTo, pageSizeTime)
+            
+            //draw marker at correct position
         }
 
         /// <summary>
