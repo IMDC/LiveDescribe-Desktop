@@ -23,6 +23,7 @@ namespace LiveDescribe.View_Model
         public event EventHandler PlayRequested;
         public event EventHandler PauseRequested;
         public event EventHandler MuteRequested;
+        public event EventHandler VideoOpenedRequested;
         #endregion
 
         #region Constructors
@@ -35,6 +36,7 @@ namespace LiveDescribe.View_Model
              FastForwardCommand = new RelayCommand(FastForward, FastForwardCheck);
              RewindCommand = new RelayCommand(Rewind, RewindCheck);
              RecordCommand = new RelayCommand(Record, RecordCheck);
+             VideoOpened = new RelayCommand(VideoOpen, (object param) => true);
 
              ImportVideoCommand = new RelayCommand(OpenVideo, ImportCheck);
              this.AddDependencySource("Path", this);
@@ -92,6 +94,12 @@ namespace LiveDescribe.View_Model
             get;
             private set;
         }
+
+        public RelayCommand VideoOpened
+        {
+            get;
+            private set;
+        }
         #endregion
 
         #region Binding Functions
@@ -144,6 +152,17 @@ namespace LiveDescribe.View_Model
         { 
         }
 
+
+        public void VideoOpen(object param)
+        {
+            EventHandler handler = VideoOpenedRequested;
+            Console.WriteLine("LOADED");
+            if (handler != null)
+            {
+                _video.CurrentState = Video.States.Loaded;
+                handler(this, EventArgs.Empty);
+            }
+        }
         /// <summary>
         /// Records user audio
         /// </summary>
@@ -287,5 +306,6 @@ namespace LiveDescribe.View_Model
 
         #endregion
 
+        
     }
 }

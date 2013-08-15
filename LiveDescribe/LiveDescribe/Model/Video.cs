@@ -14,7 +14,7 @@
     /// </summary>
     class Video: INotifyPropertyChanged
     {
-        public enum States { Playing, Paused, Recording, NotLoaded };
+        public enum States { Playing, Paused, Recording, NotLoaded, Loaded };
 
         private string _path;
         private double _duration;
@@ -25,6 +25,7 @@
         public Video() 
         {
             this._currentState = States.NotLoaded;
+            this._path = "";
         }
 
         public Video(string path)
