@@ -85,7 +85,11 @@
 
                         <Border SizeChanged="canvasBorder_SizeChanged_1" Name="audioCanvasBorder" Grid.Row="0" Grid.RowSpan="2"  BorderBrush="Black" BorderThickness="1">
                             <Canvas Name="audioCanvas" VerticalAlignment="Top" >
-                            
+                                <Polyline Points="10,20, 0,0,  20,0, 10,20, 10,187"   RenderOptions.EdgeMode="Aliased" Stroke="Black" Fill="Black" StrokeThickness="2" Width="25" Height="{Binding}"  Canvas.Left="1" Canvas.Top="0" Name="Marker">
+
+                                    
+
+                                </Polyline>
                             </Canvas>
                         </Border>
 
