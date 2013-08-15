@@ -31,9 +31,13 @@ namespace LiveDescribe.View
         {
             InitializeComponent();
 
+            MainControl mc = new MainControl();
             VideoControl vc = new VideoControl(this.videoMedia);
+            
+
             marker = new Marker(audioCanvas);
-            DataContext = vc;
+            DataContext = mc;
+            mc.VideoControl = vc;
 
             #region Event Listeners
             //listens for PlayRequested Event

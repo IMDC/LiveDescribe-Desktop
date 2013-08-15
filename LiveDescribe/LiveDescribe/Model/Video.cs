@@ -14,16 +14,23 @@
     /// </summary>
     class Video: INotifyPropertyChanged
     {
-        public enum States { Playing, Paused, Recording };
+        public enum States { Playing, Paused, Recording, NotLoaded };
 
         private string _path;
         private double _duration;
         private States _currentState;
         private double _currentTime;
 
+
+        public Video() 
+        {
+            this._currentState = States.NotLoaded;
+        }
+
         public Video(string path)
         {
-            this._path = path;     
+            this._path = path;
+            this._currentState = States.NotLoaded;
         }
 
         #region Properties

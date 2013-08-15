@@ -63,18 +63,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Graphics\Marker.cs" />
-    <Compile Include="Graphics\PositionMarker.cs" />
-    <Compile Include="Model\Description.cs" />
-    <Compile Include="Model\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Space.cs" />
     <Compile Include="Model\Video.cs" />
-    <Compile Include="View Model\DescriptionControl.cs" />
     <Compile Include="View Model\MainControl.cs" />
-    <Compile Include="View Model\SpaceControl.cs" />
     <Compile Include="View Model\VideoControl.cs" />
     <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -99,10 +89,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="Model\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
