@@ -7,7 +7,7 @@
 
     <DockPanel>
         <!--Top Menu Bar-->
-        <Menu DockPanel.Dock="Top" HorizontalAlignment="Stretch"  Grid.ColumnSpan="3"  >
+        <Menu DockPanel.Dock="Top" HorizontalAlignment="Stretch">
             <MenuItem Header="File">
                 <MenuItem  DataContext="{Binding VideoControl}" Header="Import Video" Command="{Binding ImportVideoCommand}">
                 </MenuItem>
@@ -59,7 +59,8 @@
             <!--Button Controls for Video PLayer-->
             <StackPanel  DataContext="{Binding VideoControl}" Orientation="Horizontal" Grid.Row="7" Grid.ColumnSpan="4" Grid.Column="0">
                 <Button Margin="11" Height="30" Command="{Binding MuteCommand}">Mute</Button>
-                <Slider Value="{Binding Path=Volume, ElementName=VideoMedia}" Name="VolumeControl" Maximum="1" Minimum="0"  Margin="15"  Grid.Row="7"  Width="100"/>
+                <Slider Value="{Binding Path=Volume, ElementName=VideoMedia}" Name="VolumeControl" Maximum="1" Minimum="0"  Margin="15"
+                        Width="100"/>
                 <Button Command="{Binding RecordCommand}" Margin="11" Height="30">Record</Button>
                 <Button Command="{Binding RewindCommand}" Margin="11" Height="30">Rewind</Button>
                 <Button Name="PlayControl" Margin="11" Height="30" Command="{Binding PlayCommand}">Play</Button>
@@ -79,7 +80,7 @@
             
             <!--Timeline-->
             <Border Grid.Column="0" BorderBrush="Black" Grid.ColumnSpan="7"  Grid.Row="8" Grid.RowSpan="5" BorderThickness="2"  VerticalAlignment="Stretch">
-                <ScrollViewer SizeChanged="timeLine_SizeChanged_1" Name="timeLine"  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                <ScrollViewer SizeChanged="timeLine_SizeChanged_1" Name="TimeLine"  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition />
@@ -98,7 +99,7 @@
                             </Canvas>
                         </Border>
 
-                        <Border Name="DescriptionCanvasBorder" Grid.Row="2" Grid.RowSpan="1" BorderBrush="Black" BorderThickness="1" >
+                        <Border Name="DescriptionCanvasBorder" Grid.Row="2" BorderBrush="Black" BorderThickness="1" >
                             <Canvas Name="DescriptionCanvas">
                             
                             </Canvas>
@@ -114,7 +115,7 @@
             <TextBox Grid.Column="4" Grid.Row="6" Grid.ColumnSpan="2" Grid.RowSpan="2" ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" Text="Enter Description Text" />
 
             <!--Text Controls-->
-            <StackPanel Grid.Column="6" Grid.ColumnSpan="1" Grid.Row="6" Grid.RowSpan="2">
+            <StackPanel Grid.Column="6" Grid.Row="6" Grid.RowSpan="2">
                
                 <Button Margin="10">
                     Save Text

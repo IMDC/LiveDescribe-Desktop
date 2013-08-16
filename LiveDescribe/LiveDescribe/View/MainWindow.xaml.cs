@@ -15,7 +15,7 @@ namespace LiveDescribe.View
         private double _videoDuration;
         private double _audioCanvasHeight;
         private double _audioCanvasWidth;
-        private DispatcherTimer videoTimer;
+        private readonly DispatcherTimer _videoTimer;
 
         private int pageTime = 30; //30 seconds page time before audiocanvas  & descriptioncanvas scroll
 
@@ -25,8 +25,8 @@ namespace LiveDescribe.View
 
             MainControl mc = new MainControl();
    
-            videoTimer = new DispatcherTimer();
-            videoTimer.Tick += Play_Tick;
+            _videoTimer = new DispatcherTimer();
+            _videoTimer.Tick += Play_Tick;
             //videoTimer.Interval = new TimeSpan(0, 0, 0, 0, 10);
 
             DataContext = mc;
@@ -36,7 +36,7 @@ namespace LiveDescribe.View
             //listens for PlayRequested Event
             mc.VideoControl.PlayRequested += (sender, e) =>
                 {
-                    videoTimer.Start();
+                    _videoTimer.Start();
                   //  this.storyBoard.Begin(this);
                     VideoMedia.Play();
                 };
@@ -45,7 +45,7 @@ namespace LiveDescribe.View
             mc.VideoControl.PauseRequested += (sender, e) =>
                 {
                     VideoMedia.Pause();
-                    videoTimer.Stop();
+                    _videoTimer.Stop();
                    
                 };
             
