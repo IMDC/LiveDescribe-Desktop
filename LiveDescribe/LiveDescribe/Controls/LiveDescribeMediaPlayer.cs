@@ -47,6 +47,8 @@ namespace LiveDescribe.Controls
             set
             {
                 _path = value;
+                EventHandler handler = PathChangedEvent;
+                if (handler == null) return;
                 PathChangedEvent(this, EventArgs.Empty);
             }
             get
