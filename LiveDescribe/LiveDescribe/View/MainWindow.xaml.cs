@@ -89,7 +89,7 @@ namespace LiveDescribe.View
             _audioCanvasWidth = AudioCanvasBorder.ActualWidth;
             //  Console.WriteLine("WIDTH: " + this.audioCanvasWidth);
             //  Console.WriteLine("HEIGHT: " + this.audioCanvasHeight);
-            setPaging();
+            SetPaging();
 
             //the 4th point is the bottom point of the marker, adjusting the y value of this point
             Marker.Points[4] = new Point(Marker.Points[4].X, _audioCanvasHeight);
@@ -100,11 +100,10 @@ namespace LiveDescribe.View
         /// <summary>
         /// 
         /// </summary>
-        private void setPaging()
+        private void SetPaging()
         {
             double pages = 30.093 / pageTime;
-            double width;
-            width = AudioCanvasBorder.ActualWidth * pages;
+            double width = AudioCanvasBorder.ActualWidth * pages;
             //Console.WriteLine("Width: " + this.audioCanvasBorder.ActualWidth);
             AudioCanvas.Width = width;
             
