@@ -17,7 +17,7 @@ namespace LiveDescribe.View
         private double _audioTimeLineWidth;
         private readonly DispatcherTimer _videoTimer;
 
-        private int pageTime = 30; //30 seconds page time before audiocanvas  & descriptioncanvas scroll
+        private double pageTime = 30; //30 seconds page time before audiocanvas  & descriptioncanvas scroll
 
         public MainWindow()
         {
@@ -27,7 +27,7 @@ namespace LiveDescribe.View
    
             _videoTimer = new DispatcherTimer();
             _videoTimer.Tick += Play_Tick;
-            _videoTimer.Interval = new TimeSpan(0, 0, 0, 1);
+            _videoTimer.Interval = new TimeSpan(0, 0, 0, 0, 10);
 
             DataContext = mc;
            
@@ -87,7 +87,8 @@ namespace LiveDescribe.View
         {
             _audioTimeLineHeight = TimeLine.ActualHeight;
             _audioTimeLineWidth = TimeLine.ActualWidth;
-            Console.WriteLine("WIDTH: " + _audioTimeLineWidth);
+            Console.WriteLine("AUDIO TIMELINE WIDTH: " + _audioTimeLineWidth);
+            Console.WriteLine("AUDIO CANVAS WIDTH: " + AudioCanvas.Width);
             //Console.WriteLine("HEIGHT: " + this.audioCanvasHeight);
             SetPaging();
 
@@ -103,7 +104,7 @@ namespace LiveDescribe.View
         /// </summary>
         private void SetPaging()
         {
-            double pages = (4.24 * 60) / pageTime;
+            double pages = 40 / pageTime;
            // double width = AudioCanvasBorder.ActualWidth * pages;
             double width = _audioTimeLineWidth*pages;
             //Console.WriteLine("Width: " + this.audioCanvasBorder.ActualWidth);
