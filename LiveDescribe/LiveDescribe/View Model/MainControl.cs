@@ -1,4 +1,5 @@
-﻿using Microsoft.TeamFoundation.MVVM;
+﻿using LiveDescribe.Interfaces;
+using Microsoft.TeamFoundation.MVVM;
 using System.ComponentModel;
 
 namespace LiveDescribe.View_Model
@@ -10,9 +11,9 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Constructors
-        public MainControl()
+        public MainControl(ILiveDescribePlayer mediaPlayer)
         {
-            _videocontrol = new VideoControl();
+            _videocontrol = new VideoControl(mediaPlayer);
         }
         #endregion
 

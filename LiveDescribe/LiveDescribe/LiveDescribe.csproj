@@ -64,6 +64,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Graphics\Marker.cs" />
+    <Compile Include="Interfaces\ILiveDescribePlayer.cs" />
+    <Compile Include="Controls\LiveDescribeMediaPlayer.cs" />
+    <Compile Include="LiveDescribeStates.cs" />
     <Compile Include="Model\Video.cs" />
     <Compile Include="View Model\MainControl.cs" />
     <Compile Include="View Model\VideoControl.cs" />
@@ -101,7 +104,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Commands\" />
-    <Folder Include="Controls\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,4 +1,5 @@
 ﻿using System;
+using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
 using Microsoft.TeamFoundation.MVVM;
 using Microsoft.Win32;
@@ -8,7 +9,8 @@ namespace LiveDescribe.View_Model
     class VideoControl : ViewModelBase
     {
         #region Instance Variables
-        private Video _video;
+       // private Video _video;
+        private ILiveDescribePlayer _mediaVideo;
        // private MediaElement _videoMedia;
       //  private DispatcherTimer _videoTimer;
         #endregion
@@ -18,22 +20,26 @@ namespace LiveDescribe.View_Model
         public event EventHandler PauseRequested;
         public event EventHandler MuteRequested;
         public event EventHandler VideoOpenedRequested;
+        public event EventHandler MediaFailedEvent;
         #endregion
 
         #region Constructors
-        public VideoControl()
+        public VideoControl(ILiveDescribePlayer mediaVideo)
         {
-            _video = new Video();
-             PlayCommand = new RelayCommand(Play, PlayCheck);
-             PauseCommand = new RelayCommand(Pause, PauseCheck);
-             MuteCommand = new RelayCommand(Mute, param => true);
-             FastForwardCommand = new RelayCommand(FastForward, FastForwardCheck);
-             RewindCommand = new RelayCommand(Rewind, RewindCheck);
-             RecordCommand = new RelayCommand(Record, RecordCheck);
-             VideoOpened = new RelayCommand(VideoOpen, param => true);
+           // _video = new Video();
+            _mediaVideo = mediaVideo;
 
-             ImportVideoCommand = new RelayCommand(OpenVideo, ImportCheck);
-             AddDependencySource("Path", this);
+            PlayCommand = new RelayCommand(Play, PlayCheck);
+            PauseCommand = new RelayCommand(Pause, PauseCheck);
+            MuteCommand = new RelayCommand(Mute, param => true);
+            FastForwardCommand = new RelayCommand(FastForward, FastForwardCheck);
+            RewindCommand = new RelayCommand(Rewind, RewindCheck);
+            RecordCommand = new RelayCommand(Record, RecordCheck);
+            VideoOpenedCommand = new RelayCommand(VideoOpen, param => true);
+            
+
+            ImportVideoCommand = new RelayCommand(OpenVideo, ImportCheck);
+            AddDependencySource("Path", this);
         }
         #endregion
 
@@ -89,7 +95,13 @@ namespace LiveDescribe.View_Model
             private set;
         }
 
-        public RelayCommand VideoOpened
+        public RelayCommand VideoOpenedCommand
+        {
+            get;
+            private set;
+        }
+
+        public RelayCommand MediaFailedCommand
         {
             get;
             private set;
@@ -110,7 +122,7 @@ namespace LiveDescribe.View_Model
 
             if (handler != null)
             {
-                _video.CurrentState = Video.States.Playing;
+                _mediaVideo.CurrentState = LiveDescribeStates.PlayingVideo;
                 handler(this, EventArgs.Empty);
             }
         }
@@ -127,7 +139,7 @@ namespace LiveDescribe.View_Model
 
             if (handler != null)
             {
-                _video.CurrentState = Video.States.Paused;
+                _mediaVideo.CurrentState = LiveDescribeStates.PausedVideo;
                 handler(this, EventArgs.Empty);
             }
         }
@@ -146,23 +158,27 @@ namespace LiveDescribe.View_Model
         { 
         }
 
-
+        /// <summary>
+        /// This event is thrown when the video is opened or "loaded"
+        /// </summary>
+        /// <param name="param"></param>
         public void VideoOpen(object param)
         {
             EventHandler handler = VideoOpenedRequested;
             Console.WriteLine("LOADED");
-            if (handler != null)
-            {
-                _video.CurrentState = Video.States.Loaded;
-                handler(this, EventArgs.Empty);
-            }
+
+            if (handler == null) return;
+
+            _mediaVideo.CurrentState = LiveDescribeStates.VideoLoaded;
+            handler(this, EventArgs.Empty);
         }
+
         /// <summary>
         /// Records user audio
         /// </summary>
         public void Record(object param)
         {
-            _video.CurrentState = Video.States.Recording;
+            _mediaVideo.CurrentState = LiveDescribeStates.RecordingDescription;
         }
 
         /// <summary>
@@ -195,7 +211,21 @@ namespace LiveDescribe.View_Model
                 Path = dialogBox.FileName;
             }
 
-            _video.CurrentState = Video.States.Paused;
+            _mediaVideo.CurrentState = LiveDescribeStates.PausedVideo;
+        }
+
+        /// <summary>
+        /// throws an event when the media fails to load an example of this happening would be if the
+        /// video format is not supported
+        /// </summary>
+        /// <param name="param"></param>
+        public void MediaFailed(object param)
+        {
+            EventHandler handler = MediaFailedEvent;
+
+            if (handler == null) return;
+            _mediaVideo.CurrentState = LiveDescribeStates.VideoFileFailedToLoad;
+            handler(this, EventArgs.Empty);
         }
 
         #endregion
@@ -208,7 +238,8 @@ namespace LiveDescribe.View_Model
         /// <returns>true if button can be enabled</returns>
         public bool PlayCheck(object param)
         {
-            if (_video.CurrentState == Video.States.Playing || _video.CurrentState == Video.States.Recording || _video.CurrentState == Video.States.NotLoaded)
+            if (_mediaVideo.CurrentState == LiveDescribeStates.PlayingVideo || _mediaVideo.CurrentState == LiveDescribeStates.RecordingDescription ||
+                _mediaVideo.CurrentState == LiveDescribeStates.VideoNotLoaded || _mediaVideo.CurrentState == LiveDescribeStates.VideoFileFailedToLoad)
                 return false;
             return true;
         }
@@ -220,7 +251,7 @@ namespace LiveDescribe.View_Model
         /// <returns>true if button can be enabled</returns>
         public bool PauseCheck(object param)
         {
-            if (_video.CurrentState == Video.States.Paused || _video.CurrentState == Video.States.NotLoaded)
+            if (_mediaVideo.CurrentState == LiveDescribeStates.PausedVideo || _mediaVideo.CurrentState == LiveDescribeStates.VideoNotLoaded || _mediaVideo.CurrentState == LiveDescribeStates.VideoFileFailedToLoad)
                 return false;
             return true;
         }
@@ -232,7 +263,7 @@ namespace LiveDescribe.View_Model
         /// <returns>true if the button can be enabled</returns>
         public bool RewindCheck(object param)
         {
-            if (_video.CurrentState == Video.States.NotLoaded)
+            if (_mediaVideo.CurrentState == LiveDescribeStates.VideoNotLoaded || _mediaVideo.CurrentState == LiveDescribeStates.VideoFileFailedToLoad)
                 return false;
             return true;
         }
@@ -244,7 +275,7 @@ namespace LiveDescribe.View_Model
         /// <returns></returns>
         public bool FastForwardCheck(object param)
         {
-            if (_video.CurrentState == Video.States.NotLoaded)
+            if (_mediaVideo.CurrentState == LiveDescribeStates.VideoNotLoaded || _mediaVideo.CurrentState == LiveDescribeStates.VideoFileFailedToLoad)
                 return false;
             return true;
         }
@@ -256,7 +287,7 @@ namespace LiveDescribe.View_Model
         /// <returns></returns>
         public bool RecordCheck(object param)
         {
-            if (_video.CurrentState == Video.States.NotLoaded)
+            if (_mediaVideo.CurrentState == LiveDescribeStates.VideoNotLoaded || _mediaVideo.CurrentState == LiveDescribeStates.VideoFileFailedToLoad)
                 return false;
             return true;
         }
@@ -268,7 +299,7 @@ namespace LiveDescribe.View_Model
         /// <returns></returns>
         public bool ImportCheck(object param)
         {
-            if (_video.CurrentState != Video.States.NotLoaded)
+            if (_mediaVideo.CurrentState != LiveDescribeStates.VideoNotLoaded)
                 return false;
             return true;
         }
@@ -283,12 +314,12 @@ namespace LiveDescribe.View_Model
         {
             set
             {
-                _video.Path = value;
+                _mediaVideo.Path = value;
                 RaisePropertyChanged("Path");
             }
             get
             {
-                return _video.Path;
+                return _mediaVideo.Path;
             }
 
         }

@@ -23,7 +23,7 @@ namespace LiveDescribe.View
         {
             InitializeComponent();
 
-            MainControl mc = new MainControl();
+            MainControl mc = new MainControl(VideoMedia);
    
             _videoTimer = new DispatcherTimer();
             _videoTimer.Tick += Play_Tick;
