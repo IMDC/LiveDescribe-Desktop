@@ -15,6 +15,9 @@ namespace LiveDescribe.Controls
         private LiveDescribeStates _currentState = LiveDescribeStates.VideoNotLoaded;
         public EventHandler PathChangedEvent;
 
+        /// <summary>
+        /// Property for obtaining the CurrentState used to make the VideoPlayer Stateful, if it isn't already
+        /// </summary>
         public LiveDescribeStates CurrentState
         {
             get
@@ -27,6 +30,9 @@ namespace LiveDescribe.Controls
             }
         }
 
+        /// <summary>
+        /// Keep track of the CurrentPosition in the video the player is in
+        /// </summary>
         public TimeSpan CurrentPosition
         {
             get
@@ -36,12 +42,18 @@ namespace LiveDescribe.Controls
             }
         }
 
+        /// <summary>
+        /// Keep Track of the Duration in Seconds of the current video playing
+        /// </summary>
         public double DurationSeconds
         {
             get { return this.NaturalDuration.TimeSpan.TotalSeconds;}
             
         }
 
+        /// <summary>
+        /// Keeps track of the current path of the file and throws an event if it is changed
+        /// </summary>
         public string Path
         {
             set
