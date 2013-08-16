@@ -36,8 +36,7 @@ namespace LiveDescribe.View_Model
             RewindCommand = new RelayCommand(Rewind, RewindCheck);
             RecordCommand = new RelayCommand(Record, RecordCheck);
             VideoOpenedCommand = new RelayCommand(VideoOpen, param => true);
-            
-
+            MediaFailedCommand = new RelayCommand(MediaFailed, param => true);
             ImportVideoCommand = new RelayCommand(OpenVideo, ImportCheck);
             AddDependencySource("Path", this);
         }
@@ -119,10 +118,9 @@ namespace LiveDescribe.View_Model
             Console.WriteLine("Play");
 
             EventHandler handler = PlayRequested;
-
+            _mediaVideo.CurrentState = LiveDescribeStates.PlayingVideo;
             if (handler != null)
             {
-                _mediaVideo.CurrentState = LiveDescribeStates.PlayingVideo;
                 handler(this, EventArgs.Empty);
             }
         }
@@ -136,10 +134,9 @@ namespace LiveDescribe.View_Model
             Console.WriteLine("Pause");
 
             EventHandler handler = PauseRequested;
-
+            _mediaVideo.CurrentState = LiveDescribeStates.PausedVideo;
             if (handler != null)
             {
-                _mediaVideo.CurrentState = LiveDescribeStates.PausedVideo;
                 handler(this, EventArgs.Empty);
             }
         }
@@ -166,10 +163,9 @@ namespace LiveDescribe.View_Model
         {
             EventHandler handler = VideoOpenedRequested;
             Console.WriteLine("LOADED");
+            _mediaVideo.CurrentState = LiveDescribeStates.VideoLoaded;
 
             if (handler == null) return;
-
-            _mediaVideo.CurrentState = LiveDescribeStates.VideoLoaded;
             handler(this, EventArgs.Empty);
         }
 
@@ -206,6 +202,7 @@ namespace LiveDescribe.View_Model
             OpenFileDialog dialogBox = new OpenFileDialog();
             bool? userClickedOk = dialogBox.ShowDialog();
 
+            Console.WriteLine("OPENVIDEO");
             if (userClickedOk == true)
             {
                 Path = dialogBox.FileName;
@@ -222,9 +219,9 @@ namespace LiveDescribe.View_Model
         public void MediaFailed(object param)
         {
             EventHandler handler = MediaFailedEvent;
-
+            Console.WriteLine("Media Failed to load...");
+            _mediaVideo.CurrentState = LiveDescribeStates.VideoNotLoaded;
             if (handler == null) return;
-            _mediaVideo.CurrentState = LiveDescribeStates.VideoFileFailedToLoad;
             handler(this, EventArgs.Empty);
         }
 
@@ -239,7 +236,7 @@ namespace LiveDescribe.View_Model
         public bool PlayCheck(object param)
         {
             if (_mediaVideo.CurrentState == LiveDescribeStates.PlayingVideo || _mediaVideo.CurrentState == LiveDescribeStates.RecordingDescription ||
-                _mediaVideo.CurrentState == LiveDescribeStates.VideoNotLoaded || _mediaVideo.CurrentState == LiveDescribeStates.VideoFileFailedToLoad)
+                _mediaVideo.CurrentState == LiveDescribeStates.VideoNotLoaded)
                 return false;
             return true;
         }
@@ -251,7 +248,7 @@ namespace LiveDescribe.View_Model
         /// <returns>true if button can be enabled</returns>
         public bool PauseCheck(object param)
         {
-            if (_mediaVideo.CurrentState == LiveDescribeStates.PausedVideo || _mediaVideo.CurrentState == LiveDescribeStates.VideoNotLoaded || _mediaVideo.CurrentState == LiveDescribeStates.VideoFileFailedToLoad)
+            if (_mediaVideo.CurrentState == LiveDescribeStates.PausedVideo || _mediaVideo.CurrentState == LiveDescribeStates.VideoNotLoaded)
                 return false;
             return true;
         }
@@ -263,7 +260,7 @@ namespace LiveDescribe.View_Model
         /// <returns>true if the button can be enabled</returns>
         public bool RewindCheck(object param)
         {
-            if (_mediaVideo.CurrentState == LiveDescribeStates.VideoNotLoaded || _mediaVideo.CurrentState == LiveDescribeStates.VideoFileFailedToLoad)
+            if (_mediaVideo.CurrentState == LiveDescribeStates.VideoNotLoaded)
                 return false;
             return true;
         }
@@ -275,7 +272,7 @@ namespace LiveDescribe.View_Model
         /// <returns></returns>
         public bool FastForwardCheck(object param)
         {
-            if (_mediaVideo.CurrentState == LiveDescribeStates.VideoNotLoaded || _mediaVideo.CurrentState == LiveDescribeStates.VideoFileFailedToLoad)
+            if (_mediaVideo.CurrentState == LiveDescribeStates.VideoNotLoaded)
                 return false;
             return true;
         }
@@ -287,7 +284,7 @@ namespace LiveDescribe.View_Model
         /// <returns></returns>
         public bool RecordCheck(object param)
         {
-            if (_mediaVideo.CurrentState == LiveDescribeStates.VideoNotLoaded || _mediaVideo.CurrentState == LiveDescribeStates.VideoFileFailedToLoad)
+            if (_mediaVideo.CurrentState == LiveDescribeStates.VideoNotLoaded)
                 return false;
             return true;
         }

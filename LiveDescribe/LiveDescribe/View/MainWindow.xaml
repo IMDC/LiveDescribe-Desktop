@@ -48,7 +48,7 @@
 
             <!--Media Element-->
             <Border Background="Black" Grid.Row="0" Grid.RowSpan="7" Grid.ColumnSpan="4">
-                <controls:LiveDescribeMediaPlayer DataContext="{Binding VideoControl}"  x:Name="VideoMedia" Source="{Binding Path}" LoadedBehavior="Manual">
+                <controls:LiveDescribeMediaPlayer DataContext="{Binding VideoControl}"  x:Name="VideoMedia" Source="{Binding Path}" LoadedBehavior="Manual" >
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="MediaOpened">
                             <i:InvokeCommandAction Command="{Binding VideoOpenedCommand}"/>

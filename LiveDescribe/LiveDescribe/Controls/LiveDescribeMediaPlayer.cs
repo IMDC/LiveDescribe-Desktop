@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ namespace LiveDescribe.Controls
     {
         private string _path = "";
         private LiveDescribeStates _currentState = LiveDescribeStates.VideoNotLoaded;
+        public EventHandler PathChangedEvent;
 
         public LiveDescribeStates CurrentState
         {
@@ -45,6 +47,7 @@ namespace LiveDescribe.Controls
             set
             {
                 _path = value;
+                PathChangedEvent(this, EventArgs.Empty);
             }
             get
             {

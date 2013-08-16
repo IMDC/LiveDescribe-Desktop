@@ -12,7 +12,7 @@ namespace LiveDescribe.View
     public partial class MainWindow : Window
     {
         
-        private double _videoDuration;
+        private double _videoDuration = 0;
         private double _audioTimeLineHeight;
         private double _audioTimeLineWidth;
         private readonly DispatcherTimer _videoTimer;
@@ -30,7 +30,17 @@ namespace LiveDescribe.View
             _videoTimer.Interval = new TimeSpan(0, 0, 0, 0, 10);
 
             DataContext = mc;
-           
+
+            //if the videomedia's path changes (a video is added)
+            //then play and stop the video to load the video
+            //this is done because the MediaElement does not load the video until it is played
+            //therefore you can't know the duration of the video or if it hasn't been loaded properly unless it fails
+            //I know this is a little hackish, but it's a consequence of how the MediaElement works
+            VideoMedia.PathChangedEvent += (sender, e) =>
+                {
+                    VideoMedia.Play();
+                    VideoMedia.Stop();
+                };
 
             #region Event Listeners
             //listens for PlayRequested Event
@@ -66,7 +76,6 @@ namespace LiveDescribe.View
         private void Play_Tick(object sender, EventArgs e)
         {
             //update marker position from the video controller
-            //something like this mc.VideoControl.CalculateMarkerPosition(TimeToMoveMarkerTo, pageSizeTime)
             
             int position = (int) Math.Round((VideoMedia.Position.Seconds / _videoDuration) * _audioTimeLineWidth);
             double initialPos = Canvas.GetLeft(Marker);
