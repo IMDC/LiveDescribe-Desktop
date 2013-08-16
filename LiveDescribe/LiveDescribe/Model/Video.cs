@@ -1,13 +1,6 @@
 ﻿namespace LiveDescribe.Model
 {
-
-
-    using System;
-    using System.Collections.Generic;
     using System.ComponentModel;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
 
     /// <summary>
     /// Video Class Represents a video
@@ -24,14 +17,14 @@
 
         public Video() 
         {
-            this._currentState = States.NotLoaded;
-            this._path = "";
+            _currentState = States.NotLoaded;
+            _path = "";
         }
 
         public Video(string path)
         {
-            this._path = path;
-            this._currentState = States.NotLoaded;
+            _path = path;
+            _currentState = States.NotLoaded;
         }
 
         #region Properties
@@ -40,11 +33,11 @@
         {
             get
             {
-                return this._currentState;
+                return _currentState;
             }
             set
             {
-                this._currentState = value;
+                _currentState = value;
                 NotifyPropertyChanged("CurrentState");
 
             }
@@ -67,20 +60,20 @@
         {
             set 
             {
-                this._currentTime = value; 
+                _currentTime = value; 
                 NotifyPropertyChanged("CurrentTime"); 
             }
-            get { return this._currentTime; }
+            get { return _currentTime; }
         }
 
         public double Duration
         {
             set
             {
-                this._duration = value;
+                _duration = value;
                 NotifyPropertyChanged("Duration");
             }
-            get { return this._duration; }
+            get { return _duration; }
         }
         #endregion
 

@@ -68,7 +68,7 @@
             </StackPanel>
             
             <!--Description Information-->
-            <TabControl Grid.Column="4" Grid.RowSpan="6" Grid.ColumnSpan="3">
+            <TabControl Grid.Row="0" Grid.Column="4" Grid.RowSpan="6" Grid.ColumnSpan="3">
                 <TabItem Header="Spaces">
                 </TabItem>
                 <TabItem Header="Descriptions">        
@@ -78,7 +78,7 @@
             </TabControl>
             
             <!--Timeline-->
-            <Border BorderBrush="Black" Grid.ColumnSpan="7"  Grid.Row="8" Grid.RowSpan="5" BorderThickness="2"  VerticalAlignment="Stretch">
+            <Border Grid.Column="0" BorderBrush="Black" Grid.ColumnSpan="7"  Grid.Row="8" Grid.RowSpan="5" BorderThickness="2"  VerticalAlignment="Stretch">
                 <ScrollViewer SizeChanged="timeLine_SizeChanged_1" Name="timeLine"  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                     <Grid>
                         <Grid.RowDefinitions>

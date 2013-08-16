@@ -1,17 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using LiveDescribe.View_Model;
 using System.Windows.Threading;
 
@@ -37,7 +26,7 @@ namespace LiveDescribe.View
             MainControl mc = new MainControl();
    
             videoTimer = new DispatcherTimer();
-            videoTimer.Tick += new EventHandler(Play_Tick);
+            videoTimer.Tick += Play_Tick;
             //videoTimer.Interval = new TimeSpan(0, 0, 0, 0, 10);
 
             DataContext = mc;
@@ -47,29 +36,29 @@ namespace LiveDescribe.View
             //listens for PlayRequested Event
             mc.VideoControl.PlayRequested += (sender, e) =>
                 {
-                    this.videoTimer.Start();
+                    videoTimer.Start();
                   //  this.storyBoard.Begin(this);
-                    this.VideoMedia.Play();
+                    VideoMedia.Play();
                 };
 
             //listens for PauseRequested Event
             mc.VideoControl.PauseRequested += (sender, e) =>
                 {
-                    this.VideoMedia.Pause();
-                    this.videoTimer.Stop();
+                    VideoMedia.Pause();
+                    videoTimer.Stop();
                    
                 };
             
             //listens for MuteRequested Event
             mc.VideoControl.MuteRequested += (sender, e) =>
             {
-                this.VideoMedia.IsMuted = !this.VideoMedia.IsMuted;
+                VideoMedia.IsMuted = !VideoMedia.IsMuted;
             };
 
             mc.VideoControl.VideoOpenedRequested += (sender, e) =>
                 {
-                    this._videoDuration = VideoMedia.NaturalDuration.TimeSpan.TotalSeconds;
-                    Console.WriteLine("DURATION: " + this._videoDuration);
+                    _videoDuration = VideoMedia.NaturalDuration.TimeSpan.TotalSeconds;
+                    Console.WriteLine("DURATION: " + _videoDuration);
                 };
             #endregion
         }
@@ -79,10 +68,10 @@ namespace LiveDescribe.View
             //update marker position from the video controller
             //something like this mc.VideoControl.CalculateMarkerPosition(TimeToMoveMarkerTo, pageSizeTime)
             
-            int position = (int) Math.Round((this.VideoMedia.Position.Seconds / this._videoDuration) * this._audioCanvasWidth);
-            double initialPos = Canvas.GetLeft(this.Marker);
+            int position = (int) Math.Round((VideoMedia.Position.Seconds / _videoDuration) * _audioCanvasWidth);
+            double initialPos = Canvas.GetLeft(Marker);
             double newPos = initialPos + 1;
-            Canvas.SetLeft(this.Marker, newPos);
+            Canvas.SetLeft(Marker, newPos);
 
            // Console.WriteLine("Position: " + position);
             //draw marker at correct position
@@ -96,14 +85,14 @@ namespace LiveDescribe.View
         /// <param name="e"></param>
         private void timeLine_SizeChanged_1(object sender, SizeChangedEventArgs e)
         {
-            this._audioCanvasHeight = this.AudioCanvasBorder.ActualHeight;
-            this._audioCanvasWidth = this.AudioCanvasBorder.ActualWidth;
+            _audioCanvasHeight = AudioCanvasBorder.ActualHeight;
+            _audioCanvasWidth = AudioCanvasBorder.ActualWidth;
             //  Console.WriteLine("WIDTH: " + this.audioCanvasWidth);
             //  Console.WriteLine("HEIGHT: " + this.audioCanvasHeight);
             setPaging();
 
             //the 4th point is the bottom point of the marker, adjusting the y value of this point
-            this.Marker.Points[4] = new Point(this.Marker.Points[4].X, this._audioCanvasHeight);
+            Marker.Points[4] = new Point(Marker.Points[4].X, _audioCanvasHeight);
         }
 
         #region Helper Functions
@@ -113,11 +102,11 @@ namespace LiveDescribe.View
         /// </summary>
         private void setPaging()
         {
-            double pages = 30.093 / this.pageTime;
+            double pages = 30.093 / pageTime;
             double width;
-            width = this.AudioCanvasBorder.ActualWidth * pages;
+            width = AudioCanvasBorder.ActualWidth * pages;
             //Console.WriteLine("Width: " + this.audioCanvasBorder.ActualWidth);
-            this.AudioCanvas.Width = width;
+            AudioCanvas.Width = width;
             
         }
 

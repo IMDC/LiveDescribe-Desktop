@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Win32;
-using Microsoft.TeamFoundation.MVVM;
+﻿using Microsoft.TeamFoundation.MVVM;
 using System.ComponentModel;
 
 namespace LiveDescribe.View_Model
 {
-    class MainControl : ViewModelBase, INotifyPropertyChanged
+    class MainControl : ViewModelBase
     {
         #region Instance Variables
         private VideoControl _videocontrol;
@@ -18,7 +12,7 @@ namespace LiveDescribe.View_Model
         #region Constructors
         public MainControl()
         {
-            this._videocontrol = new VideoControl();
+            _videocontrol = new VideoControl();
         }
         #endregion
 

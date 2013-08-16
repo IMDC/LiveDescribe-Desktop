@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using LiveDescribe.Model;
 using Microsoft.TeamFoundation.MVVM;
-using System.ComponentModel;
 using Microsoft.Win32;
 
 namespace LiveDescribe.View_Model
 {
-    class VideoControl : ViewModelBase, INotifyPropertyChanged
+    class VideoControl : ViewModelBase
     {
         #region Instance Variables
         private Video _video;
@@ -32,14 +26,14 @@ namespace LiveDescribe.View_Model
             _video = new Video();
              PlayCommand = new RelayCommand(Play, PlayCheck);
              PauseCommand = new RelayCommand(Pause, PauseCheck);
-             MuteCommand = new RelayCommand(Mute, (object param) => true);
+             MuteCommand = new RelayCommand(Mute, param => true);
              FastForwardCommand = new RelayCommand(FastForward, FastForwardCheck);
              RewindCommand = new RelayCommand(Rewind, RewindCheck);
              RecordCommand = new RelayCommand(Record, RecordCheck);
-             VideoOpened = new RelayCommand(VideoOpen, (object param) => true);
+             VideoOpened = new RelayCommand(VideoOpen, param => true);
 
              ImportVideoCommand = new RelayCommand(OpenVideo, ImportCheck);
-             this.AddDependencySource("Path", this);
+             AddDependencySource("Path", this);
         }
         #endregion
 
@@ -216,8 +210,7 @@ namespace LiveDescribe.View_Model
         {
             if (_video.CurrentState == Video.States.Playing || _video.CurrentState == Video.States.Recording || _video.CurrentState == Video.States.NotLoaded)
                 return false;
-            else
-                return true;
+            return true;
         }
 
         /// <summary>
@@ -229,8 +222,7 @@ namespace LiveDescribe.View_Model
         {
             if (_video.CurrentState == Video.States.Paused || _video.CurrentState == Video.States.NotLoaded)
                 return false;
-            else
-                return true;
+            return true;
         }
 
         /// <summary>
@@ -242,8 +234,7 @@ namespace LiveDescribe.View_Model
         {
             if (_video.CurrentState == Video.States.NotLoaded)
                 return false;
-            else
-                return true;
+            return true;
         }
 
         /// <summary>
@@ -255,8 +246,7 @@ namespace LiveDescribe.View_Model
         {
             if (_video.CurrentState == Video.States.NotLoaded)
                 return false;
-            else
-                return true;
+            return true;
         }
 
         /// <summary>
@@ -268,8 +258,7 @@ namespace LiveDescribe.View_Model
         {
             if (_video.CurrentState == Video.States.NotLoaded)
                 return false;
-            else
-                return true;
+            return true;
         }
 
         /// <summary>
@@ -281,9 +270,9 @@ namespace LiveDescribe.View_Model
         {
             if (_video.CurrentState != Video.States.NotLoaded)
                 return false;
-            else
-                return true;
+            return true;
         }
+
         #endregion
 
         #region Binding Properties
@@ -294,7 +283,7 @@ namespace LiveDescribe.View_Model
         {
             set
             {
-                this._video.Path = value;
+                _video.Path = value;
                 RaisePropertyChanged("Path");
             }
             get
