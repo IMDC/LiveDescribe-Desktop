@@ -51,6 +51,11 @@ namespace LiveDescribe.Controls
             
         }
 
+        public double DurationMilliseconds
+        {
+            get { return this.NaturalDuration.TimeSpan.TotalMilliseconds; }
+        }
+
         /// <summary>
         /// Keeps track of the current path of the file and throws an event if it is changed
         /// </summary>

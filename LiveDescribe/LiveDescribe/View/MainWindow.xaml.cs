@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows;
-using System.Windows.Controls;
 using LiveDescribe.View_Model;
 using System.Windows.Threading;
 
@@ -12,12 +11,12 @@ namespace LiveDescribe.View
     public partial class MainWindow : Window
     {
         
-        private double _videoDuration = 0;
+        private double _videoDuration;
         private double _audioTimeLineHeight;
         private double _audioTimeLineWidth;
         private readonly DispatcherTimer _videoTimer;
 
-        private double pageTime = 30; //30 seconds page time before audiocanvas  & descriptioncanvas scroll
+        private const double PageTime = 30; //30 seconds (in Milliseconds) page time before audiocanvas  & descriptioncanvas scroll
 
         public MainWindow()
         {
@@ -31,6 +30,8 @@ namespace LiveDescribe.View
 
             DataContext = mc;
 
+
+            #region Event Listeners for VideoMedia
             //if the videomedia's path changes (a video is added)
             //then play and stop the video to load the video
             //this is done because the MediaElement does not load the video until it is played
@@ -42,12 +43,13 @@ namespace LiveDescribe.View
                     VideoMedia.Stop();
                 };
 
-            #region Event Listeners
+            #endregion
+            
+            #region Event Listeners For VideoControl
             //listens for PlayRequested Event
             mc.VideoControl.PlayRequested += (sender, e) =>
                 {
                     _videoTimer.Start();
-                  //  this.storyBoard.Begin(this);
                     VideoMedia.Play();
                 };
 
@@ -61,14 +63,27 @@ namespace LiveDescribe.View
             
             //listens for MuteRequested Event
             mc.VideoControl.MuteRequested += (sender, e) =>
-            {
+                {
                 VideoMedia.IsMuted = !VideoMedia.IsMuted;
-            };
+                };
 
+            //listens for VideoOpenedRequested event
+            //this event only gets thrown when if the MediaFailed event doesn't occur
+            //and as soon as the video is loaded when play is pressed
             mc.VideoControl.VideoOpenedRequested += (sender, e) =>
                 {
                     _videoDuration = VideoMedia.NaturalDuration.TimeSpan.TotalSeconds;
-                    Console.WriteLine("DURATION: " + _videoDuration);
+                    Marker.Maximum = VideoMedia.NaturalDuration.TimeSpan.TotalMilliseconds;
+                    SetTimeline(); 
+                };
+
+            #endregion
+            
+            
+            #region Event Listeners for Marker
+            Marker.ValueChanged += (sender, e) =>
+                {
+                    VideoMedia.Position = new TimeSpan(0, 0, 0, 0, (int)Marker.Value);
                 };
             #endregion
         }
@@ -77,10 +92,10 @@ namespace LiveDescribe.View
         {
             //update marker position from the video controller
             
-            int position = (int) Math.Round((VideoMedia.Position.Seconds / _videoDuration) * _audioTimeLineWidth);
-            double initialPos = Canvas.GetLeft(Marker);
-            double newPos = initialPos + 1;
-            Canvas.SetLeft(Marker, newPos);
+           // int position = (int) Math.Round((VideoMedia.Position.Seconds / _videoDuration) * _audioTimeLineWidth);
+           // double initialPos = Canvas.GetLeft(Marker);
+           // double newPos = initialPos + 1;
+           // Canvas.SetLeft(Marker, newPos);
 
            // Console.WriteLine("Position: " + position);
             //draw marker at correct position
@@ -94,32 +109,28 @@ namespace LiveDescribe.View
         /// <param name="e"></param>
         private void timeLine_SizeChanged_1(object sender, SizeChangedEventArgs e)
         {
-            _audioTimeLineHeight = TimeLine.ActualHeight;
-            _audioTimeLineWidth = TimeLine.ActualWidth;
-            Console.WriteLine("AUDIO TIMELINE WIDTH: " + _audioTimeLineWidth);
-            Console.WriteLine("AUDIO CANVAS WIDTH: " + AudioCanvas.Width);
-            //Console.WriteLine("HEIGHT: " + this.audioCanvasHeight);
-            SetPaging();
-
-            //the 4th point is the bottom point of the marker, adjusting the y value of this point
-            Marker.Points[4] = new Point(Marker.Points[4].X, AudioCanvasBorder.ActualHeight);
+            SetTimeline();
         }
         #endregion
 
         #region Helper Functions
         /// <summary>
-        /// Sets the width of the audio canvas in the scrollview based off the pageTime and the total duration of the audio, if the AudioCanvas Width is greater
-        /// then the ActualWidth of the AudioCanvas then it scrolls to compensate for the additional width
+        ///Update's the instance variables that keep track of the timeline height and width, and calculates the size of the timeline
+        ///if the width of the audio canvas is greater then the timeline width it automatically overflows and scrolls due to the scrollview
+        ///then update the width of the marker to match the audio canvas
         /// </summary>
-        private void SetPaging()
+        private void SetTimeline()
         {
-            double pages = 40 / pageTime;
-           // double width = AudioCanvasBorder.ActualWidth * pages;
-            double width = _audioTimeLineWidth*pages;
-            //Console.WriteLine("Width: " + this.audioCanvasBorder.ActualWidth);
+            _audioTimeLineHeight = TimeLine.ActualHeight;
+            _audioTimeLineWidth = TimeLine.ActualWidth;
+
+            double pages = _videoDuration / PageTime;
+            double width = _audioTimeLineWidth * pages;
+
             AudioCanvas.Width = width;
+            Marker.Width = width;
         }
         #endregion
-       
+
     }
 }

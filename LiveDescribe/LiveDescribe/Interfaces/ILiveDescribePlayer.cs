@@ -13,10 +13,11 @@ namespace LiveDescribe.Interfaces
 
         double DurationSeconds { get; }
 
+        double DurationMilliseconds { get; }
+
         LiveDescribeStates CurrentState { set; get; }
         
         string Path { set; get; }
-
 
     }
 }

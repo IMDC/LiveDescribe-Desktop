@@ -48,7 +48,7 @@
 
             <!--Media Element-->
             <Border Background="Black" Grid.Row="0" Grid.RowSpan="7" Grid.ColumnSpan="4">
-                <controls:LiveDescribeMediaPlayer DataContext="{Binding VideoControl}"  x:Name="VideoMedia" Source="{Binding Path}" LoadedBehavior="Manual" >
+                <controls:LiveDescribeMediaPlayer ScrubbingEnabled="True" DataContext="{Binding VideoControl}"  x:Name="VideoMedia" Source="{Binding Path}" LoadedBehavior="Manual" >
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="MediaOpened">
                             <i:InvokeCommandAction Command="{Binding VideoOpenedCommand}"/>
@@ -97,9 +97,11 @@
 
                         <Border Name="AudioCanvasBorder"  Grid.Row="0" Grid.RowSpan="2"  BorderBrush="Black" BorderThickness="1">
                             <Canvas Name="AudioCanvas" VerticalAlignment="Top" >
-                                <Polyline Points="10,20, 0,0,  20,0, 10,20, 10,187"   RenderOptions.EdgeMode="Aliased" Stroke="Black" Fill="Black" StrokeThickness="2" Width="20"  Canvas.Left="-10" Canvas.Top="0" Name="Marker">
-                                    
-                                </Polyline>
+                                
+                                <Slider Name="Marker" Width="10">
+
+                                </Slider>
+                                
                             </Canvas>
                         </Border>
 
