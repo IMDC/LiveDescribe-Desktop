@@ -98,7 +98,6 @@ namespace LiveDescribe.View
            // double initialPos = Canvas.GetLeft(Marker);
            // double newPos = initialPos + 1;
            // Canvas.SetLeft(Marker, newPos);
-            Console.WriteLine((VideoMedia.Position.Seconds * 1000) + VideoMedia.Position.Milliseconds);
             Marker.Value = (VideoMedia.Position.Seconds * 1000) + VideoMedia.Position.Milliseconds;
 
             // Console.WriteLine("Position: " + position);
