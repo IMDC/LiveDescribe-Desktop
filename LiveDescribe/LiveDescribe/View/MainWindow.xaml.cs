@@ -2,6 +2,7 @@
 using System.Windows;
 using LiveDescribe.View_Model;
 using System.Windows.Threading;
+using Microsoft.TeamFoundation.Controls.WPF;
 
 namespace LiveDescribe.View
 {
@@ -26,7 +27,7 @@ namespace LiveDescribe.View
    
             _videoTimer = new DispatcherTimer();
             _videoTimer.Tick += Play_Tick;
-            _videoTimer.Interval = new TimeSpan(0, 0, 0, 0, 10);
+            _videoTimer.Interval = new TimeSpan(0,0,0,0,1);
 
             DataContext = mc;
 
@@ -64,7 +65,7 @@ namespace LiveDescribe.View
             //listens for MuteRequested Event
             mc.VideoControl.MuteRequested += (sender, e) =>
                 {
-                VideoMedia.IsMuted = !VideoMedia.IsMuted;
+                    VideoMedia.IsMuted = !VideoMedia.IsMuted;
                 };
 
             //listens for VideoOpenedRequested event
@@ -73,6 +74,7 @@ namespace LiveDescribe.View
             mc.VideoControl.VideoOpenedRequested += (sender, e) =>
                 {
                     _videoDuration = VideoMedia.NaturalDuration.TimeSpan.TotalSeconds;
+                   // Console.WriteLine(VideoMedia.NaturalDuration.TimeSpan.TotalMilliseconds);
                     Marker.Maximum = VideoMedia.NaturalDuration.TimeSpan.TotalMilliseconds;
                     SetTimeline(); 
                 };
@@ -80,12 +82,12 @@ namespace LiveDescribe.View
             #endregion
             
             
-            #region Event Listeners for Marker
-            Marker.ValueChanged += (sender, e) =>
+         /*   #region Event Listeners for Marker
+            Marker.Thumb.DragCompleted += (sender, e) =>
                 {
                     VideoMedia.Position = new TimeSpan(0, 0, 0, 0, (int)Marker.Value);
                 };
-            #endregion
+            #endregion*/
         }
 
         private void Play_Tick(object sender, EventArgs e)
@@ -96,8 +98,10 @@ namespace LiveDescribe.View
            // double initialPos = Canvas.GetLeft(Marker);
            // double newPos = initialPos + 1;
            // Canvas.SetLeft(Marker, newPos);
+            Console.WriteLine((VideoMedia.Position.Seconds * 1000) + VideoMedia.Position.Milliseconds);
+            Marker.Value = (VideoMedia.Position.Seconds * 1000) + VideoMedia.Position.Milliseconds;
 
-           // Console.WriteLine("Position: " + position);
+            // Console.WriteLine("Position: " + position);
             //draw marker at correct position
         }
 
