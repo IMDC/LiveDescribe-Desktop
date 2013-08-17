@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:controls="clr-namespace:LiveDescribe.Controls"
+        xmlns:behaviours="clr-namespace:LiveDescribe.Behaviours"
         Title="MainWindow" Height="800" Width="1280" MinHeight="800" MinWidth="1280">
 
 
@@ -95,13 +96,9 @@
 
                        <!-- <StackPanel Grid.ColumnSpan="6"  Grid.Row="8" Grid.RowSpan="5">-->
 
-                        <Border Name="AudioCanvasBorder"  Grid.Row="0" Grid.RowSpan="2"  BorderBrush="Black" BorderThickness="1">
-                            <Canvas Name="AudioCanvas" VerticalAlignment="Top" >
-                                
-                                <Slider Name="Marker" Width="10">
-
-                                </Slider>
-                                
+                        <Border DataContext="{Binding VideoControl}" Name="AudioCanvasBorder"  Grid.Row="0" Grid.RowSpan="2"  BorderBrush="Black" BorderThickness="1">
+                            <Canvas Name="AudioCanvas" VerticalAlignment="Top" >       
+                                <Slider behaviours:SliderDragBehaviours.DragStartedCommand="{Binding Path=PauseCommand}"  Thumb.DragCompleted="Marker_OnDragCompleted"  Name="Marker" Width="10"/>                                
                             </Canvas>
                         </Border>
 

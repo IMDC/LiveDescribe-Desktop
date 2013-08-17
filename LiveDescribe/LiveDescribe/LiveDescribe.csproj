@@ -63,6 +63,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Behaviours\SliderDragBehaviours.cs" />
     <Compile Include="Graphics\Marker.cs" />
     <Compile Include="Interfaces\ILiveDescribePlayer.cs" />
     <Compile Include="Controls\LiveDescribeMediaPlayer.cs" />

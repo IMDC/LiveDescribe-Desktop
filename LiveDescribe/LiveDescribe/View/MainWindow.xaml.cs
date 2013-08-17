@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using LiveDescribe.View_Model;
 using System.Windows.Threading;
 using Microsoft.TeamFoundation.Controls.WPF;
@@ -114,6 +116,12 @@ namespace LiveDescribe.View
         {
             SetTimeline();
         }
+
+        private void Marker_OnDragCompleted(object sender, DragCompletedEventArgs e)
+        {
+            VideoMedia.Position = new TimeSpan(0, 0, 0, 0, (int)((Slider)sender).Value);
+        }
+
         #endregion
 
         #region Helper Functions
@@ -134,6 +142,7 @@ namespace LiveDescribe.View
             Marker.Width = width;
         }
         #endregion
+
 
     }
 }
