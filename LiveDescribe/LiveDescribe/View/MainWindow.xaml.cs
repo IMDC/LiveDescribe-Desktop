@@ -4,7 +4,6 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using LiveDescribe.View_Model;
 using System.Windows.Threading;
-using Microsoft.TeamFoundation.Controls.WPF;
 
 namespace LiveDescribe.View
 {
@@ -43,7 +42,7 @@ namespace LiveDescribe.View
             VideoMedia.PathChangedEvent += (sender, e) =>
                 {
                     VideoMedia.Play();
-                    VideoMedia.Stop();
+                    VideoMedia.Pause();
                 };
 
             #endregion
@@ -83,13 +82,6 @@ namespace LiveDescribe.View
 
             #endregion
             
-            
-         /*   #region Event Listeners for Marker
-            Marker.Thumb.DragCompleted += (sender, e) =>
-                {
-                    VideoMedia.Position = new TimeSpan(0, 0, 0, 0, (int)Marker.Value);
-                };
-            #endregion*/
         }
 
         private void Play_Tick(object sender, EventArgs e)

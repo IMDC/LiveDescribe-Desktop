@@ -248,7 +248,8 @@ namespace LiveDescribe.View_Model
         /// <returns>true if button can be enabled</returns>
         public bool PauseCheck(object param)
         {
-            if (_mediaVideo.CurrentState == LiveDescribeStates.PausedVideo || _mediaVideo.CurrentState == LiveDescribeStates.VideoNotLoaded)
+            if (_mediaVideo.CurrentState == LiveDescribeStates.PausedVideo || _mediaVideo.CurrentState == LiveDescribeStates.VideoNotLoaded
+                || _mediaVideo.CurrentState == LiveDescribeStates.VideoLoaded)
                 return false;
             return true;
         }
