@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:controls="clr-namespace:LiveDescribe.Controls"
-        xmlns:behaviours="clr-namespace:LiveDescribe.Behaviours"
+        xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
         Title="MainWindow" Height="800" Width="1280" MinHeight="800" MinWidth="1280">
 
 
@@ -85,7 +85,7 @@
             
             <!--Timeline-->
             <Border Grid.Column="0" BorderBrush="Black" Grid.ColumnSpan="7"  Grid.Row="8" Grid.RowSpan="5" BorderThickness="2"  VerticalAlignment="Stretch">
-                <ScrollViewer SizeChanged="timeLine_SizeChanged_1" Name="TimeLine"  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                <ScrollViewer Name="TimeLine"  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition />
@@ -96,10 +96,16 @@
 
                        <!-- <StackPanel Grid.ColumnSpan="6"  Grid.Row="8" Grid.RowSpan="5">-->
 
-                        <Border DataContext="{Binding VideoControl}" Name="AudioCanvasBorder"  Grid.Row="0" Grid.RowSpan="2"  BorderBrush="Black" BorderThickness="1">
-                            <Canvas Name="AudioCanvas" VerticalAlignment="Top" >       
-                                <Slider behaviours:SliderDragBehaviours.DragStartedCommand="{Binding Path=PauseCommand}"  Thumb.DragCompleted="Marker_OnDragCompleted"  Name="Marker" Width="10"/>                                
-                            </Canvas>
+                        <Border SizeChanged="AudioCanvasBorder_SizeChanged_1" DataContext="{Binding VideoControl}" Name="AudioCanvasBorder"  Grid.Row="0" Grid.RowSpan="2"  BorderBrush="Black" BorderThickness="1">
+                           <Canvas Background="Turquoise" Name="AudioCanvas" VerticalAlignment="Top" >
+                                <Polyline MouseDown="Marker_OnMouseDown" MouseMove="Marker_OnMouseMove"  MouseUp="Marker_OnMouseUp" Points="10,20, 0,0,  20,0, 10,20, 10,187"   RenderOptions.EdgeMode="Aliased" Stroke="Black" Fill="Black" StrokeThickness="2" Width="20"  Canvas.Left="-10" Canvas.Top="0" Name="Marker">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="MouseDown">
+                                            <i:InvokeCommandAction Command="{Binding PauseCommand}"/>
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </Polyline>
+                           </Canvas>
                         </Border>
 
                         <Border Name="DescriptionCanvasBorder" Grid.Row="2" BorderBrush="Black" BorderThickness="1" >

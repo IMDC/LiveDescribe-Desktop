@@ -31,6 +31,7 @@ namespace LiveDescribe
         /// <summary>
         /// In this state right when the video file is loaded
         /// </summary>
-        VideoLoaded
+        VideoLoaded,
+
     }
 }

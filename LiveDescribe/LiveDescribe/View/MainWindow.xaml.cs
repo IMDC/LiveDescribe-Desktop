@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using LiveDescribe.View_Model;
 using System.Windows.Threading;
 
@@ -17,19 +17,16 @@ namespace LiveDescribe.View
         private double _audioTimeLineHeight;
         private double _audioTimeLineWidth;
         private readonly DispatcherTimer _videoTimer;
-
-        private const double PageTime = 30; //30 seconds (in Milliseconds) page time before audiocanvas  & descriptioncanvas scroll
+        private const double PageTime = 30; //30 seconds page time before audiocanvas  & descriptioncanvas scroll
 
         public MainWindow()
         {
             InitializeComponent();
 
             MainControl mc = new MainControl(VideoMedia);
-   
             _videoTimer = new DispatcherTimer();
             _videoTimer.Tick += Play_Tick;
             _videoTimer.Interval = new TimeSpan(0,0,0,0,1);
-
             DataContext = mc;
 
 
@@ -45,9 +42,18 @@ namespace LiveDescribe.View
                     VideoMedia.Pause();
                 };
 
+            VideoMedia.MediaEnded += (sender, e) =>
+            {
+                _videoTimer.Stop();
+                VideoMedia.Stop();
+                Canvas.SetLeft(Marker, -10);
+            };
+
             #endregion
             
             #region Event Listeners For VideoControl
+
+
             //listens for PlayRequested Event
             mc.VideoControl.PlayRequested += (sender, e) =>
                 {
@@ -74,9 +80,9 @@ namespace LiveDescribe.View
             //and as soon as the video is loaded when play is pressed
             mc.VideoControl.VideoOpenedRequested += (sender, e) =>
                 {
-                    _videoDuration = VideoMedia.NaturalDuration.TimeSpan.TotalSeconds;
+                    _videoDuration = VideoMedia.NaturalDuration.TimeSpan.TotalMilliseconds;
                    // Console.WriteLine(VideoMedia.NaturalDuration.TimeSpan.TotalMilliseconds);
-                    Marker.Maximum = VideoMedia.NaturalDuration.TimeSpan.TotalMilliseconds;
+                //    Marker.Maximum = VideoMedia.NaturalDuration.TimeSpan.TotalMilliseconds;
                     SetTimeline(); 
                 };
 
@@ -84,18 +90,15 @@ namespace LiveDescribe.View
             
         }
 
+        /// <summary>
+        /// Updates the Marker Position on the Timer
+        /// </summary>
+        /// <param name="sender">sender</param>
+        /// <param name="e">e</param>
         private void Play_Tick(object sender, EventArgs e)
         {
-            //update marker position from the video controller
-            
-           // int position = (int) Math.Round((VideoMedia.Position.Seconds / _videoDuration) * _audioTimeLineWidth);
-           // double initialPos = Canvas.GetLeft(Marker);
-           // double newPos = initialPos + 1;
-           // Canvas.SetLeft(Marker, newPos);
-            Marker.Value = (VideoMedia.Position.Seconds * 1000) + VideoMedia.Position.Milliseconds;
-
-            // Console.WriteLine("Position: " + position);
-            //draw marker at correct position
+            double position = (VideoMedia.Position.TotalMilliseconds / _videoDuration) * (_audioTimeLineWidth);
+            Canvas.SetLeft(Marker, (int)position);
         }
 
         #region View Listeners
@@ -104,16 +107,59 @@ namespace LiveDescribe.View
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void timeLine_SizeChanged_1(object sender, SizeChangedEventArgs e)
+        private void AudioCanvasBorder_SizeChanged_1(object sender, SizeChangedEventArgs e)
         {
             SetTimeline();
         }
 
-        private void Marker_OnDragCompleted(object sender, DragCompletedEventArgs e)
+
+        /// <summary>
+        /// Updates the video position when the mouse is released
+        /// </summary>
+        /// <param name="sender">sender</param>
+        /// <param name="mouseButtonEventArgs">e</param>
+        private void Marker_OnMouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
         {
-            VideoMedia.Position = new TimeSpan(0, 0, 0, 0, (int)((Slider)sender).Value);
+            double newValue = (Canvas.GetLeft(Marker) / _audioTimeLineWidth) * _videoDuration;
+            VideoMedia.Position = new TimeSpan(0, 0, 0, 0, (int)newValue);
+            Marker.ReleaseMouseCapture();
+            
         }
 
+        /// <summary>
+        /// Sets the mouse to be capured when the mouse is clicked
+        /// </summary>
+        /// <param name="sender">sender</param>
+        /// <param name="e">e</param>
+        private void Marker_OnMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Marker.CaptureMouse();
+        }
+
+        /// <summary>
+        /// Updates the Marker Position based on the Mouse x coord
+        /// </summary>
+        /// <param name="sender">sneder</param>
+        /// <param name="e">e</param>
+        private void Marker_OnMouseMove(object sender, MouseEventArgs e)
+        {
+            if (Marker.IsMouseCaptured)
+            {
+                if (e.GetPosition(AudioCanvasBorder).X < -10)
+                {
+                    Canvas.SetLeft(Marker, -10); 
+                }
+                else if (e.GetPosition(AudioCanvasBorder).X > _audioTimeLineWidth - 1)
+                {
+                    Canvas.SetLeft(Marker, _audioTimeLineWidth - 1);
+                }
+                else
+                {
+                    Canvas.SetLeft(Marker, e.GetPosition(AudioCanvasBorder).X);
+
+                }
+            }
+        }
         #endregion
 
         #region Helper Functions
@@ -127,14 +173,15 @@ namespace LiveDescribe.View
             _audioTimeLineHeight = TimeLine.ActualHeight;
             _audioTimeLineWidth = TimeLine.ActualWidth;
 
-            double pages = _videoDuration / PageTime;
+            double pages = _videoDuration / (PageTime * 1000);
             double width = _audioTimeLineWidth * pages;
 
             AudioCanvas.Width = width;
-            Marker.Width = width;
+
+            this.Marker.Points[4] = new Point(this.Marker.Points[4].X , this.AudioCanvasBorder.ActualHeight);
         }
         #endregion
 
-
+        
     }
 }

@@ -43,6 +43,7 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Commands
+
         /// <summary>
         /// Setter and Getter for PlayCommand
         /// </summary>
@@ -301,7 +302,6 @@ namespace LiveDescribe.View_Model
                 return false;
             return true;
         }
-
         #endregion
 
         #region Binding Properties
