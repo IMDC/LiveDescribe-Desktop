@@ -3,6 +3,7 @@ using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
 using Microsoft.TeamFoundation.MVVM;
 using Microsoft.Win32;
+using LiveDescribe.Utilities;
 
 namespace LiveDescribe.View_Model
 {
@@ -11,6 +12,7 @@ namespace LiveDescribe.View_Model
         #region Instance Variables
        // private Video _video;
         private ILiveDescribePlayer _mediaVideo;
+        private AudioUtility _audioOperator;
        // private MediaElement _videoMedia;
       //  private DispatcherTimer _videoTimer;
         #endregion
@@ -28,7 +30,7 @@ namespace LiveDescribe.View_Model
         {
            // _video = new Video();
             _mediaVideo = mediaVideo;
-
+            
             PlayCommand = new RelayCommand(Play, PlayCheck);
             PauseCommand = new RelayCommand(Pause, PauseCheck);
             MuteCommand = new RelayCommand(Mute, param => true);
@@ -165,6 +167,8 @@ namespace LiveDescribe.View_Model
             EventHandler handler = VideoOpenedRequested;
             Console.WriteLine("LOADED");
             _mediaVideo.CurrentState = LiveDescribeStates.VideoLoaded;
+            this._audioOperator = new AudioUtility(_mediaVideo.Path);
+            this._audioOperator.stripAudio("temp.wav");
 
             if (handler == null) return;
             handler(this, EventArgs.Empty);

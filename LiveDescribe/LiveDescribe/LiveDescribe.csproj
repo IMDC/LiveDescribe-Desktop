@@ -69,6 +69,7 @@
     <Compile Include="Controls\LiveDescribeMediaPlayer.cs" />
     <Compile Include="LiveDescribeStates.cs" />
     <Compile Include="Model\Video.cs" />
+    <Compile Include="Utilities\AudioUtility.cs" />
     <Compile Include="View Model\MainControl.cs" />
     <Compile Include="View Model\VideoControl.cs" />
     <Compile Include="View\MainWindow.xaml.cs">
@@ -106,6 +107,11 @@
   <ItemGroup>
     <Folder Include="Behaviours\" />
     <Folder Include="Commands\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Utilities\ffmpeg.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

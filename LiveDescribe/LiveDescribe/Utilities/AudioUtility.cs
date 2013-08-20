@@ -27,20 +27,20 @@ namespace LiveDescribe.Utilities
         /// <remarks>
         /// This function uses the executable FFMPEG file to handle the audio stripping
         /// </remarks>
-        private void stripAudio(string videoFile, string destinationAudioFile)
+        public void stripAudio(string destinationAudioFile)
         {
             //gets the path of the ffmpeg.exe file within the LiveDescribe solution
-            var appDirectory = Path.GetDirectoryName(Application.ExecutablePath);
-            var ffmpegPath = Path.Combine(appDirectory, "ffmpeg.exe");
+            var appDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            string ffmpegPath = Path.Combine(appDirectory, "Utilities/ffmpeg.exe");
 
-            if (!File.Exists(FFMPEG_PATH))
+            if (!File.Exists(ffmpegPath))
             {
-                MessageBox.Show("Cannot find ffmpeg.exe");
+                MessageBox.Show("Cannot find ffmpeg.exe" + " " + ffmpegPath);
                 return;
             }
 
             //the parameters that are sent to the ffmpeg command
-            string strParam = " -i \"" + videoFile + "\" -ac 2 -ab 160k -ar 44100 -f wav -vn -y \"" + destinationAudioFile + "\"";
+            string strParam = " -i \"" + this._videoFile + "\" -ac 2 -ab 160k -ar 44100 -f wav -vn -y \"" + destinationAudioFile + "\"";
 
             var ffmpeg = new Process
             {
