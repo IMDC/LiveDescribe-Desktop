@@ -79,8 +79,6 @@ namespace LiveDescribe.View
             mc.VideoControl.VideoOpenedRequested += (sender, e) =>
                 {
                     _videoDuration = VideoMedia.NaturalDuration.TimeSpan.TotalMilliseconds;
-                   // Console.WriteLine(VideoMedia.NaturalDuration.TimeSpan.TotalMilliseconds);
-                //    Marker.Maximum = VideoMedia.NaturalDuration.TimeSpan.TotalMilliseconds;
                     SetTimeline(); 
                 };
 
