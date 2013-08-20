@@ -84,7 +84,7 @@
             </TabControl>
             
             <!--Timeline-->
-            <Border Grid.Column="0" BorderBrush="Black" Grid.ColumnSpan="7"  Grid.Row="8" Grid.RowSpan="5" BorderThickness="2"  VerticalAlignment="Stretch">
+            <Border Grid.Column="0" BorderBrush="Black" Grid.ColumnSpan="7"  Grid.Row="8" Grid.RowSpan="5" BorderThickness="1"  VerticalAlignment="Stretch">
                 <ScrollViewer Name="TimeLine"  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                     <Grid>
                         <Grid.RowDefinitions>
