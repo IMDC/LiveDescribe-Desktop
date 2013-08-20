@@ -14,8 +14,6 @@ namespace LiveDescribe.View
     {
         
         private double _videoDuration;
-        private double _audioTimeLineHeight;
-        private double _audioTimeLineWidth;
         private readonly DispatcherTimer _videoTimer;
         private const double PageTime = 30; //30 seconds page time before audiocanvas  & descriptioncanvas scroll
 
@@ -97,7 +95,7 @@ namespace LiveDescribe.View
         /// <param name="e">e</param>
         private void Play_Tick(object sender, EventArgs e)
         {
-            double position = (VideoMedia.Position.TotalMilliseconds / _videoDuration) * (_audioTimeLineWidth);
+            double position = (VideoMedia.Position.TotalMilliseconds / _videoDuration) * (AudioCanvas.Width);
             Canvas.SetLeft(Marker, (int)position);
         }
 
@@ -120,7 +118,7 @@ namespace LiveDescribe.View
         /// <param name="mouseButtonEventArgs">e</param>
         private void Marker_OnMouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
         {
-            double newValue = (Canvas.GetLeft(Marker) / _audioTimeLineWidth) * _videoDuration;
+            double newValue = (Canvas.GetLeft(Marker) / AudioCanvas.Width) * _videoDuration;
             VideoMedia.Position = new TimeSpan(0, 0, 0, 0, (int)newValue);
             Marker.ReleaseMouseCapture();
             
@@ -139,7 +137,7 @@ namespace LiveDescribe.View
         /// <summary>
         /// Updates the Marker Position based on the Mouse x coord
         /// </summary>
-        /// <param name="sender">sneder</param>
+        /// <param name="sender">sender</param>
         /// <param name="e">e</param>
         private void Marker_OnMouseMove(object sender, MouseEventArgs e)
         {
@@ -149,14 +147,13 @@ namespace LiveDescribe.View
                 {
                     Canvas.SetLeft(Marker, -10); 
                 }
-                else if (e.GetPosition(AudioCanvasBorder).X > _audioTimeLineWidth - 1)
+                else if (e.GetPosition(AudioCanvasBorder).X > AudioCanvas.Width - 1)
                 {
-                    Canvas.SetLeft(Marker, _audioTimeLineWidth - 1);
+                    Canvas.SetLeft(Marker, AudioCanvas.Width - 1);
                 }
                 else
                 {
                     Canvas.SetLeft(Marker, e.GetPosition(AudioCanvasBorder).X);
-
                 }
             }
         }
@@ -170,14 +167,16 @@ namespace LiveDescribe.View
         /// </summary>
         private void SetTimeline()
         {
-            _audioTimeLineHeight = TimeLine.ActualHeight;
-            _audioTimeLineWidth = TimeLine.ActualWidth;
 
             double pages = _videoDuration / (PageTime * 1000);
-            double width = _audioTimeLineWidth * pages;
+            Console.WriteLine("PAGES: " + pages + " videoDuration: " + _videoDuration);
+            
+            double width = TimeLine.ActualWidth * pages;
+            Console.WriteLine("width: " + width);
+            Console.WriteLine("_audioTimeLineWidth: " + TimeLine.ActualWidth);
+
 
             AudioCanvas.Width = width;
-
             this.Marker.Points[4] = new Point(this.Marker.Points[4].X , this.AudioCanvasBorder.ActualHeight);
         }
         #endregion
