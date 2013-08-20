@@ -165,14 +165,8 @@ namespace LiveDescribe.View
         /// </summary>
         private void SetTimeline()
         {
-
             double pages = _videoDuration / (PageTime * 1000);
-            Console.WriteLine("PAGES: " + pages + " videoDuration: " + _videoDuration);
-            
             double width = TimeLine.ActualWidth * pages;
-            Console.WriteLine("width: " + width);
-            Console.WriteLine("_audioTimeLineWidth: " + TimeLine.ActualWidth);
-
 
             AudioCanvas.Width = width;
             this.Marker.Points[4] = new Point(this.Marker.Points[4].X , this.AudioCanvasBorder.ActualHeight);
