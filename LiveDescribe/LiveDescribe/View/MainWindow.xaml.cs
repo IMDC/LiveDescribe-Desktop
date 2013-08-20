@@ -17,7 +17,7 @@ namespace LiveDescribe.View
         private double _videoDuration;
         private readonly DispatcherTimer _videoTimer;
         private const double PageTime = 30; //30 seconds page time before audiocanvas  & descriptioncanvas scroll
-        private const double LineTime = 5;
+        private const double LineTime = 5; //each line in the NumberTimeline appears every 5 seconds
         private readonly VideoControl _videoControl;
 
         public MainWindow()
