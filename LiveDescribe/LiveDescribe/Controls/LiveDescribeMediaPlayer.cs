@@ -38,7 +38,6 @@ namespace LiveDescribe.Controls
             get
             {
                 return this.Position; 
-                
             }
         }
 

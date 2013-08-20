@@ -95,20 +95,28 @@
 
 
                        <!-- <StackPanel Grid.ColumnSpan="6"  Grid.Row="8" Grid.RowSpan="5">-->
+                        <!--<DockPanel Grid.Row="0" Grid.RowSpan="2">-->
 
-                        <Border SizeChanged="AudioCanvasBorder_SizeChanged_1" DataContext="{Binding VideoControl}" Name="AudioCanvasBorder"  Grid.Row="0" Grid.RowSpan="2"  BorderBrush="Black" BorderThickness="1">
-                           <Canvas Background="Turquoise" Name="AudioCanvas" VerticalAlignment="Top" >
-                                <Polyline MouseDown="Marker_OnMouseDown" MouseMove="Marker_OnMouseMove"  MouseUp="Marker_OnMouseUp" Points="10,20, 0,0,  20,0, 10,20, 10,187"   RenderOptions.EdgeMode="Aliased" Stroke="Black" Fill="Black" StrokeThickness="2" Width="20"  Canvas.Left="-10" Canvas.Top="0" Name="Marker">
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="MouseDown">
-                                            <i:InvokeCommandAction Command="{Binding PauseCommand}"/>
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
-                                </Polyline>
-                           </Canvas>
-                        </Border>
 
-                        <Border Name="DescriptionCanvasBorder" Grid.Row="2" BorderBrush="Black" BorderThickness="1" >
+                        <Border Grid.Row="0" Grid.RowSpan="2" SizeChanged="AudioCanvasBorder_SizeChanged_1" DataContext="{Binding VideoControl}" Name="AudioCanvasBorder"    BorderBrush="Black" BorderThickness="0.75">                                
+                                <Canvas Name="AudioCanvas">
+                                <Border  Name="NumberTimelineBorder" Background="White" Height="20" BorderBrush="Black" BorderThickness="0,0,0,2">
+                                    <Canvas Background="White" MouseDown="NumberTimeline_OnMouseDown" Name="NumberTimeline"/>
+                                </Border>
+
+                                <Polyline MouseDown="Marker_OnMouseDown" MouseMove="Marker_OnMouseMove"  MouseUp="Marker_OnMouseUp" Points="10,20, 0,0,  20,0, 10,20, 10,172"   RenderOptions.EdgeMode="Aliased" Stroke="Black" Fill="Black" StrokeThickness="2" Width="20"  Canvas.Left="-10" Canvas.Top="0" Name="Marker">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="MouseDown">
+                                                <i:InvokeCommandAction Command="{Binding PauseCommand}"/>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </Polyline>
+                                </Canvas>
+                            </Border>
+                       <!-- </DockPanel>-->
+
+
+                        <Border Name="DescriptionCanvasBorder" Grid.Row="2" BorderBrush="Black" BorderThickness="0.75" >
                             <Canvas Name="DescriptionCanvas">
                             
                             </Canvas>

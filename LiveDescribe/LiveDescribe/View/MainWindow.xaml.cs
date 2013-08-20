@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Shapes;
 using LiveDescribe.View_Model;
 using System.Windows.Threading;
 
@@ -16,6 +17,8 @@ namespace LiveDescribe.View
         private double _videoDuration;
         private readonly DispatcherTimer _videoTimer;
         private const double PageTime = 30; //30 seconds page time before audiocanvas  & descriptioncanvas scroll
+        private const double LineTime = 5;
+        private readonly VideoControl _videoControl;
 
         public MainWindow()
         {
@@ -26,7 +29,7 @@ namespace LiveDescribe.View
             _videoTimer.Tick += Play_Tick;
             _videoTimer.Interval = new TimeSpan(0,0,0,0,1);
             DataContext = mc;
-
+            _videoControl = mc.VideoControl;
 
             #region Event Listeners for VideoMedia
             //if the videomedia's path changes (a video is added)
@@ -108,7 +111,6 @@ namespace LiveDescribe.View
             SetTimeline();
         }
 
-
         /// <summary>
         /// Updates the video position when the mouse is released
         /// </summary>
@@ -116,10 +118,9 @@ namespace LiveDescribe.View
         /// <param name="mouseButtonEventArgs">e</param>
         private void Marker_OnMouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
         {
-            double newValue = (Canvas.GetLeft(Marker) / AudioCanvas.Width) * _videoDuration;
+            var newValue = (Canvas.GetLeft(Marker) / AudioCanvas.Width) * _videoDuration;
             VideoMedia.Position = new TimeSpan(0, 0, 0, 0, (int)newValue);
             Marker.ReleaseMouseCapture();
-            
         }
 
         /// <summary>
@@ -139,22 +140,42 @@ namespace LiveDescribe.View
         /// <param name="e">e</param>
         private void Marker_OnMouseMove(object sender, MouseEventArgs e)
         {
-            if (Marker.IsMouseCaptured)
+
+            var xPosition = e.GetPosition(AudioCanvasBorder).X;
+
+            if (!Marker.IsMouseCaptured) return;
+            if (xPosition < -10)
             {
-                if (e.GetPosition(AudioCanvasBorder).X < -10)
-                {
-                    Canvas.SetLeft(Marker, -10); 
-                }
-                else if (e.GetPosition(AudioCanvasBorder).X > AudioCanvas.Width - 1)
-                {
-                    Canvas.SetLeft(Marker, AudioCanvas.Width - 1);
-                }
-                else
-                {
-                    Canvas.SetLeft(Marker, e.GetPosition(AudioCanvasBorder).X);
-                }
+                Canvas.SetLeft(Marker, -10); 
+            }
+            else if (xPosition > AudioCanvas.Width - 1)
+            {
+                Canvas.SetLeft(Marker, AudioCanvas.Width - 1);
+            }
+            else
+            {
+                Canvas.SetLeft(Marker, xPosition);
             }
         }
+
+        /// <summary>
+        /// Gets executed when the area in the NumberTimeline canvas gets clicked
+        /// It changes the position of the video then redraws the marker in the correct spot
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void NumberTimeline_OnMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            //execute the pause command because we want to pause the video when someone is clicking through the video
+            _videoControl.PauseCommand.Execute(this);
+
+            var xPosition = e.GetPosition(NumberTimelineBorder).X;
+            var newValue = (xPosition / AudioCanvas.Width) * _videoDuration;
+            VideoMedia.Position = new TimeSpan(0, 0, 0, 0, (int)newValue);
+            Canvas.SetLeft(Marker, xPosition);
+            
+        }
+
         #endregion
 
         #region Helper Functions
@@ -167,18 +188,35 @@ namespace LiveDescribe.View
         {
 
             double pages = _videoDuration / (PageTime * 1000);
-            Console.WriteLine("PAGES: " + pages + " videoDuration: " + _videoDuration);
-            
             double width = TimeLine.ActualWidth * pages;
-            Console.WriteLine("width: " + width);
-            Console.WriteLine("_audioTimeLineWidth: " + TimeLine.ActualWidth);
 
+            var numlines = (int)(_videoDuration/(LineTime * 1000));
 
+            //Clear the canvas because we don't want the remaining lines due to importing a new video
+            //or resizing the window
+            NumberTimeline.Children.Clear();
+
+            
+            for (int i = 0; i < numlines; ++i)
+            {
+                Line splitLine = new Line
+                {
+                    Stroke = System.Windows.Media.Brushes.Black,
+                    Y1 = 0,
+                    Y2 = NumberTimeline.ActualHeight/2,
+                    X1 = width/numlines*i,
+                    X2 = width/numlines*i
+                };
+
+                NumberTimeline.Children.Add(splitLine);
+            }
+
+            NumberTimeline.Width = width;
             AudioCanvas.Width = width;
-            this.Marker.Points[4] = new Point(this.Marker.Points[4].X , this.AudioCanvasBorder.ActualHeight);
+            Marker.Points[4] = new Point(Marker.Points[4].X , AudioCanvasBorder.ActualHeight);
         }
         #endregion
 
-        
+
     }
 }
