@@ -186,13 +186,10 @@ namespace LiveDescribe.View
         /// </summary>
         private void SetTimeline()
         {
-
             double pages = _videoDuration / (PageTime * 1000);
             double width = TimeLine.ActualWidth * pages;
 
-            var numlines = (int)(_videoDuration/(LineTime * 1000));
-
-            //Clear the canvas because we don't want the remaining lines due to importing a new video
+			var numlines = (int)(_videoDuration/(LineTime * 1000));            //Clear the canvas because we don't want the remaining lines due to importing a new video
             //or resizing the window
             NumberTimeline.Children.Clear();
 
