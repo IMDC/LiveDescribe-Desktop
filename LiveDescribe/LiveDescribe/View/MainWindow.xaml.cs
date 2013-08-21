@@ -17,7 +17,8 @@ namespace LiveDescribe.View
         private double _videoDuration;
         private readonly DispatcherTimer _videoTimer;
         private const double PageTime = 30; //30 seconds page time before audiocanvas  & descriptioncanvas scroll
-        private const double LineTime = 5; //each line in the NumberTimeline appears every 5 seconds
+        private const double LineTime = 1; //each line in the NumberTimeline appears every 1 second
+        private const int LongLineTime = 5; // every 5 LineTimes, you get a Longer Line
         private readonly VideoControl _videoControl;
 
         public MainWindow()
@@ -47,7 +48,8 @@ namespace LiveDescribe.View
             {
                 _videoTimer.Stop();
                 VideoMedia.Stop();
-                Canvas.SetLeft(Marker, -10);
+                _videoControl.PauseCommand.Execute(this);
+                //_videoControl.PlayCommand.Execute(this);
             };
 
             #endregion
@@ -58,6 +60,7 @@ namespace LiveDescribe.View
             //listens for PlayRequested Event
             mc.VideoControl.PlayRequested += (sender, e) =>
                 {
+                    
                     _videoTimer.Start();
                     VideoMedia.Play();
                 };
@@ -96,8 +99,10 @@ namespace LiveDescribe.View
         /// <param name="e">e</param>
         private void Play_Tick(object sender, EventArgs e)
         {
-            double position = (VideoMedia.Position.TotalMilliseconds / _videoDuration) * (AudioCanvas.Width);
-            Canvas.SetLeft(Marker, (int)position);
+            double position = (VideoMedia.Position.TotalMilliseconds / _videoDuration) * (AudioCanvas.Width - 30);
+            Canvas.SetLeft(Marker, (int)position-10);
+            Console.WriteLine(VideoMedia.CurrentPosition.TotalMilliseconds);
+           
         }
 
         #region View Listeners
@@ -118,7 +123,8 @@ namespace LiveDescribe.View
         /// <param name="mouseButtonEventArgs">e</param>
         private void Marker_OnMouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
         {
-            var newValue = (Canvas.GetLeft(Marker) / AudioCanvas.Width) * _videoDuration;
+            var newValue = (Canvas.GetLeft(Marker)/ AudioCanvas.Width) * _videoDuration;
+            Console.WriteLine("NEW VALUE: " +(int)newValue);
             VideoMedia.Position = new TimeSpan(0, 0, 0, 0, (int)newValue);
             Marker.ReleaseMouseCapture();
         }
@@ -170,10 +176,10 @@ namespace LiveDescribe.View
             _videoControl.PauseCommand.Execute(this);
 
             var xPosition = e.GetPosition(NumberTimelineBorder).X;
-            var newValue = (xPosition / AudioCanvas.Width) * _videoDuration;
-            VideoMedia.Position = new TimeSpan(0, 0, 0, 0, (int)newValue);
-            Canvas.SetLeft(Marker, xPosition);
-            
+          //  var newValue = (xPosition / AudioCanvas.Width) * _videoDuration;
+          //  VideoMedia.Position = new TimeSpan(0, 0, 0, 0, (int)newValue);
+            Canvas.SetLeft(Marker, xPosition-10);
+            Console.WriteLine(VideoMedia.Position.TotalMilliseconds);
         }
 
         #endregion
@@ -186,6 +192,7 @@ namespace LiveDescribe.View
         /// </summary>
         private void SetTimeline()
         {
+
             double pages = _videoDuration / (PageTime * 1000);
             double width = TimeLine.ActualWidth * pages;
 
@@ -194,10 +201,28 @@ namespace LiveDescribe.View
             //or resizing the window
             NumberTimeline.Children.Clear();
 
-            
             for (int i = 0; i < numlines; ++i)
             {
-                Line splitLine = new Line
+
+                Line splitLine;
+
+                if (i%LongLineTime == 0)
+                {
+                    splitLine = new Line
+                    {
+                        Stroke = System.Windows.Media.Brushes.Blue,
+                        StrokeThickness = 1.5,
+                        Y1 = 0,
+                        Y2 = NumberTimeline.ActualHeight / 1.2,
+                        X1 = width / numlines * i,
+                        X2 = width / numlines * i,
+                    };
+                    
+                    NumberTimeline.Children.Add(splitLine);
+                    continue;
+                }
+
+                splitLine = new Line
                 {
                     Stroke = System.Windows.Media.Brushes.Black,
                     Y1 = 0,
