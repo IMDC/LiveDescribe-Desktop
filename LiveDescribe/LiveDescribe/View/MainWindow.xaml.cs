@@ -99,8 +99,6 @@ namespace LiveDescribe.View
         private void Play_Tick(object sender, EventArgs e)
         {
             double position = (VideoMedia.Position.TotalMilliseconds / _videoDuration) * (AudioCanvas.Width);
-            Canvas.SetLeft(Marker, (int)position);
-            double position = (VideoMedia.Position.TotalMilliseconds / _videoDuration) * (AudioCanvas.Width - 30);
             Canvas.SetLeft(Marker, (int)position-10);
         }
 
@@ -122,8 +120,9 @@ namespace LiveDescribe.View
         /// <param name="mouseButtonEventArgs">e</param>
         private void Marker_OnMouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
         {
-            var newValue = (Canvas.GetLeft(Marker) / AudioCanvas.Width) * _videoDuration;
-            var newValue = (Canvas.GetLeft(Marker) + 10 / AudioCanvas.Width) * _videoDuration;            VideoMedia.Position = new TimeSpan(0, 0, 0, 0, (int)newValue);
+            var newValue = (Canvas.GetLeft(Marker) + 10 / AudioCanvas.Width) * _videoDuration; 
+          
+            VideoMedia.Position = new TimeSpan(0, 0, 0, 0, (int)newValue);
             Marker.ReleaseMouseCapture();
         }
 
@@ -174,10 +173,6 @@ namespace LiveDescribe.View
             _videoControl.PauseCommand.Execute(this);
 
             var xPosition = e.GetPosition(NumberTimelineBorder).X;
-            var newValue = (xPosition / AudioCanvas.Width) * _videoDuration;
-            VideoMedia.Position = new TimeSpan(0, 0, 0, 0, (int)newValue);
-            Canvas.SetLeft(Marker, xPosition);
-            
             var newValue = (xPosition / AudioCanvas.Width) * _videoDuration;
             VideoMedia.Position = new TimeSpan(0, 0, 0, 0, (int)newValue);
             Canvas.SetLeft(Marker, xPosition - 10);
