@@ -4,6 +4,7 @@ using LiveDescribe.Model;
 using Microsoft.TeamFoundation.MVVM;
 using Microsoft.Win32;
 using LiveDescribe.Utilities;
+using System.Collections.Generic;
 
 namespace LiveDescribe.View_Model
 {
@@ -13,6 +14,7 @@ namespace LiveDescribe.View_Model
        // private Video _video;
         private ILiveDescribePlayer _mediaVideo;
         private AudioUtility _audioOperator;
+        private List<double> _waveFormData;
        // private MediaElement _videoMedia;
       //  private DispatcherTimer _videoTimer;
         #endregion
@@ -168,7 +170,9 @@ namespace LiveDescribe.View_Model
             Console.WriteLine("LOADED");
             _mediaVideo.CurrentState = LiveDescribeStates.VideoLoaded;
             this._audioOperator = new AudioUtility(_mediaVideo.Path);
-            this._audioOperator.stripAudio("temp.wav");
+            this._audioOperator.stripAudio();
+            this._waveFormData = this._audioOperator.readWavData();
+
 
             if (handler == null) return;
             handler(this, EventArgs.Empty);
