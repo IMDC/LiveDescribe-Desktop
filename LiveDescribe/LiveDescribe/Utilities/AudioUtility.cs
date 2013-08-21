@@ -1,5 +1,4 @@
-﻿using NAudio.Wave;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -256,15 +255,6 @@ namespace LiveDescribe.Utilities
             Console.WriteLine("subChunk2Id: " + System.Text.Encoding.Default.GetString(this._header.subChunk2ID));
             Console.WriteLine("subChunk2Size: " + this._header.subChunk2Size);
             
-            foreach (double sample in data)
-            {
-                if (sample < 0.3)
-                {
-                    Console.WriteLine("Sample Value: " + sample);
-                }
-                
-            }
-           
             return data;
         }
     }
