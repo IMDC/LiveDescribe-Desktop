@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Shapes;
+using LiveDescribe.Converters;
 using LiveDescribe.View_Model;
 using System.Windows.Threading;
 
@@ -20,6 +22,7 @@ namespace LiveDescribe.View
         private const double LineTime = 1; //each line in the NumberTimeline appears every 1 second
         private const int LongLineTime = 5; // every 5 LineTimes, you get a Longer Line
         private readonly VideoControl _videoControl;
+        private readonly TimeConverterFormatter _formatter; 
 
         public MainWindow()
         {
@@ -31,6 +34,7 @@ namespace LiveDescribe.View
             _videoTimer.Interval = new TimeSpan(0,0,0,0,1);
             DataContext = mc;
             _videoControl = mc.VideoControl;
+            _formatter = new TimeConverterFormatter();
 
             #region Event Listeners for VideoMedia
             //if the videomedia's path changes (a video is added)
@@ -48,7 +52,7 @@ namespace LiveDescribe.View
             {
                 _videoTimer.Stop();
                 VideoMedia.Stop();
-                Canvas.SetLeft(Marker, -10);
+                UpdateMarkerPosition(-10);
             };
 
             #endregion
@@ -99,9 +103,7 @@ namespace LiveDescribe.View
         private void Play_Tick(object sender, EventArgs e)
         {
             double position = (VideoMedia.Position.TotalMilliseconds / _videoDuration) * (AudioCanvas.Width );
-            Canvas.SetLeft(Marker, (int)position - 10);
-            //double position = (VideoMedia.Position.TotalMilliseconds / _videoDuration) * (AudioCanvas.Width);
-            //Canvas.SetLeft(Marker, (int)position-10);
+            UpdateMarkerPosition(position - 10);
         }
 
         #region View Listeners
@@ -124,7 +126,7 @@ namespace LiveDescribe.View
         {
             var newValue = ((Canvas.GetLeft(Marker) + 10) / AudioCanvas.Width) * _videoDuration; 
           
-            VideoMedia.Position = new TimeSpan(0, 0, 0, 0, (int)newValue);
+            UpdateVideoPosition((int)newValue);
             Marker.ReleaseMouseCapture();
         }
 
@@ -161,6 +163,9 @@ namespace LiveDescribe.View
             {
                 Canvas.SetLeft(Marker, xPosition - 10);
             }
+           
+            var newValue = (xPosition / AudioCanvas.Width) * _videoDuration;
+            UpdateVideoPosition((int)newValue);
         }
 
         /// <summary>
@@ -176,9 +181,9 @@ namespace LiveDescribe.View
 
             var xPosition = e.GetPosition(NumberTimelineBorder).X;
             var newValue = (xPosition / AudioCanvas.Width) * _videoDuration;
-            Console.WriteLine("Time Line value: " + newValue);
-            VideoMedia.Position = new TimeSpan(0, 0, 0, 0, (int)newValue);
-            Canvas.SetLeft(Marker, xPosition - 10);
+
+            UpdateMarkerPosition(xPosition - 10);
+            UpdateVideoPosition((int)newValue);
         }
 
         #endregion
@@ -236,6 +241,18 @@ namespace LiveDescribe.View
             NumberTimeline.Width = width;
             AudioCanvas.Width = width;
             Marker.Points[4] = new Point(Marker.Points[4].X , AudioCanvasBorder.ActualHeight);
+        }
+
+        private void UpdateMarkerPosition(double xPos)
+        {
+            Canvas.SetLeft(Marker, xPos);
+            CurrentTimeLabel.Text = (string)_formatter.Convert(VideoMedia.Position, VideoMedia.Position.GetType(), this, System.Globalization.CultureInfo.CurrentCulture);
+        }
+
+        private void UpdateVideoPosition(int vidPos)
+        {
+            VideoMedia.Position = new TimeSpan(0, 0, 0, 0, vidPos);
+            CurrentTimeLabel.Text = (string)_formatter.Convert(VideoMedia.Position, VideoMedia.Position.GetType(), this, System.Globalization.CultureInfo.CurrentCulture);
         }
         #endregion
 
