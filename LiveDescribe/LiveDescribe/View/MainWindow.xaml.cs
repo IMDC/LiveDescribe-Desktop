@@ -243,12 +243,20 @@ namespace LiveDescribe.View
             Marker.Points[4] = new Point(Marker.Points[4].X , AudioCanvasBorder.ActualHeight);
         }
 
+        /// <summary>
+        /// Updates the Marker Position in the timeline and sets the corresponding time in the timelabel
+        /// </summary>
+        /// <param name="xPos">the x position in which the marker is supposed to move</param>
         private void UpdateMarkerPosition(double xPos)
         {
             Canvas.SetLeft(Marker, xPos);
             CurrentTimeLabel.Text = (string)_formatter.Convert(VideoMedia.Position, VideoMedia.Position.GetType(), this, System.Globalization.CultureInfo.CurrentCulture);
         }
 
+        /// <summary>
+        /// Updates the video position to a spot in the video
+        /// </summary>
+        /// <param name="vidPos">the new position in the video</param>
         private void UpdateVideoPosition(int vidPos)
         {
             VideoMedia.Position = new TimeSpan(0, 0, 0, 0, vidPos);
