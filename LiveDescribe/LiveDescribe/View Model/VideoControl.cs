@@ -170,6 +170,8 @@ namespace LiveDescribe.View_Model
             EventHandler handler = VideoOpenedRequested;
             Console.WriteLine("LOADED");
             _mediaVideo.CurrentState = LiveDescribeStates.VideoLoaded;
+
+            //getting the audio data
             this._audioOperator = new AudioUtility(_mediaVideo.Path);
             this._audioOperator.stripAudio();
             this._waveFormData = this._audioOperator.readWavData();
@@ -333,6 +335,17 @@ namespace LiveDescribe.View_Model
 
         #endregion
 
-        
+        #region setters / getters
+        /// <summary>
+        /// Get the wavform Data
+        /// </summary>
+        public List<float> AudioData
+        {
+            set{}
+            get { return this._waveFormData; }
+        }
+        #endregion
+
+
     }
 }

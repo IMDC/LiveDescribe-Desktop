@@ -71,6 +71,7 @@
                 <Button Name="PlayControl" Margin="11" Height="30" Command="{Binding PlayCommand}">Play</Button>
                 <Button Name="PauseControl" Margin="11" Height="30" Command="{Binding PauseCommand}">Pause</Button>
                 <Button Command="{Binding FastForwardCommand}" Margin="11" Height="30">Fast Forward</Button>
+
             </StackPanel>
             
             <!--Description Information-->

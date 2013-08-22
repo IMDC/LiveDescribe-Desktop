@@ -219,6 +219,7 @@ namespace LiveDescribe.Utilities
                         {
                             val = ((BitConverter.ToInt16(buffer, 0) + (maxSampleValue / 2)) / maxSampleValue); //normalized sample value between 0 & 1
                             data.Add((float)val);
+                            //Console.WriteLine("Value: " + val);
                             buffer = null;
                         }
 

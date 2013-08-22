@@ -5,6 +5,7 @@ using System.Windows.Input;
 using System.Windows.Shapes;
 using LiveDescribe.View_Model;
 using System.Windows.Threading;
+using System.Collections.Generic;
 
 namespace LiveDescribe.View
 {
@@ -84,7 +85,8 @@ namespace LiveDescribe.View
             mc.VideoControl.VideoOpenedRequested += (sender, e) =>
                 {
                     _videoDuration = VideoMedia.NaturalDuration.TimeSpan.TotalMilliseconds;
-                    SetTimeline(); 
+                    SetTimeline();
+                    drawWaveForm();
                 };
 
             #endregion
@@ -237,6 +239,46 @@ namespace LiveDescribe.View
             AudioCanvas.Width = width;
             Marker.Points[4] = new Point(Marker.Points[4].X , AudioCanvasBorder.ActualHeight);
         }
+        #endregion
+
+
+        #region graphics Functions
+        /// <summary>
+        /// Draws the wavform of the video audio on the canvas
+        /// </summary>
+        private void drawWaveForm()
+        {
+            List<float> data = this._videoControl.AudioData;
+            double width = this.AudioCanvas.Width;
+            double height = this.AudioCanvas.ActualHeight;
+            List<float> bin = null;
+            double binSize = Math.Round(data.Count / width);
+            float min;
+            float max;
+
+            for (int pixel = 0; pixel < width; pixel++)
+            {
+                //get min and max from bin
+                bin = data.GetRange((int)(pixel * binSize), (int)binSize);
+            
+                bin.Sort();
+                min = bin[0];
+                max = bin[bin.Count - 1];
+                //Console.WriteLine("Min: " + min + " Max: " + max);
+
+                //draw the line on this pixel
+                Line wavLine = new Line
+                {
+                    Stroke = System.Windows.Media.Brushes.Black,
+                    Y1 = height * min,
+                    Y2 = height * max,
+                    X1 = pixel,
+                    X2 = pixel
+                };
+                AudioCanvas.Children.Add(wavLine);
+            }
+        }
+
         #endregion
 
 
