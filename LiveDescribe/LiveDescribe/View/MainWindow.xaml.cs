@@ -64,9 +64,10 @@ namespace LiveDescribe.View
             //listens for PlayRequested Event
             mc.VideoControl.PlayRequested += (sender, e) =>
                 {
-                    
                     _videoTimer.Start();
                     VideoMedia.Play();
+                    var newValue = ((Canvas.GetLeft(Marker) + 10) / AudioCanvas.Width) * _videoDuration;
+                    UpdateVideoPosition((int)newValue);
                 };
 
             //listens for PauseRequested Event
