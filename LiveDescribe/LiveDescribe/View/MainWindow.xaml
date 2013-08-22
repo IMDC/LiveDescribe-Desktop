@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:controls="clr-namespace:LiveDescribe.Controls"
+        xmlns:converters="clr-namespace:LiveDescribe.Converters"
         xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
         Title="MainWindow" Height="800" Width="1280" MinHeight="800" MinWidth="1280">
 
@@ -63,6 +64,11 @@
 
             <!--Button Controls for Video PLayer-->
             <StackPanel  DataContext="{Binding VideoControl}" Orientation="Horizontal" Grid.Row="7" Grid.ColumnSpan="4" Grid.Column="0">
+                
+                <StackPanel.Resources>
+                    <converters:TimeConverterFormatter x:Key="TimeConverterFormatter" />
+                </StackPanel.Resources>
+                
                 <Button Margin="11" Height="30" Command="{Binding MuteCommand}">Mute</Button>
                 <Slider Value="{Binding Path=Volume, ElementName=VideoMedia}" Name="VolumeControl" Maximum="1" Minimum="0"  Margin="15"
                         Width="100"/>
@@ -71,7 +77,7 @@
                 <Button Name="PlayControl" Margin="11" Height="30" Command="{Binding PlayCommand}">Play</Button>
                 <Button Name="PauseControl" Margin="11" Height="30" Command="{Binding PauseCommand}">Pause</Button>
                 <Button Command="{Binding FastForwardCommand}" Margin="11" Height="30">Fast Forward</Button>
-
+                <TextBlock  Text="00:00:000" Name="CurrentTimeLabel" MinWidth="40" Margin="50,15,0,15" FontSize="16" FontFamily="Trebuchet MS"/>
             </StackPanel>
             
             <!--Description Information-->

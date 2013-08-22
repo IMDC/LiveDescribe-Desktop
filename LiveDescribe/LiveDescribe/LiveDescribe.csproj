@@ -69,6 +69,7 @@
     <Compile Include="Controls\LiveDescribeMediaPlayer.cs" />
     <Compile Include="LiveDescribeStates.cs" />
     <Compile Include="Model\Video.cs" />
+    <Compile Include="Converters\TimeConverterFormatter.cs" />
     <Compile Include="Utilities\AudioUtility.cs" />
     <Compile Include="View Model\MainControl.cs" />
     <Compile Include="View Model\VideoControl.cs" />
@@ -106,7 +107,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Behaviours\" />
     <Folder Include="Commands\" />
   </ItemGroup>
   <ItemGroup>
