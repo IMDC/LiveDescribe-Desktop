@@ -99,6 +99,8 @@ namespace LiveDescribe.View
         private void Play_Tick(object sender, EventArgs e)
         {
             double position = (VideoMedia.Position.TotalMilliseconds / _videoDuration) * (AudioCanvas.Width);
+            Console.WriteLine("Play- Video Position: " + VideoMedia.Position.TotalMilliseconds);
+            Console.WriteLine("Play- Video Duration: " + _videoDuration);
             Canvas.SetLeft(Marker, (int)position-10);
         }
 
@@ -174,6 +176,7 @@ namespace LiveDescribe.View
 
             var xPosition = e.GetPosition(NumberTimelineBorder).X;
             var newValue = (xPosition / AudioCanvas.Width) * _videoDuration;
+            Console.WriteLine("Time Line value: " + newValue);
             VideoMedia.Position = new TimeSpan(0, 0, 0, 0, (int)newValue);
             Canvas.SetLeft(Marker, xPosition - 10);
         }

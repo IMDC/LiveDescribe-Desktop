@@ -31,7 +31,6 @@ namespace LiveDescribe.Utilities
         private string _videoFile;
         private string _audioFile;
         private Header _header = new Header();
-        private List<double> _audioData;
  
         public AudioUtility(string videoFile)
         {
@@ -174,12 +173,13 @@ namespace LiveDescribe.Utilities
         /// Read the wav data from the stripped audio and return the sample data
         /// </summary>
         /// <returns>data</returns>
-        public List<double> readWavData()
+        public List<float> readWavData()
         {
-            double maxSampleValue = Math.Pow(2,16);
+            double maxSampleValue;
+            int ratio;
             byte[] buffer;
             double val;
-            List<double> data = new List<double>();
+            List<float> data = new List<float>();
 
             using (FileStream fs = new FileStream(this._audioFile, FileMode.Open, FileAccess.Read))
             using (BinaryReader br = new BinaryReader(fs))
@@ -207,20 +207,26 @@ namespace LiveDescribe.Utilities
                     this._header.subChunk2ID = br.ReadBytes(4);
                     this._header.subChunk2Size = br.ReadUInt32();
 
+                    maxSampleValue = Math.Pow(2, this._header.bitsPerSample); //max sample depending on bitRate: 256 for 8 bit, 65536 for 16 bit ... 
+                    ratio = this._header.numChannels == 2 ? 40 : 80;
+
                     //add the sample values to the data list
-                    for (int i = 0; i < this._header.subChunk2Size / this._header.blockAlign; i++)
+                    for (int dataPoint = 0; dataPoint < this._header.subChunk2Size / this._header.blockAlign; dataPoint++)
                     {
                         buffer = br.ReadBytes(2);
-                       // val = (double)((buffer[0] & 0xff) | (buffer[1] << 8));// / maxSampleValue; //normalized sample value
-                        val = (double)((BitConverter.ToInt16(buffer, 0) + (maxSampleValue/2)) / maxSampleValue);
+                        
+                        if (dataPoint % ratio == 0)
+                        {
+                            val = ((BitConverter.ToInt16(buffer, 0) + (maxSampleValue / 2)) / maxSampleValue); //normalized sample value between 0 & 1
+                            data.Add((float)val);
+                            buffer = null;
+                        }
+
                         if (this._header.numChannels == 2)
                         {
                             //skip next sample 
                             br.ReadBytes(2);
                         }
-
-                        data.Add(val);
-                        buffer = null;
                     }
                 }
                 catch (Exception ex)
@@ -240,6 +246,7 @@ namespace LiveDescribe.Utilities
                 }
             }
 
+            #region Debug Info
             //Display the Contents of _header
             Console.WriteLine("ChunkID: " + System.Text.Encoding.Default.GetString(this._header.chunkID));
             Console.WriteLine("Chunksize: " + this._header.chunkSize);
@@ -254,8 +261,11 @@ namespace LiveDescribe.Utilities
             Console.WriteLine("bitsPerSample: " + this._header.bitsPerSample);
             Console.WriteLine("subChunk2Id: " + System.Text.Encoding.Default.GetString(this._header.subChunk2ID));
             Console.WriteLine("subChunk2Size: " + this._header.subChunk2Size);
-            
+            Console.WriteLine("audioData Length: " + data.Count);
+            #endregion
+
             return data;
         }
+
     }
 }

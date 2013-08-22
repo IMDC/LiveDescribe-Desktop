@@ -14,7 +14,8 @@ namespace LiveDescribe.View_Model
        // private Video _video;
         private ILiveDescribePlayer _mediaVideo;
         private AudioUtility _audioOperator;
-        private List<double> _waveFormData;
+        //private List<double> _waveFormData;
+        private List<float> _waveFormData;
        // private MediaElement _videoMedia;
       //  private DispatcherTimer _videoTimer;
         #endregion
