@@ -28,8 +28,7 @@ namespace LiveDescribe.Converters
                 _builder.Append(value.ToString().Substring(9, 3));
                 return _builder.ToString();
             }
-               // return value.ToString().Substring(3, 2) + ":" + value.ToString().Substring(6, 2);
-            Console.WriteLine(value.ToString());
+
             return value.ToString();
         }
 
