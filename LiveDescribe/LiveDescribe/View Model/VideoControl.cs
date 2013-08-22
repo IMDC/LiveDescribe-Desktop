@@ -40,9 +40,13 @@ namespace LiveDescribe.View_Model
             FastForwardCommand = new RelayCommand(FastForward, FastForwardCheck);
             RewindCommand = new RelayCommand(Rewind, RewindCheck);
             RecordCommand = new RelayCommand(Record, RecordCheck);
+
+            //bound to when the video loads and is opened via the mediaelement
             VideoOpenedCommand = new RelayCommand(VideoOpen, param => true);
             MediaFailedCommand = new RelayCommand(MediaFailed, param => true);
-            ImportVideoCommand = new RelayCommand(OpenVideo, ImportCheck);
+            //bound to Menu->file->Import Video
+            ImportVideoCommand = new RelayCommand(ImportVideo, ImportCheck);
+
             AddDependencySource("Path", this);
         }
         #endregion
@@ -209,7 +213,7 @@ namespace LiveDescribe.View_Model
         /// Open a dialog box for the user to choose what file they want to open
         /// </summary>
         /// <param name="param"></param>
-        public void OpenVideo(object param)
+        public void ImportVideo(object param)
         {
             OpenFileDialog dialogBox = new OpenFileDialog();
             bool? userClickedOk = dialogBox.ShowDialog();
