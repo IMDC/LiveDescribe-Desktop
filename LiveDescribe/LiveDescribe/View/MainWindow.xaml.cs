@@ -98,10 +98,10 @@ namespace LiveDescribe.View
         /// <param name="e">e</param>
         private void Play_Tick(object sender, EventArgs e)
         {
-            double position = (VideoMedia.Position.TotalMilliseconds / _videoDuration) * (AudioCanvas.Width);
-            Console.WriteLine("Play- Video Position: " + VideoMedia.Position.TotalMilliseconds);
-            Console.WriteLine("Play- Video Duration: " + _videoDuration);
-            Canvas.SetLeft(Marker, (int)position-10);
+            double position = (VideoMedia.Position.TotalMilliseconds / _videoDuration) * (AudioCanvas.Width );
+            Canvas.SetLeft(Marker, (int)position - 10);
+            //double position = (VideoMedia.Position.TotalMilliseconds / _videoDuration) * (AudioCanvas.Width);
+            //Canvas.SetLeft(Marker, (int)position-10);
         }
 
         #region View Listeners
@@ -122,7 +122,7 @@ namespace LiveDescribe.View
         /// <param name="mouseButtonEventArgs">e</param>
         private void Marker_OnMouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
         {
-            var newValue = (Canvas.GetLeft(Marker) + 10 / AudioCanvas.Width) * _videoDuration; 
+            var newValue = ((Canvas.GetLeft(Marker) + 10) / AudioCanvas.Width) * _videoDuration; 
           
             VideoMedia.Position = new TimeSpan(0, 0, 0, 0, (int)newValue);
             Marker.ReleaseMouseCapture();
