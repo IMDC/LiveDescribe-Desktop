@@ -257,6 +257,8 @@ namespace LiveDescribe.Utilities
                     {
                         fs.Close();
                     }
+
+                    data = normalizeData(data, (float)0.9, (float)0.1, (float)min, (float)max);
                 }
             }
 
