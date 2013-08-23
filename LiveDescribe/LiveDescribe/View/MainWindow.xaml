@@ -6,9 +6,19 @@
         xmlns:converters="clr-namespace:LiveDescribe.Converters"
         xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
         Title="MainWindow" Height="800" Width="1280" MinHeight="800" MinWidth="1280">
+    <Window.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolConverter"/>
+    </Window.Resources>
 
+    <Grid>
 
-    <DockPanel>
+        <Border DataContext="{Binding VideoControl}" Grid.ZIndex="2" BorderBrush="Black" BorderThickness="1" Background="#80000000" Visibility="{Binding IsBusyStrippingAudio, Converter={StaticResource BoolConverter}}" Grid.RowSpan="3">
+            <Grid>
+                <TextBlock Margin="0" TextWrapping="Wrap" Text="Please wait while we import your video..." HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" FontWeight="Bold" Foreground="#7EFFFFFF"/>
+            </Grid>
+        </Border>
+
+        <DockPanel>
         <!--Top Menu Bar-->
         <Menu DockPanel.Dock="Top" HorizontalAlignment="Stretch">
             <MenuItem Header="File">
@@ -152,4 +162,5 @@
         </Grid>
 
     </DockPanel>
+    </Grid>
 </Window>

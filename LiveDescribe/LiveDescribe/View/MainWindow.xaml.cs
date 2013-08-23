@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,7 +15,7 @@ namespace LiveDescribe.View
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
         
         private double _videoDuration;
@@ -23,7 +24,7 @@ namespace LiveDescribe.View
         private const double LineTime = 1; //each line in the NumberTimeline appears every 1 second
         private const int LongLineTime = 5; // every 5 LineTimes, you get a Longer Line
         private readonly VideoControl _videoControl;
-        private readonly TimeConverterFormatter _formatter; 
+        private readonly TimeConverterFormatter _formatter; //used to format a timespan object which in this case in the videoMedia.Position
 
         public MainWindow()
         {
@@ -90,10 +91,18 @@ namespace LiveDescribe.View
             mc.VideoControl.VideoOpenedRequested += (sender, e) =>
                 {
                     _videoDuration = VideoMedia.NaturalDuration.TimeSpan.TotalMilliseconds;
-                    SetTimeline();
-                    DrawWaveForm();
+                    
                 };
 
+            //listens for when the audio stripping is complete then draws the timeline and the wave form
+            //and sets the busy stripping audio to false so that the loading screen goes away
+            mc.VideoControl.OnStrippingAudioCompleted += (sender, e) =>
+            {
+                SetTimeline();
+                DrawWaveForm();
+                //make this false so that the loading screen goes away after the timeline and the wave form are drawn
+                _videoControl.IsBusyStrippingAudio = false;
+            };
             #endregion
             
         }
@@ -302,6 +311,24 @@ namespace LiveDescribe.View
         }
         #endregion
 
+        #region Property Changed
+        public event PropertyChangedEventHandler PropertyChanged;
 
+        /// <summary>
+        /// Raises the PropertyChanged event.
+        /// </summary>
+        /// <param name="propertyName">The name of the property changed.</param>
+        private void NotifyPropertyChanged(string propertyName)
+        {
+            /* Make a local copy of the event to prevent the case where the handler
+             * will be set as null in-between the null check and the handler call.
+             */
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+        #endregion
     }
 }

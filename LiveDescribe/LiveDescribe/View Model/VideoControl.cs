@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
 using Microsoft.TeamFoundation.MVVM;
@@ -11,13 +12,11 @@ namespace LiveDescribe.View_Model
     class VideoControl : ViewModelBase
     {
         #region Instance Variables
-       // private Video _video;
-        private ILiveDescribePlayer _mediaVideo;
+        private readonly ILiveDescribePlayer _mediaVideo;
         private AudioUtility _audioOperator;
-        //private List<double> _waveFormData;
         private List<float> _waveFormData;
-       // private MediaElement _videoMedia;
-      //  private DispatcherTimer _videoTimer;
+        private bool _busyStrippingAudio;
+        private readonly BackgroundWorker _stripAudioWorker;
         #endregion
 
         #region Event Handlers
@@ -26,6 +25,7 @@ namespace LiveDescribe.View_Model
         public event EventHandler MuteRequested;
         public event EventHandler VideoOpenedRequested;
         public event EventHandler MediaFailedEvent;
+        public event EventHandler OnStrippingAudioCompleted;
         #endregion
 
         #region Constructors
@@ -46,6 +46,8 @@ namespace LiveDescribe.View_Model
             MediaFailedCommand = new RelayCommand(MediaFailed, param => true);
             //bound to Menu->file->Import Video
             ImportVideoCommand = new RelayCommand(ImportVideo, ImportCheck);
+            IsBusyStrippingAudio = false;
+            _stripAudioWorker = new BackgroundWorker();
         }
         #endregion
 
@@ -172,16 +174,10 @@ namespace LiveDescribe.View_Model
             EventHandler handler = VideoOpenedRequested;
             Console.WriteLine("LOADED");
             _mediaVideo.CurrentState = LiveDescribeStates.VideoLoaded;
-
-            //getting the audio data
-            this._audioOperator = new AudioUtility(_mediaVideo.Path);
-            this._audioOperator.stripAudio();
-            this._waveFormData = this._audioOperator.readWavData();
-
-
             if (handler == null) return;
             handler(this, EventArgs.Empty);
         }
+
 
         /// <summary>
         /// Records user audio
@@ -208,7 +204,7 @@ namespace LiveDescribe.View_Model
         }
 
         /// <summary>
-        /// Open a dialog box for the user to choose what file they want to open
+        /// What happens when Import Video option is select, in this case open up a file dialogbox get the file then strip the audio
         /// </summary>
         /// <param name="param"></param>
         public void ImportVideo(object param)
@@ -220,6 +216,14 @@ namespace LiveDescribe.View_Model
             if (userClickedOk == true)
             {
                 Path = dialogBox.FileName;
+                //create a new background worker to strip the audio and set BusyStrippingAudio to true
+                //it does not get set to false in this class because the view is meant to take care of what they want to do with the stripped audio when it is completed for example
+                //create a wave form
+                //the variable IsBusyStrippingAudio gets binded to the view (a loading screen visibility to be exact) and when set to false will get rid of the loading screen
+                _stripAudioWorker.DoWork += new DoWorkEventHandler(StripAudio);
+                _stripAudioWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(OnFinishedStrippingAudio);
+                IsBusyStrippingAudio = true;
+                _stripAudioWorker.RunWorkerAsync();
             }
 
             _mediaVideo.CurrentState = LiveDescribeStates.PausedVideo;
@@ -239,6 +243,32 @@ namespace LiveDescribe.View_Model
             handler(this, EventArgs.Empty);
         }
 
+        #endregion
+
+        #region Background Workers
+        /// <summary>
+        /// this method works in the background to strip the audio from the current video
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void StripAudio(object sender, DoWorkEventArgs e)
+        {
+            this._audioOperator = new AudioUtility(_mediaVideo.Path);
+            this._audioOperator.stripAudio();
+            this._waveFormData = this._audioOperator.readWavData();           
+        }
+
+        /// <summary>
+        /// Gets called when the background worker is finished stripping the audio
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void OnFinishedStrippingAudio(object sender, RunWorkerCompletedEventArgs e)
+        {
+            EventHandler handler = OnStrippingAudioCompleted;
+            if (handler == null) return;
+            handler(this, EventArgs.Empty);
+        }
         #endregion
 
         #region State Checks
@@ -335,6 +365,18 @@ namespace LiveDescribe.View_Model
 
         }
 
+        public bool IsBusyStrippingAudio
+        {
+            set
+            {
+                _busyStrippingAudio = value;
+                RaisePropertyChanged("IsBusyStrippingAudio");
+            }
+            get
+            {
+                return _busyStrippingAudio;
+            }
+        }
         #endregion
 
         #region setters / getters
@@ -347,7 +389,5 @@ namespace LiveDescribe.View_Model
             get { return this._waveFormData; }
         }
         #endregion
-
-
     }
 }
