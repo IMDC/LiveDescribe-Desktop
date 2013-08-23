@@ -179,6 +179,8 @@ namespace LiveDescribe.Utilities
             int ratio;
             byte[] buffer;
             double val;
+            double min = 0; //default to 0
+            double max = 0; //default to 0
             List<float> data = new List<float>();
 
             using (FileStream fs = new FileStream(this._audioFile, FileMode.Open, FileAccess.Read))
@@ -219,8 +221,19 @@ namespace LiveDescribe.Utilities
                         {
                             val = ((BitConverter.ToInt16(buffer, 0) + (maxSampleValue / 2)) / maxSampleValue); //normalized sample value between 0 & 1
                             data.Add((float)val);
-                            //Console.WriteLine("Value: " + val);
                             buffer = null;
+
+                            //finding min and max values for normalization method
+                            if (dataPoint == 0)
+                            {
+                                min = val;
+                                max = val;
+                            }
+                            else
+                            {
+                                min = val < min ? val : min;
+                                max = val > max ? val : max;
+                            }
                         }
 
                         if (this._header.numChannels == 2)
@@ -265,6 +278,28 @@ namespace LiveDescribe.Utilities
             Console.WriteLine("audioData Length: " + data.Count);
             #endregion
 
+            return data;
+        }
+
+
+        /// <summary>
+        /// Will normalized the data using a linear transformation
+        /// using the following formula:
+        ///     I(n) = [(I(n) - min) newMax - newMin / max - min] + newMin
+        /// </summary>
+        /// <param name="data">data</param>
+        /// <param name="newMin">newMin</param>
+        /// <param name="newMax">newMax</param>
+        /// <param name="oldMin">oldMin</param>
+        /// <param name="oldMax">oldMax</param>
+        /// <returns></returns>
+        private List<float> normalizeData(List<float> data, float newMin, float newMax, float oldMin, float oldMax)
+        {
+            for (int dataPoint = 0; dataPoint < data.Count; dataPoint++)
+            {
+                float multFactor = (newMax - newMin) / (oldMax - oldMin);
+                data[dataPoint] = (float)(((data[dataPoint] - oldMin) * multFactor) + newMin);
+            }
             return data;
         }
 
