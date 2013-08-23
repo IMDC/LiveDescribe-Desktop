@@ -46,8 +46,6 @@ namespace LiveDescribe.View_Model
             MediaFailedCommand = new RelayCommand(MediaFailed, param => true);
             //bound to Menu->file->Import Video
             ImportVideoCommand = new RelayCommand(ImportVideo, ImportCheck);
-
-            AddDependencySource("Path", this);
         }
         #endregion
 
