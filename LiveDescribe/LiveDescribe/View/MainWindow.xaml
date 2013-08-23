@@ -12,116 +12,119 @@
 
     <Grid>
 
-        <Border DataContext="{Binding VideoControl}" Grid.ZIndex="2" BorderBrush="Black" BorderThickness="1" Background="#80000000" Visibility="{Binding IsBusyStrippingAudio, Converter={StaticResource BoolConverter}}" Grid.RowSpan="3">
+        <Border Name="LoadingBorder" DataContext="{Binding VideoControl}" Grid.ZIndex="2" BorderBrush="Black" BorderThickness="1" Background="#80000000" Visibility="{Binding IsBusyStrippingAudio, Converter={StaticResource BoolConverter}}" Grid.RowSpan="3">
             <Grid>
-                <TextBlock Margin="0" TextWrapping="Wrap" Text="Please wait while we import your video..." HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" FontWeight="Bold" Foreground="#7EFFFFFF"/>
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock TextWrapping="Wrap" Text="Please wait while we import your video..." HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" FontWeight="Bold" Foreground="#7EFFFFFF" RenderTransformOrigin="0.421,8.437"/>
+                    <ProgressBar Value="{Binding CurrentProgressAudioStripping, Mode=OneWay}" Maximum="100" Name="ImportVideoProgressBar" Background="#80000000" Foreground="White" Height="30"/>
+                </StackPanel>
             </Grid>
         </Border>
 
         <DockPanel>
-        <!--Top Menu Bar-->
-        <Menu DockPanel.Dock="Top" HorizontalAlignment="Stretch">
-            <MenuItem Header="File">
-                <MenuItem  DataContext="{Binding VideoControl}" Header="Import Video" Command="{Binding ImportVideoCommand}">
+            <!--Top Menu Bar-->
+            <Menu DockPanel.Dock="Top" HorizontalAlignment="Stretch">
+                <MenuItem Header="File">
+                    <MenuItem  DataContext="{Binding VideoControl}" Header="Import Video" Command="{Binding ImportVideoCommand}">
+                    </MenuItem>
                 </MenuItem>
-            </MenuItem>
-        </Menu>
-        
-        <!--Main Grid -->
-        <Grid DockPanel.Dock="Bottom"  Background="White">
+            </Menu>
 
-            <!--Main Grid Row Definitions-->    
-            <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-            </Grid.RowDefinitions>
+            <!--Main Grid -->
+            <Grid DockPanel.Dock="Bottom"  Background="White">
 
-            <!--Main Grid Column Definitions-->
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition />
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
+                <!--Main Grid Row Definitions-->
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
 
-            <!--Media Element-->
-            <Border Background="Black" Grid.Row="0" Grid.RowSpan="7" Grid.ColumnSpan="4">
-                <controls:LiveDescribeMediaPlayer ScrubbingEnabled="True" DataContext="{Binding VideoControl}"  x:Name="VideoMedia" Source="{Binding Path}" LoadedBehavior="Manual" >
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="MediaOpened">
-                            <i:InvokeCommandAction Command="{Binding VideoOpenedCommand}"/>
-                        </i:EventTrigger>
-                        <i:EventTrigger EventName="MediaFailed">
-                            <i:InvokeCommandAction Command="{Binding MediaFailedCommand}"/>
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </controls:LiveDescribeMediaPlayer>
-            </Border>
+                <!--Main Grid Column Definitions-->
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition />
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
 
-            <!--Button Controls for Video PLayer-->
-            <StackPanel  DataContext="{Binding VideoControl}" Orientation="Horizontal" Grid.Row="7" Grid.ColumnSpan="4" Grid.Column="0">
-                
-                <StackPanel.Resources>
-                    <converters:TimeConverterFormatter x:Key="TimeConverterFormatter" />
-                </StackPanel.Resources>
-                
-                <Button Margin="11" Height="30" Command="{Binding MuteCommand}">Mute</Button>
-                <Slider Value="{Binding Path=Volume, ElementName=VideoMedia}" Name="VolumeControl" Maximum="1" Minimum="0"  Margin="15"
+                <!--Media Element-->
+                <Border Background="Black" Grid.Row="0" Grid.RowSpan="7" Grid.ColumnSpan="4">
+                    <controls:LiveDescribeMediaPlayer ScrubbingEnabled="True" DataContext="{Binding VideoControl}"  x:Name="VideoMedia" Source="{Binding Path}" LoadedBehavior="Manual" >
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MediaOpened">
+                                <i:InvokeCommandAction Command="{Binding VideoOpenedCommand}"/>
+                            </i:EventTrigger>
+                            <i:EventTrigger EventName="MediaFailed">
+                                <i:InvokeCommandAction Command="{Binding MediaFailedCommand}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </controls:LiveDescribeMediaPlayer>
+                </Border>
+
+                <!--Button Controls for Video PLayer-->
+                <StackPanel  DataContext="{Binding VideoControl}" Orientation="Horizontal" Grid.Row="7" Grid.ColumnSpan="4" Grid.Column="0">
+
+                    <StackPanel.Resources>
+                        <converters:TimeConverterFormatter x:Key="TimeConverterFormatter" />
+                    </StackPanel.Resources>
+
+                    <Button Margin="11" Height="30" Command="{Binding MuteCommand}">Mute</Button>
+                    <Slider Value="{Binding Path=Volume, ElementName=VideoMedia}" Name="VolumeControl" Maximum="1" Minimum="0"  Margin="15"
                         Width="100"/>
-                <Button Command="{Binding RecordCommand}" Margin="11" Height="30">Record</Button>
-                <Button Command="{Binding RewindCommand}" Margin="11" Height="30">Rewind</Button>
-                <Button Name="PlayControl" Margin="11" Height="30" Command="{Binding PlayCommand}">Play</Button>
-                <Button Name="PauseControl" Margin="11" Height="30" Command="{Binding PauseCommand}">Pause</Button>
-                <Button Command="{Binding FastForwardCommand}" Margin="11" Height="30">Fast Forward</Button>
-                <TextBlock  Text="00:00:000" Name="CurrentTimeLabel" MinWidth="40" Margin="50,15,0,15" FontSize="16" FontFamily="Trebuchet MS"/>
-            </StackPanel>
-            
-            <!--Description Information-->
-            <TabControl Grid.Row="0" Grid.Column="4" Grid.RowSpan="6" Grid.ColumnSpan="3">
-                <TabItem Header="Spaces">
-                </TabItem>
-                <TabItem Header="Descriptions">        
-                </TabItem>
-                <TabItem Header="Extended Descriptions">
-                </TabItem>
-            </TabControl>
-            
-            <!--Timeline-->
-            <Border Grid.Column="0" BorderBrush="Black" Grid.ColumnSpan="7"  Grid.Row="8" Grid.RowSpan="5" BorderThickness="1"  VerticalAlignment="Stretch">
-                <ScrollViewer Name="TimeLine"  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
+                    <Button Command="{Binding RecordCommand}" Margin="11" Height="30">Record</Button>
+                    <Button Command="{Binding RewindCommand}" Margin="11" Height="30">Rewind</Button>
+                    <Button Name="PlayControl" Margin="11" Height="30" Command="{Binding PlayCommand}">Play</Button>
+                    <Button Name="PauseControl" Margin="11" Height="30" Command="{Binding PauseCommand}">Pause</Button>
+                    <Button Command="{Binding FastForwardCommand}" Margin="11" Height="30">Fast Forward</Button>
+                    <TextBlock  Text="00:00:000" Name="CurrentTimeLabel" MinWidth="40" Margin="50,15,0,15" FontSize="16" FontFamily="Trebuchet MS"/>
+                </StackPanel>
+
+                <!--Description Information-->
+                <TabControl Grid.Row="0" Grid.Column="4" Grid.RowSpan="6" Grid.ColumnSpan="3">
+                    <TabItem Header="Spaces">
+                    </TabItem>
+                    <TabItem Header="Descriptions">
+                    </TabItem>
+                    <TabItem Header="Extended Descriptions">
+                    </TabItem>
+                </TabControl>
+
+                <!--Timeline-->
+                <Border Grid.Column="0" BorderBrush="Black" Grid.ColumnSpan="7"  Grid.Row="8" Grid.RowSpan="5" BorderThickness="1"  VerticalAlignment="Stretch">
+                    <ScrollViewer Name="TimeLine"  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
 
 
-                       <!-- <StackPanel Grid.ColumnSpan="6"  Grid.Row="8" Grid.RowSpan="5">-->
-                        <!--<DockPanel Grid.Row="0" Grid.RowSpan="2">-->
+                            <!-- <StackPanel Grid.ColumnSpan="6"  Grid.Row="8" Grid.RowSpan="5">-->
+                            <!--<DockPanel Grid.Row="0" Grid.RowSpan="2">-->
 
 
-                        <Border Grid.Row="0" Grid.RowSpan="2" SizeChanged="AudioCanvasBorder_SizeChanged_1" DataContext="{Binding VideoControl}" Name="AudioCanvasBorder"    BorderBrush="Black" BorderThickness="1">                                
+                            <Border Grid.Row="0" Grid.RowSpan="2" SizeChanged="AudioCanvasBorder_SizeChanged_1" DataContext="{Binding VideoControl}" Name="AudioCanvasBorder"    BorderBrush="Black" BorderThickness="1">
                                 <Canvas Name="AudioCanvas">
-                                <Border  Name="NumberTimelineBorder" Background="White" Height="20" BorderBrush="Black" BorderThickness="0,0,0,2">
-                                    <Canvas Background="White" MouseDown="NumberTimeline_OnMouseDown" Name="NumberTimeline"/>
-                                </Border>
+                                    <Border  Name="NumberTimelineBorder" Background="White" Height="20" BorderBrush="Black" BorderThickness="0,0,0,2">
+                                        <Canvas Background="White" MouseDown="NumberTimeline_OnMouseDown" Name="NumberTimeline"/>
+                                    </Border>
 
-                                <Polyline MouseDown="Marker_OnMouseDown" MouseMove="Marker_OnMouseMove"  MouseUp="Marker_OnMouseUp" Points="10,20, 0,0,  20,0, 10,20, 10,172"   RenderOptions.EdgeMode="Aliased" Stroke="Black" Fill="Black" StrokeThickness="2" Width="20"  Canvas.Left="-10" Canvas.Top="0" Name="Marker">
+                                    <Polyline MouseDown="Marker_OnMouseDown" MouseMove="Marker_OnMouseMove"  MouseUp="Marker_OnMouseUp" Points="10,20, 0,0,  20,0, 10,20, 10,172"   RenderOptions.EdgeMode="Aliased" Stroke="Black" Fill="Black" StrokeThickness="2" Width="20"  Canvas.Left="-10" Canvas.Top="0" Name="Marker">
                                         <i:Interaction.Triggers>
                                             <i:EventTrigger EventName="MouseDown">
                                                 <i:InvokeCommandAction Command="{Binding PauseCommand}"/>
@@ -130,37 +133,37 @@
                                     </Polyline>
                                 </Canvas>
                             </Border>
-                       <!-- </DockPanel>-->
+                            <!-- </DockPanel>-->
 
 
-                        <Border Name="DescriptionCanvasBorder" Grid.Row="2" BorderBrush="Black" BorderThickness="0.75" >
-                            <Canvas Name="DescriptionCanvas">
-                            
-                            </Canvas>
-                        </Border>
-                        
-                        
-                    <!--</StackPanel>-->
-                    </Grid>
-                </ScrollViewer>
-            </Border>
+                            <Border Name="DescriptionCanvasBorder" Grid.Row="2" BorderBrush="Black" BorderThickness="0.75" >
+                                <Canvas Name="DescriptionCanvas">
 
-            <!--Description Text Box-->
-            <TextBox Grid.Column="4" Grid.Row="6" Grid.ColumnSpan="2" Grid.RowSpan="2" ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" Text="Enter Description Text" />
+                                </Canvas>
+                            </Border>
 
-            <!--Text Controls-->
-            <StackPanel Grid.Column="6" Grid.Row="6" Grid.RowSpan="2">
-               
-                <Button Margin="10">
-                    Save Text
-                </Button>
-                <Button Margin="10">
-                    Clear
-                </Button>
-            </StackPanel>
-            
-        </Grid>
 
-    </DockPanel>
+                            <!--</StackPanel>-->
+                        </Grid>
+                    </ScrollViewer>
+                </Border>
+
+                <!--Description Text Box-->
+                <TextBox Grid.Column="4" Grid.Row="6" Grid.ColumnSpan="2" Grid.RowSpan="2" ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" Text="Enter Description Text" />
+
+                <!--Text Controls-->
+                <StackPanel Grid.Column="6" Grid.Row="6" Grid.RowSpan="2">
+
+                    <Button Margin="10">
+                        Save Text
+                    </Button>
+                    <Button Margin="10">
+                        Clear
+                    </Button>
+                </StackPanel>
+
+            </Grid>
+
+        </DockPanel>
     </Grid>
 </Window>

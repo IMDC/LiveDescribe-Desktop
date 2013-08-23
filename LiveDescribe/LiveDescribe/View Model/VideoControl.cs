@@ -16,6 +16,7 @@ namespace LiveDescribe.View_Model
         private List<float> _waveFormData;
         private bool _busyStrippingAudio;
         private readonly BackgroundWorker _stripAudioWorker;
+        private double _currentprogressaudiostripping;
         #endregion
 
         #region Event Handlers
@@ -215,12 +216,14 @@ namespace LiveDescribe.View_Model
             if (userClickedOk == true)
             {
                 Path = dialogBox.FileName;
-                //create a new background worker to strip the audio and set BusyStrippingAudio to true
+                //create a new background worker to strip the audio and set IsBusyStrippingAudio to true
                 //it does not get set to false in this class because the view is meant to take care of what they want to do with the stripped audio when it is completed for example
                 //create a wave form
-                //the variable IsBusyStrippingAudio gets binded to the view (a loading screen visibility to be exact) and when set to false will get rid of the loading screen
+                //the variable IsBusyStrippingAudio gets binded to the view (LoadingBorder Visibility property) and when set to false will get rid of the loading screen
                 _stripAudioWorker.DoWork += StripAudio;
                 _stripAudioWorker.RunWorkerCompleted += OnFinishedStrippingAudio;
+                _stripAudioWorker.ProgressChanged += StrippingAudioProgressChanged;
+                _stripAudioWorker.WorkerReportsProgress = true;
                 IsBusyStrippingAudio = true;
                 _stripAudioWorker.RunWorkerAsync();
             }
@@ -253,8 +256,8 @@ namespace LiveDescribe.View_Model
         public void StripAudio(object sender, DoWorkEventArgs e)
         {
             _audioOperator = new AudioUtility(_mediaVideo.Path);
-            _audioOperator.stripAudio();
-            _waveFormData = _audioOperator.readWavData();           
+            _audioOperator.stripAudio(_stripAudioWorker);
+            _waveFormData = _audioOperator.readWavData(_stripAudioWorker);           
         }
 
         /// <summary>
@@ -267,6 +270,17 @@ namespace LiveDescribe.View_Model
             EventHandler handler = OnStrippingAudioCompleted;
             if (handler == null) return;
             handler(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Method that gets bounded to the _stripAudioWorker.ProgressChanged
+        /// everytime the progress changes in the audio worker it updates the property CurrentProgressAudioStripping
+        /// </summary>
+        /// <param name="sender">sender</param>
+        /// <param name="e">progresschangedeventargs</param>
+        public void StrippingAudioProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            CurrentProgressAudioStripping = e.ProgressPercentage;
         }
         #endregion
 
@@ -364,6 +378,10 @@ namespace LiveDescribe.View_Model
 
         }
 
+        /// <summary>
+        /// Property that gets bound to the LoadingBorder visibility with a converter 
+        /// to decide whether the loading border should be seen or not
+        /// </summary>
         public bool IsBusyStrippingAudio
         {
             set
@@ -374,6 +392,22 @@ namespace LiveDescribe.View_Model
             get
             {
                 return _busyStrippingAudio;
+            }
+        }
+
+        /// <summary>
+        /// Property that get's bound to the ImportVideoProgressbar Value property
+        /// </summary>
+        public double CurrentProgressAudioStripping
+        {
+            set
+            {
+                _currentprogressaudiostripping = value;
+                RaisePropertyChanged("CurrentProgressAudioStripping");
+            }
+            get
+            {
+                return _currentprogressaudiostripping;
             }
         }
         #endregion

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
+using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace LiveDescribe.Utilities
@@ -34,8 +34,8 @@ namespace LiveDescribe.Utilities
  
         public AudioUtility(string videoFile)
         {
-            this._videoFile = videoFile;
-            this._audioFile = Path.GetFileNameWithoutExtension(_videoFile) + ".wav";
+            _videoFile = videoFile;
+            _audioFile = Path.GetFileNameWithoutExtension(_videoFile) + ".wav";
         }
 
 
@@ -45,10 +45,11 @@ namespace LiveDescribe.Utilities
         /// <remarks>
         /// This function uses the executable FFMPEG file to handle the audio stripping
         /// </remarks>
-        public void stripAudio()
+        /// <param name="reportProgressWorker">Used to determine what the current progress of stripping the audio is</param>
+        public void stripAudio(BackgroundWorker reportProgressWorker)
         {
             //gets the path of the ffmpeg.exe file within the LiveDescribe solution
-            var appDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            var appDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             string ffmpegPath = Path.Combine(appDirectory, "Utilities/ffmpeg.exe");
 
             if (!File.Exists(ffmpegPath))
@@ -58,7 +59,7 @@ namespace LiveDescribe.Utilities
             }
 
             //the parameters that are sent to the ffmpeg command
-            string strParam = " -i \"" + this._videoFile + "\" -ac 2 -ab 160k -ar 44100 -f wav -vn -y \"" + this._audioFile + "\"";
+            string strParam = " -i \"" + _videoFile + "\" -ac 2 -ab 160k -ar 44100 -f wav -vn -y \"" + _audioFile + "\"";
 
             var ffmpeg = new Process
             {
@@ -133,6 +134,7 @@ namespace LiveDescribe.Utilities
                         int percentComplete = Convert.ToInt32(((double)currentTime / (double)totalTime) * 100);
                         if (percentComplete <= 100)
                         {
+                            reportProgressWorker.ReportProgress(percentComplete);
                             Console.WriteLine("Percentage: " + percentComplete);
                         }
                     }
@@ -146,7 +148,7 @@ namespace LiveDescribe.Utilities
 
             ffmpeg.WaitForExit();
 
-            var fileInfo = new FileInfo(this._audioFile);
+            var fileInfo = new FileInfo(_audioFile);
             Console.WriteLine("Audio file length: " + fileInfo.Length);
         }
 
@@ -157,13 +159,9 @@ namespace LiveDescribe.Utilities
         /// <returns></returns>
         private double getTime(string time)
         {
-            double hours;
-            double minutes;
-            double seconds;
-
-            hours = Convert.ToDouble(time.Substring(0, 2)) * 60 * 60;
-            minutes = Convert.ToDouble(time.Substring(3, 2)) * 60;
-            seconds = Convert.ToDouble(time.Substring(6, 2));
+            double hours = Convert.ToDouble(time.Substring(0, 2)) * 60 * 60;
+            double minutes = Convert.ToDouble(time.Substring(3, 2)) * 60;
+            double seconds = Convert.ToDouble(time.Substring(6, 2));
 
             return hours + minutes + seconds;
         }
@@ -172,54 +170,51 @@ namespace LiveDescribe.Utilities
         /// <summary>
         /// Read the wav data from the stripped audio and return the sample data
         /// </summary>
+        /// <param name="reportProgressWorker">Used to determine what the current progress of stripping the audio is</param>
         /// <returns>data</returns>
-        public List<float> readWavData()
+        public List<float> readWavData(BackgroundWorker reportProgressWorker)
         {
-            double maxSampleValue;
-            int ratio;
-            byte[] buffer;
-            double val;
             double min = 0; //default to 0
             double max = 0; //default to 0
             List<float> data = new List<float>();
 
-            using (FileStream fs = new FileStream(this._audioFile, FileMode.Open, FileAccess.Read))
+            using (FileStream fs = new FileStream(_audioFile, FileMode.Open, FileAccess.Read))
             using (BinaryReader br = new BinaryReader(fs))
             {
                 try
                 {
                     //RIFF chunk
-                    this._header.chunkID = br.ReadBytes(4);
-                    this._header.chunkSize = br.ReadUInt32();
-                    this._header.fmt = br.ReadBytes(4);
+                    _header.chunkID = br.ReadBytes(4);
+                    _header.chunkSize = br.ReadUInt32();
+                    _header.fmt = br.ReadBytes(4);
 
                     //fmt sub chunk
-                    this._header.subChunk1ID = br.ReadBytes(4);
-                    this._header.subChunk1Size = br.ReadUInt32();
-                    this._header.audioFormat = br.ReadUInt16();
-                    this._header.numChannels = br.ReadUInt16();
-                    this._header.sampleRate = br.ReadUInt32();
-                    this._header.byteRate = br.ReadUInt32();
-                    this._header.blockAlign = br.ReadUInt16();
-                    this._header.bitsPerSample = br.ReadUInt16();
+                    _header.subChunk1ID = br.ReadBytes(4);
+                    _header.subChunk1Size = br.ReadUInt32();
+                    _header.audioFormat = br.ReadUInt16();
+                    _header.numChannels = br.ReadUInt16();
+                    _header.sampleRate = br.ReadUInt32();
+                    _header.byteRate = br.ReadUInt32();
+                    _header.blockAlign = br.ReadUInt16();
+                    _header.bitsPerSample = br.ReadUInt16();
 
                     br.ReadBytes(2); //skip two bytes, this shouldn't need to happen
 
                     //data sub chunk
-                    this._header.subChunk2ID = br.ReadBytes(4);
-                    this._header.subChunk2Size = br.ReadUInt32();
+                    _header.subChunk2ID = br.ReadBytes(4);
+                    _header.subChunk2Size = br.ReadUInt32();
 
-                    maxSampleValue = Math.Pow(2, this._header.bitsPerSample); //max sample depending on bitRate: 256 for 8 bit, 65536 for 16 bit ... 
-                    ratio = this._header.numChannels == 2 ? 40 : 80;
+                    double maxSampleValue = Math.Pow(2, _header.bitsPerSample);
+                    int ratio = _header.numChannels == 2 ? 40 : 80;
 
                     //add the sample values to the data list
-                    for (int dataPoint = 0; dataPoint < this._header.subChunk2Size / this._header.blockAlign; dataPoint++)
+                    for (int dataPoint = 0; dataPoint < _header.subChunk2Size / _header.blockAlign; dataPoint++)
                     {
-                        buffer = br.ReadBytes(2);
+                        byte[] buffer = br.ReadBytes(2);
                         
                         if (dataPoint % ratio == 0)
                         {
-                            val = ((BitConverter.ToInt16(buffer, 0) + (maxSampleValue / 2)) / maxSampleValue); //normalized sample value between 0 & 1
+                            double val = ((BitConverter.ToInt16(buffer, 0) + (maxSampleValue / 2)) / maxSampleValue);
                             data.Add((float)val);
                             buffer = null;
 
@@ -236,12 +231,13 @@ namespace LiveDescribe.Utilities
                             }
                         }
 
-                        if (this._header.numChannels == 2)
+                        if (_header.numChannels == 2)
                         {
                             //skip next sample 
                             br.ReadBytes(2);
                         }
                     }
+
                 }
                 catch (Exception ex)
                 {
@@ -264,19 +260,19 @@ namespace LiveDescribe.Utilities
 
             #region Debug Info
             //Display the Contents of _header
-            Console.WriteLine("ChunkID: " + System.Text.Encoding.Default.GetString(this._header.chunkID));
-            Console.WriteLine("Chunksize: " + this._header.chunkSize);
-            Console.WriteLine("fmt: " + System.Text.Encoding.Default.GetString(this._header.fmt));
-            Console.WriteLine("subChunk1ID: " + System.Text.Encoding.Default.GetString(this._header.subChunk1ID));
-            Console.WriteLine("subChunk1Size: " + this._header.subChunk1Size);
-            Console.WriteLine("audioFormat: " + this._header.audioFormat);
-            Console.WriteLine("numChannels: " + this._header.numChannels);
-            Console.WriteLine("sampleRate: " + this._header.sampleRate);
-            Console.WriteLine("byteRate: " + this._header.byteRate);
-            Console.WriteLine("blockAlign: " + this._header.blockAlign);
-            Console.WriteLine("bitsPerSample: " + this._header.bitsPerSample);
-            Console.WriteLine("subChunk2Id: " + System.Text.Encoding.Default.GetString(this._header.subChunk2ID));
-            Console.WriteLine("subChunk2Size: " + this._header.subChunk2Size);
+            Console.WriteLine("ChunkID: " + Encoding.Default.GetString(_header.chunkID));
+            Console.WriteLine("Chunksize: " + _header.chunkSize);
+            Console.WriteLine("fmt: " + Encoding.Default.GetString(_header.fmt));
+            Console.WriteLine("subChunk1ID: " + Encoding.Default.GetString(_header.subChunk1ID));
+            Console.WriteLine("subChunk1Size: " + _header.subChunk1Size);
+            Console.WriteLine("audioFormat: " + _header.audioFormat);
+            Console.WriteLine("numChannels: " + _header.numChannels);
+            Console.WriteLine("sampleRate: " + _header.sampleRate);
+            Console.WriteLine("byteRate: " + _header.byteRate);
+            Console.WriteLine("blockAlign: " + _header.blockAlign);
+            Console.WriteLine("bitsPerSample: " + _header.bitsPerSample);
+            Console.WriteLine("subChunk2Id: " + Encoding.Default.GetString(_header.subChunk2ID));
+            Console.WriteLine("subChunk2Size: " + _header.subChunk2Size);
             Console.WriteLine("audioData Length: " + data.Count);
             #endregion
 
