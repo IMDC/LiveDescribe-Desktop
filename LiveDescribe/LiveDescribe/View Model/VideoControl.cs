@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using LiveDescribe.Interfaces;
-using LiveDescribe.Model;
 using Microsoft.TeamFoundation.MVVM;
 using Microsoft.Win32;
 using LiveDescribe.Utilities;
@@ -209,7 +208,7 @@ namespace LiveDescribe.View_Model
         /// <param name="param"></param>
         public void ImportVideo(object param)
         {
-            OpenFileDialog dialogBox = new OpenFileDialog();
+            var dialogBox = new OpenFileDialog();
             bool? userClickedOk = dialogBox.ShowDialog();
 
             Console.WriteLine("OPENVIDEO");
@@ -220,8 +219,8 @@ namespace LiveDescribe.View_Model
                 //it does not get set to false in this class because the view is meant to take care of what they want to do with the stripped audio when it is completed for example
                 //create a wave form
                 //the variable IsBusyStrippingAudio gets binded to the view (a loading screen visibility to be exact) and when set to false will get rid of the loading screen
-                _stripAudioWorker.DoWork += new DoWorkEventHandler(StripAudio);
-                _stripAudioWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(OnFinishedStrippingAudio);
+                _stripAudioWorker.DoWork += StripAudio;
+                _stripAudioWorker.RunWorkerCompleted += OnFinishedStrippingAudio;
                 IsBusyStrippingAudio = true;
                 _stripAudioWorker.RunWorkerAsync();
             }
@@ -253,9 +252,9 @@ namespace LiveDescribe.View_Model
         /// <param name="e"></param>
         public void StripAudio(object sender, DoWorkEventArgs e)
         {
-            this._audioOperator = new AudioUtility(_mediaVideo.Path);
-            this._audioOperator.stripAudio();
-            this._waveFormData = this._audioOperator.readWavData();           
+            _audioOperator = new AudioUtility(_mediaVideo.Path);
+            _audioOperator.stripAudio();
+            _waveFormData = _audioOperator.readWavData();           
         }
 
         /// <summary>
