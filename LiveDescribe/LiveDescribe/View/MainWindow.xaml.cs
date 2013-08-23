@@ -29,7 +29,7 @@ namespace LiveDescribe.View
         {
             InitializeComponent();
 
-            MainControl mc = new MainControl(VideoMedia);
+            var mc = new MainControl(VideoMedia);
             _videoTimer = new DispatcherTimer();
             _videoTimer.Tick += Play_Tick;
             _videoTimer.Interval = new TimeSpan(0,0,0,0,1);
@@ -64,9 +64,10 @@ namespace LiveDescribe.View
             //listens for PlayRequested Event
             mc.VideoControl.PlayRequested += (sender, e) =>
                 {
-                    
                     _videoTimer.Start();
                     VideoMedia.Play();
+                    var newValue = ((Canvas.GetLeft(Marker) + 10) / AudioCanvas.Width) * _videoDuration;
+                    UpdateVideoPosition((int)newValue);
                 };
 
             //listens for PauseRequested Event
@@ -90,7 +91,7 @@ namespace LiveDescribe.View
                 {
                     _videoDuration = VideoMedia.NaturalDuration.TimeSpan.TotalMilliseconds;
                     SetTimeline();
-                    drawWaveForm();
+                    DrawWaveForm();
                 };
 
             #endregion
@@ -192,67 +193,13 @@ namespace LiveDescribe.View
 
         #region Helper Functions
         /// <summary>
-        ///Update's the instance variables that keep track of the timeline height and width, and calculates the size of the timeline
-        ///if the width of the audio canvas is greater then the timeline width it automatically overflows and scrolls due to the scrollview
-        ///then update the width of the marker to match the audio canvas
-        /// </summary>
-        private void SetTimeline()
-        {
-
-            double pages = _videoDuration / (PageTime * 1000);
-            double width = TimeLine.ActualWidth * pages;
-
-            var numlines = (int)(_videoDuration/(LineTime * 1000));            
-            //Clear the canvas because we don't want the remaining lines due to importing a new video
-            //or resizing the window
-            NumberTimeline.Children.Clear();
-
-            for (int i = 0; i < numlines; ++i)
-            {
-
-                Line splitLine;
-
-                if (i%LongLineTime == 0)
-                {
-                    splitLine = new Line
-                    {
-                        Stroke = System.Windows.Media.Brushes.Blue,
-                        StrokeThickness = 1.5,
-                        Y1 = 0,
-                        Y2 = NumberTimeline.ActualHeight / 1.2,
-                        X1 = width / numlines * i,
-                        X2 = width / numlines * i,
-                    };
-                    
-                    NumberTimeline.Children.Add(splitLine);
-                    continue;
-                }
-
-                splitLine = new Line
-                {
-                    Stroke = System.Windows.Media.Brushes.Black,
-                    Y1 = 0,
-                    Y2 = NumberTimeline.ActualHeight/2,
-                    X1 = width/numlines*i,
-                    X2 = width/numlines*i
-                };
-
-                NumberTimeline.Children.Add(splitLine);
-            }
-
-            NumberTimeline.Width = width;
-            AudioCanvas.Width = width;
-            Marker.Points[4] = new Point(Marker.Points[4].X , AudioCanvasBorder.ActualHeight);
-        }
-
-        /// <summary>
         /// Updates the Marker Position in the timeline and sets the corresponding time in the timelabel
         /// </summary>
         /// <param name="xPos">the x position in which the marker is supposed to move</param>
         private void UpdateMarkerPosition(double xPos)
         {
             Canvas.SetLeft(Marker, xPos);
-            CurrentTimeLabel.Text = (string)_formatter.Convert(VideoMedia.Position, VideoMedia.Position.GetType(), this, System.Globalization.CultureInfo.CurrentCulture);
+            CurrentTimeLabel.Text = (string)_formatter.Convert(VideoMedia.Position, VideoMedia.Position.GetType(), this, CultureInfo.CurrentCulture);
         }
 
         /// <summary>
@@ -262,37 +209,33 @@ namespace LiveDescribe.View
         private void UpdateVideoPosition(int vidPos)
         {
             VideoMedia.Position = new TimeSpan(0, 0, 0, 0, vidPos);
-            CurrentTimeLabel.Text = (string)_formatter.Convert(VideoMedia.Position, VideoMedia.Position.GetType(), this, System.Globalization.CultureInfo.CurrentCulture);
+            CurrentTimeLabel.Text = (string)_formatter.Convert(VideoMedia.Position, VideoMedia.Position.GetType(), this, CultureInfo.CurrentCulture);
         }
         #endregion
-
 
         #region graphics Functions
         /// <summary>
         /// Draws the wavform of the video audio on the canvas
         /// </summary>
-        private void drawWaveForm()
+        private void DrawWaveForm()
         {
-            List<float> data = this._videoControl.AudioData;
-            double width = this.AudioCanvas.Width;
-            double height = this.AudioCanvas.ActualHeight;
-            List<float> bin = null;
-            double binSize = Math.Round(data.Count / width);
-            float min;
-            float max;
+            List<float> data = _videoControl.AudioData;
+            double width = AudioCanvas.Width;
+            double height = AudioCanvas.ActualHeight;
+            double binSize = Math.Floor(data.Count / width);
 
             for (int pixel = 0; pixel < width; pixel++)
             {
                 //get min and max from bin
-                bin = data.GetRange((int)(pixel * binSize), (int)binSize);
+                List<float> bin = data.GetRange((int)(pixel * binSize), (int)binSize);
             
                 bin.Sort();
-                min = bin[0];
-                max = bin[bin.Count - 1];
+                float min = bin[0];
+                float max = bin[bin.Count - 1];
                 //Console.WriteLine("Min: " + min + " Max: " + max);
 
                 //draw the line on this pixel
-                Line wavLine = new Line
+                var wavLine = new Line
                 {
                     Stroke = System.Windows.Media.Brushes.Black,
                     Y1 = height * min,
@@ -304,6 +247,59 @@ namespace LiveDescribe.View
             }
         }
 
+        /// <summary>
+        ///Update's the instance variables that keep track of the timeline height and width, and calculates the size of the timeline
+        ///if the width of the audio canvas is greater then the timeline width it automatically overflows and scrolls due to the scrollview
+        ///then update the width of the marker to match the audio canvas
+        /// </summary>
+        private void SetTimeline()
+        {
+
+            double pages = _videoDuration / (PageTime * 1000);
+            double width = TimeLine.ActualWidth * pages;
+
+            var numlines = (int)(_videoDuration / (LineTime * 1000));
+            //Clear the canvas because we don't want the remaining lines due to importing a new video
+            //or resizing the window
+            NumberTimeline.Children.Clear();
+
+            for (int i = 0; i < numlines; ++i)
+            {
+
+                Line splitLine;
+
+                if (i % LongLineTime == 0)
+                {
+                    splitLine = new Line
+                    {
+                        Stroke = System.Windows.Media.Brushes.Blue,
+                        StrokeThickness = 1.5,
+                        Y1 = 0,
+                        Y2 = NumberTimeline.ActualHeight / 1.2,
+                        X1 = width / numlines * i,
+                        X2 = width / numlines * i,
+                    };
+
+                    NumberTimeline.Children.Add(splitLine);
+                    continue;
+                }
+
+                splitLine = new Line
+                {
+                    Stroke = System.Windows.Media.Brushes.Black,
+                    Y1 = 0,
+                    Y2 = NumberTimeline.ActualHeight / 2,
+                    X1 = width / numlines * i,
+                    X2 = width / numlines * i
+                };
+
+                NumberTimeline.Children.Add(splitLine);
+            }
+
+            NumberTimeline.Width = width;
+            AudioCanvas.Width = width;
+            Marker.Points[4] = new Point(Marker.Points[4].X, AudioCanvasBorder.ActualHeight);
+        }
         #endregion
 
 
