@@ -256,8 +256,8 @@ namespace LiveDescribe.View_Model
         public void StripAudio(object sender, DoWorkEventArgs e)
         {
             _audioOperator = new AudioUtility(_mediaVideo.Path);
-            _audioOperator.stripAudio(_stripAudioWorker);
-            _waveFormData = _audioOperator.readWavData(_stripAudioWorker);           
+            _audioOperator.StripAudio(_stripAudioWorker);
+            _waveFormData = _audioOperator.ReadWavData(_stripAudioWorker);           
         }
 
         /// <summary>
