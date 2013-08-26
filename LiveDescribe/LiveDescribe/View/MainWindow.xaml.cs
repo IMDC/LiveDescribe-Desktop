@@ -91,7 +91,7 @@ namespace LiveDescribe.View
             mc.VideoControl.VideoOpenedRequested += (sender, e) =>
                 {
                     _videoDuration = VideoMedia.NaturalDuration.TimeSpan.TotalMilliseconds;
-                    
+                    Marker.IsEnabled = true;
                 };
 
             //listens for when the audio stripping is complete then draws the timeline and the wave form
@@ -306,6 +306,7 @@ namespace LiveDescribe.View
             }
 
             NumberTimeline.Width = width;
+
             AudioCanvas.Width = width;
             Marker.Points[4] = new Point(Marker.Points[4].X, AudioCanvasBorder.ActualHeight);
         }
