@@ -9,6 +9,7 @@ using LiveDescribe.Converters;
 using LiveDescribe.View_Model;
 using System.Windows.Threading;
 using System.Collections.Generic;
+using Microsoft.TeamFoundation.MVVM;
 
 namespace LiveDescribe.View
 {
@@ -125,6 +126,9 @@ namespace LiveDescribe.View
             mc.VideoControl.OnMarkerMouseMoveRequested += (sender, e) =>
             {
                 var xPosition = Mouse.GetPosition(AudioCanvasBorder).X;
+                bool canScroll = ScrollIfCan();
+                if (canScroll)
+                    Marker.ReleaseMouseCapture();
 
                 if (!Marker.IsMouseCaptured) return;
                 if (xPosition < -10)
@@ -215,7 +219,8 @@ namespace LiveDescribe.View
         /// <summary>
         /// Scrolls the scrollviewer to the right as much as the PageScrollPercent when the marker reaches the PageScrollPercent of the width of the page
         /// </summary>
-        private void ScrollIfCan()
+        /// <returns>true if it can scroll</returns>
+        private bool ScrollIfCan()
         {
             double pages = _videoDuration / (PageTime * 1000);
             double width = TimeLine.ActualWidth * pages;
@@ -223,9 +228,11 @@ namespace LiveDescribe.View
 
             double scrollOffsetRight = PageScrollPercent*(singlePageWidth*_currentPage);
 
-            if (!(Canvas.GetLeft(Marker) >= (scrollOffsetRight))) return;
+            if (!(Canvas.GetLeft(Marker) >= (scrollOffsetRight))) return false;
+    
             TimeLine.ScrollToHorizontalOffset(scrollOffsetRight);
             _currentPage++;
+            return true;
         }
         #endregion
 
