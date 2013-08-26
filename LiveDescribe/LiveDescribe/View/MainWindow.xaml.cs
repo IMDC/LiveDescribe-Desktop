@@ -125,12 +125,16 @@ namespace LiveDescribe.View
             //updates the canvas and video position when the Marker is moved
             mc.VideoControl.OnMarkerMouseMoveRequested += (sender, e) =>
             {
-                var xPosition = Mouse.GetPosition(AudioCanvasBorder).X;
-                bool canScroll = ScrollIfCan();
-                if (canScroll)
-                    Marker.ReleaseMouseCapture();
-
                 if (!Marker.IsMouseCaptured) return;
+
+                if (ScrollRightIfCan())
+                {
+                    Marker.ReleaseMouseCapture();
+                    return;
+                }
+
+                var xPosition = Mouse.GetPosition(AudioCanvasBorder).X;
+
                 if (xPosition < -10)
                 {
                     Canvas.SetLeft(Marker, -10);
@@ -159,7 +163,7 @@ namespace LiveDescribe.View
         /// <param name="e">e</param>
         private void Play_Tick(object sender, EventArgs e)
         {
-            ScrollIfCan();
+            ScrollRightIfCan();
             double position = (VideoMedia.Position.TotalMilliseconds / _videoDuration) * (AudioCanvas.Width );
             UpdateMarkerPosition(position - 10);
         }
@@ -219,8 +223,8 @@ namespace LiveDescribe.View
         /// <summary>
         /// Scrolls the scrollviewer to the right as much as the PageScrollPercent when the marker reaches the PageScrollPercent of the width of the page
         /// </summary>
-        /// <returns>true if it can scroll</returns>
-        private bool ScrollIfCan()
+        /// <returns>true if it can scroll right</returns>
+        private bool ScrollRightIfCan()
         {
             double pages = _videoDuration / (PageTime * 1000);
             double width = TimeLine.ActualWidth * pages;

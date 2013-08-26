@@ -167,7 +167,6 @@ namespace LiveDescribe.View_Model
         public void OnMarkerMouseMove(object param)
         {
             EventHandler handler = OnMarkerMouseMoveRequested;
-            Console.WriteLine("Marker Dragged");
             if (handler == null) return;
             handler(this, EventArgs.Empty);
         }
