@@ -20,7 +20,7 @@ namespace LiveDescribe.View
         
         private double _videoDuration;
         private readonly DispatcherTimer _videoTimer;
-        private int currentPage = 1; // the current page the scrollviewer is on
+        private int _currentPage = 1; // the current page the scrollviewer is on
         private const double PageScrollPercent = 0.95;  //when the marker hits 95% of the page it scrolls
         private const double PageTime = 30; //30 seconds page time before audiocanvas  & descriptioncanvas scroll
         private const double LineTime = 1; //each line in the NumberTimeline appears every 1 second
@@ -221,11 +221,11 @@ namespace LiveDescribe.View
             double width = TimeLine.ActualWidth * pages;
             double singlePageWidth = width / pages;
 
-            double scrollOffsetRight = PageScrollPercent*(singlePageWidth*currentPage);
+            double scrollOffsetRight = PageScrollPercent*(singlePageWidth*_currentPage);
 
             if (!(Canvas.GetLeft(Marker) >= (scrollOffsetRight))) return;
             TimeLine.ScrollToHorizontalOffset(scrollOffsetRight);
-            currentPage++;
+            _currentPage++;
         }
         #endregion
 
