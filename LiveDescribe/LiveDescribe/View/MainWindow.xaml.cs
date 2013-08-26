@@ -15,7 +15,7 @@ namespace LiveDescribe.View
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, INotifyPropertyChanged
+    public partial class MainWindow : Window
     {
         
         private double _videoDuration;
@@ -308,26 +308,6 @@ namespace LiveDescribe.View
             NumberTimeline.Width = width;
             AudioCanvas.Width = width;
             Marker.Points[4] = new Point(Marker.Points[4].X, AudioCanvasBorder.ActualHeight);
-        }
-        #endregion
-
-        #region Property Changed
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        /// <summary>
-        /// Raises the PropertyChanged event.
-        /// </summary>
-        /// <param name="propertyName">The name of the property changed.</param>
-        private void NotifyPropertyChanged(string propertyName)
-        {
-            /* Make a local copy of the event to prevent the case where the handler
-             * will be set as null in-between the null check and the handler call.
-             */
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
         }
         #endregion
     }
