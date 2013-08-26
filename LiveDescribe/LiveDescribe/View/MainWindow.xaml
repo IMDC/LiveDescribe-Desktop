@@ -124,10 +124,16 @@
                                         <Canvas Background="White" MouseDown="NumberTimeline_OnMouseDown" Name="NumberTimeline"/>
                                     </Border>
 
-                                    <Polyline IsEnabled="False" MouseDown="Marker_OnMouseDown" MouseMove="Marker_OnMouseMove"  MouseUp="Marker_OnMouseUp" Points="10,20, 0,0,  20,0, 10,20, 10,172"   RenderOptions.EdgeMode="Aliased" Stroke="Black" Fill="Black" StrokeThickness="2" Width="20"  Canvas.Left="-10" Canvas.Top="0" Name="Marker">
+                                    <Polyline IsEnabled="False" Points="10,20, 0,0,  20,0, 10,20, 10,172"   RenderOptions.EdgeMode="Aliased" Stroke="Black" Fill="Black" StrokeThickness="2" Width="20"  Canvas.Left="-10" Canvas.Top="0" Name="Marker">
                                         <i:Interaction.Triggers>
                                             <i:EventTrigger EventName="MouseDown">
-                                                <i:InvokeCommandAction Command="{Binding PauseCommand}"/>
+                                                <i:InvokeCommandAction Command="{Binding MarkerMouseDownCommand}"/>
+                                            </i:EventTrigger>
+                                            <i:EventTrigger EventName="MouseUp">
+                                                <i:InvokeCommandAction Command="{Binding MarkerMouseUpCommand}"/>
+                                            </i:EventTrigger>
+                                            <i:EventTrigger EventName="MouseMove">
+                                                <i:InvokeCommandAction Command="{Binding MarkerMouseMoveCommand}"/>
                                             </i:EventTrigger>
                                         </i:Interaction.Triggers>
                                     </Polyline>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using LiveDescribe.Graphics;
 using LiveDescribe.Interfaces;
 using Microsoft.TeamFoundation.MVVM;
 using Microsoft.Win32;
@@ -26,6 +27,11 @@ namespace LiveDescribe.View_Model
         public event EventHandler VideoOpenedRequested;
         public event EventHandler MediaFailedEvent;
         public event EventHandler OnStrippingAudioCompleted;
+
+        //Event handlers for the Marker on the timeline
+        public event EventHandler OnMarkerMouseDownRequested;
+        public event EventHandler OnMarkerMouseUpRequested;
+        public event EventHandler OnMarkerMouseMoveRequested;
         #endregion
 
         #region Constructors
@@ -41,17 +47,52 @@ namespace LiveDescribe.View_Model
             RewindCommand = new RelayCommand(Rewind, RewindCheck);
             RecordCommand = new RelayCommand(Record, RecordCheck);
 
+            //Marker commands {
+            MarkerMouseDownCommand = new RelayCommand(OnMarkerMouseDown, param=> true);
+            MarkerMouseUpCommand = new RelayCommand(OnMarkerMouseUp, param => true);
+            MarkerMouseMoveCommand = new RelayCommand(OnMarkerMouseMove, param => true);
+            //}
+
             //bound to when the video loads and is opened via the mediaelement
             VideoOpenedCommand = new RelayCommand(VideoOpen, param => true);
             MediaFailedCommand = new RelayCommand(MediaFailed, param => true);
+
             //bound to Menu->file->Import Video
             ImportVideoCommand = new RelayCommand(ImportVideo, ImportCheck);
+            
             IsBusyStrippingAudio = false;
             _stripAudioWorker = new BackgroundWorker();
         }
         #endregion
 
         #region Commands
+
+        /// <summary>
+        /// Setter and getter for MarkerMouseMoveCommand
+        /// </summary>
+        public RelayCommand MarkerMouseMoveCommand
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Setter and getter for MarkerMouseUpCommand
+        /// </summary>
+        public RelayCommand MarkerMouseUpCommand
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Setter and getter for MarkerMouseDownCommand
+        /// </summary>
+        public RelayCommand MarkerMouseDownCommand
+        {
+            get;
+            private set;
+        }
 
         /// <summary>
         /// Setter and Getter for PlayCommand
@@ -120,6 +161,42 @@ namespace LiveDescribe.View_Model
         #region Binding Functions
 
         /// <summary>
+        /// what happens when the marker is moved using the mouse
+        /// </summary>
+        /// <param name="param"></param>
+        public void OnMarkerMouseMove(object param)
+        {
+            EventHandler handler = OnMarkerMouseMoveRequested;
+            Console.WriteLine("Marker Dragged");
+            if (handler == null) return;
+            handler(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// What happens when the mouse is released on the marker
+        /// </summary>
+        /// <param name="param"></param>
+        public void OnMarkerMouseUp(object param)
+        {
+            EventHandler handler = OnMarkerMouseUpRequested;
+            Console.WriteLine("Marker MouseUp");
+            if (handler == null) return;
+            handler(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// What hapens when the marker is pressed down
+        /// </summary>
+        /// <param name="param"></param>
+        public void OnMarkerMouseDown(object param)
+        {
+            Console.WriteLine("Marker was pressed down");
+            this.PauseCommand.Execute(param);
+            EventHandler handler = OnMarkerMouseDownRequested;
+            if (handler == null) return;
+            handler(this, EventArgs.Empty);
+        }
+        /// <summary>
         /// Plays the video
         /// </summary>
         /// <param name="param">params</param>
@@ -145,10 +222,10 @@ namespace LiveDescribe.View_Model
 
             EventHandler handler = PauseRequested;
             _mediaVideo.CurrentState = LiveDescribeStates.PausedVideo;
-            if (handler != null)
-            {
-                handler(this, EventArgs.Empty);
-            }
+
+            if (handler == null) return;
+            handler(this, EventArgs.Empty);
+
         }
 
         /// <summary>
@@ -174,6 +251,7 @@ namespace LiveDescribe.View_Model
             EventHandler handler = VideoOpenedRequested;
             Console.WriteLine("LOADED");
             _mediaVideo.CurrentState = LiveDescribeStates.VideoLoaded;
+
             if (handler == null) return;
             handler(this, EventArgs.Empty);
         }
@@ -197,10 +275,9 @@ namespace LiveDescribe.View_Model
 
             EventHandler handler = MuteRequested;
 
-            if (handler != null)
-            {
-                handler(this, EventArgs.Empty);
-            }
+            if (handler == null) return;
+            handler(this, EventArgs.Empty);
+
         }
 
         /// <summary>

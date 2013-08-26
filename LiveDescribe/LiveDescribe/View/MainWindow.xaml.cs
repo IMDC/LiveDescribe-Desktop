@@ -106,8 +106,45 @@ namespace LiveDescribe.View
                 //make this false so that the loading screen goes away after the timeline and the wave form are drawn
                 _videoControl.IsBusyStrippingAudio = false;
             };
+
+            //captures the mouse when a mousedown request is sent to the Marker
+            mc.VideoControl.OnMarkerMouseDownRequested += (sender, e) => Marker.CaptureMouse();
+
+            //updates the video position when the mouse is released on the Marker
+            mc.VideoControl.OnMarkerMouseUpRequested += (sender, e) =>
+            {
+                var newValue = ((Canvas.GetLeft(Marker) + 10)/AudioCanvas.Width)*_videoDuration;
+
+                UpdateVideoPosition((int) newValue);
+                Marker.ReleaseMouseCapture();
+            };
+
+            //updates the canvas and video position when the Marker is moved
+            mc.VideoControl.OnMarkerMouseMoveRequested += (sender, e) =>
+            {
+                
+                var xPosition = Mouse.GetPosition(AudioCanvasBorder).X;
+
+                if (!Marker.IsMouseCaptured) return;
+                if (xPosition < -10)
+                {
+                    Canvas.SetLeft(Marker, -10);
+                }
+                else if (xPosition > AudioCanvas.Width - 1)
+                {
+                    Canvas.SetLeft(Marker, AudioCanvas.Width - 1);
+                }
+                else
+                {
+                    Canvas.SetLeft(Marker, xPosition - 10);
+                }
+
+                var newValue = (xPosition / AudioCanvas.Width) * _videoDuration;
+                UpdateVideoPosition((int)newValue);
+            };
+
             #endregion
-            
+
         }
 
         /// <summary>
@@ -130,57 +167,6 @@ namespace LiveDescribe.View
         private void AudioCanvasBorder_SizeChanged_1(object sender, SizeChangedEventArgs e)
         {
             SetTimeline();
-        }
-
-        /// <summary>
-        /// Updates the video position when the mouse is released
-        /// </summary>
-        /// <param name="sender">sender</param>
-        /// <param name="mouseButtonEventArgs">e</param>
-        private void Marker_OnMouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
-        {
-            var newValue = ((Canvas.GetLeft(Marker) + 10) / AudioCanvas.Width) * _videoDuration; 
-          
-            UpdateVideoPosition((int)newValue);
-            Marker.ReleaseMouseCapture();
-        }
-
-        /// <summary>
-        /// Sets the mouse to be capured when the mouse is clicked
-        /// </summary>
-        /// <param name="sender">sender</param>
-        /// <param name="e">e</param>
-        private void Marker_OnMouseDown(object sender, MouseButtonEventArgs e)
-        {
-            Marker.CaptureMouse();
-        }
-
-        /// <summary>
-        /// Updates the Marker Position based on the Mouse x coord
-        /// </summary>
-        /// <param name="sender">sender</param>
-        /// <param name="e">e</param>
-        private void Marker_OnMouseMove(object sender, MouseEventArgs e)
-        {
-
-            var xPosition = e.GetPosition(AudioCanvasBorder).X;
-
-            if (!Marker.IsMouseCaptured) return;
-            if (xPosition < -10)
-            {
-                Canvas.SetLeft(Marker, -10); 
-            }
-            else if (xPosition > AudioCanvas.Width - 1)
-            {
-                Canvas.SetLeft(Marker, AudioCanvas.Width - 1);
-            }
-            else
-            {
-                Canvas.SetLeft(Marker, xPosition - 10);
-            }
-           
-            var newValue = (xPosition / AudioCanvas.Width) * _videoDuration;
-            UpdateVideoPosition((int)newValue);
         }
 
         /// <summary>
