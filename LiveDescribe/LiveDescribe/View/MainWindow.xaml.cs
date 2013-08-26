@@ -1,6 +1,6 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Globalization;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -28,6 +28,9 @@ namespace LiveDescribe.View
 
         public MainWindow()
         {
+            var splashScreen = new SplashScreen("../Images/LiveDescribe-Splashscreen.png");
+            splashScreen.Show(true);
+            Thread.Sleep(2000);
             InitializeComponent();
 
             var mc = new MainControl(VideoMedia);

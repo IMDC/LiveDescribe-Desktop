@@ -111,6 +111,7 @@
     <Folder Include="Commands\" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Images\LiveDescribe-Splashscreen.png" />
     <Content Include="Utilities\ffmpeg.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
