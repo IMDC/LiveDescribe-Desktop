@@ -20,6 +20,8 @@ namespace LiveDescribe.View
         
         private double _videoDuration;
         private readonly DispatcherTimer _videoTimer;
+        private int currentPage = 1; // the current page the scrollviewer is on
+        private const double PageScrollPercent = 0.95;  //when the marker hits 95% of the page it scrolls
         private const double PageTime = 30; //30 seconds page time before audiocanvas  & descriptioncanvas scroll
         private const double LineTime = 1; //each line in the NumberTimeline appears every 1 second
         private const int LongLineTime = 5; // every 5 LineTimes, you get a Longer Line
@@ -122,7 +124,6 @@ namespace LiveDescribe.View
             //updates the canvas and video position when the Marker is moved
             mc.VideoControl.OnMarkerMouseMoveRequested += (sender, e) =>
             {
-                
                 var xPosition = Mouse.GetPosition(AudioCanvasBorder).X;
 
                 if (!Marker.IsMouseCaptured) return;
@@ -154,6 +155,7 @@ namespace LiveDescribe.View
         /// <param name="e">e</param>
         private void Play_Tick(object sender, EventArgs e)
         {
+            ScrollIfCan();
             double position = (VideoMedia.Position.TotalMilliseconds / _videoDuration) * (AudioCanvas.Width );
             UpdateMarkerPosition(position - 10);
         }
@@ -208,6 +210,22 @@ namespace LiveDescribe.View
         {
             VideoMedia.Position = new TimeSpan(0, 0, 0, 0, vidPos);
             CurrentTimeLabel.Text = (string)_formatter.Convert(VideoMedia.Position, VideoMedia.Position.GetType(), this, CultureInfo.CurrentCulture);
+        }
+
+        /// <summary>
+        /// Scrolls the scrollviewer to the right as much as the PageScrollPercent when the marker reaches the PageScrollPercent of the width of the page
+        /// </summary>
+        private void ScrollIfCan()
+        {
+            double pages = _videoDuration / (PageTime * 1000);
+            double width = TimeLine.ActualWidth * pages;
+            double singlePageWidth = width / pages;
+
+            double scrollOffsetRight = PageScrollPercent*(singlePageWidth*currentPage);
+
+            if (!(Canvas.GetLeft(Marker) >= (scrollOffsetRight))) return;
+            TimeLine.ScrollToHorizontalOffset(scrollOffsetRight);
+            currentPage++;
         }
         #endregion
 
