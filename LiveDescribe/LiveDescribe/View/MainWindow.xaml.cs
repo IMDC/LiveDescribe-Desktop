@@ -21,7 +21,6 @@ namespace LiveDescribe.View
         
         private double _videoDuration = -1;
         private readonly DispatcherTimer _videoTimer;
-        private int _currentPage = 1; // the current page the scrollviewer is on
         private const double PageScrollPercent = 0.95;  //when the marker hits 95% of the page it scrolls
         private const double PageTime = 30; //30 seconds page time before audiocanvas  & descriptioncanvas scroll
         private const double LineTime = 1; //each line in the NumberTimeline appears every 1 second
@@ -179,8 +178,7 @@ namespace LiveDescribe.View
             if (_videoDuration != -1)
             {
                 SetTimeline();
-            }
-            
+            } 
         }
 
         /// <summary>
@@ -231,16 +229,15 @@ namespace LiveDescribe.View
         private bool ScrollRightIfCan()
         {
             double pages = _videoDuration / (PageTime * 1000);
-            double width = calculateWidth(); //TimeLine.ActualWidth* pages;
-            double singlePageWidth = TimeLine.ActualWidth; //width / pages;
+            double width = calculateWidth(); 
+            double singlePageWidth = TimeLine.ActualWidth; 
 
             double scrolledAmount = TimeLine.HorizontalOffset;
-            double scrollOffsetRight = PageScrollPercent * singlePageWidth; //(singlePageWidth * _currentPage);
+            double scrollOffsetRight = PageScrollPercent * singlePageWidth;
             Console.WriteLine("Offset: " + scrollOffsetRight);
             if (!(Canvas.GetLeft(Marker) - scrolledAmount >= (scrollOffsetRight))) return false;
     
             TimeLine.ScrollToHorizontalOffset(scrollOffsetRight + scrolledAmount);
-            _currentPage++;
             return true;
         }
 
@@ -264,7 +261,7 @@ namespace LiveDescribe.View
         private void DrawWaveForm()
         {
             List<float> data = _videoControl.AudioData;
-            double width = calculateWidth(); //AudioCanvas.Width;
+            double width = calculateWidth(); 
             double height = AudioCanvas.ActualHeight;
             double binSize = Math.Floor(data.Count / width);
 
@@ -300,7 +297,7 @@ namespace LiveDescribe.View
         {
 
             double pages = _videoDuration / (PageTime * 1000);
-            double width = calculateWidth(); //TimeLine.ActualWidth* pages;
+            double width = calculateWidth(); 
 
             var numlines = (int)(_videoDuration / (LineTime * 1000));
             //Clear the canvas because we don't want the remaining lines due to importing a new video
