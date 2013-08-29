@@ -69,6 +69,7 @@
     <Compile Include="Interfaces\ILiveDescribePlayer.cs" />
     <Compile Include="Controls\LiveDescribeMediaPlayer.cs" />
     <Compile Include="LiveDescribeStates.cs" />
+    <Compile Include="Model\Space.cs" />
     <Compile Include="Model\Video.cs" />
     <Compile Include="Converters\TimeConverterFormatter.cs" />
     <Compile Include="Utilities\AudioUtility.cs" />

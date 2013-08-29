@@ -333,7 +333,8 @@ namespace LiveDescribe.View_Model
         {
             _audioOperator = new AudioUtility(_mediaVideo.Path);
             _audioOperator.StripAudio(_stripAudioWorker);
-            _waveFormData = _audioOperator.ReadWavData(_stripAudioWorker);           
+            _waveFormData = _audioOperator.ReadWavData(_stripAudioWorker);          
+           
         }
 
         /// <summary>
