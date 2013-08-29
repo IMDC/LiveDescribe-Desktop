@@ -26,6 +26,7 @@ namespace LiveDescribe.View
         private const double LineTime = 1; //each line in the NumberTimeline appears every 1 second
         private const int LongLineTime = 5; // every 5 LineTimes, you get a Longer Line
         private readonly VideoControl _videoControl;
+        private readonly PreferencesViewModel _preferences;
         private readonly TimeConverterFormatter _formatter; //used to format a timespan object which in this case in the videoMedia.Position
 
         public MainWindow()
@@ -41,6 +42,7 @@ namespace LiveDescribe.View
             _videoTimer.Interval = new TimeSpan(0,0,0,0,1);
             DataContext = mc;
             _videoControl = mc.VideoControl;
+            _preferences = mc.PreferencesViewModel;
             _formatter = new TimeConverterFormatter();
 
             #region Event Listeners for VideoMedia
@@ -153,6 +155,16 @@ namespace LiveDescribe.View
 
             #endregion
 
+            #region Event Listeners for PreferencesViewModel
+
+            _preferences.ShowPreferencesRequested += (sender, e) =>
+            {
+                var preferencesWindow = new PreferencesWindow();
+                preferencesWindow.DataContext = _preferences;
+                preferencesWindow.ShowDialog();
+            };
+
+            #endregion
         }
 
         /// <summary>

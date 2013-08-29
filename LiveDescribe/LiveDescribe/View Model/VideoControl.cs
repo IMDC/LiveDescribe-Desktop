@@ -45,7 +45,6 @@ namespace LiveDescribe.View_Model
             MuteCommand = new RelayCommand(Mute, param => true);
             FastForwardCommand = new RelayCommand(FastForward, FastForwardCheck);
             RewindCommand = new RelayCommand(Rewind, RewindCheck);
-            RecordCommand = new RelayCommand(Record, RecordCheck);
 
             //Marker commands {
             MarkerMouseDownCommand = new RelayCommand(OnMarkerMouseDown, param=> true);
@@ -253,15 +252,6 @@ namespace LiveDescribe.View_Model
 
             if (handler == null) return;
             handler(this, EventArgs.Empty);
-        }
-
-
-        /// <summary>
-        /// Records user audio
-        /// </summary>
-        public void Record(object param)
-        {
-            _mediaVideo.CurrentState = LiveDescribeStates.RecordingDescription;
         }
 
         /// <summary>

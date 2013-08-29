@@ -9,7 +9,7 @@ using System.Windows;
 
 namespace LiveDescribe.Utilities
 {
-    class AudioUtility
+    public class AudioUtility
     {
         private struct Header
         {

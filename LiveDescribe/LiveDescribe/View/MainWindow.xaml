@@ -25,8 +25,8 @@
             <!--Top Menu Bar-->
             <Menu DockPanel.Dock="Top" HorizontalAlignment="Stretch">
                 <MenuItem Header="File">
-                    <MenuItem  DataContext="{Binding VideoControl}" Header="Import Video" Command="{Binding ImportVideoCommand}">
-                    </MenuItem>
+                    <MenuItem  DataContext="{Binding VideoControl}" Header="Import Video" Command="{Binding ImportVideoCommand}"/>
+                    <MenuItem DataContext="{Binding PreferencesViewModel}" Name="Preferences" Header="Preferences" Command="{Binding ShowPreferencesCommand}"/>
                 </MenuItem>
             </Menu>
 
@@ -76,20 +76,19 @@
                 </Border>
 
                 <!--Button Controls for Video PLayer-->
-                <StackPanel  DataContext="{Binding VideoControl}" Orientation="Horizontal" Grid.Row="7" Grid.ColumnSpan="4" Grid.Column="0">
-
+                <StackPanel Orientation="Horizontal" Grid.Row="7" Grid.ColumnSpan="4" Grid.Column="0">
                     <StackPanel.Resources>
                         <converters:TimeConverterFormatter x:Key="TimeConverterFormatter" />
                     </StackPanel.Resources>
 
-                    <Button Margin="11" Height="30" Command="{Binding MuteCommand}">Mute</Button>
-                    <Slider Value="{Binding Path=Volume, ElementName=VideoMedia}" Name="VolumeControl" Maximum="1" Minimum="0"  Margin="15"
+                    <Button DataContext="{Binding VideoControl}" Margin="11" Height="30" Command="{Binding MuteCommand}">Mute</Button>
+                    <Slider DataContext="{Binding VideoControl}" Value="{Binding Path=Volume, ElementName=VideoMedia}" Name="VolumeControl" Maximum="1" Minimum="0"  Margin="15"
                         Width="100"/>
-                    <Button Command="{Binding RecordCommand}" Margin="11" Height="30">Record</Button>
-                    <Button Command="{Binding RewindCommand}" Margin="11" Height="30">Rewind</Button>
-                    <Button Name="PlayControl" Margin="11" Height="30" Command="{Binding PlayCommand}">Play</Button>
-                    <Button Name="PauseControl" Margin="11" Height="30" Command="{Binding PauseCommand}">Pause</Button>
-                    <Button Command="{Binding FastForwardCommand}" Margin="11" Height="30">Fast Forward</Button>
+                    <Button DataContext="{Binding DescriptionViewModel}" Command="{Binding RecordCommand}" Margin="11" Height="30">Record</Button>
+                    <Button DataContext="{Binding VideoControl}" Command="{Binding RewindCommand}" Margin="11" Height="30">Rewind</Button>
+                    <Button DataContext="{Binding VideoControl}" Name="PlayControl" Margin="11" Height="30" Command="{Binding PlayCommand}">Play</Button>
+                    <Button DataContext="{Binding VideoControl}" Name="PauseControl" Margin="11" Height="30" Command="{Binding PauseCommand}">Pause</Button>
+                    <Button DataContext="{Binding VideoControl}" Command="{Binding FastForwardCommand}" Margin="11" Height="30">Fast Forward</Button>
                     <TextBlock  Text="00:00:000" Name="CurrentTimeLabel" MinWidth="40" Margin="50,15,0,15" FontSize="16" FontFamily="Trebuchet MS"/>
                 </StackPanel>
 

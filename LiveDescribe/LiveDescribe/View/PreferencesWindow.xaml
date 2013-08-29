@@ -1,0 +1,45 @@
+﻿<Window x:Class="LiveDescribe.View.PreferencesWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="PreferencesWindow" Height="500" Width="500" MaxHeight="500" MaxWidth="500">
+    <Grid>
+        <DockPanel>
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" HorizontalAlignment="Right">
+                <Button Width="80" HorizontalAlignment="Left" Margin="30">
+                    Cancel
+                </Button>
+                
+                <Button Width="80" Command="{Binding ApplyCommand}" HorizontalAlignment="Right" Margin="30">
+                    Apply
+                </Button>
+            </StackPanel>
+            <TabControl>
+                <TabItem Header="AudioSource">
+                    <ListView ItemsSource="{Binding Sources}">
+                        <ListView.SelectedItem>
+                            <Binding Path="SelectedAudioSource" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True" Mode="TwoWay"/>
+                        </ListView.SelectedItem>
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Name" Width="240">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Name}"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Channels" Width="240">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Channels}"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate> 
+                                </GridViewColumn>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </TabItem>
+            </TabControl>
+        </DockPanel>
+    </Grid>
+</Window>
