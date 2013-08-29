@@ -5,7 +5,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Windows;
+using LiveDescribe.Model;
 
 namespace LiveDescribe.Utilities
 {
@@ -274,7 +276,7 @@ namespace LiveDescribe.Utilities
             Console.WriteLine("subChunk2Size: " + _header.SubChunk2Size);
             Console.WriteLine("audioData Length: " + data.Count);
             #endregion
-
+            findSpaces(data);
             return data;
         }
 
@@ -300,5 +302,135 @@ namespace LiveDescribe.Utilities
             return data;
         }
 
+        /// <summary>
+        /// Calculates the Root Mean Square of the audio data
+        /// </summary>
+        /// <param name="data">data</param>
+        /// <returns>root mean square</returns>
+        private float RMS(List<float> data)
+        {
+            float total = 0;
+            float mid = 0.5F;
+            for (int i = 0; i < data.Count; i++)
+            {
+                total += (float)Math.Pow(data[i] - mid, 2);
+            }
+
+            return (float)Math.Sqrt(total / data.Count);
+        }
+
+
+        /// <summary>
+        /// Calculates the energy of the audio data
+        /// </summary>
+        /// <param name="data">data</param>
+        /// <returns>energy</returns>
+        private float Energy(List<float> data)
+        {
+            float total = 0;
+            float mid = 0.5F;
+            for (int i = 0; i < data.Count; i++)
+            {
+                total += (float)Math.Pow(data[i] - mid, 2);
+            }
+
+            return total;
+        }
+
+        /// <summary>
+        /// Finds the Zero-crossing rate for the List "data"
+        /// passed to it
+        /// </summary>
+        /// <param name="data">data</param>
+        /// <returns>crosses</returns>
+        private float ZCR(List<float> data)
+        {
+            float crosses = 0;
+            float prev;
+            float current;
+            float mid = 0.5F;
+
+            for (int i = 1; i < data.Count; i++)
+            {
+                current = data[i] - mid;
+                prev = data[i - 1] - mid;
+                if ( (current * prev) < 0)
+                {
+                    crosses++;
+                }
+            }
+            return crosses;
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        private List<Space> findSpaces(List<float> data)
+        { 
+            float duration = (float)(_header.ChunkSize * 8 ) / ( _header.SampleRate * _header.BitsPerSample * _header.NumChannels);
+            int windowSize = 100; //100 samples 
+            int windows = 0; //counter for the total number of windows
+            int benchmark = 30; //30 windows for getting base window
+            List<float> bin; //section of the audio data
+            float zcr; //zero-crossing rate
+            float energy; //energy
+            float zcr_thresh = 0; //threshold
+            float energy_thresh = 0; //threshold
+            List<int> result = new List<int>(); //hold whether or not the window contained non-speech or not (0 for no speech and 1 otherwise)
+
+            if (windowSize * benchmark >= data.Count/2) //audio doesn't contain enough data to analyze
+            {
+                throw new Exception("Data size too small");
+            }
+
+            //read first few windows of data (assuming the first few contain no speech)
+            for (int i = 0; i < benchmark; i++)
+            { 
+                bin = data.GetRange((int)(i * windowSize), windowSize);
+                zcr_thresh += ZCR(bin);
+                energy_thresh += Energy(bin);
+            }
+
+            //get averages for the thresholds
+            zcr_thresh = zcr_thresh / benchmark;
+            energy_thresh = energy_thresh / benchmark;
+            float combined_thresh = zcr_thresh * energy_thresh;
+
+            Console.WriteLine("zcr-thresh: " + zcr_thresh);
+            Console.WriteLine("energy-thresh: " + energy_thresh);
+            Console.WriteLine("combined-thresh: " + combined_thresh);
+            //Thread.Sleep(10000);
+            
+            for (int dataPoint = 0; dataPoint * windowSize < data.Count - windowSize; dataPoint++)
+            {
+                bin = data.GetRange((int)(dataPoint * windowSize), windowSize);
+                zcr = ZCR(bin);
+                energy = Energy(bin);
+
+                if (zcr * energy <= combined_thresh)
+                {
+                    result.Add(0);
+                }
+                else 
+                {
+                    result.Add(1);
+                }
+                
+                Console.WriteLine("energy: " + energy);
+                Console.WriteLine("zcr: " + zcr);
+                windows++;
+            }
+
+            #region debugInfo
+            Console.WriteLine("WindowSize: " + windowSize);
+            Console.WriteLine("Duration: " + duration);
+            Console.WriteLine("Windows: " + windows);
+            #endregion
+
+            return new List<Space>();
+        }
     }
 }
