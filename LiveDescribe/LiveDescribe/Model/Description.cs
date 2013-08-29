@@ -30,6 +30,9 @@ namespace LiveDescribe.Model
 
         #region Properties
 
+        /// <summary>
+        /// Audio Utility that contains information about the wav description file
+        /// </summary>
         public AudioUtility AudioUtility
         {
             set
@@ -42,7 +45,9 @@ namespace LiveDescribe.Model
                 return _audioutility;
             }
         }
-
+        /// <summary>
+        /// Filename of the wav file
+        /// </summary>
         public string FileName
         {
             set
@@ -56,6 +61,9 @@ namespace LiveDescribe.Model
             }
         }
 
+        /// <summary>
+        /// Whether the description is extended or not
+        /// </summary>
         public bool IsExtendedDescription
         {
             set
@@ -69,6 +77,10 @@ namespace LiveDescribe.Model
             }
         }
 
+        /// <summary>
+        /// The time that the description starts within the wav file
+        /// for example it might start at 5 seconds instead of 0 (at the beginning)
+        /// </summary>
         public double StartWaveFileTime
         {
             set
@@ -81,7 +93,10 @@ namespace LiveDescribe.Model
                 return _startwavefiletime;
             }
         }
-
+        /// <summary>
+        /// The time that the description ends within the wav file
+        /// for example the description might end before the wav file actually finishes
+        /// </summary>
         public double EndWaveFileTime
         {
             set
@@ -94,7 +109,9 @@ namespace LiveDescribe.Model
                 return _endwavefiletime;
             }
         }
-
+        /// <summary>
+        /// Actualy Length of the description
+        /// </summary>
         public double ActualLength
         {
             private set
@@ -107,7 +124,9 @@ namespace LiveDescribe.Model
                 return _actuallength;
             }
         }
-
+        /// <summary>
+        /// The time in the video that the description starts
+        /// </summary>
         public double StartInVideo
         {
             set
@@ -120,7 +139,9 @@ namespace LiveDescribe.Model
                 return _startinvideo;
             }
         }
-
+        /// <summary>
+        /// The time in the video that the description ends
+        /// </summary>
         public double EndInVideo
         {
             set
