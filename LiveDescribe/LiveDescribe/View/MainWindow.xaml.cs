@@ -27,6 +27,7 @@ namespace LiveDescribe.View
         private const int LongLineTime = 5; // every 5 LineTimes, you get a Longer Line
         private readonly VideoControl _videoControl;
         private readonly PreferencesViewModel _preferences;
+        private readonly DescriptionViewModel _descriptionViewModel;
         private readonly TimeConverterFormatter _formatter; //used to format a timespan object which in this case in the videoMedia.Position
 
         public MainWindow()
@@ -41,8 +42,11 @@ namespace LiveDescribe.View
             _videoTimer.Tick += Play_Tick;
             _videoTimer.Interval = new TimeSpan(0,0,0,0,1);
             DataContext = mc;
+
             _videoControl = mc.VideoControl;
             _preferences = mc.PreferencesViewModel;
+            _descriptionViewModel = mc.DescriptionViewModel;
+
             _formatter = new TimeConverterFormatter();
 
             #region Event Listeners for VideoMedia
@@ -162,6 +166,16 @@ namespace LiveDescribe.View
                 var preferencesWindow = new PreferencesWindow();
                 preferencesWindow.DataContext = _preferences;
                 preferencesWindow.ShowDialog();
+            };
+
+            #endregion
+
+            #region EventListeners for DescriptionViewModel
+
+            _descriptionViewModel.RecordRequestedMicrophoneNotPluggedIn += (sender, e) =>
+            {
+                //perhaps show a popup when the Record button is pressed and there is no microphone plugged in
+                Console.WriteLine("NO MICROPHONE CONNECTED!");
             };
 
             #endregion

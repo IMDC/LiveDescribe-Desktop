@@ -4,7 +4,6 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:controls="clr-namespace:LiveDescribe.Controls"
         xmlns:converters="clr-namespace:LiveDescribe.Converters"
-        xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
         Title="MainWindow" Height="800" Width="1280" MinHeight="800" MinWidth="1280">
     <Window.Resources>
         <converters:BoolToVisibilityConverter x:Key="BoolConverter"/>
