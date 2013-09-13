@@ -15,7 +15,7 @@ namespace LiveDescribe.Interfaces
 
         double DurationMilliseconds { get; }
 
-        LiveDescribeStates CurrentState { set; get; }
+        LiveDescribeVideoStates CurrentState { set; get; }
         
         string Path { set; get; }
 

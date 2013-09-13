@@ -15,8 +15,12 @@ namespace LiveDescribe.View_Model
 
         #region Instance Variables
         private NAudio.Wave.WaveIn _microphonestream;
+        private NAudio.Wave.WaveFileWriter waveWriter;
         private readonly ILiveDescribePlayer _mediaVideo;
         private bool _usingExistingMicrophone;
+
+        //used to restore the previous video state after it's finished recording
+        private LiveDescribeVideoStates _previousVideoState;
         #endregion
 
         #region Event Handlers
@@ -28,6 +32,7 @@ namespace LiveDescribe.View_Model
 
         public DescriptionViewModel(ILiveDescribePlayer mediaVideo)
         {
+            waveWriter = null;
             RecordCommand = new RelayCommand(Record, RecordStateCheck);
             _mediaVideo = mediaVideo;
 
@@ -62,10 +67,20 @@ namespace LiveDescribe.View_Model
         /// <param name="param"></param>
         public void Record(object param)
         {
-            if (_mediaVideo != null) _mediaVideo.CurrentState = LiveDescribeStates.RecordingDescription;
+            Console.WriteLine("----------------------");
+            if (_mediaVideo.CurrentState == LiveDescribeVideoStates.RecordingDescription)
+            {
+                //have to change the state of recording
+                _mediaVideo.CurrentState = _previousVideoState;
+                Console.WriteLine("_mediaVideo == Recording");
+                MicrophoneStream.StopRecording();
+                waveWriter.Dispose();
+                waveWriter = null;
+                return;
+            }
 
-            EventHandler handler = RecordRequested;
-            EventHandler handler1 = RecordRequestedMicrophoneNotPluggedIn;
+            EventHandler handlerRecordRequested = RecordRequested;
+            EventHandler handlerNotPluggedIn = RecordRequestedMicrophoneNotPluggedIn;
             
             // if we don't have an existing microphone we try to create a new one with the first available microphone
             // if no microphone exists an exception is thrown and we throw the event "RecordRequestedMicrophoneNotPluggedIn
@@ -82,18 +97,23 @@ namespace LiveDescribe.View_Model
                 }
                 catch (NAudio.MmException e)
                 {
-                    Console.WriteLine("Creating new microphone....");
+                    Console.WriteLine("Creating new microphone Exception....");
                     Console.WriteLine(e.StackTrace);
 
-                    if (handler1 == null) return;
+                    if (handlerNotPluggedIn == null) return;
                     RecordRequestedMicrophoneNotPluggedIn(this, EventArgs.Empty);
                     return;
                 }
             }
-
-            var waveOut = new NAudio.Wave.DirectSoundOut();
-            var waveIn = new NAudio.Wave.WaveInProvider(MicrophoneStream);
-            waveOut.Init(waveIn);
+            Console.WriteLine("Recording..");
+           
+            // get a random guid to name the wave file
+            // there is an EXTREMELY small chance that the guid used has been used before
+            Guid g = Guid.NewGuid();
+            waveWriter = new NAudio.Wave.WaveFileWriter("C:\\Users\\imdc\\Desktop\\" + g.ToString() + ".wav", MicrophoneStream.WaveFormat);
+            
+            MicrophoneStream.DataAvailable += new EventHandler<NAudio.Wave.WaveInEventArgs>(MicrophoneSteam_DataAvailable);
+           // var waveIn = new NAudio.Wave.WaveInProvider(MicrophoneStream);
   
             try
             {
@@ -101,19 +121,22 @@ namespace LiveDescribe.View_Model
             }
             catch (NAudio.MmException e)
             {
-                Console.WriteLine("Previous Microphone...");
+                Console.WriteLine("Previous Microphone Exception...");
                 Console.WriteLine(e.StackTrace);
 
-                if (handler1 == null) return;
+                if (handlerNotPluggedIn == null) return;
                 RecordRequestedMicrophoneNotPluggedIn(this, EventArgs.Empty);
 
                 return;
             }
-            
-            waveOut.Play();
-            if (handler == null) return;
-            handler(this, EventArgs.Empty);
+
+            _previousVideoState = _mediaVideo.CurrentState;
+            if (_mediaVideo != null) _mediaVideo.CurrentState = LiveDescribeVideoStates.RecordingDescription;
+            if (handlerRecordRequested == null) return;
+            handlerRecordRequested(this, EventArgs.Empty);
         }
+
+        
         #endregion
 
         #region BindingProperties
@@ -138,10 +161,23 @@ namespace LiveDescribe.View_Model
 
         public bool RecordStateCheck(object param)
         {
-            if (_mediaVideo.CurrentState == LiveDescribeStates.VideoNotLoaded)
+            if (_mediaVideo.CurrentState == LiveDescribeVideoStates.VideoNotLoaded)
                 return false;
             return true;
         }
+
+        #endregion
+
+        #region Private Event Methods
+
+        private void MicrophoneSteam_DataAvailable(object sender, WaveInEventArgs e)
+        {
+            if (waveWriter == null) return;
+
+            waveWriter.Write(e.Buffer, 0, e.BytesRecorded);
+            waveWriter.Flush();
+        }
+
         #endregion
     }
 }

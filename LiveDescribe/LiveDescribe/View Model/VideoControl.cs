@@ -203,7 +203,7 @@ namespace LiveDescribe.View_Model
             Console.WriteLine("Play");
 
             EventHandler handler = PlayRequested;
-            _mediaVideo.CurrentState = LiveDescribeStates.PlayingVideo;
+            _mediaVideo.CurrentState = LiveDescribeVideoStates.PlayingVideo;
             if (handler != null)
             {
                 handler(this, EventArgs.Empty);
@@ -219,7 +219,7 @@ namespace LiveDescribe.View_Model
             Console.WriteLine("Pause");
 
             EventHandler handler = PauseRequested;
-            _mediaVideo.CurrentState = LiveDescribeStates.PausedVideo;
+            _mediaVideo.CurrentState = LiveDescribeVideoStates.PausedVideo;
 
             if (handler == null) return;
             handler(this, EventArgs.Empty);
@@ -248,7 +248,7 @@ namespace LiveDescribe.View_Model
         {
             EventHandler handler = VideoOpenedRequested;
             Console.WriteLine("LOADED");
-            _mediaVideo.CurrentState = LiveDescribeStates.VideoLoaded;
+            _mediaVideo.CurrentState = LiveDescribeVideoStates.VideoLoaded;
 
             if (handler == null) return;
             handler(this, EventArgs.Empty);
@@ -294,7 +294,7 @@ namespace LiveDescribe.View_Model
                 _stripAudioWorker.RunWorkerAsync();
             }
 
-            _mediaVideo.CurrentState = LiveDescribeStates.PausedVideo;
+            _mediaVideo.CurrentState = LiveDescribeVideoStates.PausedVideo;
         }
 
         /// <summary>
@@ -306,7 +306,7 @@ namespace LiveDescribe.View_Model
         {
             EventHandler handler = MediaFailedEvent;
             Console.WriteLine("Media Failed to load...");
-            _mediaVideo.CurrentState = LiveDescribeStates.VideoNotLoaded;
+            _mediaVideo.CurrentState = LiveDescribeVideoStates.VideoNotLoaded;
             if (handler == null) return;
             handler(this, EventArgs.Empty);
         }
@@ -359,8 +359,8 @@ namespace LiveDescribe.View_Model
         /// <returns>true if button can be enabled</returns>
         public bool PlayCheck(object param)
         {
-            if (_mediaVideo.CurrentState == LiveDescribeStates.PlayingVideo || _mediaVideo.CurrentState == LiveDescribeStates.RecordingDescription ||
-                _mediaVideo.CurrentState == LiveDescribeStates.VideoNotLoaded)
+            if (_mediaVideo.CurrentState == LiveDescribeVideoStates.PlayingVideo || _mediaVideo.CurrentState == LiveDescribeVideoStates.RecordingDescription ||
+                _mediaVideo.CurrentState == LiveDescribeVideoStates.VideoNotLoaded)
                 return false;
             return true;
         }
@@ -372,8 +372,8 @@ namespace LiveDescribe.View_Model
         /// <returns>true if button can be enabled</returns>
         public bool PauseCheck(object param)
         {
-            if (_mediaVideo.CurrentState == LiveDescribeStates.PausedVideo || _mediaVideo.CurrentState == LiveDescribeStates.VideoNotLoaded
-                || _mediaVideo.CurrentState == LiveDescribeStates.VideoLoaded)
+            if (_mediaVideo.CurrentState == LiveDescribeVideoStates.PausedVideo || _mediaVideo.CurrentState == LiveDescribeVideoStates.VideoNotLoaded
+                || _mediaVideo.CurrentState == LiveDescribeVideoStates.VideoLoaded || _mediaVideo.CurrentState == LiveDescribeVideoStates.RecordingDescription)
                 return false;
             return true;
         }
@@ -385,7 +385,7 @@ namespace LiveDescribe.View_Model
         /// <returns>true if the button can be enabled</returns>
         public bool RewindCheck(object param)
         {
-            if (_mediaVideo.CurrentState == LiveDescribeStates.VideoNotLoaded)
+            if (_mediaVideo.CurrentState == LiveDescribeVideoStates.VideoNotLoaded)
                 return false;
             return true;
         }
@@ -397,7 +397,7 @@ namespace LiveDescribe.View_Model
         /// <returns></returns>
         public bool FastForwardCheck(object param)
         {
-            if (_mediaVideo.CurrentState == LiveDescribeStates.VideoNotLoaded)
+            if (_mediaVideo.CurrentState == LiveDescribeVideoStates.VideoNotLoaded)
                 return false;
             return true;
         }
@@ -409,7 +409,7 @@ namespace LiveDescribe.View_Model
         /// <returns></returns>
         public bool RecordCheck(object param)
         {
-            if (_mediaVideo.CurrentState == LiveDescribeStates.VideoNotLoaded)
+            if (_mediaVideo.CurrentState == LiveDescribeVideoStates.VideoNotLoaded)
                 return false;
             return true;
         }
@@ -421,7 +421,7 @@ namespace LiveDescribe.View_Model
         /// <returns></returns>
         public bool ImportCheck(object param)
         {
-            if (_mediaVideo.CurrentState != LiveDescribeStates.VideoNotLoaded)
+            if (_mediaVideo.CurrentState != LiveDescribeVideoStates.VideoNotLoaded)
                 return false;
             return true;
         }

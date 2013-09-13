@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LiveDescribe
 {
-    public enum LiveDescribeStates
+    public enum LiveDescribeVideoStates
     {
         /// <summary>
         /// In this state when the video is playing
@@ -32,6 +32,5 @@ namespace LiveDescribe
         /// In this state right when the video file is loaded
         /// </summary>
         VideoLoaded,
-
     }
 }

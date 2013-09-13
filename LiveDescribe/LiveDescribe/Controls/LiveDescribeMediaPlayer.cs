@@ -12,13 +12,13 @@ namespace LiveDescribe.Controls
     class LiveDescribeMediaPlayer : MediaElement, ILiveDescribePlayer
     {
         private string _path = "";
-        private LiveDescribeStates _currentState = LiveDescribeStates.VideoNotLoaded;
+        private LiveDescribeVideoStates _currentState = LiveDescribeVideoStates.VideoNotLoaded;
         public EventHandler PathChangedEvent;
 
         /// <summary>
         /// Property for obtaining the CurrentState used to make the VideoPlayer Stateful, if it isn't already
         /// </summary>
-        public LiveDescribeStates CurrentState
+        public LiveDescribeVideoStates CurrentState
         {
             get
             {
