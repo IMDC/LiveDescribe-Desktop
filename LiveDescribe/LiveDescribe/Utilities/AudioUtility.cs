@@ -399,9 +399,9 @@ namespace LiveDescribe.Utilities
             energy_thresh = energy_thresh / benchmark;
             float combined_thresh = zcr_thresh * energy_thresh;
 
-            Console.WriteLine("zcr-thresh: " + zcr_thresh);
-            Console.WriteLine("energy-thresh: " + energy_thresh);
-            Console.WriteLine("combined-thresh: " + combined_thresh);
+          //  Console.WriteLine("zcr-thresh: " + zcr_thresh);
+          //  Console.WriteLine("energy-thresh: " + energy_thresh);
+         //   Console.WriteLine("combined-thresh: " + combined_thresh);
             //Thread.Sleep(10000);
             
             for (int dataPoint = 0; dataPoint * windowSize < data.Count - windowSize; dataPoint++)
@@ -419,8 +419,8 @@ namespace LiveDescribe.Utilities
                     result.Add(1);
                 }
                 
-                Console.WriteLine("energy: " + energy);
-                Console.WriteLine("zcr: " + zcr);
+              //  Console.WriteLine("energy: " + energy);
+              //  Console.WriteLine("zcr: " + zcr);
                 windows++;
             }
 

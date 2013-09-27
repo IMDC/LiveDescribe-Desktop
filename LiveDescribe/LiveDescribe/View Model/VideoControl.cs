@@ -275,13 +275,31 @@ namespace LiveDescribe.View_Model
         /// <param name="param"></param>
         public void ImportVideo(object param)
         {
-            var dialogBox = new OpenFileDialog();
-            bool? userClickedOk = dialogBox.ShowDialog();
+            //importing a new video so reset the settings file
+            //possibly save the old settings value in the livedescribe file? or make a class where we can just serialize it and save that to the file?
+            Properties.Settings.Default.Reset();
+            var dialogBoxChooseVideo = new OpenFileDialog();
+            var dialogBoxChooseWorkingDirectory = new System.Windows.Forms.FolderBrowserDialog();
+
+            bool? userClickedOkChooseVideo = dialogBoxChooseVideo.ShowDialog();
+
+            //handle what happens when the user clicks cancel when choosing a video
+            if (userClickedOkChooseVideo == false)
+                return;
+
+            System.Windows.Forms.DialogResult userClickedOkChooseWorkingDirectory = dialogBoxChooseWorkingDirectory.ShowDialog();
+
+            //handle what happens when the user clicks cancel when choosing a directory
+            if (userClickedOkChooseWorkingDirectory == System.Windows.Forms.DialogResult.Cancel)
+                return;
 
             Console.WriteLine("OPENVIDEO");
-            if (userClickedOk == true)
+            if (userClickedOkChooseVideo == true && userClickedOkChooseWorkingDirectory == System.Windows.Forms.DialogResult.OK)
             {
-                Path = dialogBox.FileName;
+                Path = dialogBoxChooseVideo.FileName;
+
+                //set the settings file to be the new working directory
+                Properties.Settings.Default.WorkingDirectory = dialogBoxChooseWorkingDirectory.SelectedPath + "\\";
                 //create a new background worker to strip the audio and set IsBusyStrippingAudio to true
                 //it does not get set to false in this class because the view is meant to take care of what they want to do with the stripped audio when it is completed for example
                 //create a wave form

@@ -290,7 +290,7 @@ namespace LiveDescribe.View
             double width = calculateWidth(); 
             double height = AudioCanvas.ActualHeight;
             double binSize = Math.Floor(data.Count / width);
-
+            
             for (int pixel = 0; pixel < width; pixel++)
             {
                 //get min and max from bin

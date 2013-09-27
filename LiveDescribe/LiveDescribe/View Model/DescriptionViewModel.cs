@@ -110,7 +110,7 @@ namespace LiveDescribe.View_Model
             // get a random guid to name the wave file
             // there is an EXTREMELY small chance that the guid used has been used before
             Guid g = Guid.NewGuid();
-            waveWriter = new NAudio.Wave.WaveFileWriter("C:\\Users\\imdc\\Desktop\\" + g.ToString() + ".wav", MicrophoneStream.WaveFormat);
+            waveWriter = new NAudio.Wave.WaveFileWriter(Properties.Settings.Default.WorkingDirectory + g.ToString() + ".wav", MicrophoneStream.WaveFormat);
             
             MicrophoneStream.DataAvailable += new EventHandler<NAudio.Wave.WaveInEventArgs>(MicrophoneSteam_DataAvailable);
            // var waveIn = new NAudio.Wave.WaveInProvider(MicrophoneStream);
