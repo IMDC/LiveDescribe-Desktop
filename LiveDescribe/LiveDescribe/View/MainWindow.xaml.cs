@@ -18,7 +18,7 @@ namespace LiveDescribe.View
     /// </summary>
     public partial class MainWindow : Window
     {
-        
+        private double _staticCanvasWidth = 0;
         private double _videoDuration = -1;
         private readonly DispatcherTimer _videoTimer;
         private const double PageScrollPercent = 0.95;  //when the marker hits 95% of the page it scrolls
@@ -34,6 +34,7 @@ namespace LiveDescribe.View
         {
             var splashScreen = new SplashScreen("../Images/LiveDescribe-Splashscreen.png");
             splashScreen.Show(true);
+            _staticCanvasWidth = calculateWidth();
             Thread.Sleep(2000);
             InitializeComponent();
 
@@ -254,8 +255,7 @@ namespace LiveDescribe.View
         /// <returns>true if it can scroll right</returns>
         private bool ScrollRightIfCan()
         {
-            double pages = _videoDuration / (PageTime * 1000);
-            double width = calculateWidth(); 
+            double width = _staticCanvasWidth; 
             double singlePageWidth = TimeLine.ActualWidth; 
 
             double scrolledAmount = TimeLine.HorizontalOffset;
@@ -287,7 +287,7 @@ namespace LiveDescribe.View
         private void DrawWaveForm()
         {
             List<float> data = _videoControl.AudioData;
-            double width = calculateWidth(); 
+            double width = _staticCanvasWidth; 
             double height = AudioCanvas.ActualHeight;
             double binSize = Math.Floor(data.Count / width);
             
@@ -323,7 +323,7 @@ namespace LiveDescribe.View
         {
 
             double pages = _videoDuration / (PageTime * 1000);
-            double width = calculateWidth(); 
+            double width = _staticCanvasWidth; 
 
             var numlines = (int)(_videoDuration / (LineTime * 1000));
             //Clear the canvas because we don't want the remaining lines due to importing a new video
