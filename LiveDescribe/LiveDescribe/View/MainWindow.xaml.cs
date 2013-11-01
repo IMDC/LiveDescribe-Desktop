@@ -34,7 +34,6 @@ namespace LiveDescribe.View
         {
             var splashScreen = new SplashScreen("../Images/LiveDescribe-Splashscreen.png");
             splashScreen.Show(true);
-            _staticCanvasWidth = calculateWidth();
             Thread.Sleep(2000);
             InitializeComponent();
 
@@ -103,6 +102,7 @@ namespace LiveDescribe.View
             mc.VideoControl.VideoOpenedRequested += (sender, e) =>
                 {
                     _videoDuration = VideoMedia.NaturalDuration.TimeSpan.TotalMilliseconds;
+                    _staticCanvasWidth = calculateWidth();
                     Marker.IsEnabled = true;
                 };
 
