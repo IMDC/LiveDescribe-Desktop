@@ -7,6 +7,7 @@ using Microsoft.TeamFoundation.Controls.WPF.TeamExplorer.Framework;
 using Microsoft.TeamFoundation.MVVM;
 using LiveDescribe.Interfaces;
 using NAudio.Wave;
+using LiveDescribe.Model;
 
 namespace LiveDescribe.View_Model
 {
@@ -72,10 +73,13 @@ namespace LiveDescribe.View_Model
             {
                 //have to change the state of recording
                 _mediaVideo.CurrentState = _previousVideoState;
-                Console.WriteLine("_mediaVideo == Recording");
-                MicrophoneStream.StopRecording();
+                Console.WriteLine("Finished Recording");
+                MicrophoneStream.StopRecording();           
+                NAudio.Wave.WaveFileReader read = new NAudio.Wave.WaveFileReader(waveWriter.Filename);
+                Description desc = new Description(waveWriter.Filename, 0, read.TotalTime.TotalMilliseconds, _mediaVideo.CurrentPosition.TotalMilliseconds);
                 waveWriter.Dispose();
                 waveWriter = null;
+                read.Dispose();
                 return;
             }
 
