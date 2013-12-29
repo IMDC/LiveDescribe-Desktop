@@ -139,7 +139,7 @@
                             </Border>
                             <!-- </DockPanel>-->
 
-                            <Border Name="DescriptionCanvasBorder" DataContext="{Binding DescriptionViewModel}" Grid.Row="2" BorderBrush="Blue" BorderThickness="0.75" >
+                            <Border Name="DescriptionCanvasBorder" DataContext="{Binding DescriptionViewModel}" Grid.Row="2" BorderBrush="Black" BorderThickness="0.75" >
                                 <Canvas Name="DescriptionCanvas">
                                     <ItemsControl ItemsSource="{Binding Descriptions}">
                                         <ItemsControl.ItemsPanel>
