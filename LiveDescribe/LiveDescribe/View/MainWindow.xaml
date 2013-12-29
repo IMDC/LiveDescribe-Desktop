@@ -123,7 +123,7 @@
                                     </Border>
 
                                     <Polyline IsEnabled="False" Points="10,20, 0,0,  20,0, 10,20, 10,172"   RenderOptions.EdgeMode="Aliased" Stroke="Black" Fill="Black" StrokeThickness="2" Width="20"  Canvas.Left="-10" Canvas.Top="0" Name="Marker">
-                                        <i:Interaction.Triggers>
+                                       <i:Interaction.Triggers>
                                             <i:EventTrigger EventName="MouseDown">
                                                 <i:InvokeCommandAction Command="{Binding MarkerMouseDownCommand}"/>
                                             </i:EventTrigger>
@@ -139,10 +139,26 @@
                             </Border>
                             <!-- </DockPanel>-->
 
-
-                            <Border Name="DescriptionCanvasBorder" Grid.Row="2" BorderBrush="Black" BorderThickness="0.75" >
+                            <Border Name="DescriptionCanvasBorder" DataContext="{Binding DescriptionViewModel}" Grid.Row="2" BorderBrush="Blue" BorderThickness="0.75" >
                                 <Canvas Name="DescriptionCanvas">
-
+                                    <ItemsControl ItemsSource="{Binding Descriptions}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <Canvas />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemContainerStyle>
+                                            <Style>
+                                                <Setter Property="Canvas.Left" Value="{Binding X}"/>
+                                                <Setter Property="Canvas.Top" Value="{Binding Y}"/>
+                                            </Style>
+                                        </ItemsControl.ItemContainerStyle>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Rectangle Width="{Binding Width}" Height="{Binding Height}" Fill="Green"/>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
                                 </Canvas>
                             </Border>
 

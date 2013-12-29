@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ using Microsoft.TeamFoundation.MVVM;
 using LiveDescribe.Interfaces;
 using NAudio.Wave;
 using LiveDescribe.Model;
+using LiveDescribe.Events;
 
 namespace LiveDescribe.View_Model
 {
@@ -15,16 +17,19 @@ namespace LiveDescribe.View_Model
     {
 
         #region Instance Variables
+        private ObservableCollection<Description> _descriptions;
         private NAudio.Wave.WaveIn _microphonestream;
         private NAudio.Wave.WaveFileWriter waveWriter;
         private readonly ILiveDescribePlayer _mediaVideo;
         private bool _usingExistingMicrophone;
+        private double _descriptionStartTime;
 
         //used to restore the previous video state after it's finished recording
         private LiveDescribeVideoStates _previousVideoState;
         #endregion
 
         #region Event Handlers
+        public EventHandler<DescriptionEventArgs> AddDescriptionEvent;
         public EventHandler RecordRequested;
         public EventHandler RecordRequestedMicrophoneNotPluggedIn;
         #endregion
@@ -48,6 +53,7 @@ namespace LiveDescribe.View_Model
                 _usingExistingMicrophone = true;
                 MicrophoneStream = Properties.Settings.Default.Microphone;
             }
+            Descriptions = new ObservableCollection<Description>();
         }
         #endregion
 
@@ -69,20 +75,24 @@ namespace LiveDescribe.View_Model
         public void Record(object param)
         {
             Console.WriteLine("----------------------");
+
+            //if the button was clicked once already it is in the RecordingDescription State
+            //so end the recording because it is the second click
             if (_mediaVideo.CurrentState == LiveDescribeVideoStates.RecordingDescription)
-            {
-                //have to change the state of recording
-                _mediaVideo.CurrentState = _previousVideoState;
+            {    
                 Console.WriteLine("Finished Recording");
-                MicrophoneStream.StopRecording();           
-                NAudio.Wave.WaveFileReader read = new NAudio.Wave.WaveFileReader(waveWriter.Filename);
-                Description desc = new Description(waveWriter.Filename, 0, read.TotalTime.TotalMilliseconds, _mediaVideo.CurrentPosition.TotalMilliseconds);
+                MicrophoneStream.StopRecording();
+                string filename = waveWriter.Filename;
                 waveWriter.Dispose();
                 waveWriter = null;
+                NAudio.Wave.WaveFileReader read = new NAudio.Wave.WaveFileReader(filename);
+                AddDescription(filename, 0, read.TotalTime.TotalMilliseconds, _descriptionStartTime);
                 read.Dispose();
+                //have to change the state of recording
+                _mediaVideo.CurrentState = _previousVideoState;
                 return;
             }
-
+            
             EventHandler handlerRecordRequested = RecordRequested;
             EventHandler handlerNotPluggedIn = RecordRequestedMicrophoneNotPluggedIn;
             
@@ -117,10 +127,10 @@ namespace LiveDescribe.View_Model
             waveWriter = new NAudio.Wave.WaveFileWriter(Properties.Settings.Default.WorkingDirectory + g.ToString() + ".wav", MicrophoneStream.WaveFormat);
             
             MicrophoneStream.DataAvailable += new EventHandler<NAudio.Wave.WaveInEventArgs>(MicrophoneSteam_DataAvailable);
-           // var waveIn = new NAudio.Wave.WaveInProvider(MicrophoneStream);
   
             try
             {
+                _descriptionStartTime = _mediaVideo.CurrentPosition.TotalMilliseconds;
                 MicrophoneStream.StartRecording();
             }
             catch (NAudio.MmException e)
@@ -130,7 +140,6 @@ namespace LiveDescribe.View_Model
 
                 if (handlerNotPluggedIn == null) return;
                 RecordRequestedMicrophoneNotPluggedIn(this, EventArgs.Empty);
-
                 return;
             }
 
@@ -139,8 +148,7 @@ namespace LiveDescribe.View_Model
             if (handlerRecordRequested == null) return;
             handlerRecordRequested(this, EventArgs.Empty);
         }
-
-        
+  
         #endregion
 
         #region BindingProperties
@@ -157,6 +165,22 @@ namespace LiveDescribe.View_Model
             get
             {
                 return _microphonestream;
+            }
+        }
+
+        /// <summary>
+        /// Property to set and get the ObservableCollection containing descriptions
+        /// </summary>
+        public ObservableCollection<Description> Descriptions
+        {
+            set
+            {
+                _descriptions = value;
+                RaisePropertyChanged("Descriptions");
+            }
+            get
+            {
+                return _descriptions;
             }
         }
         #endregion
@@ -182,6 +206,17 @@ namespace LiveDescribe.View_Model
             waveWriter.Flush();
         }
 
+        #endregion
+
+        #region Helper Methods
+        public void AddDescription(string filename, double startwavefiletime, double endwavefiletime, double startinvideo)
+        {
+            Description desc = new Description(filename, startwavefiletime, endwavefiletime, startinvideo);
+            Descriptions.Add(desc);
+            EventHandler<DescriptionEventArgs> addDescriptionHandler = AddDescriptionEvent;
+            if (addDescriptionHandler == null) return;
+            addDescriptionHandler(this, new DescriptionEventArgs(desc));
+        }
         #endregion
     }
 }

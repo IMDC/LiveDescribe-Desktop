@@ -21,6 +21,7 @@ namespace LiveDescribe.View
         private double _staticCanvasWidth = 0;
         private double _videoDuration = -1;
         private readonly DispatcherTimer _videoTimer;
+        private const double MarkerOffset = 10.0;
         private const double PageScrollPercent = 0.95;  //when the marker hits 95% of the page it scrolls
         private const double PageTime = 30; //30 seconds page time before audiocanvas  & descriptioncanvas scroll
         private const double LineTime = 1; //each line in the NumberTimeline appears every 1 second
@@ -40,7 +41,7 @@ namespace LiveDescribe.View
             var mc = new MainControl(VideoMedia);
             _videoTimer = new DispatcherTimer();
             _videoTimer.Tick += Play_Tick;
-            _videoTimer.Interval = new TimeSpan(0,0,0,0,1);
+            _videoTimer.Interval = new TimeSpan(0,0,0,0,10);
             DataContext = mc;
 
             _videoControl = mc.VideoControl;
@@ -65,20 +66,19 @@ namespace LiveDescribe.View
             {
                 _videoTimer.Stop();
                 VideoMedia.Stop();
-                UpdateMarkerPosition(-10);
+                UpdateMarkerPosition(-MarkerOffset);
             };
 
             #endregion
             
             #region Event Listeners For VideoControl
 
-
             //listens for PlayRequested Event
             mc.VideoControl.PlayRequested += (sender, e) =>
                 {
                     _videoTimer.Start();
                     VideoMedia.Play();
-                    var newValue = ((Canvas.GetLeft(Marker) + 10) / AudioCanvas.Width) * _videoDuration;
+                    var newValue = ((Canvas.GetLeft(Marker) + MarkerOffset) / AudioCanvas.Width) * _videoDuration;
                     UpdateVideoPosition((int)newValue);
                 };
 
@@ -117,12 +117,13 @@ namespace LiveDescribe.View
             };
 
             //captures the mouse when a mousedown request is sent to the Marker
-            mc.VideoControl.OnMarkerMouseDownRequested += (sender, e) => Marker.CaptureMouse();
+            mc.VideoControl.OnMarkerMouseDownRequested += (sender, e) => {Marker.CaptureMouse(); };
 
             //updates the video position when the mouse is released on the Marker
             mc.VideoControl.OnMarkerMouseUpRequested += (sender, e) =>
             {
-                var newValue = ((Canvas.GetLeft(Marker) + 10)/AudioCanvas.Width)*_videoDuration;
+                
+                var newValue = ((Canvas.GetLeft(Marker) + MarkerOffset)/AudioCanvas.Width)*_videoDuration;
 
                 UpdateVideoPosition((int) newValue);
                 Marker.ReleaseMouseCapture();
@@ -131,6 +132,7 @@ namespace LiveDescribe.View
             //updates the canvas and video position when the Marker is moved
             mc.VideoControl.OnMarkerMouseMoveRequested += (sender, e) =>
             {
+                
                 if (!Marker.IsMouseCaptured) return;
 
                 if (ScrollRightIfCan())
@@ -141,9 +143,9 @@ namespace LiveDescribe.View
 
                 var xPosition = Mouse.GetPosition(AudioCanvasBorder).X;
 
-                if (xPosition < -10)
+                if (xPosition < -MarkerOffset)
                 {
-                    Canvas.SetLeft(Marker, -10);
+                    Canvas.SetLeft(Marker, -MarkerOffset);
                 }
                 else if (xPosition > AudioCanvas.Width - 1)
                 {
@@ -151,13 +153,13 @@ namespace LiveDescribe.View
                 }
                 else
                 {
-                    Canvas.SetLeft(Marker, xPosition - 10);
+                    Canvas.SetLeft(Marker, xPosition - MarkerOffset);
                 }
 
                 var newValue = (xPosition / AudioCanvas.Width) * _videoDuration;
                 UpdateVideoPosition((int)newValue);
             };
-
+            
             #endregion
 
             #region Event Listeners for PreferencesViewModel
@@ -179,6 +181,34 @@ namespace LiveDescribe.View
                 Console.WriteLine("NO MICROPHONE CONNECTED!");
             };
 
+            //When a description is added, attach an event to the StartInVideo and EndInVideo properties
+            //so when those properties change it redraws them
+            _descriptionViewModel.AddDescriptionEvent += (sender, e) =>
+            {
+                //set the Description values that are bound to the graphics in MainWindow.xaml
+                e.Description.X = (e.Description.StartInVideo / _videoDuration) * AudioCanvas.Width;
+                e.Description.Y = 0;
+                e.Description.Width = (AudioCanvas.Width / _videoDuration) * (e.Description.EndWaveFileTime - e.Description.StartWaveFileTime);
+                e.Description.Height = DescriptionCanvas.ActualHeight;
+
+                e.Description.PropertyChanged += (sender1, e1) =>
+                {
+                    //possibly change this to startinwavefile
+                    if (e1.PropertyName.Equals("StartInVideo"))
+                    {
+                        //have to change the X position because the start in the description is changing
+                        //have to change the width, because the width of the description is being changed
+                       // e.Description.X = (e.Description.StartInVideo / _videoDuration) * AudioCanvas.Width;
+                      //  e.Description.Width = (AudioCanvas.Width / _videoDuration) * (e.Description.EndWaveFileTime - e.Description.StartWaveFileTime);
+                    }
+                    //possibly change this to endinwavefile depends
+                    else if (e1.PropertyName.Equals("EndInVideo"))
+                    {
+                        //change the width only because the X stays the same only the end in the video value changes
+                      //  e.Description.Width = (AudioCanvas.Width / _videoDuration) * (e.Description.EndWaveFileTime - e.Description.StartWaveFileTime);
+                    }
+                };
+            };
             #endregion
         }
 
@@ -191,7 +221,7 @@ namespace LiveDescribe.View
         {
             ScrollRightIfCan();
             double position = (VideoMedia.Position.TotalMilliseconds / _videoDuration) * (AudioCanvas.Width );
-            UpdateMarkerPosition(position - 10);
+            UpdateMarkerPosition(position - MarkerOffset);
         }
 
         #region View Listeners
@@ -222,13 +252,14 @@ namespace LiveDescribe.View
             var xPosition = e.GetPosition(NumberTimelineBorder).X;
             var newValue = (xPosition / AudioCanvas.Width) * _videoDuration;
 
-            UpdateMarkerPosition(xPosition - 10);
+            UpdateMarkerPosition(xPosition - MarkerOffset);
             UpdateVideoPosition((int)newValue);
         }
 
         #endregion
 
         #region Helper Functions
+
         /// <summary>
         /// Updates the Marker Position in the timeline and sets the corresponding time in the timelabel
         /// </summary>
@@ -260,7 +291,7 @@ namespace LiveDescribe.View
 
             double scrolledAmount = TimeLine.HorizontalOffset;
             double scrollOffsetRight = PageScrollPercent * singlePageWidth;
-            Console.WriteLine("Offset: " + scrollOffsetRight);
+          //  Console.WriteLine("Offset: " + scrollOffsetRight);
             if (!(Canvas.GetLeft(Marker) - scrolledAmount >= (scrollOffsetRight))) return false;
     
             TimeLine.ScrollToHorizontalOffset(scrollOffsetRight + scrolledAmount);
@@ -366,6 +397,7 @@ namespace LiveDescribe.View
             NumberTimeline.Width = width;
 
             AudioCanvas.Width = width;
+            DescriptionCanvas.Width = width;
             Marker.Points[4] = new Point(Marker.Points[4].X, AudioCanvasBorder.ActualHeight);
         }
         #endregion

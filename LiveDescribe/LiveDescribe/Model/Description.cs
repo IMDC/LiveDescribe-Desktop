@@ -18,17 +18,84 @@ namespace LiveDescribe.Model
         private double _actuallength;
         private double _startinvideo;
         private double _endinvideo;
+        private double _X;
+        private double _Y;
+        private double _width;
+        private double _height;
 
 
         public Description(string filename, double startwavefiletime, double endwavefiletime, double startinvideo)
         {
             FileName = filename;
-            StartWaveFileTime = startwavefiletime;
-            EndWaveFileTime = endwavefiletime;
-            StartInVideo = startinvideo;
+            _startwavefiletime = startwavefiletime;
+            _endwavefiletime = endwavefiletime;
+            _startinvideo = startinvideo;
+            _endinvideo = startinvideo + (endwavefiletime - startwavefiletime);
         }
 
         #region Properties
+        /// <summary>
+        /// Keeps track of the description's X values
+        /// </summary>
+        public double X
+        {
+            set
+            {
+                _X = value;
+                NotifyPropertyChanged("X");
+            }
+            get
+            {
+                return _X;
+            }
+        }
+
+        /// <summary>
+        /// Keeps track of the description's Y value
+        /// </summary>
+        public double Y
+        {
+            set
+            {
+                _Y = value;
+                NotifyPropertyChanged("Y");
+            }
+            get
+            {
+                return _Y;
+            }
+        }
+        /// <summary>
+        /// Keeps track of the height of the description
+        /// </summary>
+        public double Height
+        {
+            set
+            {
+                _height = value;
+                NotifyPropertyChanged("Height");
+            }
+            get
+            {
+                return _height;
+            }
+        }
+
+        /// <summary>
+        /// Keeps track of the Width of the description
+        /// </summary>
+        public double Width
+        {
+            set
+            {
+                _width = value;
+                NotifyPropertyChanged("Width");
+            }
+            get
+            {
+                return _width;
+            }
+        }
 
         /// <summary>
         /// Audio Utility that contains information about the wav description file
