@@ -58,7 +58,6 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Commands
-
         public RelayCommand RecordCommand
         {
             private set;
@@ -148,7 +147,8 @@ namespace LiveDescribe.View_Model
             if (handlerRecordRequested == null) return;
             handlerRecordRequested(this, EventArgs.Empty);
         }
-  
+
+       
         #endregion
 
         #region BindingProperties

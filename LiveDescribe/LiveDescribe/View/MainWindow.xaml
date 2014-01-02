@@ -151,11 +151,25 @@
                                             <Style>
                                                 <Setter Property="Canvas.Left" Value="{Binding X}"/>
                                                 <Setter Property="Canvas.Top" Value="{Binding Y}"/>
+                                                <Setter Property="Canvas.Height" Value="{Binding Height}"/>
+                                                <Setter Property="Canvas.Width" Value="{Binding Width}"/>
                                             </Style>
                                         </ItemsControl.ItemContainerStyle>
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <Rectangle Width="{Binding Width}" Height="{Binding Height}" Fill="Green"/>
+                                                <Rectangle Name="DescriptionGraphic" Fill="Green">
+                                                    <i:Interaction.Triggers>
+                                                        <i:EventTrigger EventName="MouseDown">
+                                                            <i:InvokeCommandAction Command="{Binding DescriptionMouseDownCommand}"/>
+                                                        </i:EventTrigger>
+                                                        <i:EventTrigger EventName="MouseUp">
+                                                            <i:InvokeCommandAction Command="{Binding DescriptionMouseUpCommand}"/>
+                                                        </i:EventTrigger>
+                                                        <i:EventTrigger EventName="MouseMove">
+                                                            <i:InvokeCommandAction Command="{Binding DescriptionMouseMoveCommand}"/>
+                                                        </i:EventTrigger>
+                                                    </i:Interaction.Triggers>
+                                                </Rectangle>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>

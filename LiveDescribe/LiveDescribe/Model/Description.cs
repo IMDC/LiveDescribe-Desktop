@@ -5,6 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LiveDescribe.Utilities;
+using LiveDescribe.Events;
+using Microsoft.TeamFoundation.Controls.WPF.TeamExplorer.Framework;
+using Microsoft.TeamFoundation.MVVM;
 
 namespace LiveDescribe.Model
 {
@@ -22,7 +25,11 @@ namespace LiveDescribe.Model
         private double _Y;
         private double _width;
         private double _height;
+        private bool _isselected;
 
+        public EventHandler DescriptionMouseDownEvent;
+        public EventHandler DescriptionMouseUpEvent;
+        public EventHandler DescriptionMouseMoveEvent;
 
         public Description(string filename, double startwavefiletime, double endwavefiletime, double startinvideo)
         {
@@ -31,6 +38,9 @@ namespace LiveDescribe.Model
             _endwavefiletime = endwavefiletime;
             _startinvideo = startinvideo;
             _endinvideo = startinvideo + (endwavefiletime - startwavefiletime);
+            DescriptionMouseDownCommand = new RelayCommand(DescriptionMouseDown, param => true);
+            DescriptionMouseUpCommand = new RelayCommand(DescriptionMouseUp, param => true);
+            DescriptionMouseMoveCommand = new RelayCommand(DescriptionMouseMove, param => true);
         }
 
         #region Properties
@@ -220,6 +230,78 @@ namespace LiveDescribe.Model
             {
                 return _endinvideo;
             }
+        }
+
+        public bool IsSelected
+        {
+            set
+            {
+                _isselected = value;
+                NotifyPropertyChanged("IsSelected");
+            }
+            get
+            {
+                return _isselected;
+            }
+        }
+        #endregion
+
+        #region Commands
+        public RelayCommand DescriptionMouseDownCommand
+        {
+            get;
+            private set;
+        }
+
+        public RelayCommand DescriptionMouseUpCommand
+        {
+            get;
+            private set;
+        }
+
+        public RelayCommand DescriptionMouseMoveCommand
+        {
+            get;
+            private set;
+        }
+        #endregion
+
+        #region Binding Functions
+        /// <summary>
+        /// Called when one of the descriptions is clicked
+        /// </summary>
+        /// <param name="param"></param>
+        public void DescriptionMouseDown(object param)
+        {
+            EventHandler handler = DescriptionMouseDownEvent;
+            IsSelected = true;
+            Console.WriteLine("Mouse Down");
+            if (handler == null) return;
+            handler(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Called when one of the descriptions mouse is up
+        /// </summary>
+        /// <param name="param"></param>
+        public void DescriptionMouseUp(object param)
+        {
+            EventHandler handler = DescriptionMouseUpEvent;
+            IsSelected = false;
+            Console.WriteLine("MOUSE UP");
+            if (handler == null) return;
+            handler(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Called when the mouse is moving on one of the descriptions
+        /// </summary>
+        /// <param name="param"></param>
+        public void DescriptionMouseMove(object param)
+        {
+            EventHandler handler = DescriptionMouseMoveEvent;
+            if (handler == null) return;
+            handler(this, EventArgs.Empty);
         }
         #endregion
 

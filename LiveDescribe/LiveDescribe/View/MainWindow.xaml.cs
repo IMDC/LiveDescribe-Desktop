@@ -135,7 +135,7 @@ namespace LiveDescribe.View
                 
                 if (!Marker.IsMouseCaptured) return;
 
-                if (ScrollRightIfCan())
+                if (ScrollRightIfCan(Canvas.GetLeft(Marker)))
                 {
                     Marker.ReleaseMouseCapture();
                     return;
@@ -143,18 +143,14 @@ namespace LiveDescribe.View
 
                 var xPosition = Mouse.GetPosition(AudioCanvasBorder).X;
 
+                //make sure the middle of the marker doesn't go below the beginning of the canvas
                 if (xPosition < -MarkerOffset)
-                {
                     Canvas.SetLeft(Marker, -MarkerOffset);
-                }
+                //make sure the middle of the marker doesn't go above the end of the canvas
                 else if (xPosition > AudioCanvas.Width - 1)
-                {
                     Canvas.SetLeft(Marker, AudioCanvas.Width - 1);
-                }
                 else
-                {
                     Canvas.SetLeft(Marker, xPosition - MarkerOffset);
-                }
 
                 var newValue = (xPosition / AudioCanvas.Width) * _videoDuration;
                 UpdateVideoPosition((int)newValue);
@@ -191,21 +187,27 @@ namespace LiveDescribe.View
                 e.Description.Width = (AudioCanvas.Width / _videoDuration) * (e.Description.EndWaveFileTime - e.Description.StartWaveFileTime);
                 e.Description.Height = DescriptionCanvas.ActualHeight;
 
+                e.Description.DescriptionMouseDownEvent += (sender1, e1) =>
+                {
+                  //Add mouse down event on every description here
+                };
+
+                e.Description.DescriptionMouseMoveEvent += (sender1, e1) =>
+                {
+                    //Add mouse move event on devery description here
+                };
+
                 e.Description.PropertyChanged += (sender1, e1) =>
                 {
                     //possibly change this to startinwavefile
-                    if (e1.PropertyName.Equals("StartInVideo"))
+                    if (e1.PropertyName.Equals("StartWaveFileTime"))
                     {
-                        //have to change the X position because the start in the description is changing
-                        //have to change the width, because the width of the description is being changed
-                       // e.Description.X = (e.Description.StartInVideo / _videoDuration) * AudioCanvas.Width;
-                      //  e.Description.Width = (AudioCanvas.Width / _videoDuration) * (e.Description.EndWaveFileTime - e.Description.StartWaveFileTime);
+                        
                     }
                     //possibly change this to endinwavefile depends
-                    else if (e1.PropertyName.Equals("EndInVideo"))
+                    else if (e1.PropertyName.Equals("EndWaveFileTime"))
                     {
-                        //change the width only because the X stays the same only the end in the video value changes
-                      //  e.Description.Width = (AudioCanvas.Width / _videoDuration) * (e.Description.EndWaveFileTime - e.Description.StartWaveFileTime);
+                       
                     }
                 };
             };
@@ -219,7 +221,7 @@ namespace LiveDescribe.View
         /// <param name="e">e</param>
         private void Play_Tick(object sender, EventArgs e)
         {
-            ScrollRightIfCan();
+            ScrollRightIfCan(Canvas.GetLeft(Marker));
             double position = (VideoMedia.Position.TotalMilliseconds / _videoDuration) * (AudioCanvas.Width );
             UpdateMarkerPosition(position - MarkerOffset);
         }
@@ -284,7 +286,7 @@ namespace LiveDescribe.View
         /// Scrolls the scrollviewer to the right as much as the PageScrollPercent when the marker reaches the PageScrollPercent of the width of the page
         /// </summary>
         /// <returns>true if it can scroll right</returns>
-        private bool ScrollRightIfCan()
+        private bool ScrollRightIfCan(double xPos)
         {
             double width = _staticCanvasWidth; 
             double singlePageWidth = TimeLine.ActualWidth; 
@@ -292,7 +294,7 @@ namespace LiveDescribe.View
             double scrolledAmount = TimeLine.HorizontalOffset;
             double scrollOffsetRight = PageScrollPercent * singlePageWidth;
           //  Console.WriteLine("Offset: " + scrollOffsetRight);
-            if (!(Canvas.GetLeft(Marker) - scrolledAmount >= (scrollOffsetRight))) return false;
+            if (!(xPos - scrolledAmount >= (scrollOffsetRight))) return false;
     
             TimeLine.ScrollToHorizontalOffset(scrollOffsetRight + scrolledAmount);
             return true;
