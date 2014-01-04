@@ -190,11 +190,13 @@ namespace LiveDescribe.View
                 e.Description.DescriptionMouseDownEvent += (sender1, e1) =>
                 {
                   //Add mouse down event on every description here
+                    Console.WriteLine("Description Mouse Down");
                 };
 
                 e.Description.DescriptionMouseMoveEvent += (sender1, e1) =>
                 {
                     //Add mouse move event on devery description here
+                    Console.WriteLine("Description Mouse Move");
                 };
 
                 e.Description.PropertyChanged += (sender1, e1) =>

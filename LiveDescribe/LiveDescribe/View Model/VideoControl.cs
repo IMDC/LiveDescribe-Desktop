@@ -65,7 +65,6 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Commands
-
         /// <summary>
         /// Setter and getter for MarkerMouseMoveCommand
         /// </summary>

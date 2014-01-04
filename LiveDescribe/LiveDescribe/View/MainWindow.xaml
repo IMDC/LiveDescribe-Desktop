@@ -83,6 +83,7 @@
                     <Button DataContext="{Binding VideoControl}" Margin="11" Height="30" Command="{Binding MuteCommand}">Mute</Button>
                     <Slider DataContext="{Binding VideoControl}" Value="{Binding Path=Volume, ElementName=VideoMedia}" Name="VolumeControl" Maximum="1" Minimum="0"  Margin="15"
                         Width="100"/>
+                    <CheckBox DataContext="{Binding DescriptionViewModel}" IsChecked="{Binding ExtendedIsChecked}"/>
                     <Button DataContext="{Binding DescriptionViewModel}" Command="{Binding RecordCommand}" Margin="11" Height="30">Record</Button>
                     <Button DataContext="{Binding VideoControl}" Command="{Binding RewindCommand}" Margin="11" Height="30">Rewind</Button>
                     <Button DataContext="{Binding VideoControl}" Name="PlayControl" Margin="11" Height="30" Command="{Binding PlayCommand}">Play</Button>
@@ -96,6 +97,7 @@
                     <TabItem Header="Spaces">
                     </TabItem>
                     <TabItem Header="Descriptions">
+                        
                     </TabItem>
                     <TabItem Header="Extended Descriptions">
                     </TabItem>
@@ -111,11 +113,7 @@
                                 <RowDefinition />
                             </Grid.RowDefinitions>
 
-
-                            <!-- <StackPanel Grid.ColumnSpan="6"  Grid.Row="8" Grid.RowSpan="5">-->
-                            <!--<DockPanel Grid.Row="0" Grid.RowSpan="2">-->
-
-
+                            <!--Audio Canvas which includes the marker and the number line-->
                             <Border Grid.Row="0" Grid.RowSpan="2" SizeChanged="AudioCanvasBorder_SizeChanged_1" DataContext="{Binding VideoControl}" Name="AudioCanvasBorder"    BorderBrush="Black" BorderThickness="1">
                                 <Canvas Name="AudioCanvas">
                                     <Border  Name="NumberTimelineBorder" Background="White" Height="20" BorderBrush="Black" BorderThickness="0,0,0,2">
@@ -137,8 +135,8 @@
                                     </Polyline>
                                 </Canvas>
                             </Border>
-                            <!-- </DockPanel>-->
-
+                            
+                            <!--Description Canvas that holds all the descriptions-->
                             <Border Name="DescriptionCanvasBorder" DataContext="{Binding DescriptionViewModel}" Grid.Row="2" BorderBrush="Black" BorderThickness="0.75" >
                                 <Canvas Name="DescriptionCanvas">
                                     <ItemsControl ItemsSource="{Binding Descriptions}">
@@ -149,15 +147,43 @@
                                         </ItemsControl.ItemsPanel>
                                         <ItemsControl.ItemContainerStyle>
                                             <Style>
-                                                <Setter Property="Canvas.Left" Value="{Binding X}"/>
-                                                <Setter Property="Canvas.Top" Value="{Binding Y}"/>
-                                                <Setter Property="Canvas.Height" Value="{Binding Height}"/>
-                                                <Setter Property="Canvas.Width" Value="{Binding Width}"/>
+                                                <Style.Triggers>
+                                                    <!--This controls the size and position of each rectangle element representing a description If it is not an extended description-->
+                                                    <DataTrigger Binding="{Binding IsExtendedDescription}" Value="false">
+                                                        <Setter Property="Canvas.Left" Value="{Binding X}"/>
+                                                        <Setter Property="Canvas.Top" Value="{Binding Y}"/>                        
+                                                        <Setter Property="Canvas.Height" Value="{Binding Height}"/>
+                                                        <Setter Property="Canvas.Width" Value="{Binding Width}"/>
+                                                    </DataTrigger>
+                                                    <!--this controls the size and the position of each rectangle element representing an extended description-->
+                                                    <DataTrigger Binding="{Binding IsExtendedDescription}" Value="true">
+                                                        <Setter Property="Canvas.Left" Value="{Binding X}"/>
+                                                        <Setter Property="Canvas.Top" Value="{Binding Y}"/>
+                                                        <Setter Property="Canvas.Height" Value="{Binding Height}"/>
+                                                        <Setter Property="Canvas.Width" Value="8"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
                                             </Style>
                                         </ItemsControl.ItemContainerStyle>
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <Rectangle Name="DescriptionGraphic" Fill="Green">
+                                                <Rectangle>
+                                                    <Rectangle.Style>
+                                                        <Style TargetType="Rectangle">
+                                                            <Style.Triggers>
+                                                                <!--If the description is not an extended description fill it Green-->
+                                                                <DataTrigger Binding="{Binding IsExtendedDescription}" Value="false">
+                                                                    <Setter Property="Fill" Value="Green"/> 
+                                                                    <Setter Property="Opacity" Value="0.25"/>
+                                                                </DataTrigger>
+                                                                <!--If the description is an extended description fill it Red-->
+                                                                <DataTrigger Binding="{Binding IsExtendedDescription}" Value="true">
+                                                                    <Setter Property="Fill" Value="Red"/>
+                                                                    <Setter Property="Opacity" Value="0.25"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Rectangle.Style>
                                                     <i:Interaction.Triggers>
                                                         <i:EventTrigger EventName="MouseDown">
                                                             <i:InvokeCommandAction Command="{Binding DescriptionMouseDownCommand}"/>
@@ -175,9 +201,6 @@
                                     </ItemsControl>
                                 </Canvas>
                             </Border>
-
-
-                            <!--</StackPanel>-->
                         </Grid>
                     </ScrollViewer>
                 </Border>
@@ -187,7 +210,6 @@
 
                 <!--Text Controls-->
                 <StackPanel Grid.Column="6" Grid.Row="6" Grid.RowSpan="2">
-
                     <Button Margin="10">
                         Save Text
                     </Button>
@@ -195,9 +217,7 @@
                         Clear
                     </Button>
                 </StackPanel>
-
             </Grid>
-
         </DockPanel>
     </Grid>
 </Window>

@@ -31,13 +31,14 @@ namespace LiveDescribe.Model
         public EventHandler DescriptionMouseUpEvent;
         public EventHandler DescriptionMouseMoveEvent;
 
-        public Description(string filename, double startwavefiletime, double endwavefiletime, double startinvideo)
+        public Description(string filename, double startwavefiletime, double endwavefiletime, double startinvideo, bool extendedDescription)
         {
             FileName = filename;
             _startwavefiletime = startwavefiletime;
             _endwavefiletime = endwavefiletime;
             _startinvideo = startinvideo;
             _endinvideo = startinvideo + (endwavefiletime - startwavefiletime);
+            IsExtendedDescription = extendedDescription;
             DescriptionMouseDownCommand = new RelayCommand(DescriptionMouseDown, param => true);
             DescriptionMouseUpCommand = new RelayCommand(DescriptionMouseUp, param => true);
             DescriptionMouseMoveCommand = new RelayCommand(DescriptionMouseMove, param => true);

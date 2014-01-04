@@ -32,6 +32,7 @@ namespace LiveDescribe.View_Model
         public EventHandler<DescriptionEventArgs> AddDescriptionEvent;
         public EventHandler RecordRequested;
         public EventHandler RecordRequestedMicrophoneNotPluggedIn;
+        public bool _recordingExtendedDescription;
         #endregion
 
         #region Constructors
@@ -58,6 +59,11 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Commands
+
+        /// <summary>
+        /// Setter and getter for RecordCommand
+        /// gets bound to the record button
+        /// </summary>
         public RelayCommand RecordCommand
         {
             private set;
@@ -85,7 +91,7 @@ namespace LiveDescribe.View_Model
                 waveWriter.Dispose();
                 waveWriter = null;
                 NAudio.Wave.WaveFileReader read = new NAudio.Wave.WaveFileReader(filename);
-                AddDescription(filename, 0, read.TotalTime.TotalMilliseconds, _descriptionStartTime);
+                AddDescription(filename, 0, read.TotalTime.TotalMilliseconds, _descriptionStartTime, ExtendedIsChecked);
                 read.Dispose();
                 //have to change the state of recording
                 _mediaVideo.CurrentState = _previousVideoState;
@@ -147,8 +153,6 @@ namespace LiveDescribe.View_Model
             if (handlerRecordRequested == null) return;
             handlerRecordRequested(this, EventArgs.Empty);
         }
-
-       
         #endregion
 
         #region BindingProperties
@@ -183,14 +187,44 @@ namespace LiveDescribe.View_Model
                 return _descriptions;
             }
         }
+
+        public bool ExtendedIsChecked
+        {
+            set
+            {
+                _recordingExtendedDescription = value;
+                RaisePropertyChanged("RecordingExtendedDescription");
+            }
+            get
+            {
+                return _recordingExtendedDescription;
+            }
+        }
         #endregion
 
         #region State Checks
-
+        /// <summary>
+        /// method to check whether the record command can be executed or not
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
         public bool RecordStateCheck(object param)
         {
             if (_mediaVideo.CurrentState == LiveDescribeVideoStates.VideoNotLoaded)
                 return false;
+            return true;
+        }
+
+        /// <summary>
+        /// method to check whether the extended description checkbox can be checked or not
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public bool ExtendedDescriptionCheckboxStateCheck(object param)
+        {
+            if (_mediaVideo.CurrentState == LiveDescribeVideoStates.VideoNotLoaded || _mediaVideo.CurrentState == LiveDescribeVideoStates.RecordingDescription)
+                return false;
+
             return true;
         }
 
@@ -209,9 +243,9 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Helper Methods
-        public void AddDescription(string filename, double startwavefiletime, double endwavefiletime, double startinvideo)
+        public void AddDescription(string filename, double startwavefiletime, double endwavefiletime, double startinvideo, bool isExtendedDescription)
         {
-            Description desc = new Description(filename, startwavefiletime, endwavefiletime, startinvideo);
+            Description desc = new Description(filename, startwavefiletime, endwavefiletime, startinvideo, isExtendedDescription);
             Descriptions.Add(desc);
             EventHandler<DescriptionEventArgs> addDescriptionHandler = AddDescriptionEvent;
             if (addDescriptionHandler == null) return;
