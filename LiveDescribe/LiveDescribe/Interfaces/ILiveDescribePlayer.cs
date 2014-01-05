@@ -19,5 +19,8 @@ namespace LiveDescribe.Interfaces
         
         string Path { set; get; }
 
+        void Play();
+
+        void Pause();
     }
 }

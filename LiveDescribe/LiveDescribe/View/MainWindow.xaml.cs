@@ -63,38 +63,42 @@ namespace LiveDescribe.View
                 };
 
             VideoMedia.MediaEnded += (sender, e) =>
-            {
-                _videoTimer.Stop();
-                VideoMedia.Stop();
-                UpdateMarkerPosition(-MarkerOffset);
-            };
+                {
+                    _videoTimer.Stop();
+                    VideoMedia.Stop();
+                    UpdateMarkerPosition(-MarkerOffset);
+                };
 
             #endregion
-            
-            #region Event Listeners For VideoControl
+
+            #region Event Listeners For Main Control (Pause, Play, Mute, FastForward, Rewind)
+            //These events are put inside the main control because they will also effect the list of audio descriptions
+            //an instance of DescriptionViewModel is inside the main control and the main control will take care of synchronizing
+            //the video, and the descriptions
+
 
             //listens for PlayRequested Event
-            mc.VideoControl.PlayRequested += (sender, e) =>
+            mc.PlayRequested += (sender, e) =>
                 {
                     _videoTimer.Start();
-                    VideoMedia.Play();
                     var newValue = ((Canvas.GetLeft(Marker) + MarkerOffset) / AudioCanvas.Width) * _videoDuration;
                     UpdateVideoPosition((int)newValue);
                 };
 
             //listens for PauseRequested Event
-            mc.VideoControl.PauseRequested += (sender, e) =>
+            mc.PauseRequested += (sender, e) =>
                 {
-                    VideoMedia.Pause();
                     _videoTimer.Stop();
-                   
                 };
-            
+
             //listens for MuteRequested Event
-            mc.VideoControl.MuteRequested += (sender, e) =>
+            mc.MuteRequested += (sender, e) =>
                 {
                     VideoMedia.IsMuted = !VideoMedia.IsMuted;
                 };
+            #endregion
+
+            #region Event Listeners For VideoControl
 
             //listens for VideoOpenedRequested event
             //this event only gets thrown when if the MediaFailed event doesn't occur
@@ -109,110 +113,109 @@ namespace LiveDescribe.View
             //listens for when the audio stripping is complete then draws the timeline and the wave form
             //and sets the busy stripping audio to false so that the loading screen goes away
             mc.VideoControl.OnStrippingAudioCompleted += (sender, e) =>
-            {
-                SetTimeline();
-                DrawWaveForm();
-                //make this false so that the loading screen goes away after the timeline and the wave form are drawn
-                _videoControl.IsBusyStrippingAudio = false;
-            };
+                {
+                    SetTimeline();
+                    DrawWaveForm();
+                    //make this false so that the loading screen goes away after the timeline and the wave form are drawn
+                    _videoControl.IsBusyStrippingAudio = false;
+                };
 
             //captures the mouse when a mousedown request is sent to the Marker
-            mc.VideoControl.OnMarkerMouseDownRequested += (sender, e) => {Marker.CaptureMouse(); };
+            mc.VideoControl.OnMarkerMouseDownRequested += (sender, e) => { Console.WriteLine("Marker Mouse Down"); Marker.CaptureMouse(); };
 
             //updates the video position when the mouse is released on the Marker
             mc.VideoControl.OnMarkerMouseUpRequested += (sender, e) =>
-            {
-                
-                var newValue = ((Canvas.GetLeft(Marker) + MarkerOffset)/AudioCanvas.Width)*_videoDuration;
+                {
+                    Console.WriteLine("Marker Mouse Up");
+                    var newValue = ((Canvas.GetLeft(Marker) + MarkerOffset)/AudioCanvas.Width)*_videoDuration;
 
-                UpdateVideoPosition((int) newValue);
-                Marker.ReleaseMouseCapture();
-            };
+                    UpdateVideoPosition((int) newValue);
+                    Marker.ReleaseMouseCapture();
+                };
 
             //updates the canvas and video position when the Marker is moved
             mc.VideoControl.OnMarkerMouseMoveRequested += (sender, e) =>
-            {
-                
-                if (!Marker.IsMouseCaptured) return;
-
-                if (ScrollRightIfCan(Canvas.GetLeft(Marker)))
                 {
-                    Marker.ReleaseMouseCapture();
-                    return;
-                }
+                    Console.WriteLine("Marker Mouse Move");
+                    if (!Marker.IsMouseCaptured) return;
 
-                var xPosition = Mouse.GetPosition(AudioCanvasBorder).X;
+                    if (ScrollRightIfCan(Canvas.GetLeft(Marker)))
+                    {
+                        Marker.ReleaseMouseCapture();
+                        return;
+                    }
 
-                //make sure the middle of the marker doesn't go below the beginning of the canvas
-                if (xPosition < -MarkerOffset)
-                    Canvas.SetLeft(Marker, -MarkerOffset);
-                //make sure the middle of the marker doesn't go above the end of the canvas
-                else if (xPosition > AudioCanvas.Width - 1)
-                    Canvas.SetLeft(Marker, AudioCanvas.Width - 1);
-                else
-                    Canvas.SetLeft(Marker, xPosition - MarkerOffset);
+                    var xPosition = Mouse.GetPosition(AudioCanvasBorder).X;
 
-                var newValue = (xPosition / AudioCanvas.Width) * _videoDuration;
-                UpdateVideoPosition((int)newValue);
-            };
-            
+                    //make sure the middle of the marker doesn't go below the beginning of the canvas
+                    if (xPosition < -MarkerOffset)
+                        Canvas.SetLeft(Marker, -MarkerOffset);
+                    //make sure the middle of the marker doesn't go above the end of the canvas
+                    else if (xPosition > AudioCanvas.Width - 1)
+                        Canvas.SetLeft(Marker, AudioCanvas.Width - 1);
+                    else
+                        Canvas.SetLeft(Marker, xPosition - MarkerOffset);
+
+                    var newValue = (xPosition / AudioCanvas.Width) * _videoDuration;
+                    UpdateVideoPosition((int)newValue);
+                };   
             #endregion
 
             #region Event Listeners for PreferencesViewModel
 
             _preferences.ShowPreferencesRequested += (sender, e) =>
-            {
-                var preferencesWindow = new PreferencesWindow();
-                preferencesWindow.DataContext = _preferences;
-                preferencesWindow.ShowDialog();
-            };
+                {
+                    var preferencesWindow = new PreferencesWindow();
+                    preferencesWindow.DataContext = _preferences;
+                    preferencesWindow.ShowDialog();
+                };
 
             #endregion
 
             #region EventListeners for DescriptionViewModel
 
             _descriptionViewModel.RecordRequestedMicrophoneNotPluggedIn += (sender, e) =>
-            {
-                //perhaps show a popup when the Record button is pressed and there is no microphone plugged in
-                Console.WriteLine("NO MICROPHONE CONNECTED!");
-            };
+                {
+                    //perhaps show a popup when the Record button is pressed and there is no microphone plugged in
+                    Console.WriteLine("NO MICROPHONE CONNECTED!");
+                };
 
             //When a description is added, attach an event to the StartInVideo and EndInVideo properties
             //so when those properties change it redraws them
             _descriptionViewModel.AddDescriptionEvent += (sender, e) =>
-            {
-                //set the Description values that are bound to the graphics in MainWindow.xaml
-                e.Description.X = (e.Description.StartInVideo / _videoDuration) * AudioCanvas.Width;
-                e.Description.Y = 0;
-                e.Description.Width = (AudioCanvas.Width / _videoDuration) * (e.Description.EndWaveFileTime - e.Description.StartWaveFileTime);
-                e.Description.Height = DescriptionCanvas.ActualHeight;
-
-                e.Description.DescriptionMouseDownEvent += (sender1, e1) =>
                 {
-                  //Add mouse down event on every description here
-                    Console.WriteLine("Description Mouse Down");
-                };
+                    //set the Description values that are bound to the graphics in MainWindow.xaml
+                    e.Description.X = (e.Description.StartInVideo / _videoDuration) * AudioCanvas.Width;
+                    e.Description.Y = 0;
+                    e.Description.Width = (AudioCanvas.Width / _videoDuration) * (e.Description.EndWaveFileTime - e.Description.StartWaveFileTime);
+                    e.Description.Height = DescriptionCanvas.ActualHeight;
 
-                e.Description.DescriptionMouseMoveEvent += (sender1, e1) =>
-                {
-                    //Add mouse move event on devery description here
-                    Console.WriteLine("Description Mouse Move");
-                };
-
-                e.Description.PropertyChanged += (sender1, e1) =>
-                {
-                    //possibly change this to startinwavefile
-                    if (e1.PropertyName.Equals("StartWaveFileTime"))
+                    e.Description.DescriptionMouseDownEvent += (sender1, e1) =>
                     {
-                        
-                    }
-                    //possibly change this to endinwavefile depends
-                    else if (e1.PropertyName.Equals("EndWaveFileTime"))
+                        //Add mouse down event on every description here
+                        Console.WriteLine("Description Mouse Down");
+                    };
+
+                    e.Description.DescriptionMouseMoveEvent += (sender1, e1) =>
                     {
-                       
-                    }
+                        //Add mouse move event on devery description here
+                        Console.WriteLine("Description Mouse Move");
+                    };
+
+                    e.Description.PropertyChanged += (sender1, e1) =>
+                    {
+                        //possibly change this to startinwavefile
+                        if (e1.PropertyName.Equals("StartWaveFileTime"))
+                        {
+
+                        }
+                        //possibly change this to endinwavefile depends
+                        else if (e1.PropertyName.Equals("EndWaveFileTime"))
+                        {
+
+                        }
+                    };
                 };
-            };
             #endregion
         }
 
@@ -236,6 +239,7 @@ namespace LiveDescribe.View
         /// <param name="e"></param>
         private void AudioCanvasBorder_SizeChanged_1(object sender, SizeChangedEventArgs e)
         {
+            Console.WriteLine("Audio Canvas Border Sized Changed");
             if (_videoDuration != -1)
             {
                 SetTimeline();
@@ -251,6 +255,7 @@ namespace LiveDescribe.View
         private void NumberTimeline_OnMouseDown(object sender, MouseButtonEventArgs e)
         {
             //execute the pause command because we want to pause the video when someone is clicking through the video
+            Console.WriteLine("Number TimeLine Mouse Down");
             _videoControl.PauseCommand.Execute(this);
 
             var xPosition = e.GetPosition(NumberTimelineBorder).X;

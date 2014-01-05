@@ -165,6 +165,7 @@
                                                 </Style.Triggers>
                                             </Style>
                                         </ItemsControl.ItemContainerStyle>
+                                        
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <Rectangle>

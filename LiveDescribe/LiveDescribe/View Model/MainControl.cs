@@ -13,6 +13,12 @@ namespace LiveDescribe.View_Model
         private DescriptionViewModel _descriptionviewmodel;
         #endregion
 
+        #region Events
+        public EventHandler PlayRequested;
+        public EventHandler PauseRequested;
+        public EventHandler MuteRequested;
+        #endregion
+
         #region Constructors
         public MainControl(ILiveDescribePlayer mediaVideo)
         {
@@ -21,10 +27,35 @@ namespace LiveDescribe.View_Model
             _descriptionviewmodel = new DescriptionViewModel(mediaVideo);
             //If apply requested happens  in the preferences use the new saved microphone in the settings
             _preferences.ApplyRequested += (sender, e) =>
-            {
-                _descriptionviewmodel.MicrophoneStream = Properties.Settings.Default.Microphone;
-                Console.WriteLine("Product Name of Apply Requested Microphone: " + NAudio.Wave.WaveIn.GetCapabilities(_descriptionviewmodel.MicrophoneStream.DeviceNumber).ProductName);
-            };
+                {
+                    _descriptionviewmodel.MicrophoneStream = Properties.Settings.Default.Microphone;
+                    Console.WriteLine("Product Name of Apply Requested Microphone: " + NAudio.Wave.WaveIn.GetCapabilities(_descriptionviewmodel.MicrophoneStream.DeviceNumber).ProductName);
+                };
+
+            _videocontrol.PlayRequested += (sender, e) =>
+                {
+                    mediaVideo.Play();
+
+                    //this Handler should be attached to in the view to update the graphics
+                    EventHandler handler = this.PlayRequested;
+                    if (handler != null) handler(sender, e);
+                };
+
+            _videocontrol.PauseRequested += (sender, e) =>
+                {
+                    mediaVideo.Pause();
+
+                    //this Handler should be attached to in the view to update the graphics
+                    EventHandler handler = this.PauseRequested;
+                    if (handler != null) handler(sender, e);
+                };
+
+            _videocontrol.MuteRequested += (sender, e) =>
+                {
+                    //this Handler should be attached to in the view to update the graphics
+                    EventHandler handler = this.MuteRequested;
+                    if (handler != null) handler(sender, e);
+                };
         }
         #endregion
 
@@ -33,7 +64,6 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Commands
- 
         #endregion
 
         #region Binding Properties
