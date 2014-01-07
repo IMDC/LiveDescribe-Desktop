@@ -76,7 +76,6 @@ namespace LiveDescribe.View
             //an instance of DescriptionViewModel is inside the main control and the main control will take care of synchronizing
             //the video, and the descriptions
 
-
             //listens for PlayRequested Event
             mc.PlayRequested += (sender, e) =>
                 {

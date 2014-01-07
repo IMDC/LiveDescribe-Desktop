@@ -15,6 +15,7 @@ namespace LiveDescribe.Model
     {
         private AudioUtility _audioutility;
         private string _filename;
+        private string _descriptiontext;
         private bool _isextendeddescription;
         private double _startwavefiletime;
         private double _endwavefiletime;
@@ -26,6 +27,7 @@ namespace LiveDescribe.Model
         private double _width;
         private double _height;
         private bool _isselected;
+        private NAudio.Wave.WaveOutEvent _soundOutput;
 
         public EventHandler DescriptionMouseDownEvent;
         public EventHandler DescriptionMouseUpEvent;
@@ -34,6 +36,7 @@ namespace LiveDescribe.Model
         public Description(string filename, double startwavefiletime, double endwavefiletime, double startinvideo, bool extendedDescription)
         {
             FileName = filename;
+            DescriptionText = filename;
             _startwavefiletime = startwavefiletime;
             _endwavefiletime = endwavefiletime;
             _startinvideo = startinvideo;
@@ -245,21 +248,56 @@ namespace LiveDescribe.Model
                 return _isselected;
             }
         }
+
+        public NAudio.Wave.WaveOutEvent SoundOutput
+        {
+            set
+            {
+                _soundOutput = value;
+                NotifyPropertyChanged("SoundOutput");
+            }
+            get
+            {
+                return _soundOutput;
+            }
+        }
+
+        public string DescriptionText
+        {
+            set
+            {
+                _descriptiontext = value;
+                NotifyPropertyChanged("DescriptionText");
+            }
+            get
+            {
+                return _descriptiontext;
+            }
+        }
         #endregion
 
         #region Commands
+        /// <summary>
+        /// Setter and getter for the DescriptionMouseDown Command
+        /// </summary>
         public RelayCommand DescriptionMouseDownCommand
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// Setter and getter for the DescriptionMouseUp Command
+        /// </summary>
         public RelayCommand DescriptionMouseUpCommand
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// Setter and getter for the DescriptionMouseMove Command
+        /// </summary>
         public RelayCommand DescriptionMouseMoveCommand
         {
             get;
@@ -269,7 +307,7 @@ namespace LiveDescribe.Model
 
         #region Binding Functions
         /// <summary>
-        /// Called when one of the descriptions is clicked
+        /// Called when the mouse is down on this description
         /// </summary>
         /// <param name="param"></param>
         public void DescriptionMouseDown(object param)
@@ -282,7 +320,7 @@ namespace LiveDescribe.Model
         }
 
         /// <summary>
-        /// Called when one of the descriptions mouse is up
+        /// Called when the mouse is up on this description
         /// </summary>
         /// <param name="param"></param>
         public void DescriptionMouseUp(object param)
@@ -295,7 +333,7 @@ namespace LiveDescribe.Model
         }
 
         /// <summary>
-        /// Called when the mouse is moving on one of the descriptions
+        /// Called when the mouse is moving on this description
         /// </summary>
         /// <param name="param"></param>
         public void DescriptionMouseMove(object param)

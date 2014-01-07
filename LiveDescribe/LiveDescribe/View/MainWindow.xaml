@@ -96,10 +96,129 @@
                 <TabControl Grid.Row="0" Grid.Column="4" Grid.RowSpan="6" Grid.ColumnSpan="3">
                     <TabItem Header="Spaces">
                     </TabItem>
-                    <TabItem Header="Descriptions">
-                        
+                    <TabItem DataContext="{Binding DescriptionViewModel}" Header="Descriptions">
+                        <ListView ItemsSource="{Binding Descriptions}">
+                            <ListView.SelectedItem>
+                                <Binding Path="DescriptionSelectedInList" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True" Mode="TwoWay"/>
+                            </ListView.SelectedItem>
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="Description Text">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock>
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsExtendedDescription}" Value="false">
+                                                                    <Setter Property="Text" Value="{Binding DescriptionText}"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Header="Start In Video(ms)">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock>
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsExtendedDescription}" Value="false">
+                                                                    <Setter Property="Text" Value="{Binding StartInVideo}"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Header="End In Video(ms)">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock>
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsExtendedDescription}" Value="false">
+                                                                    <Setter Property="Text" Value="{Binding EndInVideo}"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
                     </TabItem>
-                    <TabItem Header="Extended Descriptions">
+                    <TabItem DataContext="{Binding DescriptionViewModel}" Header="Extended Descriptions">
+                        <ListView ItemsSource="{Binding Descriptions}">
+                            <ListView.SelectedItem>
+                                <Binding Path="DescriptionSelectedInList" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True" Mode="TwoWay"/>
+                            </ListView.SelectedItem>
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="Description Text">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock>
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsExtendedDescription}" Value="true">
+                                                                    <Setter Property="Text" Value="{Binding DescriptionText}"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Header="Start In Video(ms)">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock>
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsExtendedDescription}" Value="true">
+                                                                    <Setter Property="Text" Value="{Binding StartInVideo}"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Header="End In Video(ms)">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock>
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsExtendedDescription}" Value="true">
+                                                                    <Setter Property="Text" Value="{Binding EndInVideo}"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
                     </TabItem>
                 </TabControl>
 

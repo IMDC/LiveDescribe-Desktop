@@ -8,6 +8,7 @@ using Microsoft.TeamFoundation.Controls.WPF.TeamExplorer.Framework;
 using Microsoft.TeamFoundation.MVVM;
 using LiveDescribe.Interfaces;
 using NAudio.Wave;
+using System.IO;
 using LiveDescribe.Model;
 using LiveDescribe.Events;
 
@@ -23,6 +24,7 @@ namespace LiveDescribe.View_Model
         private readonly ILiveDescribePlayer _mediaVideo;
         private bool _usingExistingMicrophone;
         private double _descriptionStartTime;
+        private Description _descriptionSelectedInList;
 
         //used to restore the previous video state after it's finished recording
         private LiveDescribeVideoStates _previousVideoState;
@@ -36,7 +38,6 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Constructors
-
         public DescriptionViewModel(ILiveDescribePlayer mediaVideo)
         {
             waveWriter = null;
@@ -157,6 +158,25 @@ namespace LiveDescribe.View_Model
 
         #region BindingProperties
         /// <summary>
+        /// This value gets set when a description gets selected in the List of descriptions in the tabs
+        /// </summary>
+        public Description DescriptionSelectedInList
+        {
+            set
+            {
+                _descriptionSelectedInList = value;
+                //possibly make a property to change the description's behaviour depending on if it was set through the list
+                //for example _descriptionSelectedInList.WasSelectedInList = true;
+                RaisePropertyChanged("DescriptionSelectedInList");
+            }
+            get
+            {
+                return _descriptionSelectedInList;
+            }
+        
+        }
+
+        /// <summary>
         /// property to set the Microphonestream
         /// </summary>
         public NAudio.Wave.WaveIn MicrophoneStream
@@ -187,7 +207,9 @@ namespace LiveDescribe.View_Model
                 return _descriptions;
             }
         }
-
+        /// <summary>
+        /// Property that gets set when the extended description checkbox is checked or unchecked
+        /// </summary>
         public bool ExtendedIsChecked
         {
             set
@@ -243,9 +265,24 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Helper Methods
+        /// <summary>
+        /// Method to add a description to the list and throw an event, whenever you are adding a description to the list you should use this method
+        /// </summary>
+        /// <param name="filename">Filename of the description</param>
+        /// <param name="startwavefiletime">The start time in the wav file of the description</param>
+        /// <param name="endwavefiletime">The end time in the wav file of the description</param>
+        /// <param name="startinvideo">The time in the video the description should start playing</param>
+        /// <param name="isExtendedDescription">Whether it is an extended description or not</param>
+        /// <exception cref="FileNotFoundException">It is thrown if the path (filename) of the description does not exist</exception>
         public void AddDescription(string filename, double startwavefiletime, double endwavefiletime, double startinvideo, bool isExtendedDescription)
         {
             Description desc = new Description(filename, startwavefiletime, endwavefiletime, startinvideo, isExtendedDescription);
+            NAudio.Wave.WaveFileReader reader = new NAudio.Wave.WaveFileReader(filename);
+            var waveOut = new NAudio.Wave.WaveOutEvent();
+            waveOut.Init(reader);
+            //debating on whether to keep it saved, during the lifetime of the program
+            //or reread it whenever necessary
+            desc.SoundOutput = waveOut;
             Descriptions.Add(desc);
             EventHandler<DescriptionEventArgs> addDescriptionHandler = AddDescriptionEvent;
             if (addDescriptionHandler == null) return;

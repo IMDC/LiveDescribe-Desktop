@@ -2,6 +2,7 @@
 using Microsoft.TeamFoundation.MVVM;
 using System.ComponentModel;
 using System;
+using LiveDescribe.Model;
 
 namespace LiveDescribe.View_Model
 {
@@ -35,7 +36,6 @@ namespace LiveDescribe.View_Model
             _videocontrol.PlayRequested += (sender, e) =>
                 {
                     mediaVideo.Play();
-
                     //this Handler should be attached to in the view to update the graphics
                     EventHandler handler = this.PlayRequested;
                     if (handler != null) handler(sender, e);
@@ -44,7 +44,6 @@ namespace LiveDescribe.View_Model
             _videocontrol.PauseRequested += (sender, e) =>
                 {
                     mediaVideo.Pause();
-
                     //this Handler should be attached to in the view to update the graphics
                     EventHandler handler = this.PauseRequested;
                     if (handler != null) handler(sender, e);
@@ -101,5 +100,8 @@ namespace LiveDescribe.View_Model
         }
         #endregion
 
+        #region Helper Functions
+
+        #endregion
     }
 }
