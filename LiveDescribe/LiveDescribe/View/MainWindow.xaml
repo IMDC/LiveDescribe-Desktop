@@ -293,7 +293,7 @@
                                                             <Style.Triggers>
                                                                 <!--If the description is not an extended description fill it Green-->
                                                                 <DataTrigger Binding="{Binding IsExtendedDescription}" Value="false">
-                                                                    <Setter Property="Fill" Value="Green"/> 
+                                                                    <Setter Property="Fill" Value="Green"/>
                                                                     <Setter Property="Opacity" Value="0.25"/>
                                                                 </DataTrigger>
                                                                 <!--If the description is an extended description fill it Red-->

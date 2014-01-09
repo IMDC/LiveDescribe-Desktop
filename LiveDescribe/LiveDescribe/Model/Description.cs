@@ -13,6 +13,8 @@ namespace LiveDescribe.Model
 {
     public class Description: INotifyPropertyChanged
     {
+        //All units of time is in milliseconds
+        #region Instance variables
         private AudioUtility _audioutility;
         private string _filename;
         private string _descriptiontext;
@@ -27,11 +29,15 @@ namespace LiveDescribe.Model
         private double _width;
         private double _height;
         private bool _isselected;
-        private NAudio.Wave.WaveOutEvent _soundOutput;
+        private bool _isPlaying;
+        #endregion
 
+        #region Event Handlers
         public EventHandler DescriptionMouseDownEvent;
         public EventHandler DescriptionMouseUpEvent;
         public EventHandler DescriptionMouseMoveEvent;
+        public EventHandler DescriptionFinishedPlaying;
+        #endregion
 
         public Description(string filename, double startwavefiletime, double endwavefiletime, double startinvideo, bool extendedDescription)
         {
@@ -46,6 +52,49 @@ namespace LiveDescribe.Model
             DescriptionMouseUpCommand = new RelayCommand(DescriptionMouseUp, param => true);
             DescriptionMouseMoveCommand = new RelayCommand(DescriptionMouseMove, param => true);
         }
+
+        #region Public Methods
+        /// <summary>
+        /// This method plays the description from a specified offset in milliseconds
+        /// </summary>
+        ///<param name="offset">The offset in the file in which to play offset is in Milliseconds</param>
+        /// <exception cref="FileNotFoundException">It is thrown if the path (filename) of the description does not exist</exception>
+        public void Play(double offset)
+        {
+            if (IsPlaying == false)
+                IsPlaying = true;
+            else
+            {
+                //TODO: add a way to stop when the EndWaveFileTime has been reached
+                //most likely using the reader variable, and the waveOut variable
+                return;
+            }
+            NAudio.Wave.WaveFileReader reader = new NAudio.Wave.WaveFileReader(FileName);
+            //reader.WaveFormat.AverageBytesPerSecond/ 1000 = Average Bytes Per Millisecond
+            //AverageBytesPerMillisecond * (offset + StartWaveFileTime) = amount to play from
+            reader.Seek((long)((reader.WaveFormat.AverageBytesPerSecond / 1000) * (offset + StartWaveFileTime)), System.IO.SeekOrigin.Begin);
+            NAudio.Wave.WaveOutEvent waveOut = new NAudio.Wave.WaveOutEvent();
+            waveOut.PlaybackStopped += OnDescriptionPlaybackStopped;
+            waveOut.Init(reader);
+            waveOut.Play();
+        }
+        #endregion
+
+        #region Private Methods
+        /// <summary>
+        /// When the playback of the wave file stops naturally, this method gets called and sets
+        /// the description IsPlaying value to false
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnDescriptionPlaybackStopped(object sender, NAudio.Wave.StoppedEventArgs e)
+        {
+            IsPlaying = false;
+            EventHandler handler = DescriptionFinishedPlaying;
+            if (handler == null) return;
+            handler(this, EventArgs.Empty);
+        }
+        #endregion
 
         #region Properties
         /// <summary>
@@ -249,19 +298,6 @@ namespace LiveDescribe.Model
             }
         }
 
-        public NAudio.Wave.WaveOutEvent SoundOutput
-        {
-            set
-            {
-                _soundOutput = value;
-                NotifyPropertyChanged("SoundOutput");
-            }
-            get
-            {
-                return _soundOutput;
-            }
-        }
-
         public string DescriptionText
         {
             set
@@ -272,6 +308,19 @@ namespace LiveDescribe.Model
             get
             {
                 return _descriptiontext;
+            }
+        }
+
+        public bool IsPlaying
+        {
+            set
+            {
+                _isPlaying = value;
+                NotifyPropertyChanged("IsPlaying");
+            }
+            get
+            {
+                return _isPlaying;
             }
         }
         #endregion

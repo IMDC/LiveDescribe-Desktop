@@ -273,16 +273,9 @@ namespace LiveDescribe.View_Model
         /// <param name="endwavefiletime">The end time in the wav file of the description</param>
         /// <param name="startinvideo">The time in the video the description should start playing</param>
         /// <param name="isExtendedDescription">Whether it is an extended description or not</param>
-        /// <exception cref="FileNotFoundException">It is thrown if the path (filename) of the description does not exist</exception>
         public void AddDescription(string filename, double startwavefiletime, double endwavefiletime, double startinvideo, bool isExtendedDescription)
         {
             Description desc = new Description(filename, startwavefiletime, endwavefiletime, startinvideo, isExtendedDescription);
-            NAudio.Wave.WaveFileReader reader = new NAudio.Wave.WaveFileReader(filename);
-            var waveOut = new NAudio.Wave.WaveOutEvent();
-            waveOut.Init(reader);
-            //debating on whether to keep it saved, during the lifetime of the program
-            //or reread it whenever necessary
-            desc.SoundOutput = waveOut;
             Descriptions.Add(desc);
             EventHandler<DescriptionEventArgs> addDescriptionHandler = AddDescriptionEvent;
             if (addDescriptionHandler == null) return;

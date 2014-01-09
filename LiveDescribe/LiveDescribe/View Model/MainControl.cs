@@ -3,15 +3,18 @@ using Microsoft.TeamFoundation.MVVM;
 using System.ComponentModel;
 using System;
 using LiveDescribe.Model;
+using System.Windows.Threading;
 
 namespace LiveDescribe.View_Model
 {
     class MainControl : ViewModelBase
     {
         #region Instance Variables
+        private DispatcherTimer _descriptiontimer;
         private VideoControl _videocontrol;
         private PreferencesViewModel _preferences;
         private DescriptionViewModel _descriptionviewmodel;
+        private ILiveDescribePlayer _mediaVideo;
         #endregion
 
         #region Events
@@ -26,6 +29,13 @@ namespace LiveDescribe.View_Model
             _videocontrol = new VideoControl(mediaVideo);
             _preferences = new PreferencesViewModel();
             _descriptionviewmodel = new DescriptionViewModel(mediaVideo);
+
+            _mediaVideo = mediaVideo;
+            //Dispatch Timer runs on the graphics thread, if possible maybe run in it's own thread
+            _descriptiontimer = new DispatcherTimer();
+            _descriptiontimer.Tick += Play_Tick;
+            _descriptiontimer.Interval = new TimeSpan(0, 0, 0, 0, 10);
+                      
             //If apply requested happens  in the preferences use the new saved microphone in the settings
             _preferences.ApplyRequested += (sender, e) =>
                 {
@@ -36,7 +46,8 @@ namespace LiveDescribe.View_Model
             _videocontrol.PlayRequested += (sender, e) =>
                 {
                     mediaVideo.Play();
-                    //this Handler should be attached to in the view to update the graphics
+                    _descriptiontimer.Start();
+                    //this Handler should be attached to the view to update the graphics
                     EventHandler handler = this.PlayRequested;
                     if (handler != null) handler(sender, e);
                 };
@@ -44,14 +55,15 @@ namespace LiveDescribe.View_Model
             _videocontrol.PauseRequested += (sender, e) =>
                 {
                     mediaVideo.Pause();
-                    //this Handler should be attached to in the view to update the graphics
+                    _descriptiontimer.Stop();
+                    //this Handler should be attached to the view to update the graphics
                     EventHandler handler = this.PauseRequested;
                     if (handler != null) handler(sender, e);
                 };
 
             _videocontrol.MuteRequested += (sender, e) =>
                 {
-                    //this Handler should be attached to in the view to update the graphics
+                    //this Handler should be attached to the view to update the graphics
                     EventHandler handler = this.MuteRequested;
                     if (handler != null) handler(sender, e);
                 };
@@ -101,7 +113,30 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Helper Functions
+        /// <summary>
+        /// Gets called by the description timer
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Play_Tick(object sender, EventArgs e)
+        {
+            //I put this method in it's own timer in the MainControl for now, because I believe it should be separate from the view
+            //this could possibly put it in the view in the other timer, so only one timer would be running
 
+            for (int i = 0; i < _descriptionviewmodel.Descriptions.Count; ++i)
+            {
+                Description curDescription = _descriptionviewmodel.Descriptions[i];
+                double offset = _mediaVideo.CurrentPosition.TotalMilliseconds - curDescription.StartInVideo;
+
+                if (!curDescription.IsExtendedDescription && 
+                    offset >= 0 && offset < (curDescription.EndWaveFileTime - curDescription.StartWaveFileTime))
+                {
+                    Console.WriteLine("Playing Regular Description");
+                    curDescription.Play(offset);
+                    break;
+                }
+            }
+        }
         #endregion
     }
 }
