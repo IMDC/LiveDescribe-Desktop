@@ -9,7 +9,7 @@ namespace LiveDescribe.Interfaces
 {
     public interface ILiveDescribePlayer
     {
-        TimeSpan CurrentPosition { get; }
+        TimeSpan CurrentPosition { get; set; }
 
         double DurationSeconds { get; }
 
@@ -19,8 +19,12 @@ namespace LiveDescribe.Interfaces
         
         string Path { set; get; }
 
+        bool IsMuted { set; get; }
+
         void Play();
 
         void Pause();
+
+        void Stop();
     }
 }

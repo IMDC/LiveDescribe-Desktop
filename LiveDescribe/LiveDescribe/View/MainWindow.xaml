@@ -70,6 +70,9 @@
                             <i:EventTrigger EventName="MediaFailed">
                                 <i:InvokeCommandAction Command="{Binding MediaFailedCommand}"/>
                             </i:EventTrigger>
+                            <i:EventTrigger EventName="MediaEnded">
+                                <i:InvokeCommandAction Command="{Binding MediaEndedCommand}"/>
+                            </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </controls:LiveDescribeMediaPlayer>
                 </Border>
@@ -97,7 +100,7 @@
                     <TabItem Header="Spaces">
                     </TabItem>
                     <TabItem DataContext="{Binding DescriptionViewModel}" Header="Descriptions">
-                        <ListView ItemsSource="{Binding Descriptions}">
+                        <ListView VirtualizingPanel.IsVirtualizing="True" ItemsSource="{Binding Descriptions}">
                             <ListView.SelectedItem>
                                 <Binding Path="DescriptionSelectedInList" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True" Mode="TwoWay"/>
                             </ListView.SelectedItem>
@@ -159,7 +162,7 @@
                         </ListView>
                     </TabItem>
                     <TabItem DataContext="{Binding DescriptionViewModel}" Header="Extended Descriptions">
-                        <ListView ItemsSource="{Binding Descriptions}">
+                        <ListView VirtualizingPanel.IsVirtualizing="True" ItemsSource="{Binding Descriptions}">
                             <ListView.SelectedItem>
                                 <Binding Path="DescriptionSelectedInList" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True" Mode="TwoWay"/>
                             </ListView.SelectedItem>
@@ -234,7 +237,7 @@
 
                             <!--Audio Canvas which includes the marker and the number line-->
                             <Border Grid.Row="0" Grid.RowSpan="2" SizeChanged="AudioCanvasBorder_SizeChanged_1" DataContext="{Binding VideoControl}" Name="AudioCanvasBorder"    BorderBrush="Black" BorderThickness="1">
-                                <Canvas Name="AudioCanvas">
+                                <Canvas VirtualizingPanel.IsVirtualizing="True" Name="AudioCanvas">
                                     <Border  Name="NumberTimelineBorder" Background="White" Height="20" BorderBrush="Black" BorderThickness="0,0,0,2">
                                         <Canvas Background="White" MouseDown="NumberTimeline_OnMouseDown" Name="NumberTimeline"/>
                                     </Border>

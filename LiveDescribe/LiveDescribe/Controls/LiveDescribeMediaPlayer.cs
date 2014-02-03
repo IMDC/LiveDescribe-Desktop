@@ -39,6 +39,10 @@ namespace LiveDescribe.Controls
             {
                 return this.Position; 
             }
+            set
+            {
+                this.Position = value;
+            }
         }
 
         /// <summary>

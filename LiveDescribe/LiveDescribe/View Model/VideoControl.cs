@@ -26,6 +26,7 @@ namespace LiveDescribe.View_Model
         public event EventHandler MuteRequested;
         public event EventHandler VideoOpenedRequested;
         public event EventHandler MediaFailedEvent;
+        public event EventHandler MediaEndedEvent;
         public event EventHandler OnStrippingAudioCompleted;
 
         //Event handlers for the Marker on the timeline
@@ -37,7 +38,6 @@ namespace LiveDescribe.View_Model
         #region Constructors
         public VideoControl(ILiveDescribePlayer mediaVideo)
         {
-           // _video = new Video();
             _mediaVideo = mediaVideo;
             
             PlayCommand = new RelayCommand(Play, PlayCheck);
@@ -56,6 +56,7 @@ namespace LiveDescribe.View_Model
             VideoOpenedCommand = new RelayCommand(VideoOpen, param => true);
             MediaFailedCommand = new RelayCommand(MediaFailed, param => true);
 
+            MediaEndedCommand = new RelayCommand(MediaEnded, param => true);
             //bound to Menu->file->Import Video
             ImportVideoCommand = new RelayCommand(ImportVideo, ImportCheck);
             
@@ -65,6 +66,15 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Commands
+        /// <summary>
+        /// Setter and getter for MediaEndedCommand
+        /// </summary>
+        public RelayCommand MediaEndedCommand
+        {
+            get;
+            private set;
+        }
+
         /// <summary>
         /// Setter and getter for MarkerMouseMoveCommand
         /// </summary>
@@ -328,6 +338,19 @@ namespace LiveDescribe.View_Model
             handler(this, EventArgs.Empty);
         }
 
+        /// <summary>
+        /// thros an event when the media is finished
+        /// </summary>
+        /// <param name="param"></param>
+        public void MediaEnded(object param)
+        {
+            EventHandler handler = MediaEndedEvent;
+            Console.WriteLine("Media Finished");
+            //Changing state back to video loaded because it is starting from the beginning
+            _mediaVideo.CurrentState = LiveDescribeVideoStates.VideoLoaded;
+            if (handler == null) return;
+            handler(this, EventArgs.Empty);
+        }
         #endregion
 
         #region Background Workers

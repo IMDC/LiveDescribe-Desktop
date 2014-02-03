@@ -43,11 +43,16 @@ namespace LiveDescribe.Model
         {
             FileName = filename;
             DescriptionText = filename;
+            IsExtendedDescription = extendedDescription;
+
+            //I specifically use the instance variables rather than the properties
+            //because the property events can possibly be caught in the view
+            //leading to an uneeded amount of changes to the description graphics
             _startwavefiletime = startwavefiletime;
             _endwavefiletime = endwavefiletime;
             _startinvideo = startinvideo;
             _endinvideo = startinvideo + (endwavefiletime - startwavefiletime);
-            IsExtendedDescription = extendedDescription;
+           
             DescriptionMouseDownCommand = new RelayCommand(DescriptionMouseDown, param => true);
             DescriptionMouseUpCommand = new RelayCommand(DescriptionMouseUp, param => true);
             DescriptionMouseMoveCommand = new RelayCommand(DescriptionMouseMove, param => true);
@@ -73,6 +78,29 @@ namespace LiveDescribe.Model
             //reader.WaveFormat.AverageBytesPerSecond/ 1000 = Average Bytes Per Millisecond
             //AverageBytesPerMillisecond * (offset + StartWaveFileTime) = amount to play from
             reader.Seek((long)((reader.WaveFormat.AverageBytesPerSecond / 1000) * (offset + StartWaveFileTime)), System.IO.SeekOrigin.Begin);
+            NAudio.Wave.WaveOutEvent waveOut = new NAudio.Wave.WaveOutEvent();
+            waveOut.PlaybackStopped += OnDescriptionPlaybackStopped;
+            waveOut.Init(reader);
+            waveOut.Play();
+        }
+        /// <summary>
+        /// This method plays the description with no offset only at the time of the value StartWaveFileTime
+        /// </summary>
+        public void Play()
+        {
+
+            if (IsPlaying == false)
+                IsPlaying = true;
+            else
+            {
+                //TODO: add a way to stop when the EndWaveFileTime has been reached
+                //most likely using the reader variable, and the waveOut variable
+                return;
+            }
+            NAudio.Wave.WaveFileReader reader = new NAudio.Wave.WaveFileReader(FileName);
+            //reader.WaveFormat.AverageBytesPerSecond/ 1000 = Average Bytes Per Millisecond
+            //AverageBytesPerMillisecond * (StartWaveFileTime) = amount to play from
+            reader.Seek((long)((reader.WaveFormat.AverageBytesPerSecond / 1000) * (StartWaveFileTime)), System.IO.SeekOrigin.Begin);
             NAudio.Wave.WaveOutEvent waveOut = new NAudio.Wave.WaveOutEvent();
             waveOut.PlaybackStopped += OnDescriptionPlaybackStopped;
             waveOut.Init(reader);

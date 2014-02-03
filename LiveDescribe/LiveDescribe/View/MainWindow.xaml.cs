@@ -20,7 +20,6 @@ namespace LiveDescribe.View
     {
         private double _staticCanvasWidth = 0;
         private double _videoDuration = -1;
-        private readonly DispatcherTimer _videoTimer;
         private const double MarkerOffset = 10.0;
         private const double PageScrollPercent = 0.95;  //when the marker hits 95% of the page it scrolls
         private const double PageTime = 30; //30 seconds page time before audiocanvas  & descriptioncanvas scroll
@@ -39,9 +38,7 @@ namespace LiveDescribe.View
             InitializeComponent();
 
             var mc = new MainControl(VideoMedia);
-            _videoTimer = new DispatcherTimer();
-            _videoTimer.Tick += Play_Tick;
-            _videoTimer.Interval = new TimeSpan(0,0,0,0,10);
+
             DataContext = mc;
 
             _videoControl = mc.VideoControl;
@@ -61,14 +58,6 @@ namespace LiveDescribe.View
                     VideoMedia.Play();
                     VideoMedia.Pause();
                 };
-
-            VideoMedia.MediaEnded += (sender, e) =>
-                {
-                    _videoTimer.Stop();
-                    VideoMedia.Stop();
-                    UpdateMarkerPosition(-MarkerOffset);
-                };
-
             #endregion
 
             #region Event Listeners For Main Control (Pause, Play, Mute, FastForward, Rewind)
@@ -79,7 +68,8 @@ namespace LiveDescribe.View
             //listens for PlayRequested Event
             mc.PlayRequested += (sender, e) =>
                 {
-                    _videoTimer.Start();
+                    //this is to recheck all the graphics states
+                    System.Windows.Input.CommandManager.InvalidateRequerySuggested();
                     var newValue = ((Canvas.GetLeft(Marker) + MarkerOffset) / AudioCanvas.Width) * _videoDuration;
                     UpdateVideoPosition((int)newValue);
                 };
@@ -87,14 +77,19 @@ namespace LiveDescribe.View
             //listens for PauseRequested Event
             mc.PauseRequested += (sender, e) =>
                 {
-                    _videoTimer.Stop();
+                    //this is to recheck all the graphics states
+                    System.Windows.Input.CommandManager.InvalidateRequerySuggested();
                 };
 
-            //listens for MuteRequested Event
-            mc.MuteRequested += (sender, e) =>
+            //listens for when the media has gone all the way to the end
+            mc.MediaEnded += (sender, e) =>
                 {
-                    VideoMedia.IsMuted = !VideoMedia.IsMuted;
+                    UpdateMarkerPosition(-MarkerOffset);
+                    //this is to recheck all the graphics states
+                    System.Windows.Input.CommandManager.InvalidateRequerySuggested();
                 };
+
+            mc.GraphicsTick += Play_Tick;
             #endregion
 
             #region Event Listeners For VideoControl
@@ -162,6 +157,7 @@ namespace LiveDescribe.View
 
             #region Event Listeners for PreferencesViewModel
 
+            //create the preferences window when the option is clicked
             _preferences.ShowPreferencesRequested += (sender, e) =>
                 {
                     var preferencesWindow = new PreferencesWindow();
@@ -225,9 +221,22 @@ namespace LiveDescribe.View
         /// <param name="e">e</param>
         private void Play_Tick(object sender, EventArgs e)
         {
-            ScrollRightIfCan(Canvas.GetLeft(Marker));
-            double position = (VideoMedia.Position.TotalMilliseconds / _videoDuration) * (AudioCanvas.Width );
-            UpdateMarkerPosition(position - MarkerOffset);
+            try
+            {
+                //This method runs on a separate thread therefore all calls to get values or set values that are located on the UI thread
+                //must be gotten with Dispatcher.Invoke
+                double canvasLeft = 0;
+                Dispatcher.Invoke(delegate { canvasLeft = Canvas.GetLeft(Marker); });
+                ScrollRightIfCan(canvasLeft);
+                Dispatcher.Invoke(delegate 
+                { 
+                    double position = (VideoMedia.Position.TotalMilliseconds / _videoDuration) * (AudioCanvas.Width); 
+                    UpdateMarkerPosition(position - MarkerOffset);
+                });
+                
+            }
+            catch (System.Threading.Tasks.TaskCanceledException exception)
+            { }
         }
 
         #region View Listeners
@@ -289,20 +298,26 @@ namespace LiveDescribe.View
         }
 
         /// <summary>
+        /// This method is called inside the Play_Tick method which runs on a separate thread
         /// Scrolls the scrollviewer to the right as much as the PageScrollPercent when the marker reaches the PageScrollPercent of the width of the page
         /// </summary>
         /// <returns>true if it can scroll right</returns>
         private bool ScrollRightIfCan(double xPos)
         {
-            double width = _staticCanvasWidth; 
-            double singlePageWidth = TimeLine.ActualWidth; 
+            //all calls to dispatcher.Invoke are to get or set values that are located in the UI thread
+            //because this method is located in the Play_Tick method which runs in a separate thread
+            //that is how you must get/set the values
 
-            double scrolledAmount = TimeLine.HorizontalOffset;
+            double width = _staticCanvasWidth;
+            double singlePageWidth = 0;
+            double scrolledAmount = 0;
+            
+            Dispatcher.Invoke(delegate { singlePageWidth = TimeLine.ActualWidth; scrolledAmount = TimeLine.HorizontalOffset; });
             double scrollOffsetRight = PageScrollPercent * singlePageWidth;
           //  Console.WriteLine("Offset: " + scrollOffsetRight);
             if (!(xPos - scrolledAmount >= (scrollOffsetRight))) return false;
-    
-            TimeLine.ScrollToHorizontalOffset(scrollOffsetRight + scrolledAmount);
+
+            Dispatcher.Invoke(delegate { TimeLine.ScrollToHorizontalOffset(scrollOffsetRight + scrolledAmount); });
             return true;
         }
 
@@ -325,6 +340,7 @@ namespace LiveDescribe.View
         /// </summary>
         private void DrawWaveForm()
         {
+            Console.WriteLine("Drawing wave form");
             List<float> data = _videoControl.AudioData;
             double width = _staticCanvasWidth; 
             double height = AudioCanvas.ActualHeight;
@@ -360,7 +376,7 @@ namespace LiveDescribe.View
         /// </summary>
         private void SetTimeline()
         {
-
+            Console.WriteLine("Setting Timeline");
             double pages = _videoDuration / (PageTime * 1000);
             double width = _staticCanvasWidth; 
 
@@ -373,7 +389,7 @@ namespace LiveDescribe.View
             {
 
                 Line splitLine;
-
+                
                 if (i % LongLineTime == 0)
                 {
                     splitLine = new Line
@@ -398,7 +414,7 @@ namespace LiveDescribe.View
                     X1 = width / numlines * i,
                     X2 = width / numlines * i
                 };
-
+               
                 NumberTimeline.Children.Add(splitLine);
             }
 
