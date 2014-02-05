@@ -25,6 +25,7 @@
             <Menu DockPanel.Dock="Top" HorizontalAlignment="Stretch">
                 <MenuItem Header="File">
                     <MenuItem  DataContext="{Binding VideoControl}" Header="Import Video" Command="{Binding ImportVideoCommand}"/>
+                    <MenuItem Header="Close Project" Command="{Binding CloseProjectCommand}"/>
                     <MenuItem DataContext="{Binding PreferencesViewModel}" Name="Preferences" Header="Preferences" Command="{Binding ShowPreferencesCommand}"/>
                 </MenuItem>
             </Menu>
@@ -255,6 +256,7 @@
                                             </i:EventTrigger>
                                         </i:Interaction.Triggers>
                                     </Polyline>
+                                    
                                 </Canvas>
                             </Border>
                             

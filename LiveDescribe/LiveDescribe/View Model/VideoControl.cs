@@ -529,5 +529,16 @@ namespace LiveDescribe.View_Model
             get { return this._waveFormData; }
         }
         #endregion
+
+        #region Functions called by MainControl
+        public void CloseVideoControl()
+        {
+            _audioOperator = null;
+            _mediaVideo.Path = null;
+            _mediaVideo.Stop();
+            _mediaVideo.Close();
+            _mediaVideo.CurrentState = LiveDescribeVideoStates.VideoNotLoaded;
+        }
+        #endregion
     }
 }

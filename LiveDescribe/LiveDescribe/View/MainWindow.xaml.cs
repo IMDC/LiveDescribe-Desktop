@@ -89,6 +89,19 @@ namespace LiveDescribe.View
                     System.Windows.Input.CommandManager.InvalidateRequerySuggested();
                 };
 
+
+            mc.ProjectClosed += (sender, e) =>
+            {
+                AudioCanvas.Children.Clear();
+                NumberTimeline.Children.Clear();
+                AudioCanvas.Children.Add(NumberTimelineBorder);
+                AudioCanvas.Children.Add(Marker);
+                
+                UpdateMarkerPosition(-MarkerOffset);
+                CurrentTimeLabel.Text = "00:00:000";
+                Marker.IsEnabled = false;
+            };
+
             mc.GraphicsTick += Play_Tick;
             #endregion
 
@@ -143,16 +156,23 @@ namespace LiveDescribe.View
 
                     //make sure the middle of the marker doesn't go below the beginning of the canvas
                     if (xPosition < -MarkerOffset)
+                    {
                         Canvas.SetLeft(Marker, -MarkerOffset);
+                        UpdateVideoPosition(0);
+                        return;
+                    }
                     //make sure the middle of the marker doesn't go above the end of the canvas
                     else if (xPosition > AudioCanvas.Width - 1)
+                    {
                         Canvas.SetLeft(Marker, AudioCanvas.Width - 1);
+                      //  UpdateVideoPosition(_videoDuration);
+                    }
                     else
                         Canvas.SetLeft(Marker, xPosition - MarkerOffset);
 
                     var newValue = (xPosition / AudioCanvas.Width) * _videoDuration;
                     UpdateVideoPosition((int)newValue);
-                };   
+                };
             #endregion
 
             #region Event Listeners for PreferencesViewModel
@@ -355,7 +375,7 @@ namespace LiveDescribe.View
                 float min = bin[0];
                 float max = bin[bin.Count - 1];
                 //Console.WriteLine("Min: " + min + " Max: " + max);
-
+                
                 //draw the line on this pixel
                 var wavLine = new Line
                 {

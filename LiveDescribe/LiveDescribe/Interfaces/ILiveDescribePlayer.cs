@@ -26,5 +26,7 @@ namespace LiveDescribe.Interfaces
         void Pause();
 
         void Stop();
+
+        void Close();
     }
 }

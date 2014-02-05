@@ -10,7 +10,6 @@ namespace LiveDescribe.View_Model
     class MainControl : ViewModelBase
     {
         #region Instance Variables
-     //   private DispatcherTimer _descriptiontimer;
         private Timer _descriptiontimer;
         private VideoControl _videocontrol;
         private PreferencesViewModel _preferences;
@@ -19,6 +18,7 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Events
+        public event EventHandler ProjectClosed;
         public event EventHandler GraphicsTick;
         public event EventHandler PlayRequested;
         public event EventHandler PauseRequested;
@@ -33,11 +33,13 @@ namespace LiveDescribe.View_Model
             _preferences = new PreferencesViewModel();
             _descriptionviewmodel = new DescriptionViewModel(mediaVideo);
 
+            CloseProjectCommand = new RelayCommand(CloseProject, param=>true);
+
             _mediaVideo = mediaVideo;
                       
             //If apply requested happens  in the preferences use the new saved microphone in the settings
             _descriptiontimer = new Timer(10);
-            _descriptiontimer.Elapsed += new ElapsedEventHandler(Play_Tick);
+            _descriptiontimer.Elapsed += (sender, e) => Play_Tick(sender, e);
             _descriptiontimer.AutoReset = true;
 
             _preferences.ApplyRequested += (sender, e) =>
@@ -85,10 +87,28 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Binding Functions
-
+        /// <summary>
+        /// This function gets called when the close project menu item gets pressed
+        /// </summary>
+        /// <param name="param"></param>
+        public void CloseProject(object param)
+        {
+            //TODO: ask to save here before closing everything
+            //TODO: put it in a background worker and create a loading screen (possibly a general use control)
+            Console.WriteLine("Closed Project");
+            _descriptionviewmodel.CloseDescriptionViewModel();
+            _videocontrol.CloseVideoControl();
+            EventHandler handler = ProjectClosed;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
         #endregion
 
         #region Commands
+        public RelayCommand CloseProjectCommand
+        {
+            private set;
+            get;
+        }
         #endregion
 
         #region Binding Properties
@@ -156,7 +176,22 @@ namespace LiveDescribe.View_Model
                     curDescription.Play(offset);
                     break;
                 }
+                else if (curDescription.IsExtendedDescription &&
+                    offset < 100 && offset >= -100)
+                {
 
+                    //this method technically runs on the UI thread because it is an event that gets called in the description class
+                    //therefore does not need to be invoked by the Dispatcher
+                    curDescription.DescriptionFinishedPlaying += (sender1, e1) =>
+                    {
+                      //  _mediaVideo.CurrentPosition = new TimeSpan((int)_mediaVideo.CurrentPosition.TotalDays,(int) _mediaVideo.CurrentPosition.TotalHours, 
+                      //       (int)_mediaVideo.CurrentPosition.TotalMinutes, (int)_mediaVideo.CurrentPosition.TotalSeconds, (int)_mediaVideo.CurrentPosition.TotalMilliseconds + 100);
+                        _videocontrol.PlayCommand.Execute(this);
+                    };
+
+                    //Invoke the commands on the UI thread
+                    Dispatcher.Invoke(delegate { _videocontrol.PauseCommand.Execute(this); curDescription.Play(); });
+                }
             }
         }
         #endregion

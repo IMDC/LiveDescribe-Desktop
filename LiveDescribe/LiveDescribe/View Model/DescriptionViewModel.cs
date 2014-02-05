@@ -20,7 +20,7 @@ namespace LiveDescribe.View_Model
         #region Instance Variables
         private ObservableCollection<Description> _descriptions;
         private NAudio.Wave.WaveIn _microphonestream;
-        private NAudio.Wave.WaveFileWriter waveWriter;
+        private NAudio.Wave.WaveFileWriter _waveWriter;
         private readonly ILiveDescribePlayer _mediaVideo;
         private bool _usingExistingMicrophone;
         private double _descriptionStartTime;
@@ -40,7 +40,7 @@ namespace LiveDescribe.View_Model
         #region Constructors
         public DescriptionViewModel(ILiveDescribePlayer mediaVideo)
         {
-            waveWriter = null;
+            _waveWriter = null;
             RecordCommand = new RelayCommand(Record, RecordStateCheck);
             _mediaVideo = mediaVideo;
 
@@ -88,9 +88,9 @@ namespace LiveDescribe.View_Model
             {    
                 Console.WriteLine("Finished Recording");
                 MicrophoneStream.StopRecording();
-                string filename = waveWriter.Filename;
-                waveWriter.Dispose();
-                waveWriter = null;
+                string filename = _waveWriter.Filename;
+                _waveWriter.Dispose();
+                _waveWriter = null;
                 NAudio.Wave.WaveFileReader read = new NAudio.Wave.WaveFileReader(filename);
                 AddDescription(filename, 0, read.TotalTime.TotalMilliseconds, _descriptionStartTime, ExtendedIsChecked);
                 read.Dispose();
@@ -130,7 +130,7 @@ namespace LiveDescribe.View_Model
             // get a random guid to name the wave file
             // there is an EXTREMELY small chance that the guid used has been used before
             Guid g = Guid.NewGuid();
-            waveWriter = new NAudio.Wave.WaveFileWriter(Properties.Settings.Default.WorkingDirectory + g.ToString() + ".wav", MicrophoneStream.WaveFormat);
+            _waveWriter = new NAudio.Wave.WaveFileWriter(Properties.Settings.Default.WorkingDirectory + g.ToString() + ".wav", MicrophoneStream.WaveFormat);
             
             MicrophoneStream.DataAvailable += new EventHandler<NAudio.Wave.WaveInEventArgs>(MicrophoneSteam_DataAvailable);
   
@@ -149,7 +149,9 @@ namespace LiveDescribe.View_Model
                 return;
             }
 
+            //save the current state so when the button is pressed again you can restore it back to that state
             _previousVideoState = _mediaVideo.CurrentState;
+
             if (_mediaVideo != null) _mediaVideo.CurrentState = LiveDescribeVideoStates.RecordingDescription;
             if (handlerRecordRequested == null) return;
             handlerRecordRequested(this, EventArgs.Empty);
@@ -256,10 +258,10 @@ namespace LiveDescribe.View_Model
 
         private void MicrophoneSteam_DataAvailable(object sender, WaveInEventArgs e)
         {
-            if (waveWriter == null) return;
+            if (_waveWriter == null) return;
 
-            waveWriter.Write(e.Buffer, 0, e.BytesRecorded);
-            waveWriter.Flush();
+            _waveWriter.Write(e.Buffer, 0, e.BytesRecorded);
+            _waveWriter.Flush();
         }
 
         #endregion
@@ -280,6 +282,18 @@ namespace LiveDescribe.View_Model
             EventHandler<DescriptionEventArgs> addDescriptionHandler = AddDescriptionEvent;
             if (addDescriptionHandler == null) return;
             addDescriptionHandler(this, new DescriptionEventArgs(desc));
+        }
+        #endregion
+
+        #region Functions Called by MainControl
+        /// <summary>
+        /// This function closes everything necessary to start fresh
+        /// </summary>
+        public void CloseDescriptionViewModel()
+        {
+            Descriptions = null;
+            _waveWriter = null;
+            Descriptions = new ObservableCollection<Description>();
         }
         #endregion
     }
