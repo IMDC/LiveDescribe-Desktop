@@ -37,7 +37,7 @@
     <Reference Include="Microsoft.Expression.Interactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.TeamFoundation.Controls, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="NAudio">
-      <HintPath>..\..\..\..\..\Desktop\NAudio-Release\NAudio.dll</HintPath>
+      <HintPath>..\lib\NAudio.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -55,7 +55,7 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="WriteableBitmapEx.Wpf">
-      <HintPath>..\..\..\..\..\Downloads\WriteableBitmapEx_v1.0.9.0\WPF\WriteableBitmapEx.Wpf.dll</HintPath>
+      <HintPath>..\lib\WriteableBitmapEx.Wpf.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
