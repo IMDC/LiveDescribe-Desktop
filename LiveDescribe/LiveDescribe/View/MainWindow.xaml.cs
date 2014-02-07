@@ -10,6 +10,8 @@ using LiveDescribe.View_Model;
 using System.Windows.Threading;
 using System.Collections.Generic;
 using Microsoft.TeamFoundation.MVVM;
+using System.Windows.Media.Imaging;
+using System.Windows.Media;
 
 namespace LiveDescribe.View
 {
@@ -93,6 +95,7 @@ namespace LiveDescribe.View
             mc.ProjectClosed += (sender, e) =>
             {
                 AudioCanvas.Children.Clear();
+                AudioCanvas.Background = null;
                 NumberTimeline.Children.Clear();
                 AudioCanvas.Children.Add(NumberTimelineBorder);
                 AudioCanvas.Children.Add(Marker);
@@ -123,6 +126,7 @@ namespace LiveDescribe.View
                 {
                     SetTimeline();
                     DrawWaveForm();
+
                     //make this false so that the loading screen goes away after the timeline and the wave form are drawn
                     _videoControl.IsBusyStrippingAudio = false;
                 };
@@ -241,6 +245,7 @@ namespace LiveDescribe.View
         /// <param name="e">e</param>
         private void Play_Tick(object sender, EventArgs e)
         {
+            
             try
             {
                 //This method runs on a separate thread therefore all calls to get values or set values that are located on the UI thread
@@ -359,13 +364,13 @@ namespace LiveDescribe.View
         /// Draws the wavform of the video audio on the canvas
         /// </summary>
         private void DrawWaveForm()
-        {
+        {   
             Console.WriteLine("Drawing wave form");
             List<float> data = _videoControl.AudioData;
             double width = _staticCanvasWidth; 
             double height = AudioCanvas.ActualHeight;
             double binSize = Math.Floor(data.Count / width);
-            
+            WriteableBitmap writeableBmp = BitmapFactory.New((int)width, (int)height);
             for (int pixel = 0; pixel < width; pixel++)
             {
                 //get min and max from bin
@@ -375,18 +380,18 @@ namespace LiveDescribe.View
                 float min = bin[0];
                 float max = bin[bin.Count - 1];
                 //Console.WriteLine("Min: " + min + " Max: " + max);
-                
-                //draw the line on this pixel
-                var wavLine = new Line
-                {
-                    Stroke = System.Windows.Media.Brushes.Black,
-                    Y1 = height * min,
-                    Y2 = height * max,
-                    X1 = pixel,
-                    X2 = pixel
-                };
-                AudioCanvas.Children.Add(wavLine);
+
+                double Y1 = height * min;
+                double Y2 = height * max;
+                double X1 = pixel;
+                double X2 = pixel;
+
+                writeableBmp.DrawLineAa((int)X1, (int)Y1, (int)X2, (int)Y2, Colors.Black);               
             }
+            ImageBrush brush = new ImageBrush();
+            brush.ImageSource = writeableBmp;
+            brush.Freeze();
+            AudioCanvas.Background = brush;
         }
 
         /// <summary>
