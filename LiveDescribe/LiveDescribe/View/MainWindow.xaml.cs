@@ -261,7 +261,9 @@ namespace LiveDescribe.View
                 
             }
             catch (System.Threading.Tasks.TaskCanceledException exception)
-            { }
+            { 
+            //do nothing this exception is thrown when the application is exited
+            }
         }
 
         #region View Listeners
