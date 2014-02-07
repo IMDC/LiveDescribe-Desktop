@@ -14,4 +14,4 @@ http://naudio.codeplex.com/
 http://writeablebitmapex.codeplex.com/
 
 Just save the file and extract it anywhere on your computer Right click References
-click Add References > Browse and add the .dll files wherever it is saved.
+click Add References > Browse and add the .dll files wherever they are saved.
