@@ -6,8 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using LiveDescribe.Utilities;
 using LiveDescribe.Events;
-using Microsoft.TeamFoundation.Controls.WPF.TeamExplorer.Framework;
-using Microsoft.TeamFoundation.MVVM;
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
+using System.Windows.Input;
 
 namespace LiveDescribe.Model
 {
@@ -28,7 +29,7 @@ namespace LiveDescribe.Model
         private double _Y;
         private double _width;
         private double _height;
-        private bool _isselected;
+        private bool _mousemoveisselected;
         private bool _isPlaying;
         #endregion
 
@@ -53,9 +54,19 @@ namespace LiveDescribe.Model
             _startinvideo = startinvideo;
             _endinvideo = startinvideo + (endwavefiletime - startwavefiletime);
            
-            DescriptionMouseDownCommand = new RelayCommand(DescriptionMouseDown, param => true);
-            DescriptionMouseUpCommand = new RelayCommand(DescriptionMouseUp, param => true);
-            DescriptionMouseMoveCommand = new RelayCommand(DescriptionMouseMove, param => true);
+            DescriptionMouseDownCommand = new RelayCommand<MouseEventArgs>( e =>
+                {
+                    EventHandler handler = DescriptionMouseDownEvent;
+                    if (handler != null) handler(this, e);
+                }, param => true);
+            DescriptionMouseUpCommand = new RelayCommand(DescriptionMouseUp, () => true);
+
+            //called when mouse moves over description
+            DescriptionMouseMoveCommand = new RelayCommand<MouseEventArgs>(e =>
+                {
+                    EventHandler handler = DescriptionMouseMoveEvent;
+                    if (handler != null) handler(this, e);
+                }, param => true);
         }
 
         #region Public Methods
@@ -313,16 +324,16 @@ namespace LiveDescribe.Model
             }
         }
 
-        public bool IsSelected
+        public bool MouseMoveIsSelected
         {
             set
             {
-                _isselected = value;
-                NotifyPropertyChanged("IsSelected");
+                _mousemoveisselected = value;
+                NotifyPropertyChanged("MosueMoveIsSelected");
             }
             get
             {
-                return _isselected;
+                return _mousemoveisselected;
             }
         }
 
@@ -357,29 +368,17 @@ namespace LiveDescribe.Model
         /// <summary>
         /// Setter and getter for the DescriptionMouseDown Command
         /// </summary>
-        public RelayCommand DescriptionMouseDownCommand
-        {
-            get;
-            private set;
-        }
+        public RelayCommand<MouseEventArgs> DescriptionMouseDownCommand { get; private set; }
 
         /// <summary>
         /// Setter and getter for the DescriptionMouseUp Command
         /// </summary>
-        public RelayCommand DescriptionMouseUpCommand
-        {
-            get;
-            private set;
-        }
+        public RelayCommand DescriptionMouseUpCommand { get; private set; }
 
         /// <summary>
         /// Setter and getter for the DescriptionMouseMove Command
         /// </summary>
-        public RelayCommand DescriptionMouseMoveCommand
-        {
-            get;
-            private set;
-        }
+        public RelayCommand<MouseEventArgs> DescriptionMouseMoveCommand { get; private set; }
         #endregion
 
         #region Binding Functions
@@ -387,10 +386,9 @@ namespace LiveDescribe.Model
         /// Called when the mouse is down on this description
         /// </summary>
         /// <param name="param"></param>
-        public void DescriptionMouseDown(object param)
+        public void DescriptionMouseDown()
         {
             EventHandler handler = DescriptionMouseDownEvent;
-            IsSelected = true;
             Console.WriteLine("Mouse Down");
             if (handler == null) return;
             handler(this, EventArgs.Empty);
@@ -400,22 +398,10 @@ namespace LiveDescribe.Model
         /// Called when the mouse is up on this description
         /// </summary>
         /// <param name="param"></param>
-        public void DescriptionMouseUp(object param)
+        public void DescriptionMouseUp()
         {
             EventHandler handler = DescriptionMouseUpEvent;
-            IsSelected = false;
             Console.WriteLine("MOUSE UP");
-            if (handler == null) return;
-            handler(this, EventArgs.Empty);
-        }
-
-        /// <summary>
-        /// Called when the mouse is moving on this description
-        /// </summary>
-        /// <param name="param"></param>
-        public void DescriptionMouseMove(object param)
-        {
-            EventHandler handler = DescriptionMouseMoveEvent;
             if (handler == null) return;
             handler(this, EventArgs.Empty);
         }

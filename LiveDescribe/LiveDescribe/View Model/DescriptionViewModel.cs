@@ -4,8 +4,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.TeamFoundation.Controls.WPF.TeamExplorer.Framework;
-using Microsoft.TeamFoundation.MVVM;
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Interfaces;
 using NAudio.Wave;
 using System.IO;
@@ -78,7 +78,7 @@ namespace LiveDescribe.View_Model
         /// Records the description
         /// </summary>
         /// <param name="param"></param>
-        public void Record(object param)
+        public void Record()
         {
             Console.WriteLine("----------------------");
 
@@ -232,7 +232,7 @@ namespace LiveDescribe.View_Model
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public bool RecordStateCheck(object param)
+        public bool RecordStateCheck()
         {
             if (_mediaVideo.CurrentState == LiveDescribeVideoStates.VideoNotLoaded)
                 return false;

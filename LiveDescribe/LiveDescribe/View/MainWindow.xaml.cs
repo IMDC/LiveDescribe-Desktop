@@ -9,7 +9,6 @@ using LiveDescribe.Converters;
 using LiveDescribe.View_Model;
 using System.Windows.Threading;
 using System.Collections.Generic;
-using Microsoft.TeamFoundation.MVVM;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
 
@@ -31,6 +30,7 @@ namespace LiveDescribe.View
         private readonly PreferencesViewModel _preferences;
         private readonly DescriptionViewModel _descriptionViewModel;
         private readonly TimeConverterFormatter _formatter; //used to format a timespan object which in this case in the videoMedia.Position
+        private double _originalPosition = -1;
 
         public MainWindow()
         {
@@ -212,12 +212,25 @@ namespace LiveDescribe.View
                     e.Description.DescriptionMouseDownEvent += (sender1, e1) =>
                     {
                         //Add mouse down event on every description here
+                        MouseEventArgs e2 = (MouseEventArgs)e1;
+                        _originalPosition = e2.GetPosition(DescriptionCanvas).X;
                         Console.WriteLine("Description Mouse Down");
                     };
 
                     e.Description.DescriptionMouseMoveEvent += (sender1, e1) =>
                     {
                         //Add mouse move event on devery description here
+
+                        MouseEventArgs e2 = (MouseEventArgs)e1;
+                        if (e2.LeftButton == MouseButtonState.Pressed && _originalPosition != -1)
+                        {
+                            e.Description.X = e.Description.X + (e2.GetPosition(DescriptionCanvas).X - _originalPosition);
+                            _originalPosition = e2.GetPosition(DescriptionCanvas).X;
+                        }
+                        else
+                        {
+                            _originalPosition = -1;
+                        }
                         Console.WriteLine("Description Mouse Move");
                     };
 
@@ -263,6 +276,7 @@ namespace LiveDescribe.View
             catch (System.Threading.Tasks.TaskCanceledException exception)
             { 
             //do nothing this exception is thrown when the application is exited
+                Console.WriteLine(exception.ToString());
             }
         }
 

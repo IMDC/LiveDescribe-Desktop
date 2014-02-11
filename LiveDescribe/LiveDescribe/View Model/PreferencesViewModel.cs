@@ -8,7 +8,8 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LiveDescribe.Properties;
-using Microsoft.TeamFoundation.MVVM;
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 using NAudio.Wave;
 
 namespace LiveDescribe.View_Model
@@ -58,25 +59,18 @@ namespace LiveDescribe.View_Model
         #region Constructors
         public PreferencesViewModel()
         {
-            ShowPreferencesCommand = new RelayCommand(ShowPreferences, param=>true);
+            ShowPreferencesCommand = new RelayCommand(ShowPreferences, () => true);
             _sources = new ObservableCollection<AudioSourceInfo>();
-            ApplyCommand = new RelayCommand(Apply, param=>true);
+            ApplyCommand = new RelayCommand(Apply, () => true);
         }
         #endregion
 
         #region Commands
 
-        public RelayCommand ApplyCommand
-        {
-            private set;
-            get;
-        }
+        public RelayCommand ApplyCommand { get; private set; }
 
-        public RelayCommand ShowPreferencesCommand
-        {
-            private set;
-            get;
-        }
+        public RelayCommand ShowPreferencesCommand { get; private set; }
+
         #endregion
 
         #region Binding Functions
@@ -84,7 +78,7 @@ namespace LiveDescribe.View_Model
         /// Called when you want the show preferences window to come up
         /// </summary>
         /// <param name="obj"></param>
-        private void ShowPreferences(object obj)
+        private void ShowPreferences()
         {
             EventHandler handler = ShowPreferencesRequested;
             InitializeAudioSourceInfo();
@@ -96,7 +90,7 @@ namespace LiveDescribe.View_Model
         /// called when the preferences should be saved and applied to the settings
         /// </summary>
         /// <param name="obj"></param>
-        private void Apply(object obj)
+        private void Apply()
         {
             EventHandler handler = ApplyRequested;
             SaveAudioSourceInfo();

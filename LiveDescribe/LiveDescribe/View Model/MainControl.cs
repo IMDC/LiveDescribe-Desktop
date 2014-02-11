@@ -1,5 +1,7 @@
 ﻿using LiveDescribe.Interfaces;
-using Microsoft.TeamFoundation.MVVM;
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Threading;
+using GalaSoft.MvvmLight.Command;
 using System.ComponentModel;
 using System;
 using LiveDescribe.Model;
@@ -29,11 +31,12 @@ namespace LiveDescribe.View_Model
         #region Constructors
         public MainControl(ILiveDescribePlayer mediaVideo)
         {
+            DispatcherHelper.Initialize();
             _videocontrol = new VideoControl(mediaVideo);
             _preferences = new PreferencesViewModel();
             _descriptionviewmodel = new DescriptionViewModel(mediaVideo);
 
-            CloseProjectCommand = new RelayCommand(CloseProject, param=>true);
+            CloseProjectCommand = new RelayCommand(CloseProject, ()=>true);
 
             _mediaVideo = mediaVideo;
                       
@@ -91,7 +94,7 @@ namespace LiveDescribe.View_Model
         /// This function gets called when the close project menu item gets pressed
         /// </summary>
         /// <param name="param"></param>
-        public void CloseProject(object param)
+        public void CloseProject()
         {
             //TODO: ask to save here before closing everything
             //TODO: put it in a background worker and create a loading screen (possibly a general use control)
@@ -104,11 +107,7 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Commands
-        public RelayCommand CloseProjectCommand
-        {
-            private set;
-            get;
-        }
+        public RelayCommand CloseProjectCommand { private set; get; }
         #endregion
 
         #region Binding Properties
@@ -165,10 +164,11 @@ namespace LiveDescribe.View_Model
                 Description curDescription = _descriptionviewmodel.Descriptions[i];
                 TimeSpan current = new TimeSpan();
                 //get the current position of the video from the UI thread
-                Dispatcher.Invoke(delegate { current = _mediaVideo.CurrentPosition; });
+                DispatcherHelper.UIDispatcher.Invoke(delegate { current = _mediaVideo.CurrentPosition; });
+                Console.WriteLine(current.TotalMilliseconds);
                 double offset = current.TotalMilliseconds - curDescription.StartInVideo;
               
-                Console.WriteLine("Offset: " + offset);
+              //  Console.WriteLine("Offset: " + offset);
                 if (!curDescription.IsExtendedDescription && 
                     offset >= 0 && offset < (curDescription.EndWaveFileTime - curDescription.StartWaveFileTime))
                 {
@@ -190,7 +190,7 @@ namespace LiveDescribe.View_Model
                     };
 
                     //Invoke the commands on the UI thread
-                    Dispatcher.Invoke(delegate { _videocontrol.PauseCommand.Execute(this); curDescription.Play(); });
+                    DispatcherHelper.UIDispatcher.Invoke(delegate { _videocontrol.PauseCommand.Execute(this); curDescription.Play(); });
                 }
             }
         }

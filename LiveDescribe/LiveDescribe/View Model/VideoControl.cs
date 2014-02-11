@@ -2,7 +2,8 @@
 using System.ComponentModel;
 using LiveDescribe.Graphics;
 using LiveDescribe.Interfaces;
-using Microsoft.TeamFoundation.MVVM;
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 using Microsoft.Win32;
 using LiveDescribe.Utilities;
 using System.Collections.Generic;
@@ -42,21 +43,21 @@ namespace LiveDescribe.View_Model
             
             PlayCommand = new RelayCommand(Play, PlayCheck);
             PauseCommand = new RelayCommand(Pause, PauseCheck);
-            MuteCommand = new RelayCommand(Mute, param => true);
+            MuteCommand = new RelayCommand(Mute, () => true);
             FastForwardCommand = new RelayCommand(FastForward, FastForwardCheck);
             RewindCommand = new RelayCommand(Rewind, RewindCheck);
 
             //Marker commands {
-            MarkerMouseDownCommand = new RelayCommand(OnMarkerMouseDown, param=> true);
-            MarkerMouseUpCommand = new RelayCommand(OnMarkerMouseUp, param => true);
-            MarkerMouseMoveCommand = new RelayCommand(OnMarkerMouseMove, param => true);
+            MarkerMouseDownCommand = new RelayCommand(OnMarkerMouseDown, () => true);
+            MarkerMouseUpCommand = new RelayCommand(OnMarkerMouseUp, () => true);
+            MarkerMouseMoveCommand = new RelayCommand(OnMarkerMouseMove, () => true);
             //}
 
             //bound to when the video loads and is opened via the mediaelement
-            VideoOpenedCommand = new RelayCommand(VideoOpen, param => true);
-            MediaFailedCommand = new RelayCommand(MediaFailed, param => true);
+            VideoOpenedCommand = new RelayCommand(VideoOpen, () => true);
+            MediaFailedCommand = new RelayCommand(MediaFailed, () => true);
 
-            MediaEndedCommand = new RelayCommand(MediaEnded, param => true);
+            MediaEndedCommand = new RelayCommand(MediaEnded, () => true);
             //bound to Menu->file->Import Video
             ImportVideoCommand = new RelayCommand(ImportVideo, ImportCheck);
             
@@ -69,101 +70,49 @@ namespace LiveDescribe.View_Model
         /// <summary>
         /// Setter and getter for MediaEndedCommand
         /// </summary>
-        public RelayCommand MediaEndedCommand
-        {
-            get;
-            private set;
-        }
+        public RelayCommand MediaEndedCommand { get; private set; }
 
         /// <summary>
         /// Setter and getter for MarkerMouseMoveCommand
         /// </summary>
-        public RelayCommand MarkerMouseMoveCommand
-        {
-            get;
-            private set;
-        }
+        public RelayCommand MarkerMouseMoveCommand { get; private set; }
 
         /// <summary>
         /// Setter and getter for MarkerMouseUpCommand
         /// </summary>
-        public RelayCommand MarkerMouseUpCommand
-        {
-            get;
-            private set;
-        }
+        public RelayCommand MarkerMouseUpCommand { get; private set; }
 
         /// <summary>
         /// Setter and getter for MarkerMouseDownCommand
         /// </summary>
-        public RelayCommand MarkerMouseDownCommand
-        {
-            get;
-            private set;
-        }
+        public RelayCommand MarkerMouseDownCommand { get; private set; }
 
         /// <summary>
         /// Setter and Getter for PlayCommand
         /// </summary>
-        public RelayCommand PlayCommand
-        {
-            get;
-            private set;
-        }
+        public RelayCommand PlayCommand  { get; private set; }
 
         /// <summary>
         /// Setter and Getter for PauseCommand
         /// </summary>
-        public RelayCommand PauseCommand
-        {
-            get;
-            private set;
-        }
+        public RelayCommand PauseCommand  { get; private set; }
 
         /// <summary>
         /// Setter and Getter for MuteCommand
         /// </summary>
-        public RelayCommand MuteCommand
-        {
-            get;
-            private set;
-        }
+        public RelayCommand MuteCommand { get; private set; }
 
-        public RelayCommand ImportVideoCommand
-        {
-            get;
-            private set;
-        }
+        public RelayCommand ImportVideoCommand { get; private set; }
 
-        public RelayCommand FastForwardCommand
-        {
-            get;
-            private set;
-        }
+        public RelayCommand FastForwardCommand  { get; private set; }
 
-        public RelayCommand RewindCommand
-        {
-            get;
-            private set;
-        }
+        public RelayCommand RewindCommand  { get; private set; }
 
-        public RelayCommand RecordCommand
-        {
-            get;
-            private set;
-        }
+        public RelayCommand RecordCommand  { get; private set; }
 
-        public RelayCommand VideoOpenedCommand
-        {
-            get;
-            private set;
-        }
+        public RelayCommand VideoOpenedCommand  { get; private set; }
 
-        public RelayCommand MediaFailedCommand
-        {
-            get;
-            private set;
-        }
+        public RelayCommand MediaFailedCommand  { get; private set; }
         #endregion
 
         #region Binding Functions
@@ -172,7 +121,7 @@ namespace LiveDescribe.View_Model
         /// what happens when the marker is moved using the mouse
         /// </summary>
         /// <param name="param"></param>
-        public void OnMarkerMouseMove(object param)
+        public void OnMarkerMouseMove()
         {
             EventHandler handler = OnMarkerMouseMoveRequested;
             if (handler == null) return;
@@ -183,7 +132,7 @@ namespace LiveDescribe.View_Model
         /// What happens when the mouse is released on the marker
         /// </summary>
         /// <param name="param"></param>
-        public void OnMarkerMouseUp(object param)
+        public void OnMarkerMouseUp()
         {
             EventHandler handler = OnMarkerMouseUpRequested;
             Console.WriteLine("Marker MouseUp");
@@ -195,10 +144,10 @@ namespace LiveDescribe.View_Model
         /// What hapens when the marker is pressed down
         /// </summary>
         /// <param name="param"></param>
-        public void OnMarkerMouseDown(object param)
+        public void OnMarkerMouseDown()
         {
             Console.WriteLine("Marker was pressed down");
-            this.PauseCommand.Execute(param);
+            this.PauseCommand.Execute(this);
             EventHandler handler = OnMarkerMouseDownRequested;
             if (handler == null) return;
             handler(this, EventArgs.Empty);
@@ -207,7 +156,7 @@ namespace LiveDescribe.View_Model
         /// Plays the video
         /// </summary>
         /// <param name="param">params</param>
-        public void Play(object param)
+        public void Play()
         {
             Console.WriteLine("Play");
 
@@ -223,7 +172,7 @@ namespace LiveDescribe.View_Model
         /// Pauses the video
         /// </summary>
         /// <param name="param">params</param>
-        public void Pause(object param)
+        public void Pause()
         {
             Console.WriteLine("Pause");
 
@@ -238,14 +187,14 @@ namespace LiveDescribe.View_Model
         /// <summary>
         /// Fastforwards the video
         /// </summary>
-        public void FastForward(object param)
+        public void FastForward()
         { 
         }
 
         /// <summary>
         /// Rewinds the video
         /// </summary>
-        public void Rewind(object param)
+        public void Rewind()
         { 
         }
 
@@ -253,7 +202,7 @@ namespace LiveDescribe.View_Model
         /// This event is thrown when the video is opened or "loaded"
         /// </summary>
         /// <param name="param"></param>
-        public void VideoOpen(object param)
+        public void VideoOpen()
         {
             EventHandler handler = VideoOpenedRequested;
             Console.WriteLine("LOADED");
@@ -267,7 +216,7 @@ namespace LiveDescribe.View_Model
         /// Mutes the video's audio
         /// </summary>
         /// <param name="param">params</param>
-        public void Mute(object param)
+        public void Mute()
         {
             Console.WriteLine("Mute");
 
@@ -282,7 +231,7 @@ namespace LiveDescribe.View_Model
         /// What happens when Import Video option is select, in this case open up a file dialogbox get the file then strip the audio
         /// </summary>
         /// <param name="param"></param>
-        public void ImportVideo(object param)
+        public void ImportVideo()
         {
             //importing a new video so reset the settings file
             //possibly save the old settings value in the livedescribe file? or make a class where we can just serialize it and save that to the file?
@@ -329,7 +278,7 @@ namespace LiveDescribe.View_Model
         /// video format is not supported
         /// </summary>
         /// <param name="param"></param>
-        public void MediaFailed(object param)
+        public void MediaFailed()
         {
             EventHandler handler = MediaFailedEvent;
             Console.WriteLine("Media Failed to load...");
@@ -342,7 +291,7 @@ namespace LiveDescribe.View_Model
         /// thros an event when the media is finished
         /// </summary>
         /// <param name="param"></param>
-        public void MediaEnded(object param)
+        public void MediaEnded()
         {
             EventHandler handler = MediaEndedEvent;
             Console.WriteLine("Media Finished");
@@ -397,7 +346,7 @@ namespace LiveDescribe.View_Model
         /// </summary>
         /// <param name="param">param</param>
         /// <returns>true if button can be enabled</returns>
-        public bool PlayCheck(object param)
+        public bool PlayCheck()
         {
             if (_mediaVideo.CurrentState == LiveDescribeVideoStates.PlayingVideo || _mediaVideo.CurrentState == LiveDescribeVideoStates.RecordingDescription ||
                 _mediaVideo.CurrentState == LiveDescribeVideoStates.VideoNotLoaded)
@@ -410,7 +359,7 @@ namespace LiveDescribe.View_Model
         /// </summary>
         /// <param name="param">param</param>
         /// <returns>true if button can be enabled</returns>
-        public bool PauseCheck(object param)
+        public bool PauseCheck()
         {
             if (_mediaVideo.CurrentState == LiveDescribeVideoStates.PausedVideo || _mediaVideo.CurrentState == LiveDescribeVideoStates.VideoNotLoaded
                 || _mediaVideo.CurrentState == LiveDescribeVideoStates.VideoLoaded || _mediaVideo.CurrentState == LiveDescribeVideoStates.RecordingDescription)
@@ -423,7 +372,7 @@ namespace LiveDescribe.View_Model
         /// </summary>
         /// <param name="param">param</param>
         /// <returns>true if the button can be enabled</returns>
-        public bool RewindCheck(object param)
+        public bool RewindCheck()
         {
             if (_mediaVideo.CurrentState == LiveDescribeVideoStates.VideoNotLoaded)
                 return false;
@@ -435,7 +384,7 @@ namespace LiveDescribe.View_Model
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public bool FastForwardCheck(object param)
+        public bool FastForwardCheck()
         {
             if (_mediaVideo.CurrentState == LiveDescribeVideoStates.VideoNotLoaded)
                 return false;
@@ -447,7 +396,7 @@ namespace LiveDescribe.View_Model
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public bool RecordCheck(object param)
+        public bool RecordCheck()
         {
             if (_mediaVideo.CurrentState == LiveDescribeVideoStates.VideoNotLoaded)
                 return false;
@@ -459,7 +408,7 @@ namespace LiveDescribe.View_Model
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public bool ImportCheck(object param)
+        public bool ImportCheck()
         {
             if (_mediaVideo.CurrentState != LiveDescribeVideoStates.VideoNotLoaded)
                 return false;
