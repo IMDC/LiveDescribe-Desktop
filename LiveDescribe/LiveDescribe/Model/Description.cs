@@ -54,19 +54,11 @@ namespace LiveDescribe.Model
             _startinvideo = startinvideo;
             _endinvideo = startinvideo + (endwavefiletime - startwavefiletime);
            
-            DescriptionMouseDownCommand = new RelayCommand<MouseEventArgs>( e =>
-                {
-                    EventHandler handler = DescriptionMouseDownEvent;
-                    if (handler != null) handler(this, e);
-                }, param => true);
+            DescriptionMouseDownCommand = new RelayCommand<MouseEventArgs>(DescriptionMouseDown, param => true);
             DescriptionMouseUpCommand = new RelayCommand(DescriptionMouseUp, () => true);
 
             //called when mouse moves over description
-            DescriptionMouseMoveCommand = new RelayCommand<MouseEventArgs>(e =>
-                {
-                    EventHandler handler = DescriptionMouseMoveEvent;
-                    if (handler != null) handler(this, e);
-                }, param => true);
+            DescriptionMouseMoveCommand = new RelayCommand<MouseEventArgs>(DescriptionMouseMove, param => true);
         }
 
         #region Public Methods
@@ -404,6 +396,26 @@ namespace LiveDescribe.Model
             Console.WriteLine("MOUSE UP");
             if (handler == null) return;
             handler(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Called when the mouse is down on this description
+        /// </summary>
+        /// <param name="e">the MouseEventArgs from the mouse down event</param>
+        public void DescriptionMouseDown(MouseEventArgs e)
+        {
+            EventHandler handler = DescriptionMouseDownEvent;
+            if (handler != null) handler(this, e);
+        }
+
+        /// <summary>
+        /// Called when the mouse is moving over a description
+        /// </summary>
+        /// <param name="e">the MouseEventArgs from the mouse move event</param>
+        public void DescriptionMouseMove(MouseEventArgs e)
+        {
+            EventHandler handler = DescriptionMouseMoveEvent;
+            if (handler != null) handler(this, e);
         }
         #endregion
 
