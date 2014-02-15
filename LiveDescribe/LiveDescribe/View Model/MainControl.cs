@@ -165,7 +165,7 @@ namespace LiveDescribe.View_Model
                 TimeSpan current = new TimeSpan();
                 //get the current position of the video from the UI thread
                 DispatcherHelper.UIDispatcher.Invoke(delegate { current = _mediaVideo.CurrentPosition; });
-                Console.WriteLine(current.TotalMilliseconds);
+
                 double offset = current.TotalMilliseconds - curDescription.StartInVideo;
               
               //  Console.WriteLine("Offset: " + offset);
@@ -177,20 +177,24 @@ namespace LiveDescribe.View_Model
                     break;
                 }
                 else if (curDescription.IsExtendedDescription &&
-                    offset < 100 && offset >= -100)
+                    offset < 100 && offset >= 0)
                 {
 
+                    Console.WriteLine("offset: " + offset);
                     //this method technically runs on the UI thread because it is an event that gets called in the description class
                     //therefore does not need to be invoked by the Dispatcher
                     curDescription.DescriptionFinishedPlaying += (sender1, e1) =>
                     {
-                      //  _mediaVideo.CurrentPosition = new TimeSpan((int)_mediaVideo.CurrentPosition.TotalDays,(int) _mediaVideo.CurrentPosition.TotalHours, 
-                      //       (int)_mediaVideo.CurrentPosition.TotalMinutes, (int)_mediaVideo.CurrentPosition.TotalSeconds, (int)_mediaVideo.CurrentPosition.TotalMilliseconds + 100);
+                        Console.WriteLine("Before: " + (int)_mediaVideo.CurrentPosition.TotalMilliseconds);
+                        _mediaVideo.CurrentPosition = new TimeSpan((int)_mediaVideo.CurrentPosition.TotalDays,(int) _mediaVideo.CurrentPosition.TotalHours, 
+                             (int)_mediaVideo.CurrentPosition.TotalMinutes, (int)_mediaVideo.CurrentPosition.TotalSeconds, (int)_mediaVideo.CurrentPosition.TotalMilliseconds + (100 - (int)offset) + (int)offset + 1 );
+                        Console.WriteLine("After: " + (int)_mediaVideo.CurrentPosition.TotalMilliseconds);
                         _videocontrol.PlayCommand.Execute(this);
                     };
 
                     //Invoke the commands on the UI thread
                     DispatcherHelper.UIDispatcher.Invoke(delegate { _videocontrol.PauseCommand.Execute(this); curDescription.Play(); });
+                    break;
                 }
             }
         }

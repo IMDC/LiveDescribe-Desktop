@@ -34,6 +34,7 @@ namespace LiveDescribe.Model
         #endregion
 
         #region Event Handlers
+        public EventHandler DescriptionDeleteEvent;
         public EventHandler DescriptionMouseDownEvent;
         public EventHandler DescriptionMouseUpEvent;
         public EventHandler DescriptionMouseMoveEvent;
@@ -52,11 +53,15 @@ namespace LiveDescribe.Model
             _startwavefiletime = startwavefiletime;
             _endwavefiletime = endwavefiletime;
             _startinvideo = startinvideo;
-            _endinvideo = startinvideo + (endwavefiletime - startwavefiletime);
-           
+
+            if (!extendedDescription)
+                _endinvideo = startinvideo + (endwavefiletime - startwavefiletime);
+            else
+                _endinvideo = startinvideo;
+
             DescriptionMouseDownCommand = new RelayCommand<MouseEventArgs>(DescriptionMouseDown, param => true);
             DescriptionMouseUpCommand = new RelayCommand(DescriptionMouseUp, () => true);
-
+            DescriptionDeleteCommand = new RelayCommand(DescriptionDelete, () => true);
             //called when mouse moves over description
             DescriptionMouseMoveCommand = new RelayCommand<MouseEventArgs>(DescriptionMouseMove, param => true);
         }
@@ -371,6 +376,11 @@ namespace LiveDescribe.Model
         /// Setter and getter for the DescriptionMouseMove Command
         /// </summary>
         public RelayCommand<MouseEventArgs> DescriptionMouseMoveCommand { get; private set; }
+
+        /// <summary>
+        /// Setter and getter for DescriptionDeletecommand 
+        /// </summary>
+        public RelayCommand DescriptionDeleteCommand { get; private set; }
         #endregion
 
         #region Binding Functions
@@ -416,6 +426,12 @@ namespace LiveDescribe.Model
         {
             EventHandler handler = DescriptionMouseMoveEvent;
             if (handler != null) handler(this, e);
+        }
+
+        public void DescriptionDelete()
+        {
+            EventHandler handler = DescriptionDeleteEvent;
+            if (handler != null) handler(this, EventArgs.Empty);
         }
         #endregion
 

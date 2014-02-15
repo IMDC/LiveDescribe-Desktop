@@ -294,6 +294,13 @@
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <Rectangle>
+                                                    <Rectangle.ContextMenu>
+                                                        <ContextMenu>
+                                                            <MenuItem Header="Delete" Command="{Binding DescriptionDeleteCommand}">
+                                                                
+                                                            </MenuItem>
+                                                        </ContextMenu>
+                                                    </Rectangle.ContextMenu>
                                                     <Rectangle.Style>
                                                         <Style TargetType="Rectangle">
                                                             <Style.Triggers>
