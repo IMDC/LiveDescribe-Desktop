@@ -226,6 +226,8 @@ namespace LiveDescribe.View
                         {
                             e.Description.X = e.Description.X + (e2.GetPosition(DescriptionCanvas).X - _originalPosition);
                             _originalPosition = e2.GetPosition(DescriptionCanvas).X;
+                            e.Description.StartInVideo = (_videoDuration/AudioCanvas.Width) * (e.Description.X);
+                            e.Description.EndInVideo = e.Description.StartInVideo + (e.Description.EndWaveFileTime - e.Description.StartWaveFileTime);
                         }
                         else
                         {
