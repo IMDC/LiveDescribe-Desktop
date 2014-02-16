@@ -159,9 +159,9 @@ namespace LiveDescribe.View_Model
 
             //I put this method in it's own timer in the MainControl for now, because I believe it should be separate from the view
             //this could possibly put it in the view in the other timer, so only one timer would be running
-            for (int i = 0; i < _descriptionviewmodel.Descriptions.Count; ++i)
+            for (int i = 0; i < _descriptionviewmodel.AllDescriptions.Count; ++i)
             {
-                Description curDescription = _descriptionviewmodel.Descriptions[i];
+                Description curDescription = _descriptionviewmodel.AllDescriptions[i];
                 TimeSpan current = new TimeSpan();
                 //get the current position of the video from the UI thread
                 DispatcherHelper.UIDispatcher.Invoke(delegate { current = _mediaVideo.CurrentPosition; });

@@ -219,7 +219,7 @@ namespace LiveDescribe.View
 
                     e.Description.DescriptionMouseMoveEvent += (sender1, e1) =>
                     {
-                        //Add mouse move event on devery description here
+                        //Add mouse move event on every description here
 
                         MouseEventArgs e2 = (MouseEventArgs)e1;
                         if (e2.LeftButton == MouseButtonState.Pressed && _originalPosition != -1)

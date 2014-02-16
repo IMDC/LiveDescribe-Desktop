@@ -18,7 +18,12 @@ namespace LiveDescribe.View_Model
     {
 
         #region Instance Variables
-        private ObservableCollection<Description> _descriptions;
+        //this list contains all the descriptions both regular and extended
+        private ObservableCollection<Description> _alldescriptions;
+        //this list only contains the extended description this list should be used to bind to the list view of extended descriptions
+        private ObservableCollection<Description> _extendedDescriptions;
+        //this list only contains all the regular descriptions this list should only be used to bind to the list of regular descriptions
+        private ObservableCollection<Description> _regularDescriptions;
         private NAudio.Wave.WaveIn _microphonestream;
         private NAudio.Wave.WaveFileWriter _waveWriter;
         private readonly ILiveDescribePlayer _mediaVideo;
@@ -55,7 +60,9 @@ namespace LiveDescribe.View_Model
                 _usingExistingMicrophone = true;
                 MicrophoneStream = Properties.Settings.Default.Microphone;
             }
-            Descriptions = new ObservableCollection<Description>();
+            AllDescriptions = new ObservableCollection<Description>();
+            RegularDescriptions = new ObservableCollection<Description>();
+            ExtendedDescriptions = new ObservableCollection<Description>();
         }
         #endregion
 
@@ -195,20 +202,55 @@ namespace LiveDescribe.View_Model
         }
 
         /// <summary>
-        /// Property to set and get the ObservableCollection containing descriptions
+        /// Property to set and get the ObservableCollection containing all of the descriptions
         /// </summary>
-        public ObservableCollection<Description> Descriptions
+        public ObservableCollection<Description> AllDescriptions
         {
             set
             {
-                _descriptions = value;
-                RaisePropertyChanged("Descriptions");
+                _alldescriptions = value;
+                RaisePropertyChanged("AllDescriptions");
             }
             get
             {
-                return _descriptions;
+                return _alldescriptions;
             }
         }
+
+        /// <summary>
+        /// Property to set and get the collection with all the extended descriptions
+        /// should be bound to the extended description list
+        /// </summary>
+        public ObservableCollection<Description> ExtendedDescriptions
+        {
+            set
+            {
+                _extendedDescriptions = value;
+                RaisePropertyChanged("ExtendedDescriptions");
+            }
+            get
+            {
+                return _extendedDescriptions;
+            }
+        }
+
+        /// <summary>
+        /// Property to set and get the collection with all the regular descriptions
+        /// should be bound to the regular description list
+        /// </summary>
+        public ObservableCollection<Description> RegularDescriptions
+        {
+            set
+            {
+                _regularDescriptions = value;
+                RaisePropertyChanged("RegularDescriptions");
+            }
+            get
+            {
+                return _regularDescriptions;
+            }
+        }
+
         /// <summary>
         /// Property that gets set when the extended description checkbox is checked or unchecked
         /// </summary>
@@ -278,7 +320,12 @@ namespace LiveDescribe.View_Model
         public void AddDescription(string filename, double startwavefiletime, double endwavefiletime, double startinvideo, bool isExtendedDescription)
         {
             Description desc = new Description(filename, startwavefiletime, endwavefiletime, startinvideo, isExtendedDescription);
-            Descriptions.Add(desc);
+            if (isExtendedDescription)
+                ExtendedDescriptions.Add(desc);
+            else
+                RegularDescriptions.Add(desc);
+
+            AllDescriptions.Add(desc);
             EventHandler<DescriptionEventArgs> addDescriptionHandler = AddDescriptionEvent;
             if (addDescriptionHandler == null) return;
             addDescriptionHandler(this, new DescriptionEventArgs(desc));
@@ -291,9 +338,13 @@ namespace LiveDescribe.View_Model
         /// </summary>
         public void CloseDescriptionViewModel()
         {
-            Descriptions = null;
+            AllDescriptions = null;
+            ExtendedDescriptions = null;
+            RegularDescriptions = null;
             _waveWriter = null;
-            Descriptions = new ObservableCollection<Description>();
+            AllDescriptions = new ObservableCollection<Description>();
+            ExtendedDescriptions = new ObservableCollection<Description>();
+            RegularDescriptions = new ObservableCollection<Description>();
         }
         #endregion
     }
