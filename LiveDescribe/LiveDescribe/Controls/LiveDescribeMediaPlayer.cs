@@ -31,21 +31,6 @@ namespace LiveDescribe.Controls
         }
 
         /// <summary>
-        /// Keep track of the CurrentPosition in the video the player is in
-        /// </summary>
-        public TimeSpan CurrentPosition
-        {
-            get
-            {
-                return this.Position; 
-            }
-            set
-            {
-                this.Position = value;
-            }
-        }
-
-        /// <summary>
         /// Keep Track of the Duration in Seconds of the current video playing
         /// </summary>
         public double DurationSeconds

@@ -34,7 +34,7 @@ namespace LiveDescribe.View_Model
             DispatcherHelper.Initialize();
             _videocontrol = new VideoControl(mediaVideo);
             _preferences = new PreferencesViewModel();
-            _descriptionviewmodel = new DescriptionViewModel(mediaVideo);
+            _descriptionviewmodel = new DescriptionViewModel(mediaVideo, _videocontrol);
 
             CloseProjectCommand = new RelayCommand(CloseProject, ()=>true);
 
@@ -53,7 +53,7 @@ namespace LiveDescribe.View_Model
 
             _videocontrol.PlayRequested += (sender, e) =>
                 {
-                    mediaVideo.Play();
+                    _mediaVideo.Play();
                     _descriptiontimer.Start();
                     //this Handler should be attached to the view to update the graphics
                     EventHandler handler = this.PlayRequested;
@@ -62,7 +62,7 @@ namespace LiveDescribe.View_Model
 
             _videocontrol.PauseRequested += (sender, e) =>
                 {
-                    mediaVideo.Pause();
+                    _mediaVideo.Pause();
                     _descriptiontimer.Stop();
                     //this Handler should be attached to the view to update the graphics
                     EventHandler handler = this.PauseRequested;
@@ -73,7 +73,7 @@ namespace LiveDescribe.View_Model
                 {
                     
                     //this Handler should be attached to the view to update the graphics
-                    mediaVideo.IsMuted = !mediaVideo.IsMuted;
+                    _mediaVideo.IsMuted = !_mediaVideo.IsMuted;
                     EventHandler handler = this.MuteRequested;
                     if (handler != null) handler(sender, e);
                 };
@@ -81,7 +81,7 @@ namespace LiveDescribe.View_Model
             _videocontrol.MediaEndedEvent += (sender, e) =>
                 {
                     _descriptiontimer.Stop();
-                    mediaVideo.Stop();
+                    _mediaVideo.Stop();
                     EventHandler handler = this.MediaEnded;
                     if (handler != null) handler(sender, e);
                 };
@@ -156,44 +156,27 @@ namespace LiveDescribe.View_Model
 
             EventHandler handler = GraphicsTick;
             if (handler != null) handler(sender, e);
-
             //I put this method in it's own timer in the MainControl for now, because I believe it should be separate from the view
-            //this could possibly put it in the view in the other timer, so only one timer would be running
             for (int i = 0; i < _descriptionviewmodel.AllDescriptions.Count; ++i)
             {
-                Description curDescription = _descriptionviewmodel.AllDescriptions[i];
-                TimeSpan current = new TimeSpan();
+                Description currentDescription = _descriptionviewmodel.AllDescriptions[i];
+                TimeSpan currentPositionInVideo = new TimeSpan();
                 //get the current position of the video from the UI thread
-                DispatcherHelper.UIDispatcher.Invoke(delegate { current = _mediaVideo.CurrentPosition; });
+                DispatcherHelper.UIDispatcher.Invoke(delegate {currentPositionInVideo = _mediaVideo.Position;});           
+                double offset = currentPositionInVideo.TotalMilliseconds - currentDescription.StartInVideo;
 
-                double offset = current.TotalMilliseconds - curDescription.StartInVideo;
-              
-              //  Console.WriteLine("Offset: " + offset);
-                if (!curDescription.IsExtendedDescription && 
-                    offset >= 0 && offset < (curDescription.EndWaveFileTime - curDescription.StartWaveFileTime))
+                if (!currentDescription.IsExtendedDescription && 
+                    offset >= 0 && offset < (currentDescription.EndWaveFileTime - currentDescription.StartWaveFileTime))
                 {
-                 //   Console.WriteLine("Playing Regular Description");
-                    curDescription.Play(offset);
+                    Console.WriteLine("Playing Regular Description");
+                    currentDescription.Play(offset);
                     break;
                 }
-                else if (curDescription.IsExtendedDescription &&
-                    offset < 100 && offset >= 0)
+                else if (currentDescription.IsExtendedDescription &&
+                    //if it is equal then the video time matches when the description should start dead on
+                    offset < LiveDescribeConstants.EXTENDED_DESCRIPTION_START_INTERVAL_MAX && offset >= 0)
                 {
-
-                    Console.WriteLine("offset: " + offset);
-                    //this method technically runs on the UI thread because it is an event that gets called in the description class
-                    //therefore does not need to be invoked by the Dispatcher
-                    curDescription.DescriptionFinishedPlaying += (sender1, e1) =>
-                    {
-                        Console.WriteLine("Before: " + (int)_mediaVideo.CurrentPosition.TotalMilliseconds);
-                        _mediaVideo.CurrentPosition = new TimeSpan((int)_mediaVideo.CurrentPosition.TotalDays,(int) _mediaVideo.CurrentPosition.TotalHours, 
-                             (int)_mediaVideo.CurrentPosition.TotalMinutes, (int)_mediaVideo.CurrentPosition.TotalSeconds, (int)_mediaVideo.CurrentPosition.TotalMilliseconds + (100 - (int)offset) + (int)offset + 1 );
-                        Console.WriteLine("After: " + (int)_mediaVideo.CurrentPosition.TotalMilliseconds);
-                        _videocontrol.PlayCommand.Execute(this);
-                    };
-
-                    //Invoke the commands on the UI thread
-                    DispatcherHelper.UIDispatcher.Invoke(delegate { _videocontrol.PauseCommand.Execute(this); curDescription.Play(); });
+                    DispatcherHelper.UIDispatcher.Invoke(delegate {_videocontrol.PauseCommand.Execute(this); Console.WriteLine("Playing Extended Description"); currentDescription.Play(); });
                     break;
                 }
             }

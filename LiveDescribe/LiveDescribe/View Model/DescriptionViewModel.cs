@@ -11,6 +11,7 @@ using NAudio.Wave;
 using System.IO;
 using LiveDescribe.Model;
 using LiveDescribe.Events;
+using System.Windows.Data;
 
 namespace LiveDescribe.View_Model
 {
@@ -31,6 +32,10 @@ namespace LiveDescribe.View_Model
         private double _descriptionStartTime;
         private Description _descriptionSelectedInList;
 
+        //this variable should be used as little as possible in this class
+        //most interactions between the  descriptionviewmodel and the videocontrol should be in the maincontrol
+        private VideoControl _videoControl;
+
         //used to restore the previous video state after it's finished recording
         private LiveDescribeVideoStates _previousVideoState;
         #endregion
@@ -43,11 +48,12 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Constructors
-        public DescriptionViewModel(ILiveDescribePlayer mediaVideo)
+        public DescriptionViewModel(ILiveDescribePlayer mediaVideo, VideoControl videoControl)
         {
             _waveWriter = null;
             RecordCommand = new RelayCommand(Record, RecordStateCheck);
             _mediaVideo = mediaVideo;
+            _videoControl = videoControl;
 
             //check if the current microphone exists in the settings
             //if it doesn't use the first one or else get the one stored in the settings
@@ -143,7 +149,7 @@ namespace LiveDescribe.View_Model
   
             try
             {
-                _descriptionStartTime = _mediaVideo.CurrentPosition.TotalMilliseconds;
+                _descriptionStartTime = _mediaVideo.Position.TotalMilliseconds;
                 MicrophoneStream.StartRecording();
             }
             catch (NAudio.MmException e)
@@ -325,10 +331,43 @@ namespace LiveDescribe.View_Model
             else
                 RegularDescriptions.Add(desc);
 
+            SetupEventsOnDescription(desc);
+
             AllDescriptions.Add(desc);
             EventHandler<DescriptionEventArgs> addDescriptionHandler = AddDescriptionEvent;
             if (addDescriptionHandler == null) return;
             addDescriptionHandler(this, new DescriptionEventArgs(desc));
+        }
+
+        /// <summary>
+        /// Method to setup events on a descriptions no graphics setup should be included in here, that should be in the view
+        /// </summary>
+        /// <param name="desc">The description to setup the events on</param>
+        private void SetupEventsOnDescription(Description desc)
+        {
+            //this method is called when a description is finished playing
+            desc.DescriptionFinishedPlaying += (sender1, e1) =>
+                {
+                //if the description is an extended description, we want to move the video forward to get out of the interval of
+                //where the extended description will play
+                //then we want to replay the video
+                    if (desc.IsExtendedDescription)
+                    {
+                        double offset = _mediaVideo.Position.TotalMilliseconds - desc.StartInVideo;
+                        //+1 so we are out of the interval and it doesn't repeat the description
+                        int newStartInVideo = (int)(_mediaVideo.Position.TotalMilliseconds + (LiveDescribeConstants.EXTENDED_DESCRIPTION_START_INTERVAL_MAX - offset + 1)); 
+                        _mediaVideo.Position = new TimeSpan(0,0,0,0,newStartInVideo);
+                        _videoControl.PlayCommand.Execute(this);
+                        Console.WriteLine("Extended Description Finished!");
+                    }
+
+                };
+
+            //this method gets called when a description is deleted
+            desc.DescriptionDeleteEvent += (sender1, e1) =>
+                {
+                    //remove description from appropriate lists
+                };
         }
         #endregion
 

@@ -73,6 +73,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Events\AddDescriptionEventArgs.cs" />
+    <Compile Include="LiveDescribeConstants.cs" />
     <Compile Include="Model\Space.cs" />
     <Compile Include="View\PreferencesWindow.xaml.cs">
       <DependentUpon>PreferencesWindow.xaml</DependentUpon>

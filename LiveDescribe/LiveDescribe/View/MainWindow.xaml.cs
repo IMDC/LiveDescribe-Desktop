@@ -23,7 +23,7 @@ namespace LiveDescribe.View
         private double _videoDuration = -1;
         private const double MarkerOffset = 10.0;
         private const double PageScrollPercent = 0.95;  //when the marker hits 95% of the page it scrolls
-        private const double PageTime = 30; //30 seconds page time before audiocanvas  & descriptioncanvas scroll
+        private const double PageTimeBeforeCanvasScrolls = 30; //30 seconds page time before audiocanvas  & descriptioncanvas scroll
         private const double LineTime = 1; //each line in the NumberTimeline appears every 1 second
         private const int LongLineTime = 5; // every 5 LineTimes, you get a Longer Line
         private readonly VideoControl _videoControl;
@@ -71,9 +71,10 @@ namespace LiveDescribe.View
             mc.PlayRequested += (sender, e) =>
                 {
                     //this is to recheck all the graphics states
-                    System.Windows.Input.CommandManager.InvalidateRequerySuggested();
-                    var newValue = ((Canvas.GetLeft(Marker) + MarkerOffset) / AudioCanvas.Width) * _videoDuration;
-                    UpdateVideoPosition((int)newValue);
+                    System.Windows.Input.CommandManager.InvalidateRequerySuggested();                   
+                 
+                    double position = (VideoMedia.Position.TotalMilliseconds / _videoDuration) * (AudioCanvas.Width);
+                    UpdateMarkerPosition(position - MarkerOffset);
                 };
 
             //listens for PauseRequested Event
@@ -169,7 +170,6 @@ namespace LiveDescribe.View
                     else if (xPosition > AudioCanvas.Width - 1)
                     {
                         Canvas.SetLeft(Marker, AudioCanvas.Width - 1);
-                      //  UpdateVideoPosition(_videoDuration);
                     }
                     else
                         Canvas.SetLeft(Marker, xPosition - MarkerOffset);
@@ -357,7 +357,6 @@ namespace LiveDescribe.View
             
             Dispatcher.Invoke(delegate { singlePageWidth = TimeLine.ActualWidth; scrolledAmount = TimeLine.HorizontalOffset; });
             double scrollOffsetRight = PageScrollPercent * singlePageWidth;
-          //  Console.WriteLine("Offset: " + scrollOffsetRight);
             if (!(xPos - scrolledAmount >= (scrollOffsetRight))) return false;
 
             Dispatcher.Invoke(delegate { TimeLine.ScrollToHorizontalOffset(scrollOffsetRight + scrolledAmount); });
@@ -371,7 +370,7 @@ namespace LiveDescribe.View
         private double calculateWidth()
         {
             double screenWidth = System.Windows.SystemParameters.PrimaryScreenWidth;
-            double staticCanvasWidth = (_videoDuration / (PageTime * 1000)) * screenWidth;
+            double staticCanvasWidth = (_videoDuration / (PageTimeBeforeCanvasScrolls * 1000)) * screenWidth;
             this.AudioCanvas.MaxWidth = staticCanvasWidth;
             return staticCanvasWidth;
         }
@@ -420,7 +419,7 @@ namespace LiveDescribe.View
         private void SetTimeline()
         {
             Console.WriteLine("Setting Timeline");
-            double pages = _videoDuration / (PageTime * 1000);
+            double pages = _videoDuration / (PageTimeBeforeCanvasScrolls * 1000);
             double width = _staticCanvasWidth; 
 
             var numlines = (int)(_videoDuration / (LineTime * 1000));

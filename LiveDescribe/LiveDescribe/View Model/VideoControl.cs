@@ -10,7 +10,7 @@ using System.Collections.Generic;
 
 namespace LiveDescribe.View_Model
 {
-    class VideoControl : ViewModelBase
+    public class VideoControl : ViewModelBase
     {
         #region Instance Variables
         private readonly ILiveDescribePlayer _mediaVideo;
