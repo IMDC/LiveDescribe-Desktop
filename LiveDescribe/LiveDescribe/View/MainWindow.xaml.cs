@@ -238,15 +238,13 @@ namespace LiveDescribe.View
 
                     e.Description.PropertyChanged += (sender1, e1) =>
                     {
-                        //possibly change this to startinwavefile
                         if (e1.PropertyName.Equals("StartWaveFileTime"))
                         {
-
+                            //change start in the wave file for resizing the start time
                         }
-                        //possibly change this to endinwavefile depends
                         else if (e1.PropertyName.Equals("EndWaveFileTime"))
                         {
-
+                            //change end in the wave file for resizing the end time
                         }
                     };
                 };

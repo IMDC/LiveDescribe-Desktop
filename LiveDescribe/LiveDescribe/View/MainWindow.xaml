@@ -283,14 +283,15 @@
                 </Border>
 
                 <!--Description Text Box-->
-                <TextBox Grid.Column="4" Grid.Row="6" Grid.ColumnSpan="2" Grid.RowSpan="2" ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" Text="Enter Description Text" />
+                <TextBox DataContext="{Binding DescriptionViewModel}" Grid.Column="4" Grid.Row="6" Grid.ColumnSpan="2" Grid.RowSpan="2" ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" 
+                         Text="{Binding DescriptionText}"/>
 
                 <!--Text Controls-->
-                <StackPanel Grid.Column="6" Grid.Row="6" Grid.RowSpan="2">
-                    <Button Margin="10">
+                <StackPanel DataContext="{Binding DescriptionViewModel}" Grid.Column="6" Grid.Row="6" Grid.RowSpan="2">
+                    <Button Margin="10" Command="{Binding SaveDescriptionTextCommand}">
                         Save Text
                     </Button>
-                    <Button Margin="10">
+                    <Button Margin="10" Command="{Binding ClearDescriptionTextCommand}">
                         Clear
                     </Button>
                 </StackPanel>
