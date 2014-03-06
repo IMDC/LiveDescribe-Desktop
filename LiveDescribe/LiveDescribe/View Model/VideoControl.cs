@@ -16,9 +16,7 @@ namespace LiveDescribe.View_Model
         private readonly ILiveDescribePlayer _mediaVideo;
         private AudioUtility _audioOperator;
         private List<float> _waveFormData;
-      //  private bool _busyStrippingAudio;
         private readonly BackgroundWorker _stripAudioWorker;
-       // private double _currentprogressaudiostripping;
         private LoadingViewModel _loadingViewModel;
         #endregion
 
@@ -308,7 +306,7 @@ namespace LiveDescribe.View_Model
         /// <param name="e"></param>
         public void StripAudio(object sender, DoWorkEventArgs e)
         {
-            _audioOperator = new AudioUtility(_mediaVideo.Path);
+            _audioOperator = new AudioUtility(Path);
             _audioOperator.StripAudio(_stripAudioWorker);
             _waveFormData = _audioOperator.ReadWavData(_stripAudioWorker);          
            
@@ -416,7 +414,7 @@ namespace LiveDescribe.View_Model
 
         #region Binding Properties
         /// <summary>
-        /// Path set in the "MediaElement" source property
+        /// Bound to the LiveDescribeMediaPlayer (_mediaVideo) Path property
         /// </summary>
         public string Path
         {
