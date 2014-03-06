@@ -254,14 +254,11 @@ namespace LiveDescribe.View_Model
             Console.WriteLine("OPENVIDEO");
             if (userClickedOkChooseVideo == true && userClickedOkChooseWorkingDirectory == System.Windows.Forms.DialogResult.OK)
             {
+                //changes the Path variable that is binded to the mediaelement
                 Path = dialogBoxChooseVideo.FileName;
 
                 //set the settings file to be the new working directory
                 Properties.Settings.Default.WorkingDirectory = dialogBoxChooseWorkingDirectory.SelectedPath + "\\";
-                //create a new background worker to strip the audio and set IsBusyStrippingAudio to true
-                //it does not get set to false in this class because the view is meant to take care of what they want to do with the stripped audio when it is completed for example
-                //create a wave form
-                //the variable IsBusyStrippingAudio gets binded to the view (LoadingBorder Visibility property) and when set to false will get rid of the loading screen
                 _stripAudioWorker.DoWork += StripAudio;
                 _stripAudioWorker.RunWorkerCompleted += OnFinishedStrippingAudio;
                 _stripAudioWorker.ProgressChanged += StrippingAudioProgressChanged;
