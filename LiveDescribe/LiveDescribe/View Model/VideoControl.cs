@@ -252,18 +252,9 @@ namespace LiveDescribe.View_Model
             Console.WriteLine("OPENVIDEO");
             if (userClickedOkChooseVideo == true && userClickedOkChooseWorkingDirectory == System.Windows.Forms.DialogResult.OK)
             {
-                //changes the Path variable that is binded to the mediaelement
-                Path = dialogBoxChooseVideo.FileName;
-
                 //set the settings file to be the new working directory
                 Properties.Settings.Default.WorkingDirectory = dialogBoxChooseWorkingDirectory.SelectedPath + "\\";
-                _stripAudioWorker.DoWork += StripAudio;
-                _stripAudioWorker.RunWorkerCompleted += OnFinishedStrippingAudio;
-                _stripAudioWorker.ProgressChanged += StrippingAudioProgressChanged;
-                _stripAudioWorker.WorkerReportsProgress = true;
-                _loadingViewModel.Text = "Please wait while we import your video...";
-                _loadingViewModel.Visible = true;
-                _stripAudioWorker.RunWorkerAsync();
+                SetupAndStripAudio(dialogBoxChooseVideo.FileName);
             }
 
             _mediaVideo.CurrentState = LiveDescribeVideoStates.PausedVideo;
@@ -442,7 +433,10 @@ namespace LiveDescribe.View_Model
         }
         #endregion
 
-        #region Functions called by MainControl
+        #region Helper Methods
+        /// <summary>
+        /// This function is to close the video control, it is called by the main control
+        /// </summary>
         public void CloseVideoControl()
         {
             _audioOperator = null;
@@ -450,6 +444,24 @@ namespace LiveDescribe.View_Model
             _mediaVideo.Stop();
             _mediaVideo.Close();
             _mediaVideo.CurrentState = LiveDescribeVideoStates.VideoNotLoaded;
+        }
+
+        /// <summary>
+        /// This function is used to setup all the events for the background worker and to run it
+        /// to strip the audio from the video
+        /// </summary>
+        /// <param name="path"></param>
+        public void SetupAndStripAudio(String path)
+        {
+            //changes the Path variable that is binded to the media element
+            Path = path;
+            _stripAudioWorker.DoWork += StripAudio;
+            _stripAudioWorker.RunWorkerCompleted += OnFinishedStrippingAudio;
+            _stripAudioWorker.ProgressChanged += StrippingAudioProgressChanged;
+            _stripAudioWorker.WorkerReportsProgress = true;
+            _loadingViewModel.Text = "Please wait while we import your video...";
+            _loadingViewModel.Visible = true;
+            _stripAudioWorker.RunWorkerAsync();
         }
         #endregion
     }
