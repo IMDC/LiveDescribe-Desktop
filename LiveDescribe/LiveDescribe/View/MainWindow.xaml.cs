@@ -39,13 +39,13 @@ namespace LiveDescribe.View
             Thread.Sleep(2000);
             InitializeComponent();
 
-            var mc = new MainControl(VideoMedia);
+            var maincontrol = new MainControl(VideoMedia);
 
-            DataContext = mc;
+            DataContext = maincontrol;
 
-            _videoControl = mc.VideoControl;
-            _preferences = mc.PreferencesViewModel;
-            _descriptionViewModel = mc.DescriptionViewModel;
+            _videoControl = maincontrol.VideoControl;
+            _preferences = maincontrol.PreferencesViewModel;
+            _descriptionViewModel = maincontrol.DescriptionViewModel;
 
             _formatter = new TimeConverterFormatter();
 
@@ -68,7 +68,7 @@ namespace LiveDescribe.View
             //the video, and the descriptions
 
             //listens for PlayRequested Event
-            mc.PlayRequested += (sender, e) =>
+            maincontrol.PlayRequested += (sender, e) =>
                 {
                     //this is to recheck all the graphics states
                     System.Windows.Input.CommandManager.InvalidateRequerySuggested();                   
@@ -78,14 +78,14 @@ namespace LiveDescribe.View
                 };
 
             //listens for PauseRequested Event
-            mc.PauseRequested += (sender, e) =>
+            maincontrol.PauseRequested += (sender, e) =>
                 {
                     //this is to recheck all the graphics states
                     System.Windows.Input.CommandManager.InvalidateRequerySuggested();
                 };
 
             //listens for when the media has gone all the way to the end
-            mc.MediaEnded += (sender, e) =>
+            maincontrol.MediaEnded += (sender, e) =>
                 {
                     UpdateMarkerPosition(-MarkerOffset);
                     //this is to recheck all the graphics states
@@ -93,7 +93,7 @@ namespace LiveDescribe.View
                 };
 
 
-            mc.ProjectClosed += (sender, e) =>
+            maincontrol.ProjectClosed += (sender, e) =>
             {
                 AudioCanvas.Children.Clear();
                 AudioCanvas.Background = null;
@@ -106,7 +106,7 @@ namespace LiveDescribe.View
                 Marker.IsEnabled = false;
             };
 
-            mc.GraphicsTick += Play_Tick;
+            maincontrol.GraphicsTick += Play_Tick;
             #endregion
 
             #region Event Listeners For VideoControl
@@ -114,7 +114,7 @@ namespace LiveDescribe.View
             //listens for VideoOpenedRequested event
             //this event only gets thrown when if the MediaFailed event doesn't occur
             //and as soon as the video is loaded when play is pressed
-            mc.VideoControl.VideoOpenedRequested += (sender, e) =>
+            maincontrol.VideoControl.VideoOpenedRequested += (sender, e) =>
                 {
                     _videoDuration = VideoMedia.NaturalDuration.TimeSpan.TotalMilliseconds;
                     _staticCanvasWidth = calculateWidth();
@@ -123,20 +123,20 @@ namespace LiveDescribe.View
 
             //listens for when the audio stripping is complete then draws the timeline and the wave form
             //and sets the busy stripping audio to false so that the loading screen goes away
-            mc.VideoControl.OnStrippingAudioCompleted += (sender, e) =>
+            maincontrol.VideoControl.OnStrippingAudioCompleted += (sender, e) =>
                 {
                     SetTimeline();
                     DrawWaveForm();
 
                     //make this false so that the loading screen goes away after the timeline and the wave form are drawn
-                    _videoControl.IsBusyStrippingAudio = false;
+                    maincontrol.LoadingViewModel.Visible = false;
                 };
 
             //captures the mouse when a mousedown request is sent to the Marker
-            mc.VideoControl.OnMarkerMouseDownRequested += (sender, e) => { Console.WriteLine("Marker Mouse Down"); Marker.CaptureMouse(); };
+            maincontrol.VideoControl.OnMarkerMouseDownRequested += (sender, e) => { Console.WriteLine("Marker Mouse Down"); Marker.CaptureMouse(); };
 
             //updates the video position when the mouse is released on the Marker
-            mc.VideoControl.OnMarkerMouseUpRequested += (sender, e) =>
+            maincontrol.VideoControl.OnMarkerMouseUpRequested += (sender, e) =>
                 {
                     Console.WriteLine("Marker Mouse Up");
                     var newValue = ((Canvas.GetLeft(Marker) + MarkerOffset)/AudioCanvas.Width)*_videoDuration;
@@ -146,7 +146,7 @@ namespace LiveDescribe.View
                 };
 
             //updates the canvas and video position when the Marker is moved
-            mc.VideoControl.OnMarkerMouseMoveRequested += (sender, e) =>
+            maincontrol.VideoControl.OnMarkerMouseMoveRequested += (sender, e) =>
                 {
                     Console.WriteLine("Marker Mouse Move");
                     if (!Marker.IsMouseCaptured) return;

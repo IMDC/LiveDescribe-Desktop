@@ -12,11 +12,11 @@
 
     <Grid>
 
-        <Border Name="LoadingBorder" DataContext="{Binding VideoControl}" Grid.ZIndex="2" BorderBrush="Black" BorderThickness="1" Background="#80000000" Visibility="{Binding IsBusyStrippingAudio, Converter={StaticResource BoolConverter}}" Grid.RowSpan="3">
+        <Border Name="LoadingBorder" DataContext="{Binding LoadingViewModel}" Grid.ZIndex="2" BorderBrush="Black" BorderThickness="1" Background="#80000000" Visibility="{Binding Visible, Converter={StaticResource BoolConverter}}" Grid.RowSpan="3">
             <Grid>
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBlock TextWrapping="Wrap" Text="Please wait while we import your video..." HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" FontWeight="Bold" Foreground="#7EFFFFFF" RenderTransformOrigin="0.421,8.437"/>
-                    <ProgressBar Value="{Binding CurrentProgressAudioStripping, Mode=OneWay}" Maximum="100" Name="ImportVideoProgressBar" Background="#80000000" Foreground="White" Height="30"/>
+                    <TextBlock TextWrapping="Wrap" Text="{Binding Text}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" FontWeight="Bold" Foreground="#7EFFFFFF" RenderTransformOrigin="0.421,8.437"/>
+                    <ProgressBar Value="{Binding Value, Mode=OneWay}" Maximum="{Binding Max}" Name="ImportVideoProgressBar" Background="#80000000" Foreground="White" Height="30"/>
                 </StackPanel>
             </Grid>
         </Border>

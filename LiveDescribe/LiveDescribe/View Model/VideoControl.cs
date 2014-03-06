@@ -16,9 +16,10 @@ namespace LiveDescribe.View_Model
         private readonly ILiveDescribePlayer _mediaVideo;
         private AudioUtility _audioOperator;
         private List<float> _waveFormData;
-        private bool _busyStrippingAudio;
+      //  private bool _busyStrippingAudio;
         private readonly BackgroundWorker _stripAudioWorker;
-        private double _currentprogressaudiostripping;
+       // private double _currentprogressaudiostripping;
+        private LoadingViewModel _loadingViewModel;
         #endregion
 
         #region Event Handlers
@@ -37,10 +38,10 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Constructors
-        public VideoControl(ILiveDescribePlayer mediaVideo)
+        public VideoControl(ILiveDescribePlayer mediaVideo, LoadingViewModel loadingViewModel)
         {
             _mediaVideo = mediaVideo;
-            
+            _loadingViewModel = loadingViewModel;
             PlayCommand = new RelayCommand(Play, PlayCheck);
             PauseCommand = new RelayCommand(Pause, PauseCheck);
             MuteCommand = new RelayCommand(Mute, () => true);
@@ -61,7 +62,6 @@ namespace LiveDescribe.View_Model
             //bound to Menu->file->Import Video
             ImportVideoCommand = new RelayCommand(ImportVideo, ImportCheck);
             
-            IsBusyStrippingAudio = false;
             _stripAudioWorker = new BackgroundWorker();
         }
         #endregion
@@ -266,7 +266,8 @@ namespace LiveDescribe.View_Model
                 _stripAudioWorker.RunWorkerCompleted += OnFinishedStrippingAudio;
                 _stripAudioWorker.ProgressChanged += StrippingAudioProgressChanged;
                 _stripAudioWorker.WorkerReportsProgress = true;
-                IsBusyStrippingAudio = true;
+                _loadingViewModel.Text = "Please wait while we import your video...";
+                _loadingViewModel.Visible = true;
                 _stripAudioWorker.RunWorkerAsync();
             }
 
@@ -336,7 +337,7 @@ namespace LiveDescribe.View_Model
         /// <param name="e">progresschangedeventargs</param>
         public void StrippingAudioProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            CurrentProgressAudioStripping = e.ProgressPercentage;
+            _loadingViewModel.Value = e.ProgressPercentage;
         }
         #endregion
 
@@ -432,39 +433,6 @@ namespace LiveDescribe.View_Model
                 return _mediaVideo.Path;
             }
 
-        }
-
-        /// <summary>
-        /// Property that gets bound to the LoadingBorder visibility with a converter 
-        /// to decide whether the loading border should be seen or not
-        /// </summary>
-        public bool IsBusyStrippingAudio
-        {
-            set
-            {
-                _busyStrippingAudio = value;
-                RaisePropertyChanged("IsBusyStrippingAudio");
-            }
-            get
-            {
-                return _busyStrippingAudio;
-            }
-        }
-
-        /// <summary>
-        /// Property that get's bound to the ImportVideoProgressbar Value property
-        /// </summary>
-        public double CurrentProgressAudioStripping
-        {
-            set
-            {
-                _currentprogressaudiostripping = value;
-                RaisePropertyChanged("CurrentProgressAudioStripping");
-            }
-            get
-            {
-                return _currentprogressaudiostripping;
-            }
         }
         #endregion
 

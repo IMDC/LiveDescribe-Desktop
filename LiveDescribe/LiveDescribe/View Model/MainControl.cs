@@ -16,6 +16,7 @@ namespace LiveDescribe.View_Model
         private VideoControl _videocontrol;
         private PreferencesViewModel _preferences;
         private DescriptionViewModel _descriptionviewmodel;
+        private LoadingViewModel _loadingViewModel;
         private ILiveDescribePlayer _mediaVideo;
         #endregion
 
@@ -32,12 +33,12 @@ namespace LiveDescribe.View_Model
         public MainControl(ILiveDescribePlayer mediaVideo)
         {
             DispatcherHelper.Initialize();
-            _videocontrol = new VideoControl(mediaVideo);
+            _loadingViewModel = new LoadingViewModel(100, null, 0, false);
+            _videocontrol = new VideoControl(mediaVideo, _loadingViewModel);
             _preferences = new PreferencesViewModel();
             _descriptionviewmodel = new DescriptionViewModel(mediaVideo, _videocontrol);
 
             CloseProjectCommand = new RelayCommand(CloseProject, ()=>true);
-
             _mediaVideo = mediaVideo;
                       
             //If apply requested happens  in the preferences use the new saved microphone in the settings
@@ -85,7 +86,6 @@ namespace LiveDescribe.View_Model
                     EventHandler handler = this.MediaEnded;
                     if (handler != null) handler(sender, e);
                 };
-            
         }
         #endregion
 
@@ -141,6 +141,17 @@ namespace LiveDescribe.View_Model
             get
             {
                 return _descriptionviewmodel;
+            }
+        }
+
+        /// <summary>
+        /// returns the loading view model so it can be binded to a control in the main window
+        /// </summary>
+        public LoadingViewModel LoadingViewModel
+        {
+            get
+            {
+                return _loadingViewModel;
             }
         }
         #endregion
