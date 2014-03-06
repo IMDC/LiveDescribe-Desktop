@@ -414,7 +414,7 @@ namespace LiveDescribe.View_Model
 
         #region Binding Properties
         /// <summary>
-        /// Bound to the LiveDescribeMediaPlayer (_mediaVideo) Path property
+        /// Bound to the LiveDescribeMediaPlayer (_mediaVideo) Source property
         /// </summary>
         public string Path
         {
