@@ -19,12 +19,9 @@ namespace LiveDescribe.View_Model
     {
 
         #region Instance Variables
-        //this list contains all the descriptions both regular and extended
-        private ObservableCollection<Description> _alldescriptions;
-        //this list only contains the extended description this list should be used to bind to the list view of extended descriptions
-        private ObservableCollection<Description> _extendedDescriptions;
-        //this list only contains all the regular descriptions this list should only be used to bind to the list of regular descriptions
-        private ObservableCollection<Description> _regularDescriptions;
+        private ObservableCollection<Description> _alldescriptions;      //this list contains all the descriptions both regular and extended
+        private ObservableCollection<Description> _extendedDescriptions; //this list only contains the extended description this list should be used to bind to the list view of extended descriptions
+        private ObservableCollection<Description> _regularDescriptions;  //this list only contains all the regular descriptions this list should only be used to bind to the list of regular descriptions
         private NAudio.Wave.WaveIn _microphonestream;
         private NAudio.Wave.WaveFileWriter _waveWriter;
         private readonly ILiveDescribePlayer _mediaVideo;
@@ -37,8 +34,7 @@ namespace LiveDescribe.View_Model
         //most interactions between the  descriptionviewmodel and the videocontrol should be in the maincontrol
         private VideoControl _videoControl;
 
-        //used to restore the previous video state after it's finished recording
-        private LiveDescribeVideoStates _previousVideoState;
+        private LiveDescribeVideoStates _previousVideoState; //used to restore the previous video state after it's finished recording
         #endregion
 
         #region Event Handlers
@@ -120,27 +116,14 @@ namespace LiveDescribe.View_Model
         public void Record()
         {
             Console.WriteLine("----------------------");
-
             //if the button was clicked once already it is in the RecordingDescription State
             //so end the recording because it is the second click
             if (_mediaVideo.CurrentState == LiveDescribeVideoStates.RecordingDescription)
-            {    
-                Console.WriteLine("Finished Recording");
-                MicrophoneStream.StopRecording();
-                string filename = _waveWriter.Filename;
-                _waveWriter.Dispose();
-                _waveWriter = null;
-                NAudio.Wave.WaveFileReader read = new NAudio.Wave.WaveFileReader(filename);
-                AddDescription(filename, 0, read.TotalTime.TotalMilliseconds, _descriptionStartTime, ExtendedIsChecked);
-                read.Dispose();
-                //have to change the state of recording
-                _mediaVideo.CurrentState = _previousVideoState;
+            {
+                FinishRecordingDescription();
                 return;
             }
-            
-            EventHandler handlerRecordRequested = RecordRequested;
-            EventHandler handlerNotPluggedIn = RecordRequestedMicrophoneNotPluggedIn;
-            
+                                 
             // if we don't have an existing microphone we try to create a new one with the first available microphone
             // if no microphone exists an exception is thrown and we throw the event "RecordRequestedMicrophoneNotPluggedIn
             if (!_usingExistingMicrophone)
@@ -156,21 +139,18 @@ namespace LiveDescribe.View_Model
                 }
                 catch (NAudio.MmException e)
                 {
-                    Console.WriteLine("Creating new microphone Exception....");
-                    Console.WriteLine(e.StackTrace);
-
-                    if (handlerNotPluggedIn == null) return;
-                    RecordRequestedMicrophoneNotPluggedIn(this, EventArgs.Empty);
+                    //Microphone not plugged in
+                    Console.WriteLine("Creating new microphone (No Microphone) Exception....");
+                    HandleNoMicrophoneException(e);
                     return;
                 }
             }
             Console.WriteLine("Recording..");
-           
+         
             // get a random guid to name the wave file
             // there is an EXTREMELY small chance that the guid used has been used before
             Guid g = Guid.NewGuid();
-            _waveWriter = new NAudio.Wave.WaveFileWriter(Properties.Settings.Default.WorkingDirectory + g.ToString() + ".wav", MicrophoneStream.WaveFormat);
-            
+            _waveWriter = new NAudio.Wave.WaveFileWriter(Properties.Settings.Default.WorkingDirectory + g.ToString() + ".wav", MicrophoneStream.WaveFormat);          
             MicrophoneStream.DataAvailable += new EventHandler<NAudio.Wave.WaveInEventArgs>(MicrophoneSteam_DataAvailable);
   
             try
@@ -180,17 +160,15 @@ namespace LiveDescribe.View_Model
             }
             catch (NAudio.MmException e)
             {
-                Console.WriteLine("Previous Microphone Exception...");
-                Console.WriteLine(e.StackTrace);
-
-                if (handlerNotPluggedIn == null) return;
-                RecordRequestedMicrophoneNotPluggedIn(this, EventArgs.Empty);
+                //Microphone not plugged in
+                Console.WriteLine("Previous Microphone was found then unplugged (No Microphone) Exception...");
+                HandleNoMicrophoneException(e);
                 return;
             }
-
             //save the current state so when the button is pressed again you can restore it back to that state
             _previousVideoState = _mediaVideo.CurrentState;
 
+            EventHandler handlerRecordRequested = RecordRequested;
             if (_mediaVideo != null) _mediaVideo.CurrentState = LiveDescribeVideoStates.RecordingDescription;
             if (handlerRecordRequested == null) return;
             handlerRecordRequested(this, EventArgs.Empty);
@@ -356,7 +334,11 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Private Event Methods
-
+        /// <summary>
+        /// Write to the wave file, on data available in the microphone stream
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MicrophoneSteam_DataAvailable(object sender, WaveInEventArgs e)
         {
             if (_waveWriter == null) return;
@@ -368,6 +350,32 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Helper Methods
+        /// <summary>
+        /// Stops recording a description, and sets the correct state of the media video
+        /// it also adds the description that was recorded to the list of descriptions
+        /// </summary>
+        private void FinishRecordingDescription()
+        {
+            Console.WriteLine("Finished Recording");
+            MicrophoneStream.StopRecording();
+            string filename = _waveWriter.Filename;
+            _waveWriter.Dispose();
+            _waveWriter = null;
+            NAudio.Wave.WaveFileReader read = new NAudio.Wave.WaveFileReader(filename);
+            AddDescription(filename, 0, read.TotalTime.TotalMilliseconds, _descriptionStartTime, ExtendedIsChecked);
+            read.Dispose();
+            //have to change the state of recording
+            _mediaVideo.CurrentState = _previousVideoState;
+        }
+
+        private void HandleNoMicrophoneException(NAudio.MmException e)
+        {
+            Console.WriteLine(e.StackTrace);
+            EventHandler handlerNotPluggedIn = RecordRequestedMicrophoneNotPluggedIn;
+            if (handlerNotPluggedIn == null) return;
+            RecordRequestedMicrophoneNotPluggedIn(this, EventArgs.Empty);
+        }
+
         /// <summary>
         /// Method to add a description to the list and throw an event, whenever you are adding a description to the list you should use this method
         /// </summary>

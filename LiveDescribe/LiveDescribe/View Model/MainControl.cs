@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System;
 using LiveDescribe.Model;
 using System.Timers;
+using Microsoft.Win32;
 
 namespace LiveDescribe.View_Model
 {
@@ -104,6 +105,8 @@ namespace LiveDescribe.View_Model
             EventHandler handler = ProjectClosed;
             if (handler != null) handler(this, EventArgs.Empty);
         }
+
+
         #endregion
 
         #region Commands
