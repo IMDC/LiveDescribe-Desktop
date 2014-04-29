@@ -1,18 +1,15 @@
-﻿using System;
+﻿using LiveDescribe.Converters;
+using LiveDescribe.View_Model;
+using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media.Animation;
 using System.Windows.Shapes;
-using LiveDescribe.Converters;
-using LiveDescribe.View_Model;
 using System.Windows.Threading;
-using System.Collections.Generic;
-using System.Windows.Media.Imaging;
-using System.Windows.Media;
 
 namespace LiveDescribe.View
 {
@@ -21,17 +18,23 @@ namespace LiveDescribe.View
     /// </summary>
     public partial class MainWindow : Window
     {
-        private double _staticCanvasWidth = 0;
-        private double _videoDuration = -1;
+        //Constants
         private const double MarkerOffset = 10.0;
-        private const double PageScrollPercent = 0.95;  //when the marker hits 95% of the page it scrolls
-        private const double PageTimeBeforeCanvasScrolls = 30; //30 seconds page time before audiocanvas  & descriptioncanvas scroll
+        /// <summary>when the marker hits 95% of the page it scrolls</summary>
+        private const double PageScrollPercent = 0.95;
+        /// <summary>30 seconds page time before audiocanvas  & descriptioncanvas scroll</summary>
+        private const double PageTimeBeforeCanvasScrolls = 30;
         private const double LineTime = 1; //each line in the NumberTimeline appears every 1 second
         private const int LongLineTime = 5; // every 5 LineTimes, you get a Longer Line
+
+        /// <summary>The width of the entire canvas.</summary>
+        private double _canvasWidth = 0;
+        private double _videoDuration = -1;
         private readonly VideoControl _videoControl;
         private readonly PreferencesViewModel _preferences;
+        /// <summary>used to format a timespan object which in this case in the videoMedia.Position</summary>
         private readonly DescriptionViewModel _descriptionViewModel;
-        private readonly TimeConverterFormatter _formatter; //used to format a timespan object which in this case in the videoMedia.Position
+        private readonly TimeConverterFormatter _formatter;
         private double _originalPosition = -1;
 
         public MainWindow()
@@ -51,7 +54,10 @@ namespace LiveDescribe.View
 
             _formatter = new TimeConverterFormatter();
 
+            #region TimeLine Event Listeners
+
             TimeLine.ScrollChanged += (sender, e) => { DrawWaveForm(); };
+            #endregion
 
             #region Event Listeners for VideoMedia
             //if the videomedia's path changes (a video is added)
@@ -67,9 +73,9 @@ namespace LiveDescribe.View
             #endregion
 
             #region Event Listeners For Main Control (Pause, Play, Mute, FastForward, Rewind)
-            //These events are put inside the main control because they will also effect the list of audio descriptions
-            //an instance of DescriptionViewModel is inside the main control and the main control will take care of synchronizing
-            //the video, and the descriptions
+            //These events are put inside the main control because they will also effect the list
+            //of audio descriptions an instance of DescriptionViewModel is inside the main control
+            //and the main control will take care of synchronizing the video, and the descriptions
 
             //listens for PlayRequested Event
             maincontrol.PlayRequested += (sender, e) =>
@@ -96,7 +102,6 @@ namespace LiveDescribe.View
                     System.Windows.Input.CommandManager.InvalidateRequerySuggested();
                 };
 
-
             maincontrol.ProjectClosed += (sender, e) =>
             {
                 AudioCanvas.Children.Clear();
@@ -121,7 +126,7 @@ namespace LiveDescribe.View
             maincontrol.VideoControl.VideoOpenedRequested += (sender, e) =>
                 {
                     _videoDuration = VideoMedia.NaturalDuration.TimeSpan.TotalMilliseconds;
-                    _staticCanvasWidth = calculateWidth();
+                    _canvasWidth = calculateWidth();
                     Marker.IsEnabled = true;
                 };
 
@@ -136,7 +141,11 @@ namespace LiveDescribe.View
                 };
 
             //captures the mouse when a mousedown request is sent to the Marker
-            maincontrol.VideoControl.OnMarkerMouseDownRequested += (sender, e) => { Console.WriteLine("Marker Mouse Down"); Marker.CaptureMouse(); };
+            maincontrol.VideoControl.OnMarkerMouseDownRequested += (sender, e) =>
+            {
+                Console.WriteLine("Marker Mouse Down");
+                Marker.CaptureMouse();
+            };
 
             //updates the video position when the mouse is released on the Marker
             maincontrol.VideoControl.OnMarkerMouseUpRequested += (sender, e) =>
@@ -261,11 +270,10 @@ namespace LiveDescribe.View
         /// <param name="e">e</param>
         private void Play_Tick(object sender, EventArgs e)
         {
-
             try
             {
-                //This method runs on a separate thread therefore all calls to get values or set values that are located on the UI thread
-                //must be gotten with Dispatcher.Invoke
+                //This method runs on a separate thread therefore all calls to get values or set
+                //values that are located on the UI thread must be gotten with Dispatcher.Invoke
                 double canvasLeft = 0;
                 Dispatcher.Invoke(delegate { canvasLeft = Canvas.GetLeft(Marker); });
                 ScrollRightIfCan(canvasLeft);
@@ -328,7 +336,8 @@ namespace LiveDescribe.View
         private void UpdateMarkerPosition(double xPos)
         {
             Canvas.SetLeft(Marker, xPos);
-            CurrentTimeLabel.Text = (string)_formatter.Convert(VideoMedia.Position, VideoMedia.Position.GetType(), this, CultureInfo.CurrentCulture);
+            CurrentTimeLabel.Text = (string)_formatter.Convert(VideoMedia.Position, VideoMedia.Position.GetType(),
+                this, CultureInfo.CurrentCulture);
         }
 
         /// <summary>
@@ -338,12 +347,14 @@ namespace LiveDescribe.View
         private void UpdateVideoPosition(int vidPos)
         {
             VideoMedia.Position = new TimeSpan(0, 0, 0, 0, vidPos);
-            CurrentTimeLabel.Text = (string)_formatter.Convert(VideoMedia.Position, VideoMedia.Position.GetType(), this, CultureInfo.CurrentCulture);
+            CurrentTimeLabel.Text = (string)_formatter.Convert(VideoMedia.Position, VideoMedia.Position.GetType(),
+                this, CultureInfo.CurrentCulture);
         }
 
         /// <summary>
         /// This method is called inside the Play_Tick method which runs on a separate thread
-        /// Scrolls the scrollviewer to the right as much as the PageScrollPercent when the marker reaches the PageScrollPercent of the width of the page
+        /// Scrolls the scrollviewer to the right as much as the PageScrollPercent when the marker
+        /// reaches the PageScrollPercent of the width of the page
         /// </summary>
         /// <returns>true if it can scroll right</returns>
         private bool ScrollRightIfCan(double xPos)
@@ -352,11 +363,15 @@ namespace LiveDescribe.View
             //because this method is located in the Play_Tick method which runs in a separate thread
             //that is how you must get/set the values
 
-            double width = _staticCanvasWidth;
+            double width = _canvasWidth;
             double singlePageWidth = 0;
             double scrolledAmount = 0;
 
-            Dispatcher.Invoke(delegate { singlePageWidth = TimeLine.ActualWidth; scrolledAmount = TimeLine.HorizontalOffset; });
+            Dispatcher.Invoke(delegate
+            {
+                singlePageWidth = TimeLine.ActualWidth;
+                scrolledAmount = TimeLine.HorizontalOffset;
+            });
             double scrollOffsetRight = PageScrollPercent * singlePageWidth;
             if (!(xPos - scrolledAmount >= (scrollOffsetRight))) return false;
 
@@ -366,7 +381,7 @@ namespace LiveDescribe.View
 
         /// <summary>
         /// Calculates the width required for the audioCanvas
-        /// and then sets _staticCanvasWidth to this value
+        /// and then sets _canvasWidth to this value
         /// </summary>
         private double calculateWidth()
         {
@@ -389,7 +404,7 @@ namespace LiveDescribe.View
                 return;
 
             double width = TimeLine.ActualWidth;
-            double fullWidth = _staticCanvasWidth;
+            double fullWidth = _canvasWidth;
             double height = AudioCanvas.ActualHeight;
             double binSize = Math.Floor(data.Count / Math.Max(fullWidth, 1));
 
@@ -424,7 +439,7 @@ namespace LiveDescribe.View
                 });
             }
             double pages = _videoDuration / (PageTimeBeforeCanvasScrolls * 1000);
-            double canvasWidth = _staticCanvasWidth;
+            double canvasWidth = _canvasWidth;
 
             var numlines = (int)(_videoDuration / (LineTime * 1000));
             //Clear the canvas because we don't want the remaining lines due to importing a new video
@@ -433,16 +448,16 @@ namespace LiveDescribe.View
 
             for (int i = 0; i < numlines; ++i)
             {
-                if (i%LongLineTime == 0)
+                if (i % LongLineTime == 0)
                 {
                     NumberTimeline.Children.Add(new Line
                     {
                         Stroke = System.Windows.Media.Brushes.Blue,
                         StrokeThickness = 1.5,
                         Y1 = 0,
-                        Y2 = NumberTimeline.ActualHeight/1.2,
-                        X1 = canvasWidth/numlines*i,
-                        X2 = canvasWidth/numlines*i,
+                        Y2 = NumberTimeline.ActualHeight / 1.2,
+                        X1 = canvasWidth / numlines * i,
+                        X2 = canvasWidth / numlines * i,
                     });
                 }
                 else
@@ -451,25 +466,26 @@ namespace LiveDescribe.View
                     {
                         Stroke = System.Windows.Media.Brushes.Black,
                         Y1 = 0,
-                        Y2 = NumberTimeline.ActualHeight/2,
-                        X1 = canvasWidth/numlines*i,
-                        X2 = canvasWidth/numlines*i
+                        Y2 = NumberTimeline.ActualHeight / 2,
+                        X1 = canvasWidth / numlines * i,
+                        X2 = canvasWidth / numlines * i
                     });
                 }
             }
         }
 
         /// <summary>
-        ///Update's the instance variables that keep track of the timeline height and width, and calculates the size of the timeline
-        ///if the width of the audio canvas is greater then the timeline width it automatically overflows and scrolls due to the scrollview
-        ///then update the width of the marker to match the audio canvas
+        /// Update's the instance variables that keep track of the timeline height and width, and
+        /// calculates the size of the timeline if the width of the audio canvas is greater then the
+        /// timeline width it automatically overflows and scrolls due to the scrollview then update
+        /// the width of the marker to match the audio canvas
         /// </summary>
         private void SetTimeline()
         {
             Console.WriteLine("Setting Timeline");
-            NumberTimeline.Width = _staticCanvasWidth;
-            AudioCanvas.Width = _staticCanvasWidth;
-            DescriptionCanvas.Width = _staticCanvasWidth;
+            NumberTimeline.Width = _canvasWidth;
+            AudioCanvas.Width = _canvasWidth;
+            DescriptionCanvas.Width = _canvasWidth;
 
             DrawWaveForm();
         }
