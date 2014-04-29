@@ -432,5 +432,25 @@ namespace LiveDescribe.Utilities
 
             return new List<Space>();
         }
+
+        /// <summary>
+        /// Attempts to delete the file created by stripping the audio.
+        /// </summary>
+        public void DeleteAudioFile()
+        {
+            try
+            {
+                File.Delete(_audioFile);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("An error occured attempting to delete the audio file: {0}", e.ToString());
+            }
+
+            if (!File.Exists(_audioFile))
+                Console.WriteLine("File deleted");
+            else
+                Console.WriteLine("File not deleted");
+        }
     }
 }

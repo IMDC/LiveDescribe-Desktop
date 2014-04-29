@@ -300,7 +300,7 @@ namespace LiveDescribe.View_Model
             _audioOperator = new AudioUtility(Path);
             _audioOperator.StripAudio(_stripAudioWorker);
             _waveFormData = _audioOperator.ReadWavData(_stripAudioWorker);          
-           
+            _audioOperator.DeleteAudioFile();
         }
 
         /// <summary>
