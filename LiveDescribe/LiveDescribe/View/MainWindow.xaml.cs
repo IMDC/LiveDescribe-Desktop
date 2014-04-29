@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Globalization;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using LiveDescribe.Converters;
 using LiveDescribe.View_Model;
@@ -49,6 +51,8 @@ namespace LiveDescribe.View
 
             _formatter = new TimeConverterFormatter();
 
+            TimeLine.ScrollChanged += (sender, e) => { DrawWaveForm(); };
+
             #region Event Listeners for VideoMedia
             //if the videomedia's path changes (a video is added)
             //then play and stop the video to load the video
@@ -71,8 +75,8 @@ namespace LiveDescribe.View
             maincontrol.PlayRequested += (sender, e) =>
                 {
                     //this is to recheck all the graphics states
-                    System.Windows.Input.CommandManager.InvalidateRequerySuggested();                   
-                 
+                    System.Windows.Input.CommandManager.InvalidateRequerySuggested();
+
                     double position = (VideoMedia.Position.TotalMilliseconds / _videoDuration) * (AudioCanvas.Width);
                     UpdateMarkerPosition(position - MarkerOffset);
                 };
@@ -100,7 +104,7 @@ namespace LiveDescribe.View
                 NumberTimeline.Children.Clear();
                 AudioCanvas.Children.Add(NumberTimelineBorder);
                 AudioCanvas.Children.Add(Marker);
-                
+
                 UpdateMarkerPosition(-MarkerOffset);
                 CurrentTimeLabel.Text = "00:00:000";
                 Marker.IsEnabled = false;
@@ -126,7 +130,6 @@ namespace LiveDescribe.View
             maincontrol.VideoControl.OnStrippingAudioCompleted += (sender, e) =>
                 {
                     SetTimeline();
-                    DrawWaveForm();
 
                     //make this false so that the loading screen goes away after the timeline and the wave form are drawn
                     maincontrol.LoadingViewModel.Visible = false;
@@ -139,9 +142,9 @@ namespace LiveDescribe.View
             maincontrol.VideoControl.OnMarkerMouseUpRequested += (sender, e) =>
                 {
                     Console.WriteLine("Marker Mouse Up");
-                    var newValue = ((Canvas.GetLeft(Marker) + MarkerOffset)/AudioCanvas.Width)*_videoDuration;
+                    var newValue = ((Canvas.GetLeft(Marker) + MarkerOffset) / AudioCanvas.Width) * _videoDuration;
 
-                    UpdateVideoPosition((int) newValue);
+                    UpdateVideoPosition((int)newValue);
                     Marker.ReleaseMouseCapture();
                 };
 
@@ -226,7 +229,7 @@ namespace LiveDescribe.View
                         {
                             e.Description.X = e.Description.X + (e2.GetPosition(DescriptionCanvas).X - _originalPosition);
                             _originalPosition = e2.GetPosition(DescriptionCanvas).X;
-                            e.Description.StartInVideo = (_videoDuration/AudioCanvas.Width) * (e.Description.X);
+                            e.Description.StartInVideo = (_videoDuration / AudioCanvas.Width) * (e.Description.X);
                             e.Description.EndInVideo = e.Description.StartInVideo + (e.Description.EndWaveFileTime - e.Description.StartWaveFileTime);
                         }
                         else
@@ -258,7 +261,7 @@ namespace LiveDescribe.View
         /// <param name="e">e</param>
         private void Play_Tick(object sender, EventArgs e)
         {
-            
+
             try
             {
                 //This method runs on a separate thread therefore all calls to get values or set values that are located on the UI thread
@@ -266,16 +269,16 @@ namespace LiveDescribe.View
                 double canvasLeft = 0;
                 Dispatcher.Invoke(delegate { canvasLeft = Canvas.GetLeft(Marker); });
                 ScrollRightIfCan(canvasLeft);
-                Dispatcher.Invoke(delegate 
-                { 
-                    double position = (VideoMedia.Position.TotalMilliseconds / _videoDuration) * (AudioCanvas.Width); 
+                Dispatcher.Invoke(delegate
+                {
+                    double position = (VideoMedia.Position.TotalMilliseconds / _videoDuration) * (AudioCanvas.Width);
                     UpdateMarkerPosition(position - MarkerOffset);
                 });
-                
+
             }
             catch (System.Threading.Tasks.TaskCanceledException exception)
-            { 
-            //do nothing this exception is thrown when the application is exited
+            {
+                //do nothing this exception is thrown when the application is exited
                 Console.WriteLine(exception.ToString());
             }
         }
@@ -292,7 +295,7 @@ namespace LiveDescribe.View
             if (_videoDuration != -1)
             {
                 SetTimeline();
-            } 
+            }
         }
 
         /// <summary>
@@ -352,7 +355,7 @@ namespace LiveDescribe.View
             double width = _staticCanvasWidth;
             double singlePageWidth = 0;
             double scrolledAmount = 0;
-            
+
             Dispatcher.Invoke(delegate { singlePageWidth = TimeLine.ActualWidth; scrolledAmount = TimeLine.HorizontalOffset; });
             double scrollOffsetRight = PageScrollPercent * singlePageWidth;
             if (!(xPos - scrolledAmount >= (scrollOffsetRight))) return false;
@@ -379,34 +382,81 @@ namespace LiveDescribe.View
         /// Draws the wavform of the video audio on the canvas
         /// </summary>
         private void DrawWaveForm()
-        {   
+        {
             Console.WriteLine("Drawing wave form");
             List<float> data = _videoControl.AudioData;
-            double width = _staticCanvasWidth; 
+            if (data == null)
+                return;
+
+            double width = TimeLine.ActualWidth;
+            double fullWidth = _staticCanvasWidth;
             double height = AudioCanvas.ActualHeight;
-            double binSize = Math.Floor(data.Count / width);
-            WriteableBitmap writeableBmp = BitmapFactory.New((int)width, (int)height);
-            for (int pixel = 0; pixel < width; pixel++)
+            double binSize = Math.Floor(data.Count / Math.Max(fullWidth, 1));
+
+            AudioCanvas.Children.Clear();
+            //Re-add Children components
+            AudioCanvas.Children.Add(NumberTimelineBorder);
+            AudioCanvas.Children.Add(Marker);
+
+            int begin = (int)TimeLine.HorizontalOffset;
+            int end = (int)(TimeLine.HorizontalOffset + width);
+
+            for (int pixel = begin; pixel < end; pixel++)
             {
                 //get min and max from bin
                 List<float> bin = data.GetRange((int)(pixel * binSize), (int)binSize);
-            
-                bin.Sort();
-                float min = bin[0];
-                float max = bin[bin.Count - 1];
-                //Console.WriteLine("Min: " + min + " Max: " + max);
+
+                float min = bin.Min();
+                float max = bin.Max();
 
                 double Y1 = height * min;
                 double Y2 = height * max;
                 double X1 = pixel;
                 double X2 = pixel;
 
-                writeableBmp.DrawLineAa((int)X1, (int)Y1, (int)X2, (int)Y2, Colors.Black);               
+                AudioCanvas.Children.Add(new Line
+                {
+                    Stroke = System.Windows.Media.Brushes.Black,
+                    Y1 = Y1,
+                    Y2 = Y2,
+                    X1 = X1,
+                    X2 = X2,
+                });
             }
-            ImageBrush brush = new ImageBrush();
-            brush.ImageSource = writeableBmp;
-            brush.Freeze();
-            AudioCanvas.Background = brush;
+            double pages = _videoDuration / (PageTimeBeforeCanvasScrolls * 1000);
+            double canvasWidth = _staticCanvasWidth;
+
+            var numlines = (int)(_videoDuration / (LineTime * 1000));
+            //Clear the canvas because we don't want the remaining lines due to importing a new video
+            //or resizing the window
+            NumberTimeline.Children.Clear();
+
+            for (int i = 0; i < numlines; ++i)
+            {
+                if (i%LongLineTime == 0)
+                {
+                    NumberTimeline.Children.Add(new Line
+                    {
+                        Stroke = System.Windows.Media.Brushes.Blue,
+                        StrokeThickness = 1.5,
+                        Y1 = 0,
+                        Y2 = NumberTimeline.ActualHeight/1.2,
+                        X1 = canvasWidth/numlines*i,
+                        X2 = canvasWidth/numlines*i,
+                    });
+                }
+                else
+                {
+                    NumberTimeline.Children.Add(new Line
+                    {
+                        Stroke = System.Windows.Media.Brushes.Black,
+                        Y1 = 0,
+                        Y2 = NumberTimeline.ActualHeight/2,
+                        X1 = canvasWidth/numlines*i,
+                        X2 = canvasWidth/numlines*i
+                    });
+                }
+            }
         }
 
         /// <summary>
@@ -417,52 +467,11 @@ namespace LiveDescribe.View
         private void SetTimeline()
         {
             Console.WriteLine("Setting Timeline");
-            double pages = _videoDuration / (PageTimeBeforeCanvasScrolls * 1000);
-            double width = _staticCanvasWidth; 
+            NumberTimeline.Width = _staticCanvasWidth;
+            AudioCanvas.Width = _staticCanvasWidth;
+            DescriptionCanvas.Width = _staticCanvasWidth;
 
-            var numlines = (int)(_videoDuration / (LineTime * 1000));
-            //Clear the canvas because we don't want the remaining lines due to importing a new video
-            //or resizing the window
-            NumberTimeline.Children.Clear();
-
-            for (int i = 0; i < numlines; ++i)
-            {
-
-                Line splitLine;
-                
-                if (i % LongLineTime == 0)
-                {
-                    splitLine = new Line
-                    {
-                        Stroke = System.Windows.Media.Brushes.Blue,
-                        StrokeThickness = 1.5,
-                        Y1 = 0,
-                        Y2 = NumberTimeline.ActualHeight / 1.2,
-                        X1 = width / numlines * i,
-                        X2 = width / numlines * i,
-                    };
-
-                    NumberTimeline.Children.Add(splitLine);
-                    continue;
-                }
-
-                splitLine = new Line
-                {
-                    Stroke = System.Windows.Media.Brushes.Black,
-                    Y1 = 0,
-                    Y2 = NumberTimeline.ActualHeight / 2,
-                    X1 = width / numlines * i,
-                    X2 = width / numlines * i
-                };
-               
-                NumberTimeline.Children.Add(splitLine);
-            }
-
-            NumberTimeline.Width = width;
-
-            AudioCanvas.Width = width;
-            DescriptionCanvas.Width = width;
-            Marker.Points[4] = new Point(Marker.Points[4].X, AudioCanvasBorder.ActualHeight);
+            DrawWaveForm();
         }
         #endregion
     }
