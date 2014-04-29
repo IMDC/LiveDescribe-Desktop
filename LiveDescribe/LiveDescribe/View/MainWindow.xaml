@@ -5,9 +5,16 @@
         xmlns:cmd="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Extras.WPF45"
         xmlns:controls="clr-namespace:LiveDescribe.Controls"
         xmlns:converters="clr-namespace:LiveDescribe.Converters"
-        Title="MainWindow" Height="800" Width="1280" MinHeight="800" MinWidth="1280">
+        Title="MainWindow" Height="600" Width="950" MinHeight="600" MinWidth="800">
     <Window.Resources>
         <converters:BoolToVisibilityConverter x:Key="BoolConverter"/>
+        <Style
+            x:Key="ControlPanelStyle"
+            TargetType="Control">
+            <Setter
+                Property="Margin"
+                Value="5" />
+        </Style>
     </Window.Resources>
 
     <Grid>
@@ -85,16 +92,16 @@
                         <converters:TimeConverterFormatter x:Key="TimeConverterFormatter" />
                     </StackPanel.Resources>
 
-                    <Button DataContext="{Binding VideoControl}" Margin="11" Height="30" Command="{Binding MuteCommand}">Mute</Button>
-                    <Slider DataContext="{Binding VideoControl}" Value="{Binding Path=Volume, ElementName=VideoMedia}" Name="VolumeControl" Maximum="1" Minimum="0"  Margin="15"
+                    <Button DataContext="{Binding VideoControl}" Style="{StaticResource ControlPanelStyle}" Command="{Binding MuteCommand}">Mute</Button>
+                    <Slider DataContext="{Binding VideoControl}" Value="{Binding Path=Volume, ElementName=VideoMedia}" Name="VolumeControl" Maximum="1" Minimum="0"  Style="{StaticResource ControlPanelStyle}"
                         Width="100"/>
                     <CheckBox DataContext="{Binding DescriptionViewModel}" IsChecked="{Binding ExtendedIsChecked}"/>
-                    <Button DataContext="{Binding DescriptionViewModel}" Command="{Binding RecordCommand}" Margin="11" Height="30">Record</Button>
-                    <Button DataContext="{Binding VideoControl}" Command="{Binding RewindCommand}" Margin="11" Height="30">Rewind</Button>
-                    <Button DataContext="{Binding VideoControl}" Name="PlayControl" Margin="11" Height="30" Command="{Binding PlayCommand}">Play</Button>
-                    <Button DataContext="{Binding VideoControl}" Name="PauseControl" Margin="11" Height="30" Command="{Binding PauseCommand}">Pause</Button>
-                    <Button DataContext="{Binding VideoControl}" Command="{Binding FastForwardCommand}" Margin="11" Height="30">Fast Forward</Button>
-                    <TextBlock  Text="00:00:000" Name="CurrentTimeLabel" MinWidth="40" Margin="50,15,0,15" FontSize="16" FontFamily="Trebuchet MS"/>
+                    <Button DataContext="{Binding DescriptionViewModel}" Command="{Binding RecordCommand}" Style="{StaticResource ControlPanelStyle}">Record</Button>
+                    <Button DataContext="{Binding VideoControl}" Command="{Binding RewindCommand}" Style="{StaticResource ControlPanelStyle}">Rewind</Button>
+                    <Button DataContext="{Binding VideoControl}" Name="PlayControl" Style="{StaticResource ControlPanelStyle}" Command="{Binding PlayCommand}">Play</Button>
+                    <Button DataContext="{Binding VideoControl}" Name="PauseControl" Style="{StaticResource ControlPanelStyle}" Command="{Binding PauseCommand}">Pause</Button>
+                    <Button DataContext="{Binding VideoControl}" Command="{Binding FastForwardCommand}" Style="{StaticResource ControlPanelStyle}">Fast Forward</Button>
+                    <TextBlock  Text="00:00:000" Name="CurrentTimeLabel" MinWidth="40" Margin="5,15,0,5" FontSize="16" FontFamily="Trebuchet MS"/>
                 </StackPanel>
 
                 <!--Description Information-->
