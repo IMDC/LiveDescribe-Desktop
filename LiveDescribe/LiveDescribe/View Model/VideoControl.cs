@@ -440,10 +440,16 @@ namespace LiveDescribe.View_Model
         public void CloseVideoControl()
         {
             _audioOperator = null;
+            _waveFormData = null;
             _mediaVideo.Path = null;
             _mediaVideo.Stop();
             _mediaVideo.Close();
             _mediaVideo.CurrentState = LiveDescribeVideoStates.VideoNotLoaded;
+
+            //Unhook events from _stripAudioWorker
+            _stripAudioWorker.DoWork -= StripAudio;
+            _stripAudioWorker.RunWorkerCompleted -= OnFinishedStrippingAudio;
+            _stripAudioWorker.ProgressChanged -= StrippingAudioProgressChanged;
         }
 
         /// <summary>
