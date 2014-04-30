@@ -405,7 +405,6 @@ namespace LiveDescribe.View
 
             double width = TimeLine.ActualWidth;
             double fullWidth = _canvasWidth;
-            double height = AudioCanvas.ActualHeight;
             double binSize = Math.Floor(data.Count / Math.Max(fullWidth, 1));
 
             AudioCanvas.Children.Clear();
@@ -421,21 +420,17 @@ namespace LiveDescribe.View
                 //get min and max from bin
                 List<float> bin = data.GetRange((int)(pixel * binSize), (int)binSize);
 
-                float min = bin.Min();
-                float max = bin.Max();
-
-                double Y1 = height * min;
-                double Y2 = height * max;
-                double X1 = pixel;
-                double X2 = pixel;
+                double soundWaveOffset = NumberTimeline.ActualHeight;
+                double soundWaveHeight = AudioCanvas.ActualHeight - soundWaveOffset;
 
                 AudioCanvas.Children.Add(new Line
                 {
                     Stroke = System.Windows.Media.Brushes.Black,
-                    Y1 = Y1,
-                    Y2 = Y2,
-                    X1 = X1,
-                    X2 = X2,
+                    SnapsToDevicePixels = true, //Turn off anti-aliasing effect
+                    Y1 = (soundWaveHeight) * bin.Min() + soundWaveOffset,
+                    Y2 = (soundWaveHeight) * bin.Max() + soundWaveOffset,
+                    X1 = pixel,
+                    X2 = pixel,
                 });
             }
             //double pages = _videoDuration / (PageTimeBeforeCanvasScrolls * 1000);

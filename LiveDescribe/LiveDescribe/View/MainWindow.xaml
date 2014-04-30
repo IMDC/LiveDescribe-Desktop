@@ -5,7 +5,7 @@
         xmlns:cmd="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Extras.WPF45"
         xmlns:controls="clr-namespace:LiveDescribe.Controls"
         xmlns:converters="clr-namespace:LiveDescribe.Converters"
-        Title="MainWindow" Height="600" Width="950" MinHeight="600" MinWidth="800">
+        Title="MainWindow" Height="600" Width="950" MinHeight="600" MinWidth="950">
     <Window.Resources>
         <converters:BoolToVisibilityConverter x:Key="BoolConverter"/>
         <Style
