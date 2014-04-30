@@ -9,7 +9,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Shapes;
-using System.Windows.Threading;
 
 namespace LiveDescribe.View
 {
@@ -390,6 +389,7 @@ namespace LiveDescribe.View
             this.AudioCanvas.MaxWidth = staticCanvasWidth;
             return staticCanvasWidth;
         }
+
         #endregion
 
         #region graphics Functions
@@ -438,15 +438,18 @@ namespace LiveDescribe.View
                     X2 = X2,
                 });
             }
-            double pages = _videoDuration / (PageTimeBeforeCanvasScrolls * 1000);
+            //double pages = _videoDuration / (PageTimeBeforeCanvasScrolls * 1000);
             double canvasWidth = _canvasWidth;
 
-            var numlines = (int)(_videoDuration / (LineTime * 1000));
+            //Number of lines needed for the entire video
+            int numlines = (int)(_videoDuration / (LineTime * 1000));
+            int beginLine = (int)((numlines / _canvasWidth) * TimeLine.HorizontalOffset);
+            int endLine = beginLine + (int)((numlines / _canvasWidth) * TimeLine.ActualWidth) + 1;
             //Clear the canvas because we don't want the remaining lines due to importing a new video
             //or resizing the window
             NumberTimeline.Children.Clear();
 
-            for (int i = 0; i < numlines; ++i)
+            for (int i = beginLine; i <= endLine; ++i)
             {
                 if (i % LongLineTime == 0)
                 {
