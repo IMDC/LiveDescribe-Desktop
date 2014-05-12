@@ -76,9 +76,17 @@
     <Compile Include="LiveDescribeConstants.cs" />
     <Compile Include="Model\Space.cs" />
     <Compile Include="View Model\LoadingViewModel.cs" />
+    <Compile Include="View\NewProjectView.xaml.cs">
+      <DependentUpon>NewProjectView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View Model\NewProjectViewModel.cs" />
     <Compile Include="View\PreferencesWindow.xaml.cs">
       <DependentUpon>PreferencesWindow.xaml</DependentUpon>
     </Compile>
+    <Page Include="View\NewProjectView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

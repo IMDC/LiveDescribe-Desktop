@@ -39,7 +39,10 @@ namespace LiveDescribe.View_Model
             _preferences = new PreferencesViewModel();
             _descriptionviewmodel = new DescriptionViewModel(mediaVideo, _videocontrol);
 
+            //Commands
             CloseProjectCommand = new RelayCommand(CloseProject, ()=>true);
+            NewProjectCommand = new RelayCommand(NewProject, ()=>true);
+
             _mediaVideo = mediaVideo;
                       
             //If apply requested happens  in the preferences use the new saved microphone in the settings
@@ -106,11 +109,19 @@ namespace LiveDescribe.View_Model
             if (handler != null) handler(this, EventArgs.Empty);
         }
 
-
+        public void NewProject()
+        {
+            Console.WriteLine("Hello");
+        }
         #endregion
 
         #region Commands
         public RelayCommand CloseProjectCommand { private set; get; }
+
+        /// <summary>
+        /// Command to Open a new Project.
+        /// </summary>
+        public RelayCommand NewProjectCommand { private set; get; }
         #endregion
 
         #region Binding Properties
