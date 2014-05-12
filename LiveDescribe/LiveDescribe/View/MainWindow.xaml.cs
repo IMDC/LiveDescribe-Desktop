@@ -299,10 +299,18 @@ namespace LiveDescribe.View
         private void AudioCanvasBorder_SizeChanged_1(object sender, SizeChangedEventArgs e)
         {
             Console.WriteLine("Audio Canvas Border Sized Changed");
+            
+            //Video is loaded
             if (_videoDuration != -1)
             {
                 SetTimeline();
             }
+            //update marker to fit the entire AudioCanvas even when there's no video loaded
+            else
+            {
+                Marker.Points[4] = new Point(Marker.Points[4].X, AudioCanvasBorder.ActualHeight);
+            }
+            
         }
 
         /// <summary>
@@ -484,7 +492,7 @@ namespace LiveDescribe.View
             NumberTimeline.Width = _canvasWidth;
             AudioCanvas.Width = _canvasWidth;
             DescriptionCanvas.Width = _canvasWidth;
-
+            Marker.Points[4] = new Point(Marker.Points[4].X, AudioCanvasBorder.ActualHeight);
             DrawWaveForm();
         }
         #endregion
