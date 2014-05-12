@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System;
 using LiveDescribe.Model;
 using System.Timers;
+using LiveDescribe.View;
 using Microsoft.Win32;
 
 namespace LiveDescribe.View_Model
@@ -93,7 +94,16 @@ namespace LiveDescribe.View_Model
         }
         #endregion
 
-        #region Binding Functions
+        #region Commands
+        public RelayCommand CloseProjectCommand { private set; get; }
+
+        /// <summary>
+        /// Command to Open a new Project.
+        /// </summary>
+        public RelayCommand NewProjectCommand { private set; get; }
+        #endregion
+
+        #region Command Functions
         /// <summary>
         /// This function gets called when the close project menu item gets pressed
         /// </summary>
@@ -111,17 +121,8 @@ namespace LiveDescribe.View_Model
 
         public void NewProject()
         {
-            Console.WriteLine("Hello");
+            NewProjectViewModel.CreateWindow();
         }
-        #endregion
-
-        #region Commands
-        public RelayCommand CloseProjectCommand { private set; get; }
-
-        /// <summary>
-        /// Command to Open a new Project.
-        /// </summary>
-        public RelayCommand NewProjectCommand { private set; get; }
         #endregion
 
         #region Binding Properties
