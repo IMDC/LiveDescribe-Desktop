@@ -214,18 +214,19 @@
                     Grid.Row="0"
                     Grid.Column="4"
                     Grid.RowSpan="6"
-                    Grid.ColumnSpan="3">
+                    Grid.ColumnSpan="3"
+                    DataContext="{Binding DescriptionInfoTabViewModel}"
+                    SelectedIndex="{Binding TabSelectedIndex}">
                     <TabItem
                         Header="Spaces" />
                     <TabItem
-                        DataContext="{Binding DescriptionViewModel}"
                         Header="Descriptions">
                         <ListView
                             VirtualizingPanel.IsVirtualizing="True"
                             ItemsSource="{Binding RegularDescriptions}">
                             <ListView.SelectedItem>
                                 <Binding
-                                    Path="DescriptionSelectedInList"
+                                    Path="RegularDescriptionSelectedInList"
                                     UpdateSourceTrigger="PropertyChanged"
                                     ValidatesOnDataErrors="True"
                                     Mode="TwoWay" />
@@ -264,14 +265,13 @@
                         </ListView>
                     </TabItem>
                     <TabItem
-                        DataContext="{Binding DescriptionViewModel}"
                         Header="Extended Descriptions">
                         <ListView
                             VirtualizingPanel.IsVirtualizing="True"
                             ItemsSource="{Binding ExtendedDescriptions}">
                             <ListView.SelectedItem>
                                 <Binding
-                                    Path="DescriptionSelectedInList"
+                                    Path="ExtendedDescriptionSelectedInList"
                                     UpdateSourceTrigger="PropertyChanged"
                                     ValidatesOnDataErrors="True"
                                     Mode="TwoWay" />
@@ -516,7 +516,7 @@
 
                 <!--Description Text Box-->
                 <TextBox
-                    DataContext="{Binding DescriptionViewModel}"
+                    DataContext="{Binding DescriptionInfoTabViewModel}"
                     Grid.Column="4"
                     Grid.Row="6"
                     Grid.ColumnSpan="2"
@@ -527,7 +527,7 @@
 
                 <!--Text Controls-->
                 <StackPanel
-                    DataContext="{Binding DescriptionViewModel}"
+                    DataContext="{Binding DescriptionInfoTabViewModel}"
                     Grid.Column="6"
                     Grid.Row="6"
                     Grid.RowSpan="2">

@@ -20,6 +20,7 @@ namespace LiveDescribe.View_Model
         private DescriptionViewModel _descriptionviewmodel;
         private LoadingViewModel _loadingViewModel;
         private ILiveDescribePlayer _mediaVideo;
+        private DescriptionInfoTabViewModel _descriptionInfoTabViewModel;
         #endregion
 
         #region Events
@@ -39,6 +40,7 @@ namespace LiveDescribe.View_Model
             _videocontrol = new VideoControl(mediaVideo, _loadingViewModel);
             _preferences = new PreferencesViewModel();
             _descriptionviewmodel = new DescriptionViewModel(mediaVideo, _videocontrol);
+            _descriptionInfoTabViewModel = new DescriptionInfoTabViewModel(_descriptionviewmodel);
 
             //Commands
             CloseProjectCommand = new RelayCommand(CloseProject, ()=>true);
@@ -167,6 +169,14 @@ namespace LiveDescribe.View_Model
             get
             {
                 return _loadingViewModel;
+            }
+        }
+
+        public DescriptionInfoTabViewModel DescriptionInfoTabViewModel
+        {
+            get
+            {
+                return _descriptionInfoTabViewModel;
             }
         }
         #endregion

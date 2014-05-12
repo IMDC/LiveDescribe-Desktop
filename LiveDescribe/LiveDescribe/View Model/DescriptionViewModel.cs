@@ -27,8 +27,6 @@ namespace LiveDescribe.View_Model
         private readonly ILiveDescribePlayer _mediaVideo;
         private bool _usingExistingMicrophone;
         private double _descriptionStartTime;
-        private Description _descriptionSelectedInList;
-        private String _descriptionText;
 
         //this variable should be used as little as possible in this class
         //most interactions between the  descriptionviewmodel and the videocontrol should be in the maincontrol
@@ -48,11 +46,7 @@ namespace LiveDescribe.View_Model
         public DescriptionViewModel(ILiveDescribePlayer mediaVideo, VideoControl videoControl)
         {
             _waveWriter = null;
-            DescriptionSelectedInList = null;
-            DescriptionText = "Enter Description Text";
             RecordCommand = new RelayCommand(Record, RecordStateCheck);
-            SaveDescriptionTextCommand = new RelayCommand(SaveDescriptionText,SaveTextStateCheck);
-            ClearDescriptionTextCommand = new RelayCommand(ClearDescriptionText, ()=>true);
             _mediaVideo = mediaVideo;
             _videoControl = videoControl;
 
@@ -79,35 +73,9 @@ namespace LiveDescribe.View_Model
         /// gets bound to the record button
         /// </summary>
         public RelayCommand RecordCommand { private set; get; }
-
-        /// <summary>
-        /// Command to save description text to the selected description
-        /// </summary>
-        public RelayCommand SaveDescriptionTextCommand { private set; get; }
-
-        /// <summary>
-        /// Command to clear the textbox of the description
-        /// </summary>
-        public RelayCommand ClearDescriptionTextCommand { private set; get; }
         #endregion
 
         #region Binding Functions
-
-        /// <summary>
-        /// Clears the description text
-        /// </summary>
-        public void ClearDescriptionText()
-        {
-            DescriptionText = "";
-        }
-
-        /// <summary>
-        /// Changes the description text of the selected description
-        /// </summary>
-        public void SaveDescriptionText()
-        {
-            DescriptionSelectedInList.DescriptionText = DescriptionText;
-        }
 
         /// <summary>
         /// Records the description
@@ -176,40 +144,6 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region BindingProperties
-        /// <summary>
-        /// This value gets set when a description gets selected in the List of descriptions in the tabs
-        /// </summary>
-        public Description DescriptionSelectedInList
-        {
-            set
-            {
-                _descriptionSelectedInList = value;
-                //possibly make a property to change the description's behaviour depending on if it was set through the list
-                //for example _descriptionSelectedInList.WasSelectedInList = true;
-                RaisePropertyChanged("DescriptionSelectedInList");
-            }
-            get
-            {
-                return _descriptionSelectedInList;
-            }
-        
-        }
-
-        /// <summary>
-        /// This property sets the description text, that is used to change the DescriptionSelectedInList's _descriptionText value
-        /// </summary>
-        public String DescriptionText
-        {
-            set
-            {
-                _descriptionText = value;
-                RaisePropertyChanged("DescriptionText");
-            }
-            get
-            {
-                return _descriptionText;
-            }
-        }
 
         /// <summary>
         /// property to set the Microphonestream
@@ -303,17 +237,6 @@ namespace LiveDescribe.View_Model
         public bool RecordStateCheck()
         {
             if (_mediaVideo.CurrentState == LiveDescribeVideoStates.VideoNotLoaded)
-                return false;
-            return true;
-        }
-
-        /// <summary>
-        /// method to check whether the save text button can be clicked or not
-        /// </summary>
-        /// <returns></returns>
-        public bool SaveTextStateCheck()
-        {
-            if (DescriptionSelectedInList == null)
                 return false;
             return true;
         }
