@@ -75,6 +75,7 @@
     <Compile Include="Events\AddDescriptionEventArgs.cs" />
     <Compile Include="LiveDescribeConstants.cs" />
     <Compile Include="Model\Space.cs" />
+    <Compile Include="View Model\DescriptionInfoTabViewModel.cs" />
     <Compile Include="View Model\LoadingViewModel.cs" />
     <Compile Include="View\PreferencesWindow.xaml.cs">
       <DependentUpon>PreferencesWindow.xaml</DependentUpon>
