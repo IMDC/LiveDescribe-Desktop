@@ -484,7 +484,7 @@ namespace LiveDescribe.View
             NumberTimeline.Width = _canvasWidth;
             AudioCanvas.Width = _canvasWidth;
             DescriptionCanvas.Width = _canvasWidth;
-
+            Marker.Points[4] = new Point(Marker.Points[4].X, AudioCanvasBorder.ActualHeight);
             DrawWaveForm();
         }
         #endregion
