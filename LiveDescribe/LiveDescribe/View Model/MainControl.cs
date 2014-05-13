@@ -157,6 +157,9 @@ namespace LiveDescribe.View_Model
             if (viewModel.DialogResult != true)
                 return;
 
+            if(_project != null)
+                CloseProject();
+
             _project = viewModel.Project;
 
 
@@ -178,6 +181,9 @@ namespace LiveDescribe.View_Model
             bool? dialogSuccess = projectChooser.ShowDialog();
             if (dialogSuccess != true)
                 return;
+
+            if (_project != null)
+                CloseProject();
 
             var r = new StreamReader(projectChooser.FileName);
             Project p = JsonConvert.DeserializeObject<Project>(r.ReadToEnd());
