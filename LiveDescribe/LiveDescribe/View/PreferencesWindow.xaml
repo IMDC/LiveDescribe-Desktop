@@ -4,14 +4,16 @@
         Title="PreferencesWindow" Height="500" Width="500" MaxHeight="500" MaxWidth="500">
     <Grid>
         <DockPanel>
-            <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" HorizontalAlignment="Right">
-                <Button Width="80" HorizontalAlignment="Left" Margin="30">
-                    Cancel
-                </Button>
-                
-                <Button Width="80" Command="{Binding ApplyCommand}" HorizontalAlignment="Right" Margin="30">
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" HorizontalAlignment="Right" Height="63">
+
+                <Button Width="80" Command="{Binding ApplyCommand}" HorizontalAlignment="Right" Margin="20">
                     Apply
                 </Button>
+
+                <Button Width="80" HorizontalAlignment="Left" Margin="20" Click="Close_OnClick">
+                    Close
+                </Button>    
+                
             </StackPanel>
             <TabControl>
                 <TabItem Header="AudioSource">

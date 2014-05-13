@@ -75,7 +75,6 @@
                         Header="Close Project"
                         Command="{Binding CloseProjectCommand}" />
                     <MenuItem
-                        DataContext="{Binding PreferencesViewModel}"
                         Name="Preferences"
                         Header="Preferences"
                         Command="{Binding ShowPreferencesCommand}" />
