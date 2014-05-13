@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -129,7 +130,10 @@ namespace LiveDescribe.View_Model
 
         private void CreateProject()
         {
-            Project = new Project(_projectName,_videoPath,_projectPath);
+            Project p = new Project(_projectName,Path.GetFileName(_videoPath),_projectPath);
+
+            //TODO: Check for success
+            Project = p;
             OnProjectCreated();
         }
         #endregion
