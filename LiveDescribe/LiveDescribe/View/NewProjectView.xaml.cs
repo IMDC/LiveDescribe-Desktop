@@ -26,6 +26,14 @@ namespace LiveDescribe.View
         {
             InitializeComponent();
             DataContext = dataContext;
+
+            dataContext.ProjectCreated += dataContext_ProjectCreated;
+        }
+
+        void dataContext_ProjectCreated(object sender, EventArgs e)
+        {
+            DialogResult = true;
+            this.Close();
         }
 
         private void Cancel_OnClick(object sender, RoutedEventArgs e)
