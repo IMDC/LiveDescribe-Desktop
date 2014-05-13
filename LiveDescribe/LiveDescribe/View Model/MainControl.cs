@@ -10,6 +10,7 @@ using LiveDescribe.Model;
 using System.Timers;
 using LiveDescribe.View;
 using Microsoft.Win32;
+using Newtonsoft.Json;
 
 namespace LiveDescribe.View_Model
 {
@@ -46,13 +47,13 @@ namespace LiveDescribe.View_Model
             _descriptionInfoTabViewModel = new DescriptionInfoTabViewModel(_descriptionviewmodel);
 
             //Commands
-            CloseProjectCommand = new RelayCommand(CloseProject, ()=>true);
+            CloseProjectCommand = new RelayCommand(CloseProject, () => true);
             NewProjectCommand = new RelayCommand(NewProject);
             OpenProjectCommand = new RelayCommand(OpenProject);
             ShowPreferencesCommand = new RelayCommand(ShowPreferences, () => true);
 
             _mediaVideo = mediaVideo;
-                      
+
             //If apply requested happens  in the preferences use the new saved microphone in the settings
             _descriptiontimer = new Timer(10);
             _descriptiontimer.Elapsed += (sender, e) => Play_Tick(sender, e);
@@ -84,7 +85,7 @@ namespace LiveDescribe.View_Model
 
             _videocontrol.MuteRequested += (sender, e) =>
                 {
-                    
+
                     //this Handler should be attached to the view to update the graphics
                     _mediaVideo.IsMuted = !_mediaVideo.IsMuted;
                     EventHandler handler = this.MuteRequested;
@@ -157,10 +158,16 @@ namespace LiveDescribe.View_Model
             };
 
             bool? dialogSuccess = projectChooser.ShowDialog();
-            if (dialogSuccess == true)
-            {
-               //TODO: Deserialize project file
-            }
+            if (dialogSuccess != true)
+                return;
+
+            var r = new StreamReader(projectChooser.FileName);
+            Project p = JsonConvert.DeserializeObject<Project>(r.ReadToEnd());
+            r.Close();
+
+            //TODO: Load project logic
+
+            _project = p;
         }
 
         /// <summary>
@@ -169,8 +176,8 @@ namespace LiveDescribe.View_Model
         public void ShowPreferences()
         {
             _preferences.InitializeAudioSourceInfo();
-            var preferencesWindow = new PreferencesWindow(_preferences);        
-            preferencesWindow.ShowDialog();         
+            var preferencesWindow = new PreferencesWindow(_preferences);
+            preferencesWindow.ShowDialog();
         }
         #endregion
 
@@ -245,10 +252,10 @@ namespace LiveDescribe.View_Model
                 Description currentDescription = _descriptionviewmodel.AllDescriptions[i];
                 TimeSpan currentPositionInVideo = new TimeSpan();
                 //get the current position of the video from the UI thread
-                DispatcherHelper.UIDispatcher.Invoke(delegate {currentPositionInVideo = _mediaVideo.Position;});           
+                DispatcherHelper.UIDispatcher.Invoke(delegate { currentPositionInVideo = _mediaVideo.Position; });
                 double offset = currentPositionInVideo.TotalMilliseconds - currentDescription.StartInVideo;
 
-                if (!currentDescription.IsExtendedDescription && 
+                if (!currentDescription.IsExtendedDescription &&
                     offset >= 0 && offset < (currentDescription.EndWaveFileTime - currentDescription.StartWaveFileTime))
                 {
                     Console.WriteLine("Playing Regular Description");
@@ -259,7 +266,7 @@ namespace LiveDescribe.View_Model
                     //if it is equal then the video time matches when the description should start dead on
                     offset < LiveDescribeConstants.EXTENDED_DESCRIPTION_START_INTERVAL_MAX && offset >= 0)
                 {
-                    DispatcherHelper.UIDispatcher.Invoke(delegate {_videocontrol.PauseCommand.Execute(this); Console.WriteLine("Playing Extended Description"); currentDescription.Play(); });
+                    DispatcherHelper.UIDispatcher.Invoke(delegate { _videocontrol.PauseCommand.Execute(this); Console.WriteLine("Playing Extended Description"); currentDescription.Play(); });
                     break;
                 }
             }

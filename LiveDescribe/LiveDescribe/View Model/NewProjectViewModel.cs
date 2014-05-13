@@ -7,6 +7,7 @@ using System.IO;
 using System.Web.Script.Serialization;
 using System.Windows;
 using System.Windows.Forms;
+using Newtonsoft.Json;
 using MessageBox = System.Windows.MessageBox;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 
@@ -161,10 +162,12 @@ namespace LiveDescribe.View_Model
                 Directory.CreateDirectory(p.ProjectFolderPath);
                 File.Copy(_videoPath, p.VideoFile.AbsolutePath, true);
 
-                var json = new JavaScriptSerializer();
-
-                StreamWriter sw = new StreamWriter(p.ProjectFile.AbsolutePath, false);
-                sw.Write(json.Serialize(p));
+                //TODO: Move logic into filewriter class?
+                //Write Project object to file
+                var serializer = new JsonSerializer();
+                serializer.Formatting = Formatting.Indented;
+                var sw = new StreamWriter(p.ProjectFile.AbsolutePath, false);
+                serializer.Serialize(sw, p, typeof(Project));
                 sw.Close();
             }
             //TODO: Catch individual exceptions?

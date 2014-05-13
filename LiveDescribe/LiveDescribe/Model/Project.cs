@@ -20,22 +20,28 @@ namespace LiveDescribe.Model
         /// <summary>
         /// The name of the project.
         /// </summary>
-        public string ProjectName { private set; get; }
+        public string ProjectName { set; get; }
 
         /// <summary>
         /// The absolute path to the project folder.
         /// </summary>
-        public string ProjectFolderPath { private set; get; }
+        public string ProjectFolderPath { set; get; }
 
         /// <summary>
         /// The file containing all project info on disk.
         /// </summary>
-        public ProjectFile ProjectFile { private set; get; }
+        public ProjectFile ProjectFile { set; get; }
 
         /// <summary>
         /// The video file used in the project.
         /// </summary>
-        public ProjectFile VideoFile { private set; get; }
+        public ProjectFile VideoFile { set; get; }
+
+        /// <summary>
+        /// Empty Constructor to allow for JSON serialization.
+        /// </summary>
+        public Project()
+        {}
 
         /// <summary>
         /// Constructs an instance of Project.

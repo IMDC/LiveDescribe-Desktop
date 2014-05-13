@@ -11,13 +11,19 @@ namespace LiveDescribe.Model
         /// The path of the project file relative to the project directory.
         /// Example is @"video.avi".
         /// </summary>
-        public string RelativePath { get; private set; }
+        public string RelativePath { get; set; }
 
         /// <summary>
         /// The full path of the project file starting from its drive letter.
         /// Example is @"C:\Users\imdc\Documents\Test Projects\tProj\vid.avi".
         /// </summary>
-        public string AbsolutePath { get; private set; }
+        public string AbsolutePath { get; set; }
+
+        /// <summary>
+        /// Empty Constructor to allow for JSON serialization.
+        /// </summary>
+        public ProjectFile()
+        {}
 
         /// <summary>
         /// Creates a Project file with the given paths.
