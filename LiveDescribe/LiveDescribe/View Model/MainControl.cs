@@ -47,10 +47,10 @@ namespace LiveDescribe.View_Model
             _descriptionInfoTabViewModel = new DescriptionInfoTabViewModel(_descriptionviewmodel);
 
             //Commands
-            CloseProjectCommand = new RelayCommand(CloseProject, () => true);
+            CloseProjectCommand = new RelayCommand(CloseProject, CanCloseProject);
             NewProjectCommand = new RelayCommand(NewProject);
             OpenProjectCommand = new RelayCommand(OpenProject);
-            ShowPreferencesCommand = new RelayCommand(ShowPreferences, () => true);
+            ShowPreferencesCommand = new RelayCommand(ShowPreferences);
 
             _mediaVideo = mediaVideo;
 
@@ -123,6 +123,13 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Command Functions
+
+        public bool CanCloseProject()
+        {
+            //TODO: implement notifiable property?
+            return _project != null;
+        }
+
         /// <summary>
         /// This function gets called when the close project menu item gets pressed
         /// </summary>
@@ -131,8 +138,11 @@ namespace LiveDescribe.View_Model
             //TODO: ask to save here before closing everything
             //TODO: put it in a background worker and create a loading screen (possibly a general use control)
             Console.WriteLine("Closed Project");
+
             _descriptionviewmodel.CloseDescriptionViewModel();
             _videocontrol.CloseVideoControl();
+            _project = null;
+
             EventHandler handler = ProjectClosed;
             if (handler != null) handler(this, EventArgs.Empty);
         }
@@ -144,9 +154,17 @@ namespace LiveDescribe.View_Model
         {
             var viewModel = NewProjectViewModel.CreateWindow();
 
-            if (viewModel.DialogResult == true)
-                _project = viewModel.Project;
-            //TODO: Import video, etc
+            if (viewModel.DialogResult != true)
+                return;
+
+            _project = viewModel.Project;
+
+
+            //TODO: project created event?
+            //Set up environment
+            Properties.Settings.Default.WorkingDirectory = _project.ProjectFolderPath;
+            _videocontrol.SetupAndStripAudio(_project.VideoFile.AbsolutePath);
+            _mediaVideo.CurrentState = LiveDescribeVideoStates.PausedVideo;
         }
 
         public void OpenProject()
@@ -165,9 +183,13 @@ namespace LiveDescribe.View_Model
             Project p = JsonConvert.DeserializeObject<Project>(r.ReadToEnd());
             r.Close();
 
-            //TODO: Load project logic
-
             _project = p;
+
+            //TODO: project opened event?
+            //Set up environment
+            Properties.Settings.Default.WorkingDirectory = _project.ProjectFolderPath;
+            _videocontrol.SetupAndStripAudio(_project.VideoFile.AbsolutePath);
+            _mediaVideo.CurrentState = LiveDescribeVideoStates.PausedVideo;
         }
 
         /// <summary>
@@ -187,10 +209,7 @@ namespace LiveDescribe.View_Model
         /// </summary>
         public VideoControl VideoControl
         {
-            get
-            {
-                return _videocontrol;
-            }
+            get { return _videocontrol; }
         }
 
         /// <summary>
@@ -198,10 +217,7 @@ namespace LiveDescribe.View_Model
         /// </summary>
         public PreferencesViewModel PreferencesViewModel
         {
-            get
-            {
-                return _preferences;
-            }
+            get { return _preferences; }
         }
 
         /// <summary>
@@ -209,10 +225,7 @@ namespace LiveDescribe.View_Model
         /// </summary>
         public DescriptionViewModel DescriptionViewModel
         {
-            get
-            {
-                return _descriptionviewmodel;
-            }
+            get { return _descriptionviewmodel; }
         }
 
         /// <summary>
@@ -220,18 +233,12 @@ namespace LiveDescribe.View_Model
         /// </summary>
         public LoadingViewModel LoadingViewModel
         {
-            get
-            {
-                return _loadingViewModel;
-            }
+            get { return _loadingViewModel; }
         }
 
         public DescriptionInfoTabViewModel DescriptionInfoTabViewModel
         {
-            get
-            {
-                return _descriptionInfoTabViewModel;
-            }
+            get { return _descriptionInfoTabViewModel; }
         }
         #endregion
 
