@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Model;
 using LiveDescribe.View;
-using Microsoft.TeamFoundation.Controls.WinForms;
+using System;
+using System.IO;
+using System.Web.Script.Serialization;
+using System.Windows;
+using System.Windows.Forms;
+using Newtonsoft.Json;
+using MessageBox = System.Windows.MessageBox;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 
 namespace LiveDescribe.View_Model
@@ -127,9 +127,64 @@ namespace LiveDescribe.View_Model
                 && !string.IsNullOrWhiteSpace(_projectPath);
         }
 
+        /// <summary>
+        /// Attempts to create a project using forminfo. If the given folder structure exists, the
+        /// user will be asked for confirmation to overwrite it. On an error, the project creation
+        /// will be cancelled and the method will return. On success, the ProjectCreated event is
+        /// invoked.
+        /// </summary>
         private void CreateProject()
         {
-            Project = new Project(_projectName,_videoPath,_projectPath);
+            Project p = new Project(_projectName, Path.GetFileName(_videoPath), _projectPath);
+
+            //Ensure that path is absolute
+            if (!Path.IsPathRooted(p.ProjectFolderPath))
+            {
+                MessageBox.Show("Project path must be a root path.", "Error", MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                return;
+            }
+
+            if (Directory.Exists(p.ProjectFolderPath))
+            {
+                var text = string.Format("The folder {0} already exists. Do you wish to overwrite its contents?",
+                    p.ProjectFolderPath);
+                var result = MessageBox.Show(text, "Warning", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+
+                //Return if user doesn't agree to overwrite files.
+                if (result != MessageBoxResult.Yes)
+                    return;
+            }
+
+            //Attempt to create files
+            try
+            {
+                Directory.CreateDirectory(p.ProjectFolderPath);
+                File.Copy(_videoPath, p.VideoFile.AbsolutePath, true);
+
+                //TODO: Move logic into filewriter class?
+                //Write Project object to file
+                var serializer = new JsonSerializer();
+                serializer.Formatting = Formatting.Indented;
+                var sw = new StreamWriter(p.ProjectFile.AbsolutePath, false);
+                serializer.Serialize(sw, p, typeof(Project));
+                sw.Close();
+            }
+            //TODO: Catch individual exceptions?
+            catch (Exception e)
+            {
+                Console.WriteLine(e.StackTrace);
+                MessageBox.Show("An error occured while attempting to create the project.",
+                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                /* TODO: Delete files on error? If we decide to do this, then only delete created
+                 * files as opposed to deleting entire directory, as the latter can have
+                 * disastorous consequences if user picks the wrong directory and there's an error.
+                 */
+                return;
+            }
+
+            Project = p;
             OnProjectCreated();
         }
         #endregion

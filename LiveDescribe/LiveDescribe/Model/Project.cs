@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,20 +23,40 @@ namespace LiveDescribe.Model
         public string ProjectName { set; get; }
 
         /// <summary>
-        /// The absolute path to the video to import.
-        /// </summary>
-        public string VideoPath { set; get; }
-
-        /// <summary>
         /// The absolute path to the project folder.
         /// </summary>
-        public string ProjectPath { set; get; }
+        public string ProjectFolderPath { set; get; }
 
-        public Project(string projectName, string videoPath, string projectPath)
+        /// <summary>
+        /// The file containing all project info on disk.
+        /// </summary>
+        public ProjectFile ProjectFile { set; get; }
+
+        /// <summary>
+        /// The video file used in the project.
+        /// </summary>
+        public ProjectFile VideoFile { set; get; }
+
+        /// <summary>
+        /// Empty Constructor to allow for JSON serialization.
+        /// </summary>
+        public Project()
+        {}
+
+        /// <summary>
+        /// Constructs an instance of Project.
+        /// </summary>
+        /// <param name="projectName">Name of the project.</param>
+        /// <param name="videoFileName">Name and extension of the video.</param>
+        /// <param name="projectPath">Absolute path to the project folder.</param>
+        public Project(string projectName, string videoFileName, string projectPath)
         {
-            this.ProjectName = projectName;
-            this.VideoPath = VideoPath;
-            this.ProjectPath = projectPath;
+            ProjectName = projectName;
+
+            ProjectFolderPath = Path.Combine(projectPath, projectName);
+
+            ProjectFile = new ProjectFile(ProjectFolderPath, ProjectName + ProjectExtension);
+            VideoFile = new ProjectFile(ProjectFolderPath, videoFileName);
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using LiveDescribe.Interfaces;
+﻿using System.IO;
+using System.Web.Script.Serialization;
+using LiveDescribe.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Threading;
 using GalaSoft.MvvmLight.Command;
@@ -8,6 +10,7 @@ using LiveDescribe.Model;
 using System.Timers;
 using LiveDescribe.View;
 using Microsoft.Win32;
+using Newtonsoft.Json;
 
 namespace LiveDescribe.View_Model
 {
@@ -44,12 +47,13 @@ namespace LiveDescribe.View_Model
             _descriptionInfoTabViewModel = new DescriptionInfoTabViewModel(_descriptionviewmodel);
 
             //Commands
-            CloseProjectCommand = new RelayCommand(CloseProject, ()=>true);
-            NewProjectCommand = new RelayCommand(NewProject, ()=>true);
-            ShowPreferencesCommand = new RelayCommand(ShowPreferences, () => true);
+            CloseProjectCommand = new RelayCommand(CloseProject, CanCloseProject);
+            NewProjectCommand = new RelayCommand(NewProject);
+            OpenProjectCommand = new RelayCommand(OpenProject);
+            ShowPreferencesCommand = new RelayCommand(ShowPreferences);
 
             _mediaVideo = mediaVideo;
-                      
+
             //If apply requested happens  in the preferences use the new saved microphone in the settings
             _descriptiontimer = new Timer(10);
             _descriptiontimer.Elapsed += (sender, e) => Play_Tick(sender, e);
@@ -81,7 +85,7 @@ namespace LiveDescribe.View_Model
 
             _videocontrol.MuteRequested += (sender, e) =>
                 {
-                    
+
                     //this Handler should be attached to the view to update the graphics
                     _mediaVideo.IsMuted = !_mediaVideo.IsMuted;
                     EventHandler handler = this.MuteRequested;
@@ -102,9 +106,14 @@ namespace LiveDescribe.View_Model
         public RelayCommand CloseProjectCommand { private set; get; }
 
         /// <summary>
-        /// Command to Open a new Project.
+        /// Command to open a new Project.
         /// </summary>
         public RelayCommand NewProjectCommand { private set; get; }
+
+        /// <summary>
+        /// Command to open an already existing project.
+        /// </summary>
+        public RelayCommand OpenProjectCommand { private set; get; }
 
         /// <summary>
         /// Command to show preferences
@@ -114,6 +123,13 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Command Functions
+
+        public bool CanCloseProject()
+        {
+            //TODO: implement notifiable property?
+            return _project != null;
+        }
+
         /// <summary>
         /// This function gets called when the close project menu item gets pressed
         /// </summary>
@@ -122,8 +138,11 @@ namespace LiveDescribe.View_Model
             //TODO: ask to save here before closing everything
             //TODO: put it in a background worker and create a loading screen (possibly a general use control)
             Console.WriteLine("Closed Project");
+
             _descriptionviewmodel.CloseDescriptionViewModel();
             _videocontrol.CloseVideoControl();
+            _project = null;
+
             EventHandler handler = ProjectClosed;
             if (handler != null) handler(this, EventArgs.Empty);
         }
@@ -135,8 +154,42 @@ namespace LiveDescribe.View_Model
         {
             var viewModel = NewProjectViewModel.CreateWindow();
 
-            if (viewModel.DialogResult == true)
-                _project = viewModel.Project;
+            if (viewModel.DialogResult != true)
+                return;
+
+            _project = viewModel.Project;
+
+
+            //TODO: project created event?
+            //Set up environment
+            Properties.Settings.Default.WorkingDirectory = _project.ProjectFolderPath;
+            _videocontrol.SetupAndStripAudio(_project.VideoFile.AbsolutePath);
+            _mediaVideo.CurrentState = LiveDescribeVideoStates.PausedVideo;
+        }
+
+        public void OpenProject()
+        {
+            var projectChooser = new OpenFileDialog
+            {
+                Filter = string.Format("LiveDescribe Files (*{0})|*{0}|All Files(*.*)|*.*",
+                    Project.ProjectExtension)
+            };
+
+            bool? dialogSuccess = projectChooser.ShowDialog();
+            if (dialogSuccess != true)
+                return;
+
+            var r = new StreamReader(projectChooser.FileName);
+            Project p = JsonConvert.DeserializeObject<Project>(r.ReadToEnd());
+            r.Close();
+
+            _project = p;
+
+            //TODO: project opened event?
+            //Set up environment
+            Properties.Settings.Default.WorkingDirectory = _project.ProjectFolderPath;
+            _videocontrol.SetupAndStripAudio(_project.VideoFile.AbsolutePath);
+            _mediaVideo.CurrentState = LiveDescribeVideoStates.PausedVideo;
         }
 
         /// <summary>
@@ -145,8 +198,8 @@ namespace LiveDescribe.View_Model
         public void ShowPreferences()
         {
             _preferences.InitializeAudioSourceInfo();
-            var preferencesWindow = new PreferencesWindow(_preferences);        
-            preferencesWindow.ShowDialog();         
+            var preferencesWindow = new PreferencesWindow(_preferences);
+            preferencesWindow.ShowDialog();
         }
         #endregion
 
@@ -156,10 +209,7 @@ namespace LiveDescribe.View_Model
         /// </summary>
         public VideoControl VideoControl
         {
-            get
-            {
-                return _videocontrol;
-            }
+            get { return _videocontrol; }
         }
 
         /// <summary>
@@ -167,10 +217,7 @@ namespace LiveDescribe.View_Model
         /// </summary>
         public PreferencesViewModel PreferencesViewModel
         {
-            get
-            {
-                return _preferences;
-            }
+            get { return _preferences; }
         }
 
         /// <summary>
@@ -178,10 +225,7 @@ namespace LiveDescribe.View_Model
         /// </summary>
         public DescriptionViewModel DescriptionViewModel
         {
-            get
-            {
-                return _descriptionviewmodel;
-            }
+            get { return _descriptionviewmodel; }
         }
 
         /// <summary>
@@ -189,18 +233,12 @@ namespace LiveDescribe.View_Model
         /// </summary>
         public LoadingViewModel LoadingViewModel
         {
-            get
-            {
-                return _loadingViewModel;
-            }
+            get { return _loadingViewModel; }
         }
 
         public DescriptionInfoTabViewModel DescriptionInfoTabViewModel
         {
-            get
-            {
-                return _descriptionInfoTabViewModel;
-            }
+            get { return _descriptionInfoTabViewModel; }
         }
         #endregion
 
@@ -221,10 +259,10 @@ namespace LiveDescribe.View_Model
                 Description currentDescription = _descriptionviewmodel.AllDescriptions[i];
                 TimeSpan currentPositionInVideo = new TimeSpan();
                 //get the current position of the video from the UI thread
-                DispatcherHelper.UIDispatcher.Invoke(delegate {currentPositionInVideo = _mediaVideo.Position;});           
+                DispatcherHelper.UIDispatcher.Invoke(delegate { currentPositionInVideo = _mediaVideo.Position; });
                 double offset = currentPositionInVideo.TotalMilliseconds - currentDescription.StartInVideo;
 
-                if (!currentDescription.IsExtendedDescription && 
+                if (!currentDescription.IsExtendedDescription &&
                     offset >= 0 && offset < (currentDescription.EndWaveFileTime - currentDescription.StartWaveFileTime))
                 {
                     Console.WriteLine("Playing Regular Description");
@@ -235,7 +273,7 @@ namespace LiveDescribe.View_Model
                     //if it is equal then the video time matches when the description should start dead on
                     offset < LiveDescribeConstants.EXTENDED_DESCRIPTION_START_INTERVAL_MAX && offset >= 0)
                 {
-                    DispatcherHelper.UIDispatcher.Invoke(delegate {_videocontrol.PauseCommand.Execute(this); Console.WriteLine("Playing Extended Description"); currentDescription.Play(); });
+                    DispatcherHelper.UIDispatcher.Invoke(delegate { _videocontrol.PauseCommand.Execute(this); Console.WriteLine("Playing Extended Description"); currentDescription.Play(); });
                     break;
                 }
             }

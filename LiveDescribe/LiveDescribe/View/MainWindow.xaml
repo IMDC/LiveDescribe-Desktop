@@ -72,6 +72,9 @@
                         Header="New Project"
                         Command="{Binding NewProjectCommand}"/>
                     <MenuItem
+                        Header="Open Project"
+                        Command="{Binding OpenProjectCommand}"/>
+                    <MenuItem
                         Header="Close Project"
                         Command="{Binding CloseProjectCommand}" />
                     <MenuItem
