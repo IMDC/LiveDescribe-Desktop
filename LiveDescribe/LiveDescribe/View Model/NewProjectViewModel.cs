@@ -6,18 +6,64 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using LiveDescribe.Model;
 using LiveDescribe.View;
+using Microsoft.TeamFoundation.Controls.WinForms;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 
 namespace LiveDescribe.View_Model
 {
     public class NewProjectViewModel : ViewModelBase
     {
-        #region Fields and Properties
+        #region Fields
         private string _videoPath;
         private string _projectName;
         private string _projectPath;
 
+        public bool? DialogResult { set; get; }
+        public Project Project { private set; get; }
+        #endregion
+
+        #region CreateWindow
+        /// <summary>
+        /// Creates a NewProjectView and attaches an instance of NewProjectViewModel to it.
+        /// </summary>
+        /// <returns>The ViewModel of the Window.</returns>
+        public static NewProjectViewModel CreateWindow()
+        {
+            var viewModel = new NewProjectViewModel();
+            var view = new NewProjectView(viewModel);
+
+            viewModel.DialogResult = view.ShowDialog();
+
+            return viewModel;
+        }
+        #endregion
+
+        #region Constructor
+        public NewProjectViewModel()
+        {
+            ChooseVideoCommand = new RelayCommand(ChooseVideo);
+            ChoosePathCommand = new RelayCommand(ChoosePath);
+            CreateProjectCommand = new RelayCommand(CreateProject, CanCreateProject);
+        }
+        #endregion
+
+        #region events
+        /// <summary>
+        /// Event is raised when a project is successfully created.
+        /// </summary>
+        public event EventHandler ProjectCreated;
+
+        protected virtual void OnProjectCreated()
+        {
+            EventHandler handler = ProjectCreated;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
+        #endregion
+
+        #region Accessors
         public string VideoPath
         {
             set
@@ -46,38 +92,6 @@ namespace LiveDescribe.View_Model
                 RaisePropertyChanged("ProjectPath");
             }
             get { return _projectPath; }
-        }
-        #endregion
-
-        #region CreateWindow
-        /// <summary>
-        /// Creates a NewProjectView and attaches an instance of NewProjectViewModel to it. Returns
-        /// a project object only when the window is closed.
-        /// </summary>
-        /// <returns>The newly created project object, or null if no project was created.</returns>
-        public static object CreateWindow()
-        {
-            var viewModel = new NewProjectViewModel();
-            var view = new NewProjectView(viewModel);
-
-            var result = view.ShowDialog();
-
-            if (result == true)
-            {
-                //TODO return project
-                return null;
-            }
-            else
-                return null;
-        }
-        #endregion
-
-        #region Constructor
-        public NewProjectViewModel()
-        {
-            ChooseVideoCommand = new RelayCommand(ChooseVideo);
-            ChoosePathCommand = new RelayCommand(ChoosePath);
-            CreateProjectCommand = new RelayCommand(CreateProject, CanCreateProject);
         }
         #endregion
 
@@ -115,9 +129,9 @@ namespace LiveDescribe.View_Model
 
         private void CreateProject()
         {
-            //TODO: This
+            Project = new Project(_projectName,_videoPath,_projectPath);
+            OnProjectCreated();
         }
         #endregion
-
     }
 }

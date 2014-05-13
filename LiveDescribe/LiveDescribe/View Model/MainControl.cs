@@ -21,6 +21,7 @@ namespace LiveDescribe.View_Model
         private LoadingViewModel _loadingViewModel;
         private ILiveDescribePlayer _mediaVideo;
         private DescriptionInfoTabViewModel _descriptionInfoTabViewModel;
+        private Project _project;
         #endregion
 
         #region Events
@@ -109,7 +110,6 @@ namespace LiveDescribe.View_Model
         /// <summary>
         /// This function gets called when the close project menu item gets pressed
         /// </summary>
-        /// <param name="param"></param>
         public void CloseProject()
         {
             //TODO: ask to save here before closing everything
@@ -121,9 +121,15 @@ namespace LiveDescribe.View_Model
             if (handler != null) handler(this, EventArgs.Empty);
         }
 
+        /// <summary>
+        /// Opens a new project creation window, and on success sets up the new project.
+        /// </summary>
         public void NewProject()
         {
-            NewProjectViewModel.CreateWindow();
+            var viewModel = NewProjectViewModel.CreateWindow();
+
+            if (viewModel.DialogResult == true)
+                _project = viewModel.Project;
         }
         #endregion
 
