@@ -1,4 +1,6 @@
-﻿using LiveDescribe.Interfaces;
+﻿using System.IO;
+using System.Web.Script.Serialization;
+using LiveDescribe.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Threading;
 using GalaSoft.MvvmLight.Command;
@@ -45,7 +47,8 @@ namespace LiveDescribe.View_Model
 
             //Commands
             CloseProjectCommand = new RelayCommand(CloseProject, ()=>true);
-            NewProjectCommand = new RelayCommand(NewProject, ()=>true);
+            NewProjectCommand = new RelayCommand(NewProject);
+            OpenProjectCommand = new RelayCommand(OpenProject);
             ShowPreferencesCommand = new RelayCommand(ShowPreferences, () => true);
 
             _mediaVideo = mediaVideo;
@@ -102,9 +105,14 @@ namespace LiveDescribe.View_Model
         public RelayCommand CloseProjectCommand { private set; get; }
 
         /// <summary>
-        /// Command to Open a new Project.
+        /// Command to open a new Project.
         /// </summary>
         public RelayCommand NewProjectCommand { private set; get; }
+
+        /// <summary>
+        /// Command to open an already existing project.
+        /// </summary>
+        public RelayCommand OpenProjectCommand { private set; get; }
 
         /// <summary>
         /// Command to show preferences
@@ -138,6 +146,21 @@ namespace LiveDescribe.View_Model
             if (viewModel.DialogResult == true)
                 _project = viewModel.Project;
             //TODO: Import video, etc
+        }
+
+        public void OpenProject()
+        {
+            var projectChooser = new OpenFileDialog
+            {
+                Filter = string.Format("LiveDescribe Files (*{0})|*{0}|All Files(*.*)|*.*",
+                    Project.ProjectExtension)
+            };
+
+            bool? dialogSuccess = projectChooser.ShowDialog();
+            if (dialogSuccess == true)
+            {
+               //TODO: Deserialize project file
+            }
         }
 
         /// <summary>
