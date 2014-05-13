@@ -137,6 +137,7 @@ namespace LiveDescribe.View_Model
 
             if (viewModel.DialogResult == true)
                 _project = viewModel.Project;
+            //TODO: Import video, etc
         }
 
         /// <summary>
