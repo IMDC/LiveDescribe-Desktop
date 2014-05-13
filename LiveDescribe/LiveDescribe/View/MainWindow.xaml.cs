@@ -190,18 +190,6 @@ namespace LiveDescribe.View
                 };
             #endregion
 
-            #region Event Listeners for PreferencesViewModel
-
-            //create the preferences window when the option is clicked
-            _preferences.ShowPreferencesRequested += (sender, e) =>
-                {
-                    var preferencesWindow = new PreferencesWindow();
-                    preferencesWindow.DataContext = _preferences;
-                    preferencesWindow.ShowDialog();
-                };
-
-            #endregion
-
             #region EventListeners for DescriptionViewModel
 
             _descriptionViewModel.RecordRequestedMicrophoneNotPluggedIn += (sender, e) =>

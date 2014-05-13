@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using LiveDescribe.View_Model;
 
 namespace LiveDescribe.View
 {
@@ -19,9 +20,21 @@ namespace LiveDescribe.View
     /// </summary>
     public partial class PreferencesWindow : Window
     {
-        public PreferencesWindow()
+
+        PreferencesViewModel _preferencesViewModel;
+
+        public PreferencesWindow(PreferencesViewModel datacontext)
         {
             InitializeComponent();
+            
+            _preferencesViewModel = datacontext;
+            DataContext = _preferencesViewModel;
+        }
+
+        private void Close_OnClick(object sender, RoutedEventArgs e)
+        {
+            DialogResult = false;
+            this.Close();
         }
     }
 }

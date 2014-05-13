@@ -45,6 +45,7 @@ namespace LiveDescribe.View_Model
             //Commands
             CloseProjectCommand = new RelayCommand(CloseProject, ()=>true);
             NewProjectCommand = new RelayCommand(NewProject, ()=>true);
+            ShowPreferencesCommand = new RelayCommand(ShowPreferences, () => true);
 
             _mediaVideo = mediaVideo;
                       
@@ -103,6 +104,12 @@ namespace LiveDescribe.View_Model
         /// Command to Open a new Project.
         /// </summary>
         public RelayCommand NewProjectCommand { private set; get; }
+
+        /// <summary>
+        /// Command to show preferences
+        /// </summary>
+        public RelayCommand ShowPreferencesCommand { private set; get; }
+
         #endregion
 
         #region Command Functions
@@ -124,6 +131,16 @@ namespace LiveDescribe.View_Model
         public void NewProject()
         {
             NewProjectViewModel.CreateWindow();
+        }
+
+        /// <summary>
+        /// Gets called when the show preferences option is clicked
+        /// </summary>
+        public void ShowPreferences()
+        {
+            _preferences.InitializeAudioSourceInfo();
+            var preferencesWindow = new PreferencesWindow(_preferences);        
+            preferencesWindow.ShowDialog();         
         }
         #endregion
 

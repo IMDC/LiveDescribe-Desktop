@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using LiveDescribe.Properties;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using LiveDescribe.View;
 using NAudio.Wave;
 
 namespace LiveDescribe.View_Model
@@ -59,7 +60,6 @@ namespace LiveDescribe.View_Model
         #region Constructors
         public PreferencesViewModel()
         {
-            ShowPreferencesCommand = new RelayCommand(ShowPreferences, () => true);
             _sources = new ObservableCollection<AudioSourceInfo>();
             ApplyCommand = new RelayCommand(Apply, () => true);
         }
@@ -69,22 +69,9 @@ namespace LiveDescribe.View_Model
 
         public RelayCommand ApplyCommand { get; private set; }
 
-        public RelayCommand ShowPreferencesCommand { get; private set; }
-
         #endregion
 
         #region Binding Functions
-        /// <summary>
-        /// Called when you want the show preferences window to come up
-        /// </summary>
-        /// <param name="obj"></param>
-        private void ShowPreferences()
-        {
-            EventHandler handler = ShowPreferencesRequested;
-            InitializeAudioSourceInfo();
-            if (handler == null) return;
-            handler(this, EventArgs.Empty);
-        }
 
         /// <summary>
         /// called when the preferences should be saved and applied to the settings
@@ -139,7 +126,7 @@ namespace LiveDescribe.View_Model
         /// <summary>
         /// used to initialize the Collection of all the microphones available
         /// </summary>
-        private void InitializeAudioSourceInfo()
+        public void InitializeAudioSourceInfo()
         {
             for (int i = 0; i < NAudio.Wave.WaveIn.DeviceCount; ++i)
             {
