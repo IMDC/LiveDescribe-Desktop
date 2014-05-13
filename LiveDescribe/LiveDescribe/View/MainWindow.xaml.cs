@@ -1,5 +1,6 @@
 ﻿using LiveDescribe.Converters;
 using LiveDescribe.View_Model;
+using LiveDescribe.Model;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -27,6 +28,7 @@ namespace LiveDescribe.View
         private const int LongLineTime = 5; // every 5 LineTimes, you get a Longer Line
 
         /// <summary>The width of the entire canvas.</summary>
+        private Description _descriptionBeingDragged;
         private double _canvasWidth = 0;
         private double _videoDuration = -1;
         private readonly VideoControl _videoControl;
@@ -212,27 +214,18 @@ namespace LiveDescribe.View
                     {
                         //Add mouse down event on every description here
                         MouseEventArgs e2 = (MouseEventArgs)e1;
-                        _originalPosition = e2.GetPosition(DescriptionCanvas).X;
-                        Console.WriteLine("Description Mouse Down");
+                        if (Mouse.LeftButton == MouseButtonState.Pressed)
+                        {
+                            _originalPosition = e2.GetPosition(DescriptionCanvas).X;
+                            _descriptionBeingDragged = e.Description;
+                            Console.WriteLine("Description Mouse Down");
+                            DescriptionCanvas.CaptureMouse();
+                        }
                     };
 
                     e.Description.DescriptionMouseMoveEvent += (sender1, e1) =>
                     {
                         //Add mouse move event on every description here
-
-                        MouseEventArgs e2 = (MouseEventArgs)e1;
-                        if (e2.LeftButton == MouseButtonState.Pressed && _originalPosition != -1)
-                        {
-                            e.Description.X = e.Description.X + (e2.GetPosition(DescriptionCanvas).X - _originalPosition);
-                            _originalPosition = e2.GetPosition(DescriptionCanvas).X;
-                            e.Description.StartInVideo = (_videoDuration / AudioCanvas.Width) * (e.Description.X);
-                            e.Description.EndInVideo = e.Description.StartInVideo + (e.Description.EndWaveFileTime - e.Description.StartWaveFileTime);
-                        }
-                        else
-                        {
-                            _originalPosition = -1;
-                        }
-                        Console.WriteLine("Description Mouse Move");
                     };
 
                     e.Description.PropertyChanged += (sender1, e1) =>
@@ -299,6 +292,36 @@ namespace LiveDescribe.View
                 Marker.Points[4] = new Point(Marker.Points[4].X, AudioCanvasBorder.ActualHeight);
             }
             
+        }
+        /// <summary>
+        /// Gets called on the mouse up event of the description canvas
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DescriptionCanvas_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (Mouse.LeftButton == MouseButtonState.Released)
+            {
+                //used for drag and drop, when the left click is released we want to release the mouse capture over  the description
+                //and stop dragging the description
+                //the mouse gets captured when a description is left clicked
+                DescriptionCanvas.ReleaseMouseCapture();
+                Console.WriteLine("DescriptionMouseCaptured False");
+            }
+        }
+
+        private void DescriptionCanvas_MouseMove(object sender, MouseEventArgs e)
+        {
+            //while the mouse is moving over the description canvas and if a description is clicked (DescriptionCanvas.IsMouseCaptured)
+            //update the position of the description and the start and end times in the video
+            if (DescriptionCanvas.IsMouseCaptured)
+            {
+                _descriptionBeingDragged.X = _descriptionBeingDragged.X + (e.GetPosition(DescriptionCanvas).X - _originalPosition);
+                _originalPosition = e.GetPosition(DescriptionCanvas).X;
+                _descriptionBeingDragged.StartInVideo = (_videoDuration / AudioCanvas.Width) * (_descriptionBeingDragged.X);
+                _descriptionBeingDragged.EndInVideo = _descriptionBeingDragged.StartInVideo + (_descriptionBeingDragged.EndWaveFileTime - _descriptionBeingDragged.StartWaveFileTime);
+                Console.WriteLine("DescriptionMouse Move");
+            }
         }
 
         /// <summary>
