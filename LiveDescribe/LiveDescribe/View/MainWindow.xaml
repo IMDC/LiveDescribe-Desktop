@@ -65,10 +65,6 @@
                 <MenuItem
                     Header="File">
                     <MenuItem
-                        DataContext="{Binding VideoControl}"
-                        Header="Import Video"
-                        Command="{Binding ImportVideoCommand}" />
-                    <MenuItem
                         Header="New Project"
                         Command="{Binding NewProjectCommand}"/>
                     <MenuItem

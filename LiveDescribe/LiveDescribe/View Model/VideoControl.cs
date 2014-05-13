@@ -57,8 +57,6 @@ namespace LiveDescribe.View_Model
             MediaFailedCommand = new RelayCommand(MediaFailed, () => true);
 
             MediaEndedCommand = new RelayCommand(MediaEnded, () => true);
-            //bound to Menu->file->Import Video
-            ImportVideoCommand = new RelayCommand(ImportVideo, ImportCheck);
             
             _stripAudioWorker = new BackgroundWorker();
         }
@@ -99,8 +97,6 @@ namespace LiveDescribe.View_Model
         /// Setter and Getter for MuteCommand
         /// </summary>
         public RelayCommand MuteCommand { get; private set; }
-
-        public RelayCommand ImportVideoCommand { get; private set; }
 
         public RelayCommand FastForwardCommand  { get; private set; }
 
@@ -223,41 +219,6 @@ namespace LiveDescribe.View_Model
             if (handler == null) return;
             handler(this, EventArgs.Empty);
 
-        }
-
-        /// <summary>
-        /// What happens when Import Video option is select, in this case open up a file dialogbox get the file then strip the audio
-        /// </summary>
-        /// <param name="param"></param>
-        public void ImportVideo()
-        {
-            //importing a new video so reset the settings file
-            //possibly save the old settings value in the livedescribe file? or make a class where we can just serialize it and save that to the file?
-            Properties.Settings.Default.Reset();
-            var dialogBoxChooseVideo = new OpenFileDialog();
-            var dialogBoxChooseWorkingDirectory = new System.Windows.Forms.FolderBrowserDialog();
-
-            bool? userClickedOkChooseVideo = dialogBoxChooseVideo.ShowDialog();
-
-            //handle what happens when the user clicks cancel when choosing a video
-            if (userClickedOkChooseVideo == false)
-                return;
-
-            System.Windows.Forms.DialogResult userClickedOkChooseWorkingDirectory = dialogBoxChooseWorkingDirectory.ShowDialog();
-
-            //handle what happens when the user clicks cancel when choosing a directory
-            if (userClickedOkChooseWorkingDirectory == System.Windows.Forms.DialogResult.Cancel)
-                return;
-
-            Console.WriteLine("OPENVIDEO");
-            if (userClickedOkChooseVideo == true && userClickedOkChooseWorkingDirectory == System.Windows.Forms.DialogResult.OK)
-            {
-                //set the settings file to be the new working directory
-                Properties.Settings.Default.WorkingDirectory = dialogBoxChooseWorkingDirectory.SelectedPath + "\\";
-                SetupAndStripAudio(dialogBoxChooseVideo.FileName);
-            }
-
-            _mediaVideo.CurrentState = LiveDescribeVideoStates.PausedVideo;
         }
 
         /// <summary>
@@ -386,18 +347,6 @@ namespace LiveDescribe.View_Model
         public bool RecordCheck()
         {
             if (_mediaVideo.CurrentState == LiveDescribeVideoStates.VideoNotLoaded)
-                return false;
-            return true;
-        }
-
-        /// <summary>
-        /// Used for the RelayCommand "ImportCommand" to check whether importing will work or not
-        /// </summary>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        public bool ImportCheck()
-        {
-            if (_mediaVideo.CurrentState != LiveDescribeVideoStates.VideoNotLoaded)
                 return false;
             return true;
         }

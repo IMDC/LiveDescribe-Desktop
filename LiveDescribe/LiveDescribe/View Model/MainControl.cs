@@ -162,7 +162,7 @@ namespace LiveDescribe.View_Model
 
             //TODO: project created event?
             //Set up environment
-            Properties.Settings.Default.WorkingDirectory = _project.ProjectFolderPath;
+            Properties.Settings.Default.WorkingDirectory = _project.ProjectFolderPath +"\\";
             _videocontrol.SetupAndStripAudio(_project.VideoFile.AbsolutePath);
             _mediaVideo.CurrentState = LiveDescribeVideoStates.PausedVideo;
         }
@@ -187,7 +187,7 @@ namespace LiveDescribe.View_Model
 
             //TODO: project opened event?
             //Set up environment
-            Properties.Settings.Default.WorkingDirectory = _project.ProjectFolderPath;
+            Properties.Settings.Default.WorkingDirectory = _project.ProjectFolderPath + "\\";
             _videocontrol.SetupAndStripAudio(_project.VideoFile.AbsolutePath);
             _mediaVideo.CurrentState = LiveDescribeVideoStates.PausedVideo;
         }
