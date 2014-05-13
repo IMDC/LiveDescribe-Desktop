@@ -394,7 +394,7 @@
                                 BorderBrush="Black"
                                 BorderThickness="0.75">
                                 <Canvas
-                                    Name="DescriptionCanvas">
+                                    Name="DescriptionCanvas" MouseUp="DescriptionCanvas_MouseUp" MouseMove="DescriptionCanvas_MouseMove">
                                     <ItemsControl
                                         ItemsSource="{Binding AllDescriptions}">
                                         <ItemsControl.ItemsPanel>
