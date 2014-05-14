@@ -66,10 +66,13 @@
                     Header="File">
                     <MenuItem
                         Header="New Project"
-                        Command="{Binding NewProjectCommand}"/>
+                        Command="{Binding NewProjectCommand}" />
                     <MenuItem
                         Header="Open Project"
-                        Command="{Binding OpenProjectCommand}"/>
+                        Command="{Binding OpenProjectCommand}" />
+                    <MenuItem
+                        Header="Save Project"
+                        Command="{Binding SaveProjectCommand}" />
                     <MenuItem
                         Header="Close Project"
                         Command="{Binding CloseProjectCommand}" />
@@ -393,7 +396,9 @@
                                 BorderBrush="Black"
                                 BorderThickness="0.75">
                                 <Canvas
-                                    Name="DescriptionCanvas" MouseUp="DescriptionCanvas_MouseUp" MouseMove="DescriptionCanvas_MouseMove">
+                                    Name="DescriptionCanvas"
+                                    MouseUp="DescriptionCanvas_MouseUp"
+                                    MouseMove="DescriptionCanvas_MouseMove">
                                     <ItemsControl
                                         ItemsSource="{Binding AllDescriptions}">
                                         <ItemsControl.ItemsPanel>

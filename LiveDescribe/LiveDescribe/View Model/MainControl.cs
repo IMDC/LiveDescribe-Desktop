@@ -51,6 +51,7 @@ namespace LiveDescribe.View_Model
             CloseProjectCommand = new RelayCommand(CloseProject, CanCloseProject);
             NewProjectCommand = new RelayCommand(NewProject);
             OpenProjectCommand = new RelayCommand(OpenProject);
+            SaveProjectCommand = new RelayCommand(SaveProject, CanSaveProject);
             ShowPreferencesCommand = new RelayCommand(ShowPreferences);
 
             _mediaVideo = mediaVideo;
@@ -117,6 +118,11 @@ namespace LiveDescribe.View_Model
         /// Command to open an already existing project.
         /// </summary>
         public RelayCommand OpenProjectCommand { private set; get; }
+
+        /// <summary>
+        /// Command to save project.
+        /// </summary>
+        public RelayCommand SaveProjectCommand { private set; get; }
 
         /// <summary>
         /// Command to show preferences
@@ -201,6 +207,11 @@ namespace LiveDescribe.View_Model
             _videocontrol.Path = _project.VideoFile.AbsolutePath;
 
             _mediaVideo.CurrentState = LiveDescribeVideoStates.PausedVideo;
+        }
+
+        public bool CanSaveProject()
+        {
+            return _project != null;
         }
 
         public void SaveProject()
