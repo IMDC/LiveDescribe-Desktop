@@ -276,7 +276,7 @@ namespace LiveDescribe.Model
             }
         }
         /// <summary>
-        /// Actualy Length of the description
+        /// Actual Length of the description
         /// </summary>
         public double ActualLength
         {

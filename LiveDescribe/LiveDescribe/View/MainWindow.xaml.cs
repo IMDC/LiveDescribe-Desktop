@@ -316,7 +316,17 @@ namespace LiveDescribe.View
             //update the position of the description and the start and end times in the video
             if (DescriptionCanvas.IsMouseCaptured)
             {
-                _descriptionBeingDragged.X = _descriptionBeingDragged.X + (e.GetPosition(DescriptionCanvas).X - _originalPosition);
+                double newPosition = _descriptionBeingDragged.X + (e.GetPosition(DescriptionCanvas).X - _originalPosition);
+                //size in pixels of the description
+                double size = (AudioCanvas.Width / _videoDuration) * (_descriptionBeingDragged.EndWaveFileTime - _descriptionBeingDragged.StartWaveFileTime);
+
+                //bounds checking when dragging the description
+                if (newPosition < 0)
+                    newPosition = 0;
+                else if (newPosition + size > AudioCanvas.Width)
+                    newPosition = AudioCanvas.Width - size;
+
+                _descriptionBeingDragged.X = newPosition;
                 _originalPosition = e.GetPosition(DescriptionCanvas).X;
                 _descriptionBeingDragged.StartInVideo = (_videoDuration / AudioCanvas.Width) * (_descriptionBeingDragged.X);
                 _descriptionBeingDragged.EndInVideo = _descriptionBeingDragged.StartInVideo + (_descriptionBeingDragged.EndWaveFileTime - _descriptionBeingDragged.StartWaveFileTime);
