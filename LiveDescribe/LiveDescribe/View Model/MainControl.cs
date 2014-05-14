@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System;
 using LiveDescribe.Model;
 using System.Timers;
+using LiveDescribe.Utilities;
 using LiveDescribe.View;
 using Microsoft.Win32;
 using Newtonsoft.Json;
@@ -99,6 +100,8 @@ namespace LiveDescribe.View_Model
                     EventHandler handler = this.MediaEnded;
                     if (handler != null) handler(sender, e);
                 };
+
+            _videocontrol.OnStrippingAudioCompleted += (sender, args) => SaveProject();
         }
         #endregion
 
@@ -185,17 +188,22 @@ namespace LiveDescribe.View_Model
             if (_project != null)
                 CloseProject();
 
-            var r = new StreamReader(projectChooser.FileName);
-            Project p = JsonConvert.DeserializeObject<Project>(r.ReadToEnd());
-            r.Close();
+            Project p = FileReader.ReadProjectFile(projectChooser.FileName);
 
             _project = p;
 
             //TODO: project opened event?
+            //TODO: Load Project method that handles both new and open use cases
             //Set up environment
             Properties.Settings.Default.WorkingDirectory = _project.ProjectFolderPath + "\\";
             _videocontrol.SetupAndStripAudio(_project.VideoFile.AbsolutePath);
             _mediaVideo.CurrentState = LiveDescribeVideoStates.PausedVideo;
+        }
+
+        public void SaveProject()
+        {
+            FileWriter.WriteProjectFile(_project);
+            FileWriter.WriteWaveFormFile(_project,_videocontrol.AudioData);
         }
 
         /// <summary>

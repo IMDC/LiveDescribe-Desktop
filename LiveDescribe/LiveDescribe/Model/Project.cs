@@ -17,6 +17,8 @@ namespace LiveDescribe.Model
         /// </summary>
         public const string ProjectExtension = ".ld";
 
+        public const string WaveFormFileName = "waveform.bin";
+
         /// <summary>
         /// The name of the project.
         /// </summary>
@@ -38,10 +40,15 @@ namespace LiveDescribe.Model
         public ProjectFile VideoFile { set; get; }
 
         /// <summary>
+        /// The file that contains the waveform data.
+        /// </summary>
+        public ProjectFile WaveFormFile { set; get; }
+
+        /// <summary>
         /// Empty Constructor to allow for JSON serialization.
         /// </summary>
         public Project()
-        {}
+        { }
 
         /// <summary>
         /// Constructs an instance of Project.
@@ -57,6 +64,7 @@ namespace LiveDescribe.Model
 
             ProjectFile = new ProjectFile(ProjectFolderPath, ProjectName + ProjectExtension);
             VideoFile = new ProjectFile(ProjectFolderPath, videoFileName);
+            WaveFormFile = new ProjectFile(ProjectFolderPath, WaveFormFileName);
         }
     }
 }

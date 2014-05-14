@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Model;
+using LiveDescribe.Utilities;
 using LiveDescribe.View;
 using System;
 using System.IO;
@@ -162,13 +163,7 @@ namespace LiveDescribe.View_Model
                 Directory.CreateDirectory(p.ProjectFolderPath);
                 File.Copy(_videoPath, p.VideoFile.AbsolutePath, true);
 
-                //TODO: Move logic into filewriter class?
-                //Write Project object to file
-                var serializer = new JsonSerializer();
-                serializer.Formatting = Formatting.Indented;
-                var sw = new StreamWriter(p.ProjectFile.AbsolutePath, false);
-                serializer.Serialize(sw, p, typeof(Project));
-                sw.Close();
+                FileWriter.WriteProjectFile(p);
             }
             //TODO: Catch individual exceptions?
             catch (Exception e)
