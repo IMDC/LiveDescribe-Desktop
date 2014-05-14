@@ -163,20 +163,8 @@ namespace LiveDescribe.View_Model
         {
             var viewModel = NewProjectViewModel.CreateWindow();
 
-            if (viewModel.DialogResult != true)
-                return;
-
-            if(_project != null)
-                CloseProject();
-
-            _project = viewModel.Project;
-
-
-            //TODO: project created event?
-            //Set up environment
-            Properties.Settings.Default.WorkingDirectory = _project.ProjectFolderPath +"\\";
-            _videocontrol.SetupAndStripAudio(_project.VideoFile.AbsolutePath);
-            _mediaVideo.CurrentState = LiveDescribeVideoStates.PausedVideo;
+            if (viewModel.DialogResult == true)
+                SetProject(viewModel.Project);
         }
 
         public void OpenProject()
@@ -188,25 +176,11 @@ namespace LiveDescribe.View_Model
             };
 
             bool? dialogSuccess = projectChooser.ShowDialog();
-            if (dialogSuccess != true)
-                return;
-
-            if (_project != null)
-                CloseProject();
-
-            Project p = FileReader.ReadProjectFile(projectChooser.FileName);
-
-            _project = p;
-
-            //TODO: project opened event?
-            //TODO: Load Project method that handles both new and open use cases
-            //Set up environment
-            Properties.Settings.Default.WorkingDirectory = _project.ProjectFolderPath + "\\";
-            //_videocontrol.SetupAndStripAudio(_project.VideoFile.AbsolutePath);
-            _videocontrol.AudioData = FileReader.ReadWaveFormFile(_project);
-            _videocontrol.Path = _project.VideoFile.AbsolutePath;
-
-            _mediaVideo.CurrentState = LiveDescribeVideoStates.PausedVideo;
+            if (dialogSuccess == true)
+            {
+                Project p = FileReader.ReadProjectFile(projectChooser.FileName);
+                SetProject(p);
+            }
         }
 
         public bool CanSaveProject()
@@ -306,6 +280,34 @@ namespace LiveDescribe.View_Model
                 }
             }
         }
+
+        /// <summary>
+        /// Initializes and sets up the progam for a given project file.
+        /// </summary>
+        /// <param name="p">The project to initialize</param>
+        public void SetProject(Project p)
+        {
+            if (_project != null)
+                CloseProject();
+
+            _project = p;
+
+            //Set up environment
+            Properties.Settings.Default.WorkingDirectory = _project.ProjectFolderPath + "\\";
+
+            if (File.Exists(_project.WaveFormFile.AbsolutePath))
+            {
+                _videocontrol.AudioData = FileReader.ReadWaveFormFile(_project);
+                _videocontrol.Path = _project.VideoFile.AbsolutePath;
+            }
+            else
+            {
+                _videocontrol.SetupAndStripAudio(_project.VideoFile.AbsolutePath);
+            }
+
+            _mediaVideo.CurrentState = LiveDescribeVideoStates.PausedVideo;
+        }
+
         #endregion
     }
 }
