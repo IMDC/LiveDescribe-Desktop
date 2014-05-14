@@ -196,7 +196,10 @@ namespace LiveDescribe.View_Model
             //TODO: Load Project method that handles both new and open use cases
             //Set up environment
             Properties.Settings.Default.WorkingDirectory = _project.ProjectFolderPath + "\\";
-            _videocontrol.SetupAndStripAudio(_project.VideoFile.AbsolutePath);
+            //_videocontrol.SetupAndStripAudio(_project.VideoFile.AbsolutePath);
+            _videocontrol.AudioData = FileReader.ReadWaveFormFile(_project);
+            _videocontrol.Path = _project.VideoFile.AbsolutePath;
+
             _mediaVideo.CurrentState = LiveDescribeVideoStates.PausedVideo;
         }
 

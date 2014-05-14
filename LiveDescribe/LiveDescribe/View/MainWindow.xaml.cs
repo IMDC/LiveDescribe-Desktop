@@ -129,6 +129,7 @@ namespace LiveDescribe.View
                     _videoDuration = VideoMedia.NaturalDuration.TimeSpan.TotalMilliseconds;
                     _canvasWidth = calculateWidth();
                     Marker.IsEnabled = true;
+                    SetTimeline();
                 };
 
             //listens for when the audio stripping is complete then draws the timeline and the wave form

@@ -377,6 +377,7 @@ namespace LiveDescribe.View_Model
         /// </summary>
         public List<float> AudioData
         {
+            set { _waveFormData = value; }
             get { return this._waveFormData; }
         }
         #endregion
