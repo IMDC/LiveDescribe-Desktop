@@ -317,7 +317,17 @@ namespace LiveDescribe.View
             //update the position of the description and the start and end times in the video
             if (DescriptionCanvas.IsMouseCaptured)
             {
-                _descriptionBeingDragged.X = _descriptionBeingDragged.X + (e.GetPosition(DescriptionCanvas).X - _originalPosition);
+                double newPosition = _descriptionBeingDragged.X + (e.GetPosition(DescriptionCanvas).X - _originalPosition);
+                //size in pixels of the description
+                double size = (AudioCanvas.Width / _videoDuration) * (_descriptionBeingDragged.EndWaveFileTime - _descriptionBeingDragged.StartWaveFileTime);
+
+                //bounds checking when dragging the description
+                if (newPosition < 0)
+                    newPosition = 0;
+                else if (newPosition + size > AudioCanvas.Width)
+                    newPosition = AudioCanvas.Width - size;
+
+                _descriptionBeingDragged.X = newPosition;
                 _originalPosition = e.GetPosition(DescriptionCanvas).X;
                 _descriptionBeingDragged.StartInVideo = (_videoDuration / AudioCanvas.Width) * (_descriptionBeingDragged.X);
                 _descriptionBeingDragged.EndInVideo = _descriptionBeingDragged.StartInVideo + (_descriptionBeingDragged.EndWaveFileTime - _descriptionBeingDragged.StartWaveFileTime);
@@ -493,6 +503,15 @@ namespace LiveDescribe.View
         }
 
         /// <summary>
+        /// Resizes all the descriptions height to fit the description canvas
+        /// </summary>
+        private void ResizeDescriptions()
+        {
+            foreach (Description description in _descriptionViewModel.AllDescriptions)
+                description.Height = DescriptionCanvas.ActualHeight;       
+        }
+
+        /// <summary>
         /// Update's the instance variables that keep track of the timeline height and width, and
         /// calculates the size of the timeline if the width of the audio canvas is greater then the
         /// timeline width it automatically overflows and scrolls due to the scrollview then update
@@ -505,7 +524,9 @@ namespace LiveDescribe.View
             AudioCanvas.Width = _canvasWidth;
             DescriptionCanvas.Width = _canvasWidth;
             Marker.Points[4] = new Point(Marker.Points[4].X, AudioCanvasBorder.ActualHeight);
+
             DrawWaveForm();
+            ResizeDescriptions();
         }
         #endregion
     }
