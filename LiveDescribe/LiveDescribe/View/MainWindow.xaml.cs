@@ -281,7 +281,7 @@ namespace LiveDescribe.View
         private void AudioCanvasBorder_SizeChanged_1(object sender, SizeChangedEventArgs e)
         {
             Console.WriteLine("Audio Canvas Border Sized Changed");
-            
+
             //Video is loaded
             if (_videoDuration != -1)
             {
@@ -292,7 +292,7 @@ namespace LiveDescribe.View
             {
                 Marker.Points[4] = new Point(Marker.Points[4].X, AudioCanvasBorder.ActualHeight);
             }
-            
+
         }
         /// <summary>
         /// Gets called on the mouse up event of the description canvas
@@ -433,22 +433,18 @@ namespace LiveDescribe.View
             double width = TimeLine.ActualWidth;
 
             List<short> data = _videoControl.AudioData;
-            if (data == null || _canvasWidth ==0 || width == 0)
+            if (data == null || _canvasWidth == 0 || width == 0)
                 return;
 
             double bytesPerFloat = 1;
 
-            int samplesPerPixel = (int) Math.Floor((data.Count/bytesPerFloat) / (_canvasWidth));
-            //int samplesPerPixel = (int)Math.Floor(data.);
+            double samplesPerPixel = ((data.Count / bytesPerFloat) / (_canvasWidth));
 
-            int numPixels = data.Count/samplesPerPixel;
-
-            Console.WriteLine("Data.Count: {0}, batchSize {1}, Regular Width: {2} Canvas Width: {3}",
-                data.Count,samplesPerPixel,width, _canvasWidth);
+            Console.WriteLine("Horizontal Offset: {0}, Witdh {1}", TimeLine.HorizontalOffset, width);
 
             double soundWaveOffset = NumberTimeline.ActualHeight;
             double soundWaveHeight = AudioCanvas.ActualHeight - soundWaveOffset;
-            double middle = soundWaveHeight/2;
+            double middle = soundWaveHeight / 2;
             double yscale = middle;
 
             AudioCanvas.Children.Clear();
@@ -459,19 +455,21 @@ namespace LiveDescribe.View
             int begin = (int)TimeLine.HorizontalOffset;
             int end = (int)(TimeLine.HorizontalOffset + width);
 
-            for (int sampleIndex = begin*samplesPerPixel, pixel=begin; pixel <= end; sampleIndex += samplesPerPixel, pixel++)
+            for (int sampleIndex = (int)(begin * samplesPerPixel), pixel = begin;
+                pixel <= end;
+                sampleIndex += (int)samplesPerPixel, pixel++)
             {
                 if (sampleIndex + samplesPerPixel < data.Count)
                 {
-                    double max = (double)data.GetRange(sampleIndex, samplesPerPixel).Max()/short.MaxValue;
-                    double min = (double)data.GetRange(sampleIndex, samplesPerPixel).Min() / short.MaxValue;
+                    double max = (double)data.GetRange(sampleIndex, (int)samplesPerPixel).Max() / short.MaxValue;
+                    double min = (double)data.GetRange(sampleIndex, (int)samplesPerPixel).Min() / short.MaxValue;
 
                     AudioCanvas.Children.Add(new Line
                     {
                         Stroke = System.Windows.Media.Brushes.Black,
                         SnapsToDevicePixels = true, //Turn off anti-aliasing effect
-                        Y1 = middle + max*yscale + soundWaveOffset,
-                        Y2 = middle + min*yscale + soundWaveOffset,
+                        Y1 = middle + max * yscale + soundWaveOffset,
+                        Y2 = middle + min * yscale + soundWaveOffset,
                         X1 = pixel,
                         X2 = pixel,
                     });
@@ -522,7 +520,7 @@ namespace LiveDescribe.View
         private void ResizeDescriptions()
         {
             foreach (Description description in _descriptionViewModel.AllDescriptions)
-                description.Height = DescriptionCanvas.ActualHeight;       
+                description.Height = DescriptionCanvas.ActualHeight;
         }
 
         /// <summary>
