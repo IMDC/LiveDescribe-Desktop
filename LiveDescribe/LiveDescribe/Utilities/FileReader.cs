@@ -23,14 +23,14 @@ namespace LiveDescribe.Utilities
             return p;
         }
 
-        public static List<float> ReadWaveFormFile(Project project)
+        public static List<short> ReadWaveFormFile(Project project)
         {
-            var waveFormData = new List<float>();
+            var waveFormData = new List<short>();
 
             using (var file = File.Open(project.WaveFormFile.AbsolutePath, FileMode.Open, FileAccess.Read))
             {
                 var bin = new BinaryFormatter();
-                waveFormData = (List<float>) bin.Deserialize(file);
+                waveFormData = (List<short>) bin.Deserialize(file);
             }
 
             return waveFormData;

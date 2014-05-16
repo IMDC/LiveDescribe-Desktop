@@ -32,7 +32,7 @@ namespace LiveDescribe.Utilities
         /// </summary>
         /// <param name="project"></param>
         /// <param name="waveFormData"></param>
-        public static void WriteWaveFormFile(Project project, List<float> waveFormData)
+        public static void WriteWaveFormFile(Project project, List<short> waveFormData)
         {
             using (var file = File.Open(project.WaveFormFile.AbsolutePath, FileMode.Create, FileAccess.Write))
             {

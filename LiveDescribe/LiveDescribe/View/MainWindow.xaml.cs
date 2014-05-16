@@ -432,11 +432,11 @@ namespace LiveDescribe.View
 
             double width = TimeLine.ActualWidth;
 
-            List<float> data = _videoControl.AudioData;
+            List<short> data = _videoControl.AudioData;
             if (data == null || _canvasWidth ==0 || width == 0)
                 return;
 
-            double bytesPerFloat = 4;
+            double bytesPerFloat = 1;
 
             int samplesPerPixel = (int) Math.Floor((data.Count/bytesPerFloat) / (_canvasWidth));
             //int samplesPerPixel = (int)Math.Floor(data.);
@@ -449,7 +449,7 @@ namespace LiveDescribe.View
             double soundWaveOffset = NumberTimeline.ActualHeight;
             double soundWaveHeight = AudioCanvas.ActualHeight - soundWaveOffset;
             double middle = soundWaveHeight/2;
-            double yscale = 100;
+            double yscale = middle;
 
             AudioCanvas.Children.Clear();
             //Re-add Children components
@@ -463,53 +463,21 @@ namespace LiveDescribe.View
             {
                 if (sampleIndex + samplesPerPixel < data.Count)
                 {
-                    var max = data.GetRange(sampleIndex, samplesPerPixel).Max();
+                    double max = (double)data.GetRange(sampleIndex, samplesPerPixel).Max()/short.MaxValue;
+                    double min = (double)data.GetRange(sampleIndex, samplesPerPixel).Min() / short.MaxValue;
 
                     AudioCanvas.Children.Add(new Line
                     {
                         Stroke = System.Windows.Media.Brushes.Black,
                         SnapsToDevicePixels = true, //Turn off anti-aliasing effect
                         Y1 = middle + max*yscale + soundWaveOffset,
-                        Y2 = middle - max*yscale + soundWaveOffset,
+                        Y2 = middle + min*yscale + soundWaveOffset,
                         X1 = pixel,
                         X2 = pixel,
                     });
                 }
             }
 
-            /*
-            double width = TimeLine.ActualWidth;
-            double fullWidth = _canvasWidth;
-            double binSize = Math.Floor(data.Count / Math.Max(fullWidth, 1));
-
-            AudioCanvas.Children.Clear();
-            //Re-add Children components
-            AudioCanvas.Children.Add(NumberTimelineBorder);
-            AudioCanvas.Children.Add(Marker);
-
-            int begin = (int)TimeLine.HorizontalOffset;
-            int end = (int)(TimeLine.HorizontalOffset + width);
-
-            for (int pixel = begin; pixel < end; pixel++)
-            {
-                //get min and max from bin
-                List<float> bin = data.GetRange((int)(pixel * binSize), (int)binSize);
-
-                double soundWaveOffset = NumberTimeline.ActualHeight;
-                double soundWaveHeight = AudioCanvas.ActualHeight - soundWaveOffset;
-
-                AudioCanvas.Children.Add(new Line
-                {
-                    Stroke = System.Windows.Media.Brushes.Black,
-                    SnapsToDevicePixels = true, //Turn off anti-aliasing effect
-                    Y1 = (soundWaveHeight) * bin.Min() + soundWaveOffset,
-                    Y2 = (soundWaveHeight) * bin.Max() + soundWaveOffset,
-                    X1 = pixel,
-                    X2 = pixel,
-                });
-            }
-            double pages = _videoDuration / (PageTimeBeforeCanvasScrolls * 1000);
-            //*/
             double canvasWidth = _canvasWidth;
 
             //Number of lines needed for the entire video

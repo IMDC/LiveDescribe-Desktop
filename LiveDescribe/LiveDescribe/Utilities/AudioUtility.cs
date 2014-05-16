@@ -174,131 +174,49 @@ namespace LiveDescribe.Utilities
         /// </summary>
         /// <param name="reportProgressWorker">Used to determine what the current progress of stripping the audio is</param>
         /// <returns>data</returns>
-        public List<float> ReadWavData(BackgroundWorker reportProgressWorker)
+        public List<short> ReadWavData(BackgroundWorker reportProgressWorker)
         {
-            double min = 0; //default to 0
-            double max = 0; //default to 0
-            var data = new List<float>();
+            var data = new List<short>();
 
-            float[] buffer;
-            using (var reader = new AudioFileReader(_audioFile))
-            {
-                var samples = reader.Length / (reader.WaveFormat.BitsPerSample / 8);
-
-                if (reader.WaveFormat.Channels == 1)
-                {
-                    buffer = new float[samples];
-                    reader.Read(buffer, 0, (int)samples);
-                }
-                else if (reader.WaveFormat.Channels == 2)
-                {
-                    int ratio = reader.WaveFormat.Channels == 2 ? 40 : 80;
-
-                    buffer = new float[ratio];
-                    List<float> wavData = new List<float>();
-                    for (int i = 0; i < reader.Length; i+=buffer.Length)
-                    {
-                        //Read 2 bytes from Left Channel only
-                        reader.Read(buffer, 0, 2);
-                        wavData.Add(buffer[0]);
-                        wavData.Add(buffer[1]);
-
-                        //Advance the reader by n-2 bytes
-                        reader.Read(buffer, 0, buffer.Length-2);
-                    }
-                    return wavData;
-                }
-                else
-                {
-                    throw new NotImplementedException();
-                }
-            }
-
-            return new List<float>(buffer);
-
-            /*
             using (var fs = new FileStream(_audioFile, FileMode.Open, FileAccess.Read))
             using (var br = new BinaryReader(fs))
             {
-                try
+                //RIFF chunk
+                _header.ChunkId = br.ReadBytes(4);
+                _header.ChunkSize = br.ReadUInt32();
+                _header.Fmt = br.ReadBytes(4);
+
+                //fmt sub chunk
+                _header.SubChunk1Id = br.ReadBytes(4);
+                _header.SubChunk1Size = br.ReadUInt32();
+                _header.AudioFormat = br.ReadUInt16();
+                _header.NumChannels = br.ReadUInt16();
+                _header.SampleRate = br.ReadUInt32();
+                _header.ByteRate = br.ReadUInt32();
+                _header.BlockAlign = br.ReadUInt16();
+                _header.BitsPerSample = br.ReadUInt16();
+
+                br.ReadBytes(2); //skip two bytes, this shouldn't need to happen
+
+                //data sub chunk
+                _header.SubChunk2Id = br.ReadBytes(4);
+                _header.SubChunk2Size = br.ReadUInt32();
+
+                double maxSampleValue = Math.Pow(2, _header.BitsPerSample);
+                int ratio = _header.NumChannels == 2 ? 40 : 80;
+
+                for (int i = 0; i < _header.SubChunk2Size; i+=ratio)
                 {
-                    //RIFF chunk
-                    _header.ChunkId = br.ReadBytes(4);
-                    _header.ChunkSize = br.ReadUInt32();
-                    _header.Fmt = br.ReadBytes(4);
-
-                    //fmt sub chunk
-                    _header.SubChunk1Id = br.ReadBytes(4);
-                    _header.SubChunk1Size = br.ReadUInt32();
-                    _header.AudioFormat = br.ReadUInt16();
-                    _header.NumChannels = br.ReadUInt16();
-                    _header.SampleRate = br.ReadUInt32();
-                    _header.ByteRate = br.ReadUInt32();
-                    _header.BlockAlign = br.ReadUInt16();
-                    _header.BitsPerSample = br.ReadUInt16();
-
-                    br.ReadBytes(2); //skip two bytes, this shouldn't need to happen
-
-                    //data sub chunk
-                    _header.SubChunk2Id = br.ReadBytes(4);
-                    _header.SubChunk2Size = br.ReadUInt32();
-
-                    double maxSampleValue = Math.Pow(2, _header.BitsPerSample);
-                    int ratio = _header.NumChannels == 2 ? 40 : 80;
-
-                    //add the sample values to the data list
-                    for (int dataPoint = 0; dataPoint < _header.SubChunk2Size / _header.BlockAlign; dataPoint++)
-                    {
-                        byte[] buffer = br.ReadBytes(2);
-
-                        if (dataPoint % ratio == 0)
-                        {
-                            double val = ((BitConverter.ToInt16(buffer, 0) + (maxSampleValue / 2)) / maxSampleValue);
-                            data.Add((float)val);
-                            buffer = null;
-
-                            //finding min and max values for normalization method
-                            if (dataPoint == 0)
-                            {
-                                min = val;
-                                max = val;
-                            }
-                            else
-                            {
-                                min = val < min ? val : min;
-                                max = val > max ? val : max;
-                            }
-                        }
-
-                        if (_header.NumChannels == 2)
-                        {
-                            //skip next sample 
-                            br.ReadBytes(2);
-                        }
-                    }
-
+                    data.Add(br.ReadInt16());
+                    //Read n-2 bytes, as we skip them
+                    br.ReadBytes(ratio - 2);
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
-                finally
-                {
-                    if (br != null)
-                    {
-                        br.Close();
-                    }
-                    if (fs != null)
-                    {
-                        fs.Close();
-                    }
 
-                    data = normalizeData(data, (float)0.9, (float)0.1, (float)min, (float)max);
-                }
+                return data;
             }
-             */
 
             #region Debug Info
+            /*
             //Display the Contents of _header
             Console.WriteLine("ChunkID: " + Encoding.Default.GetString(_header.ChunkId));
             Console.WriteLine("Chunksize: " + _header.ChunkSize);
@@ -314,9 +232,8 @@ namespace LiveDescribe.Utilities
             Console.WriteLine("subChunk2Id: " + Encoding.Default.GetString(_header.SubChunk2Id));
             Console.WriteLine("subChunk2Size: " + _header.SubChunk2Size);
             Console.WriteLine("audioData Length: " + data.Count);
+            //*/
             #endregion
-            findSpaces(data);
-            return data;
         }
 
 

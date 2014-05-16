@@ -15,7 +15,7 @@ namespace LiveDescribe.View_Model
         #region Instance Variables
         private readonly ILiveDescribePlayer _mediaVideo;
         private AudioUtility _audioOperator;
-        private List<float> _waveFormData;
+        private List<short> _waveFormData;
         private readonly BackgroundWorker _stripAudioWorker;
         private LoadingViewModel _loadingViewModel;
         #endregion
@@ -375,7 +375,7 @@ namespace LiveDescribe.View_Model
         /// <summary>
         /// Get the wavform Data
         /// </summary>
-        public List<float> AudioData
+        public List<short> AudioData
         {
             set { _waveFormData = value; }
             get { return this._waveFormData; }
