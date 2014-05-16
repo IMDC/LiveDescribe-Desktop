@@ -436,7 +436,10 @@ namespace LiveDescribe.View
             if (data == null || _canvasWidth ==0 || width == 0)
                 return;
 
-            int samplesPerPixel = (int) Math.Floor(data.Count / (_canvasWidth)); //(int) Math.Max(1, data.Count/_canvasWidth);
+            double bytesPerSample = 4;
+
+            int samplesPerPixel = (int) Math.Floor((data.Count/bytesPerSample) / (_canvasWidth));
+            //int samplesPerPixel = (int)Math.Floor(data.);
 
             int numPixels = data.Count/samplesPerPixel;
 
@@ -456,11 +459,11 @@ namespace LiveDescribe.View
             int begin = (int)TimeLine.HorizontalOffset;
             int end = (int)(TimeLine.HorizontalOffset + width);
 
-            for (int i = begin*samplesPerPixel, pixel=begin; pixel <= end; i += samplesPerPixel, pixel++)
+            for (int sampleIndex = begin*samplesPerPixel, pixel=begin; pixel <= end; sampleIndex += samplesPerPixel, pixel++)
             {
-                if (i + samplesPerPixel < data.Count)
+                if (sampleIndex + samplesPerPixel < data.Count)
                 {
-                    var max = data.GetRange(i, samplesPerPixel - 1).Max();
+                    var max = data.GetRange(sampleIndex, samplesPerPixel).Max();
 
                     AudioCanvas.Children.Add(new Line
                     {
