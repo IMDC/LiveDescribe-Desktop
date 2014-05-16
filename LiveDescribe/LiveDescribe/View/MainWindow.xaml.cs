@@ -429,10 +429,52 @@ namespace LiveDescribe.View
         private void DrawWaveForm()
         {
             Console.WriteLine("Drawing wave form");
+
+            double width = TimeLine.ActualWidth;
+
             List<float> data = _videoControl.AudioData;
-            if (data == null)
+            if (data == null || _canvasWidth ==0 || width == 0)
                 return;
 
+            int samplesPerPixel = (int) Math.Floor(data.Count / (_canvasWidth)); //(int) Math.Max(1, data.Count/_canvasWidth);
+
+            int numPixels = data.Count/samplesPerPixel;
+
+            Console.WriteLine("Data.Count: {0}, batchSize {1}, Regular Width: {2} Canvas Width: {3}",
+                data.Count,samplesPerPixel,width, _canvasWidth);
+
+            double soundWaveOffset = NumberTimeline.ActualHeight;
+            double soundWaveHeight = AudioCanvas.ActualHeight - soundWaveOffset;
+            double middle = soundWaveHeight/2;
+            double yscale = 100;
+
+            AudioCanvas.Children.Clear();
+            //Re-add Children components
+            AudioCanvas.Children.Add(NumberTimelineBorder);
+            AudioCanvas.Children.Add(Marker);
+
+            int begin = (int)TimeLine.HorizontalOffset;
+            int end = (int)(TimeLine.HorizontalOffset + width);
+
+            for (int i = begin*samplesPerPixel, pixel=begin; pixel <= end; i += samplesPerPixel, pixel++)
+            {
+                if (i + samplesPerPixel < data.Count)
+                {
+                    var max = data.GetRange(i, samplesPerPixel - 1).Max();
+
+                    AudioCanvas.Children.Add(new Line
+                    {
+                        Stroke = System.Windows.Media.Brushes.Black,
+                        SnapsToDevicePixels = true, //Turn off anti-aliasing effect
+                        Y1 = middle + max*yscale + soundWaveOffset,
+                        Y2 = middle - max*yscale + soundWaveOffset,
+                        X1 = pixel,
+                        X2 = pixel,
+                    });
+                }
+            }
+
+            /*
             double width = TimeLine.ActualWidth;
             double fullWidth = _canvasWidth;
             double binSize = Math.Floor(data.Count / Math.Max(fullWidth, 1));
@@ -463,7 +505,8 @@ namespace LiveDescribe.View
                     X2 = pixel,
                 });
             }
-            //double pages = _videoDuration / (PageTimeBeforeCanvasScrolls * 1000);
+            double pages = _videoDuration / (PageTimeBeforeCanvasScrolls * 1000);
+            //*/
             double canvasWidth = _canvasWidth;
 
             //Number of lines needed for the entire video

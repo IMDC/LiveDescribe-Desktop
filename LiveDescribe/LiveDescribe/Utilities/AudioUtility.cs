@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Windows;
 using LiveDescribe.Model;
+using NAudio.Wave;
 
 namespace LiveDescribe.Utilities
 {
@@ -179,6 +180,38 @@ namespace LiveDescribe.Utilities
             double max = 0; //default to 0
             var data = new List<float>();
 
+            float[] buffer;
+            using (var reader = new AudioFileReader(_audioFile))
+            {
+                var samples = reader.Length / (reader.WaveFormat.BitsPerSample / 8);
+
+                if (reader.WaveFormat.Channels == 1)
+                {
+                    buffer = new float[samples];
+                    reader.Read(buffer, 0, (int)samples);
+                }
+                else if (reader.WaveFormat.Channels == 2)
+                {
+                    buffer = new float[2];
+                    List<float> wavData = new List<float>();
+                    for (int i = 0; i < reader.Length; i+=4)
+                    {
+                        reader.Read(buffer, 0, buffer.Length);
+                        wavData.Add(buffer[0]);
+                        wavData.Add(buffer[1]);
+                        reader.Read(buffer, 0, buffer.Length);
+                    }
+                    return wavData;
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            return new List<float>(buffer);
+
+            /*
             using (var fs = new FileStream(_audioFile, FileMode.Open, FileAccess.Read))
             using (var br = new BinaryReader(fs))
             {
@@ -212,7 +245,7 @@ namespace LiveDescribe.Utilities
                     for (int dataPoint = 0; dataPoint < _header.SubChunk2Size / _header.BlockAlign; dataPoint++)
                     {
                         byte[] buffer = br.ReadBytes(2);
-                        
+
                         if (dataPoint % ratio == 0)
                         {
                             double val = ((BitConverter.ToInt16(buffer, 0) + (maxSampleValue / 2)) / maxSampleValue);
@@ -258,6 +291,7 @@ namespace LiveDescribe.Utilities
                     data = normalizeData(data, (float)0.9, (float)0.1, (float)min, (float)max);
                 }
             }
+             */
 
             #region Debug Info
             //Display the Contents of _header
