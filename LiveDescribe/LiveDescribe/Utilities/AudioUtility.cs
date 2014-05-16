@@ -192,14 +192,19 @@ namespace LiveDescribe.Utilities
                 }
                 else if (reader.WaveFormat.Channels == 2)
                 {
-                    buffer = new float[2];
+                    int ratio = reader.WaveFormat.Channels == 2 ? 40 : 80;
+
+                    buffer = new float[ratio];
                     List<float> wavData = new List<float>();
-                    for (int i = 0; i < reader.Length; i+=4)
+                    for (int i = 0; i < reader.Length; i+=buffer.Length)
                     {
-                        reader.Read(buffer, 0, buffer.Length);
+                        //Read 2 bytes from Left Channel only
+                        reader.Read(buffer, 0, 2);
                         wavData.Add(buffer[0]);
                         wavData.Add(buffer[1]);
-                        reader.Read(buffer, 0, buffer.Length);
+
+                        //Advance the reader by n-2 bytes
+                        reader.Read(buffer, 0, buffer.Length-2);
                     }
                     return wavData;
                 }

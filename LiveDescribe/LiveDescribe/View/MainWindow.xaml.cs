@@ -436,9 +436,9 @@ namespace LiveDescribe.View
             if (data == null || _canvasWidth ==0 || width == 0)
                 return;
 
-            double bytesPerSample = 4;
+            double bytesPerFloat = 4;
 
-            int samplesPerPixel = (int) Math.Floor((data.Count/bytesPerSample) / (_canvasWidth));
+            int samplesPerPixel = (int) Math.Floor((data.Count/bytesPerFloat) / (_canvasWidth));
             //int samplesPerPixel = (int)Math.Floor(data.);
 
             int numPixels = data.Count/samplesPerPixel;
