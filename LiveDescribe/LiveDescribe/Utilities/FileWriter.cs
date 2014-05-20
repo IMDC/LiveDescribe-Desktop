@@ -21,7 +21,7 @@ namespace LiveDescribe.Utilities
         {
             var serializer = new JsonSerializer();
             serializer.Formatting = Formatting.Indented;
-            using (var sw = new StreamWriter(project.ProjectFile.AbsolutePath, false))
+            using (var sw = new StreamWriter(project.ProjectFile, false))
             {
                 serializer.Serialize(sw, project, typeof (Project));
             }
@@ -34,7 +34,7 @@ namespace LiveDescribe.Utilities
         /// <param name="waveFormData"></param>
         public static void WriteWaveFormFile(Project project, List<short> waveFormData)
         {
-            using (var file = File.Open(project.WaveFormFile.AbsolutePath, FileMode.Create, FileAccess.Write))
+            using (var file = File.Open(project.WaveFormFile, FileMode.Create, FileAccess.Write))
             {
                 var bin = new BinaryFormatter();
                 bin.Serialize(file,waveFormData);

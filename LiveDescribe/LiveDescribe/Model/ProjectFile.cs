@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Reflection.Emit;
 
 namespace LiveDescribe.Model
 {
@@ -7,6 +8,16 @@ namespace LiveDescribe.Model
     /// </summary>
     public class ProjectFile
     {
+        /// <summary>
+        /// Converts a ProjectFile to a string.
+        /// </summary>
+        /// <param name="p">A ProjectFile.</param>
+        /// <returns>The absolute path of the Project file.</returns>
+        public static implicit operator string(ProjectFile p)
+        {
+            return p.AbsolutePath;
+        }
+
         /// <summary>
         /// The path of the project file relative to the project directory.
         /// Example is @"video.avi".

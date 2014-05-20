@@ -198,8 +198,8 @@ namespace LiveDescribe.View_Model
         {
             FileWriter.WriteProjectFile(_project);
 
-            if (!Directory.Exists(_project.CacheFolder.AbsolutePath))
-                Directory.CreateDirectory(_project.CacheFolder.AbsolutePath);
+            if (!Directory.Exists(_project.CacheFolder))
+                Directory.CreateDirectory(_project.CacheFolder);
 
             FileWriter.WriteWaveFormFile(_project,_videocontrol.AudioData);
         }
@@ -219,7 +219,7 @@ namespace LiveDescribe.View_Model
 
             CloseProject();
 
-            Directory.Delete(p.CacheFolder.AbsolutePath, true);
+            Directory.Delete(p.CacheFolder, true);
 
             SetProject(p);
         }
@@ -325,14 +325,14 @@ namespace LiveDescribe.View_Model
             //Set up environment
             Properties.Settings.Default.WorkingDirectory = _project.ProjectFolderPath + "\\";
 
-            if (File.Exists(_project.WaveFormFile.AbsolutePath))
+            if (File.Exists(_project.WaveFormFile))
             {
                 _videocontrol.AudioData = FileReader.ReadWaveFormFile(_project);
-                _videocontrol.Path = _project.VideoFile.AbsolutePath;
+                _videocontrol.Path = _project.VideoFile;
             }
             else
             {
-                _videocontrol.SetupAndStripAudio(_project.VideoFile.AbsolutePath);
+                _videocontrol.SetupAndStripAudio(_project.VideoFile);
             }
 
             _mediaVideo.CurrentState = LiveDescribeVideoStates.PausedVideo;

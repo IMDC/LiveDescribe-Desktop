@@ -27,7 +27,7 @@ namespace LiveDescribe.Utilities
         {
             var waveFormData = new List<short>();
 
-            using (var file = File.Open(project.WaveFormFile.AbsolutePath, FileMode.Open, FileAccess.Read))
+            using (var file = File.Open(project.WaveFormFile, FileMode.Open, FileAccess.Read))
             {
                 var bin = new BinaryFormatter();
                 waveFormData = (List<short>) bin.Deserialize(file);
