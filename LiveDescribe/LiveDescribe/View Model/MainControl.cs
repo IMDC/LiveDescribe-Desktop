@@ -325,7 +325,7 @@ namespace LiveDescribe.View_Model
             //Set up environment
             Properties.Settings.Default.WorkingDirectory = _project.ProjectFolderPath + "\\";
 
-            if (Directory.Exists(_project.CacheFolder))
+            if (Directory.Exists(_project.CacheFolder) && File.Exists(_project.WaveFormFile))
             {
                 _videocontrol.AudioData = FileReader.ReadWaveFormFile(_project);
                 _videocontrol.Path = _project.VideoFile;

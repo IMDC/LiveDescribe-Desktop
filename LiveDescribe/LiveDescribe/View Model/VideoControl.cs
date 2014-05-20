@@ -287,7 +287,7 @@ namespace LiveDescribe.View_Model
         /// <param name="e">progresschangedeventargs</param>
         public void StrippingAudioProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            _loadingViewModel.Value = e.ProgressPercentage;
+            _loadingViewModel.SetProgress("Importing Video", e.ProgressPercentage);
         }
         #endregion
 
@@ -418,7 +418,7 @@ namespace LiveDescribe.View_Model
             _stripAudioWorker.RunWorkerCompleted += OnFinishedStrippingAudio;
             _stripAudioWorker.ProgressChanged += StrippingAudioProgressChanged;
             _stripAudioWorker.WorkerReportsProgress = true;
-            _loadingViewModel.Text = "Please wait while we import your video...";
+            _loadingViewModel.SetProgress("Importing Video", 0);
             _loadingViewModel.Visible = true;
             _stripAudioWorker.RunWorkerAsync();
         }
