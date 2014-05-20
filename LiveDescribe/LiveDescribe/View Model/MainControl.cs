@@ -52,6 +52,7 @@ namespace LiveDescribe.View_Model
             NewProjectCommand = new RelayCommand(NewProject);
             OpenProjectCommand = new RelayCommand(OpenProject);
             SaveProjectCommand = new RelayCommand(SaveProject, CanSaveProject);
+            ClearCacheCommand = new RelayCommand(ClearCache, CanClearCache);
             ShowPreferencesCommand = new RelayCommand(ShowPreferences);
 
             _mediaVideo = mediaVideo;
@@ -125,6 +126,11 @@ namespace LiveDescribe.View_Model
         public RelayCommand SaveProjectCommand { private set; get; }
 
         /// <summary>
+        /// Command to clear the cache of the current project.
+        /// </summary>
+        public RelayCommand ClearCacheCommand { private set; get; }
+
+        /// <summary>
         /// Command to show preferences
         /// </summary>
         public RelayCommand ShowPreferencesCommand { private set; get; }
@@ -191,7 +197,31 @@ namespace LiveDescribe.View_Model
         public void SaveProject()
         {
             FileWriter.WriteProjectFile(_project);
+
+            if (!Directory.Exists(_project.CacheFolder.AbsolutePath))
+                Directory.CreateDirectory(_project.CacheFolder.AbsolutePath);
+
             FileWriter.WriteWaveFormFile(_project,_videocontrol.AudioData);
+        }
+
+        public bool CanClearCache()
+        {
+            return _project != null;
+        }
+
+        /// <summary>
+        /// Closes the current project, deletes its cache folder, and then reopens it again. This
+        /// will cause the program to re-import it.
+        /// </summary>
+        public void ClearCache()
+        {
+            var p = _project;
+
+            CloseProject();
+
+            Directory.Delete(p.CacheFolder.AbsolutePath, true);
+
+            SetProject(p);
         }
 
         /// <summary>
