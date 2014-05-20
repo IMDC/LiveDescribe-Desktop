@@ -219,7 +219,50 @@
                     DataContext="{Binding DescriptionInfoTabViewModel}"
                     SelectedIndex="{Binding TabSelectedIndex}">
                     <TabItem
-                        Header="Spaces" />
+                        Header="Spaces">
+                        <ListView
+                            VirtualizingPanel.IsVirtualizing="True"
+                            ItemsSource="{Binding Spaces}">
+                            <ListView.SelectedItem>
+                                <Binding
+                                    Path="SpaceSelectedInList"
+                                    UpdateSourceTrigger="PropertyChanged"
+                                    ValidatesOnDataErrors="True"
+                                    Mode="TwoWay" />
+                            </ListView.SelectedItem>
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn
+                                        Header="Space Text">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock
+                                                    Text="{Binding SpaceText}" />
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn
+                                        Header="Start In Video(ms)">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock
+                                                    Text="{Binding StartInVideo}" />
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn
+                                        Header="End In Video(ms)">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock
+                                                    Text="{Binding EndInVideo}" />
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </TabItem>
                     <TabItem
                         Header="Descriptions">
                         <ListView
@@ -336,14 +379,23 @@
                             <Border
                                 Grid.Row="0"
                                 Grid.RowSpan="2"
-                                SizeChanged="AudioCanvasBorder_SizeChanged_1"
-                                DataContext="{Binding VideoControl}"
+                                SizeChanged="AudioCanvasBorder_SizeChanged_1"                             
                                 Name="AudioCanvasBorder"
                                 BorderBrush="Black"
                                 BorderThickness="1">
                                 <Canvas
+                                    Background="Transparent"
                                     VirtualizingPanel.IsVirtualizing="True"
-                                    Name="AudioCanvas">
+                                    Name="AudioCanvas"
+                                    HorizontalAlignment="Left"
+                                    MouseRightButtonDown="AudioCanvas_RecordRightClickPosition">
+                                    
+                                    <Canvas.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="Add Space" Click="AudioCanvas_AddSpaceClick"/>
+                                        </ContextMenu>
+                                    </Canvas.ContextMenu>
+                                    
                                     <Border
                                         Name="NumberTimelineBorder"
                                         Background="White"
@@ -355,8 +407,81 @@
                                             MouseDown="NumberTimeline_OnMouseDown"
                                             Name="NumberTimeline" />
                                     </Border>
-
+                                   
+                                    <ItemsControl
+                                        Name="SpacesItemControl"
+                                        DataContext="{Binding SpacesViewModel}"
+                                        ItemsSource="{Binding Spaces}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <Canvas />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        
+                                        <ItemsControl.ItemContainerStyle>
+                                            <Style>
+                                                <Setter
+                                                    Property="Canvas.Left"
+                                                    Value="{Binding X}" />
+                                                <Setter
+                                                    Property="Canvas.Top"
+                                                    Value="{Binding Y}" />
+                                                <Setter
+                                                    Property="Canvas.Height"
+                                                    Value="{Binding Height}" />
+                                                <Setter
+                                                    Property="Canvas.Width"
+                                                    Value="{Binding Width}" />
+                                            </Style>
+                                        </ItemsControl.ItemContainerStyle>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Rectangle>
+                                                    <Rectangle.ContextMenu>
+                                                        <ContextMenu>
+                                                            <MenuItem
+                                                                Header="Delete Space"
+                                                                Command="{Binding DeleteSpaceCommand}" />
+                                                        </ContextMenu>
+                                                    </Rectangle.ContextMenu>
+                                                    <Rectangle.Style>
+                                                        <Style
+                                                            TargetType="Rectangle">
+                                                            <Setter
+                                                                Property="Fill"
+                                                                Value="Blue" />
+                                                            <Setter
+                                                                Property="Opacity"
+                                                                Value="0.2" />
+                                                        </Style>
+                                                    </Rectangle.Style>
+                                                    <i:Interaction.Triggers>
+                                                        <i:EventTrigger
+                                                            EventName="MouseDown">
+                                                            <!--   <i:InvokeCommandAction Command="{Binding DescriptionMouseDownCommand}" /> -->
+                                                            <cmd:EventToCommand
+                                                                Command="{Binding SpaceMouseDownCommand, Mode=OneWay}"
+                                                                PassEventArgsToCommand="True" />
+                                                        </i:EventTrigger>
+                                                        <i:EventTrigger
+                                                            EventName="MouseUp">
+                                                            <i:InvokeCommandAction
+                                                                Command="{Binding SpaceMouseUpCommand}" />
+                                                        </i:EventTrigger>
+                                                        <i:EventTrigger
+                                                            EventName="MouseMove">
+                                                            <!-- <i:InvokeCommandAction Command="{Binding DescriptionMouseMoveCommand}" />-->
+                                                            <cmd:EventToCommand
+                                                                Command="{Binding SpaceMouseMoveCommand, Mode=OneWay}"
+                                                                PassEventArgsToCommand="True" />
+                                                        </i:EventTrigger>
+                                                    </i:Interaction.Triggers>
+                                                </Rectangle>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
                                     <Polyline
+                                        DataContext="{Binding VideoControl}"
                                         IsEnabled="False"
                                         Points="10,20, 0,0,  20,0, 10,20, 10,172"
                                         RenderOptions.EdgeMode="Aliased"
@@ -453,7 +578,7 @@
                                                     <Rectangle.ContextMenu>
                                                         <ContextMenu>
                                                             <MenuItem
-                                                                Header="Delete"
+                                                                Header="Delete Description"
                                                                 Command="{Binding DescriptionDeleteCommand}" />
                                                         </ContextMenu>
                                                     </Rectangle.ContextMenu>
@@ -526,7 +651,7 @@
                     Grid.RowSpan="2"
                     ScrollViewer.VerticalScrollBarVisibility="Auto"
                     TextWrapping="Wrap"
-                    Text="{Binding DescriptionText}" />
+                    Text="{Binding DescriptionAndSpaceText}" />
 
                 <!--Text Controls-->
                 <StackPanel

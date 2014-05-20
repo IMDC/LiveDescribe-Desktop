@@ -19,6 +19,7 @@ namespace LiveDescribe.View
     public partial class MainWindow : Window
     {
         //Constants
+        private const double DefaultSpaceLengthInMilliSeconds = 3000;
         private const double MarkerOffset = 10.0;
         /// <summary>when the marker hits 95% of the page it scrolls</summary>
         private const double PageScrollPercent = 0.95;
@@ -32,11 +33,13 @@ namespace LiveDescribe.View
         private double _canvasWidth = 0;
         private double _videoDuration = -1;
         private readonly VideoControl _videoControl;
+        private readonly SpacesViewModel _spacesViewModel;
         private readonly PreferencesViewModel _preferences;
         /// <summary>used to format a timespan object which in this case in the videoMedia.Position</summary>
         private readonly DescriptionViewModel _descriptionViewModel;
         private readonly TimeConverterFormatter _formatter;
-        private double _originalPosition = -1;
+        private double _originalPositionForDraggingDescription = -1;
+        private Point RightClickPointOnAudioCanvas;
 
         public MainWindow()
         {
@@ -52,11 +55,11 @@ namespace LiveDescribe.View
             _videoControl = maincontrol.VideoControl;
             _preferences = maincontrol.PreferencesViewModel;
             _descriptionViewModel = maincontrol.DescriptionViewModel;
+            _spacesViewModel = maincontrol.SpacesViewModel;
 
             _formatter = new TimeConverterFormatter();
 
             #region TimeLine Event Listeners
-
             TimeLine.ScrollChanged += (sender, e) => { DrawWaveForm(); };
             #endregion
 
@@ -136,7 +139,7 @@ namespace LiveDescribe.View
             //and sets the busy stripping audio to false so that the loading screen goes away
             maincontrol.VideoControl.OnStrippingAudioCompleted += (sender, e) =>
                 {
-                    SetTimeline();
+                   SetTimeline();
 
                     //make this false so that the loading screen goes away after the timeline and the wave form are drawn
                     maincontrol.LoadingViewModel.Visible = false;
@@ -217,7 +220,7 @@ namespace LiveDescribe.View
                         MouseEventArgs e2 = (MouseEventArgs)e1;
                         if (Mouse.LeftButton == MouseButtonState.Pressed)
                         {
-                            _originalPosition = e2.GetPosition(DescriptionCanvas).X;
+                            _originalPositionForDraggingDescription = e2.GetPosition(DescriptionCanvas).X;
                             _descriptionBeingDragged = e.Description;
                             Console.WriteLine("Description Mouse Down");
                             DescriptionCanvas.CaptureMouse();
@@ -317,7 +320,7 @@ namespace LiveDescribe.View
             //update the position of the description and the start and end times in the video
             if (DescriptionCanvas.IsMouseCaptured)
             {
-                double newPosition = _descriptionBeingDragged.X + (e.GetPosition(DescriptionCanvas).X - _originalPosition);
+                double newPosition = _descriptionBeingDragged.X + (e.GetPosition(DescriptionCanvas).X - _originalPositionForDraggingDescription);
                 //size in pixels of the description
                 double size = (AudioCanvas.Width / _videoDuration) * (_descriptionBeingDragged.EndWaveFileTime - _descriptionBeingDragged.StartWaveFileTime);
 
@@ -328,11 +331,57 @@ namespace LiveDescribe.View
                     newPosition = AudioCanvas.Width - size;
 
                 _descriptionBeingDragged.X = newPosition;
-                _originalPosition = e.GetPosition(DescriptionCanvas).X;
+                _originalPositionForDraggingDescription = e.GetPosition(DescriptionCanvas).X;
                 _descriptionBeingDragged.StartInVideo = (_videoDuration / AudioCanvas.Width) * (_descriptionBeingDragged.X);
                 _descriptionBeingDragged.EndInVideo = _descriptionBeingDragged.StartInVideo + (_descriptionBeingDragged.EndWaveFileTime - _descriptionBeingDragged.StartWaveFileTime);
                 Console.WriteLine("DescriptionMouse Move");
             }
+        }
+
+        private void AudioCanvas_RecordRightClickPosition(object sender, MouseButtonEventArgs e)
+        {
+            //record the position in which you right clicked on the canvas
+            //this position is used to calculate where on the audio canvas to draw a space
+            RightClickPointOnAudioCanvas = e.GetPosition(AudioCanvas);
+        }
+
+        private void AudioCanvas_AddSpaceClick(object sender, RoutedEventArgs e)
+        {
+            double middle = RightClickPointOnAudioCanvas.X;  // going to be the middle of the space
+            double middleTime = (_videoDuration / AudioCanvas.Width) * middle;  // middle of the space in milliseconds
+            double starttime = middleTime - (DefaultSpaceLengthInMilliSeconds / 2);
+            double endtime = middleTime + (DefaultSpaceLengthInMilliSeconds / 2);
+
+            Space space = new Space();
+
+            //Bounds checking when creating a space
+            if (starttime >= 0 && endtime <= _videoDuration)
+            {
+                space.StartInVideo = starttime;
+                space.EndInVideo = endtime;
+            }
+            else if (starttime < 0 && endtime > _videoDuration)
+            {
+                space.StartInVideo = 0;
+                space.EndInVideo = _videoDuration;
+            }
+            else if (starttime < 0)
+            {
+                space.StartInVideo = 0;
+                space.EndInVideo = endtime;
+                
+            }
+            else if (endtime > _videoDuration)
+            {
+                space.StartInVideo = starttime;
+                space.EndInVideo = _videoDuration;
+            }
+
+            space.X = (AudioCanvas.Width / _videoDuration) * starttime;
+            space.Y = 0;
+            space.Height = AudioCanvas.ActualHeight;
+            space.Width = (AudioCanvas.Width / _videoDuration) * (space.EndInVideo - space.StartInVideo);
+            _spacesViewModel.AddSpace(space);
         }
 
         /// <summary>
@@ -343,15 +392,19 @@ namespace LiveDescribe.View
         /// <param name="e"></param>
         private void NumberTimeline_OnMouseDown(object sender, MouseButtonEventArgs e)
         {
-            //execute the pause command because we want to pause the video when someone is clicking through the video
-            Console.WriteLine("Number TimeLine Mouse Down");
-            _videoControl.PauseCommand.Execute(this);
 
-            var xPosition = e.GetPosition(NumberTimelineBorder).X;
-            var newValue = (xPosition / AudioCanvas.Width) * _videoDuration;
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                //execute the pause command because we want to pause the video when someone is clicking through the video
+                Console.WriteLine("Number TimeLine Mouse Down");
+                _videoControl.PauseCommand.Execute(this);
 
-            UpdateMarkerPosition(xPosition - MarkerOffset);
-            UpdateVideoPosition((int)newValue);
+                var xPosition = e.GetPosition(NumberTimelineBorder).X;
+                var newValue = (xPosition / AudioCanvas.Width) * _videoDuration;
+
+                UpdateMarkerPosition(xPosition - MarkerOffset);
+                UpdateVideoPosition((int)newValue);
+            }
         }
 
         #endregion
@@ -440,8 +493,6 @@ namespace LiveDescribe.View
 
             double samplesPerPixel = ((data.Count / bytesPerFloat) / (_canvasWidth));
 
-            Console.WriteLine("Horizontal Offset: {0}, Witdh {1}", TimeLine.HorizontalOffset, width);
-
             double soundWaveOffset = NumberTimeline.ActualHeight;
             double soundWaveHeight = AudioCanvas.ActualHeight - soundWaveOffset;
             double middle = soundWaveHeight / 2;
@@ -449,9 +500,10 @@ namespace LiveDescribe.View
 
             AudioCanvas.Children.Clear();
             //Re-add Children components
+            AudioCanvas.Children.Add(SpacesItemControl);
             AudioCanvas.Children.Add(NumberTimelineBorder);
             AudioCanvas.Children.Add(Marker);
-
+            
             int begin = (int)TimeLine.HorizontalOffset;
             int end = (int)(TimeLine.HorizontalOffset + width);
 

@@ -86,6 +86,7 @@
     <Compile Include="Utilities\FileWriter.cs" />
     <Compile Include="View Model\DescriptionInfoTabViewModel.cs" />
     <Compile Include="View Model\LoadingViewModel.cs" />
+    <Compile Include="View Model\SpacesViewModel.cs" />
     <Compile Include="View\NewProjectView.xaml.cs">
       <DependentUpon>NewProjectView.xaml</DependentUpon>
     </Compile>
