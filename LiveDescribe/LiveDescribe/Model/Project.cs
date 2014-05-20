@@ -21,6 +21,8 @@ namespace LiveDescribe.Model
 
         public const string WaveFormFileName = "waveform.bin";
 
+        public const string DescriptionsFolderName = "descriptions";
+
         /// <summary>
         /// The name of the project.
         /// </summary>
@@ -35,6 +37,8 @@ namespace LiveDescribe.Model
         /// The Folder containing cacheable data relating to the project
         /// </summary>
         public ProjectFile CacheFolder { set; get; }
+
+        public ProjectFile DescriptionsFolder { set; get; }
 
         /// <summary>
         /// The file containing all project info on disk.
@@ -66,11 +70,13 @@ namespace LiveDescribe.Model
         public Project(string projectName, string videoFileName, string projectPath)
         {
             ProjectName = projectName;
-
             ProjectFolderPath = Path.Combine(projectPath, projectName);
 
-            CacheFolder = new ProjectFile(projectPath,Path.Combine(ProjectFolderPath,CacheFolderName));
+            //Folders
+            CacheFolder = new ProjectFile(ProjectFolderPath,CacheFolderName);
+            DescriptionsFolder = new ProjectFile(ProjectFolderPath,DescriptionsFolderName);
 
+            //Files
             ProjectFile = new ProjectFile(ProjectFolderPath, ProjectName + ProjectExtension);
             VideoFile = new ProjectFile(ProjectFolderPath, videoFileName);
             WaveFormFile = new ProjectFile(ProjectFolderPath, Path.Combine(CacheFolder.RelativePath,

@@ -337,7 +337,19 @@ namespace LiveDescribe.View_Model
                 _videocontrol.SetupAndStripAudio(_project);
             }
 
+            if (Directory.Exists(_project.DescriptionsFolder))
+            {
+                //TODO: Load descriptions
+            }
+            else
+            {
+                Directory.CreateDirectory(_project.DescriptionsFolder);
+            }
+
             _mediaVideo.CurrentState = LiveDescribeVideoStates.PausedVideo;
+
+            //Set Children
+            _descriptionviewmodel.Project = _project;
         }
 
         #endregion

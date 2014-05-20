@@ -33,6 +33,8 @@ namespace LiveDescribe.View_Model
         private VideoControl _videoControl;
 
         private LiveDescribeVideoStates _previousVideoState; //used to restore the previous video state after it's finished recording
+
+        public Project Project { get; set; }
         #endregion
 
         #region Event Handlers
@@ -49,6 +51,8 @@ namespace LiveDescribe.View_Model
             RecordCommand = new RelayCommand(Record, RecordStateCheck);
             _mediaVideo = mediaVideo;
             _videoControl = videoControl;
+
+            Project = null;
 
             //check if the current microphone exists in the settings
             //if it doesn't use the first one or else get the one stored in the settings
@@ -117,8 +121,8 @@ namespace LiveDescribe.View_Model
          
             // get a random guid to name the wave file
             // there is an EXTREMELY small chance that the guid used has been used before
-            Guid g = Guid.NewGuid();
-            _waveWriter = new NAudio.Wave.WaveFileWriter(Properties.Settings.Default.WorkingDirectory + g.ToString() + ".wav", MicrophoneStream.WaveFormat);          
+            string path = Path.Combine(Project.DescriptionsFolder, Guid.NewGuid().ToString() + ".wav");
+            _waveWriter = new WaveFileWriter(path, MicrophoneStream.WaveFormat);
             MicrophoneStream.DataAvailable += new EventHandler<NAudio.Wave.WaveInEventArgs>(MicrophoneSteam_DataAvailable);
   
             try
@@ -236,9 +240,7 @@ namespace LiveDescribe.View_Model
         /// <returns></returns>
         public bool RecordStateCheck()
         {
-            if (_mediaVideo.CurrentState == LiveDescribeVideoStates.VideoNotLoaded)
-                return false;
-            return true;
+            return Project != null && _mediaVideo.CurrentState != LiveDescribeVideoStates.VideoNotLoaded;
         }
 
         /// <summary>
