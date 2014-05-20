@@ -4,6 +4,7 @@ using LiveDescribe.Graphics;
 using LiveDescribe.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using LiveDescribe.Model;
 using Microsoft.Win32;
 using LiveDescribe.Utilities;
 using System.Collections.Generic;
@@ -18,6 +19,8 @@ namespace LiveDescribe.View_Model
         private List<short> _waveFormData;
         private readonly BackgroundWorker _stripAudioWorker;
         private LoadingViewModel _loadingViewModel;
+
+        public Project Project { get; set; }
         #endregion
 
         #region Event Handlers
@@ -258,7 +261,7 @@ namespace LiveDescribe.View_Model
         /// <param name="e"></param>
         public void StripAudio(object sender, DoWorkEventArgs e)
         {
-            _audioOperator = new AudioUtility(Path);
+            _audioOperator = new AudioUtility(Project);
             _audioOperator.StripAudio(_stripAudioWorker);
             _waveFormData = _audioOperator.ReadWavData(_stripAudioWorker);          
             _audioOperator.DeleteAudioFile();
@@ -406,10 +409,11 @@ namespace LiveDescribe.View_Model
         /// to strip the audio from the video
         /// </summary>
         /// <param name="path"></param>
-        public void SetupAndStripAudio(String path)
+        public void SetupAndStripAudio(Project p)
         {
             //changes the Path variable that is binded to the media element
-            Path = path;
+            Path = p.VideoFile;
+            Project = p;
             _stripAudioWorker.DoWork += StripAudio;
             _stripAudioWorker.RunWorkerCompleted += OnFinishedStrippingAudio;
             _stripAudioWorker.ProgressChanged += StrippingAudioProgressChanged;

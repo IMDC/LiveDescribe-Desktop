@@ -35,10 +35,10 @@ namespace LiveDescribe.Utilities
         private readonly string _audioFile;
         private Header _header;
  
-        public AudioUtility(string videoFile)
+        public AudioUtility(Project p)
         {
-            _videoFile = videoFile;
-            _audioFile = Path.GetFileNameWithoutExtension(_videoFile) + ".wav";
+            _videoFile = p.VideoFile;
+            _audioFile = Path.Combine(p.CacheFolder, Path.GetFileNameWithoutExtension(_videoFile) + ".wav");
         }
 
 

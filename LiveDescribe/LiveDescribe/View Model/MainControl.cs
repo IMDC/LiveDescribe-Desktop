@@ -325,14 +325,16 @@ namespace LiveDescribe.View_Model
             //Set up environment
             Properties.Settings.Default.WorkingDirectory = _project.ProjectFolderPath + "\\";
 
-            if (File.Exists(_project.WaveFormFile))
+            if (Directory.Exists(_project.CacheFolder))
             {
                 _videocontrol.AudioData = FileReader.ReadWaveFormFile(_project);
                 _videocontrol.Path = _project.VideoFile;
             }
             else
             {
-                _videocontrol.SetupAndStripAudio(_project.VideoFile);
+                Directory.CreateDirectory(_project.CacheFolder);
+
+                _videocontrol.SetupAndStripAudio(_project);
             }
 
             _mediaVideo.CurrentState = LiveDescribeVideoStates.PausedVideo;
