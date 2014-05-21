@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -44,6 +45,14 @@ namespace LiveDescribe.Utilities
             }
 
             return waveFormData;
+        }
+
+        public static ObservableCollection<Description> ReadDescriptionsFile(Project project)
+        {
+            using (var r = new StreamReader(project.DescriptionsFile))
+            {
+                return JsonConvert.DeserializeObject<ObservableCollection<Description>>(r.ReadToEnd());
+            }
         }
     }
 }

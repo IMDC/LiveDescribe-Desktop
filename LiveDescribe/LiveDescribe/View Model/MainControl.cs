@@ -203,6 +203,7 @@ namespace LiveDescribe.View_Model
 
             FileWriter.WriteWaveFormHeader(_project,_videocontrol.Header);
             FileWriter.WriteWaveFormFile(_project,_videocontrol.AudioData);
+            FileWriter.WriteDescriptionsFile(_project,_descriptionviewmodel.AllDescriptions);
         }
 
         public bool CanClearCache()
@@ -341,7 +342,18 @@ namespace LiveDescribe.View_Model
 
             if (Directory.Exists(_project.DescriptionsFolder))
             {
-                //TODO: Load descriptions
+                if (File.Exists(_project.DescriptionsFile))
+                {
+                    _descriptionviewmodel.AllDescriptions = FileReader.ReadDescriptionsFile(_project);
+
+                    foreach (Description d in _descriptionviewmodel.AllDescriptions)
+                    {
+                        if(d.IsExtendedDescription)
+                            _descriptionviewmodel.ExtendedDescriptions.Add(d);
+                        else
+                            _descriptionviewmodel.RegularDescriptions.Add(d);
+                    }
+                }
             }
             else
             {

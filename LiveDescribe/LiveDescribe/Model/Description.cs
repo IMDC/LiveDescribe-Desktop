@@ -9,6 +9,7 @@ using LiveDescribe.Events;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using System.Windows.Input;
+using Newtonsoft.Json;
 
 namespace LiveDescribe.Model
 {
@@ -16,7 +17,6 @@ namespace LiveDescribe.Model
     {
         //All units of time is in milliseconds
         #region Instance variables
-        private AudioUtility _audioutility;
         private string _filename;
         private string _descriptiontext;
         private bool _isextendeddescription;
@@ -34,10 +34,15 @@ namespace LiveDescribe.Model
         #endregion
 
         #region Event Handlers
+        [JsonIgnore]
         public EventHandler DescriptionDeleteEvent;
+        [JsonIgnore]
         public EventHandler DescriptionMouseDownEvent;
+        [JsonIgnore]
         public EventHandler DescriptionMouseUpEvent;
+        [JsonIgnore]
         public EventHandler DescriptionMouseMoveEvent;
+        [JsonIgnore]
         public EventHandler DescriptionFinishedPlaying;
         #endregion
 
@@ -197,21 +202,6 @@ namespace LiveDescribe.Model
         }
 
         /// <summary>
-        /// Audio Utility that contains information about the wav description file
-        /// </summary>
-        public AudioUtility AudioUtility
-        {
-            set
-            {
-                _audioutility = value;
-                NotifyPropertyChanged("AudioUtility");
-            }
-            get
-            {
-                return _audioutility;
-            }
-        }
-        /// <summary>
         /// Filename of the wav file
         /// </summary>
         public string FileName
@@ -365,21 +355,25 @@ namespace LiveDescribe.Model
         /// <summary>
         /// Setter and getter for the DescriptionMouseDown Command
         /// </summary>
+        [JsonIgnore]
         public RelayCommand<MouseEventArgs> DescriptionMouseDownCommand { get; private set; }
 
         /// <summary>
         /// Setter and getter for the DescriptionMouseUp Command
         /// </summary>
+        [JsonIgnore]
         public RelayCommand DescriptionMouseUpCommand { get; private set; }
 
         /// <summary>
         /// Setter and getter for the DescriptionMouseMove Command
         /// </summary>
+        [JsonIgnore]
         public RelayCommand<MouseEventArgs> DescriptionMouseMoveCommand { get; private set; }
 
         /// <summary>
         /// Setter and getter for DescriptionDeletecommand 
         /// </summary>
+        [JsonIgnore]
         public RelayCommand DescriptionDeleteCommand { get; private set; }
         #endregion
 
