@@ -19,12 +19,9 @@ namespace LiveDescribe.View_Model
         private List<short> _waveFormData;
         private readonly BackgroundWorker _stripAudioWorker;
         private LoadingViewModel _loadingViewModel;
-<<<<<<< HEAD
         private Header _audioHeader;
-=======
 
         public Project Project { get; set; }
->>>>>>> 22898603184d5333c8a205a90aedb68caa5b5e4b
         #endregion
 
         #region Event Handlers
