@@ -22,6 +22,7 @@ namespace LiveDescribe.View_Model
         private VideoControl _videocontrol;
         private PreferencesViewModel _preferences;
         private DescriptionViewModel _descriptionviewmodel;
+        private SpacesViewModel _spacesviewmodel;
         private LoadingViewModel _loadingViewModel;
         private ILiveDescribePlayer _mediaVideo;
         private DescriptionInfoTabViewModel _descriptionInfoTabViewModel;
@@ -41,11 +42,12 @@ namespace LiveDescribe.View_Model
         public MainControl(ILiveDescribePlayer mediaVideo)
         {
             DispatcherHelper.Initialize();
+            _spacesviewmodel = new SpacesViewModel();
             _loadingViewModel = new LoadingViewModel(100, null, 0, false);
             _videocontrol = new VideoControl(mediaVideo, _loadingViewModel);
             _preferences = new PreferencesViewModel();
             _descriptionviewmodel = new DescriptionViewModel(mediaVideo, _videocontrol);
-            _descriptionInfoTabViewModel = new DescriptionInfoTabViewModel(_descriptionviewmodel);
+            _descriptionInfoTabViewModel = new DescriptionInfoTabViewModel(_descriptionviewmodel, _spacesviewmodel);
 
             //Commands
             CloseProjectCommand = new RelayCommand(CloseProject, CanCloseProject);
@@ -156,6 +158,7 @@ namespace LiveDescribe.View_Model
 
             _descriptionviewmodel.CloseDescriptionViewModel();
             _videocontrol.CloseVideoControl();
+            _spacesviewmodel.CloseSpacesViewModel();
             _project = null;
 
             EventHandler handler = ProjectClosed;
@@ -237,6 +240,15 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Binding Properties
+
+        /// <summary>
+        /// returns the spaces view model so a control in the main window can use it as a data context
+        /// </summary>
+        public SpacesViewModel SpacesViewModel
+        {
+            get { return _spacesviewmodel; }
+        }
+
         /// <summary>
         /// returns the video control so it can be binded to a control in the mainwindow
         /// </summary>

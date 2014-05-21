@@ -4,50 +4,109 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
+using System.Windows.Input;
 
 namespace LiveDescribe.Model
 {
-    public class Space
+    public class Space : INotifyPropertyChanged
     {
         #region Instance Variables
-        private double _startTime;
-        private string _text;
-        private double _endTime;
+        private double _startInVideo;
+        private string _spaceText;
+        private double _endInVideo;
         private double _length;
+        private double _x;
+        private double _y;
+        private double _height;
+        private double _width;
+        #endregion
+
+        #region Event Handlers
+        public EventHandler SpaceDeleteEvent;
+        public EventHandler SpaceMouseUpEvent;
+        public EventHandler SpaceMouseDownEvent;
+        public EventHandler SpaceMouseMoveEvent;
+        #endregion
+
+        #region Constructors
+        public Space(double starttime, double endtime)
+        {
+            StartInVideo = starttime;
+            EndInVideo = endtime;
+            DeleteSpaceCommand = new RelayCommand(DeleteSpace, () => true);
+
+            SpaceMouseUpCommand = new RelayCommand(SpaceMouseUp, () => true);
+            SpaceMouseDownCommand = new RelayCommand<MouseEventArgs>(SpaceMouseDown, param => true);
+            SpaceMouseMoveCommand = new RelayCommand<MouseEventArgs>(SpaceMouseMove, param => true);
+        }
+
+        public Space() 
+        {
+            DeleteSpaceCommand = new RelayCommand(DeleteSpace, () => true);
+
+            SpaceMouseUpCommand = new RelayCommand(SpaceMouseUp, () => true);
+            SpaceMouseDownCommand = new RelayCommand<MouseEventArgs>(SpaceMouseDown, param => true);
+            SpaceMouseMoveCommand = new RelayCommand<MouseEventArgs>(SpaceMouseMove, param => true);
+        }
+
+
+        #endregion
+
+        #region Commands
+        /// <summary>
+        /// Setter and Getters for all Commands related to a Space
+        /// </summary>
+
+        public RelayCommand DeleteSpaceCommand { get; private set; }
+        public RelayCommand<MouseEventArgs> SpaceMouseDownCommand { get; private set; }
+        public RelayCommand<MouseEventArgs> SpaceMouseMoveCommand { get; private set; }
+        public RelayCommand SpaceMouseUpCommand { get; private set; }
         #endregion
 
         #region Properties
-        public string Text
+
+        /// <summary>
+        /// Sets the text for the space
+        /// </summary>
+        public String SpaceText
         {
             set
             {
-                _text = value;
-                NotifyPropertyChanged("Text");
+                _spaceText = value;
+                NotifyPropertyChanged("SpaceText");
             }
             get
             {
-                return _text;
+                return _spaceText;
             }
         }
 
-        public double StartTime
+        /// <summary>
+        /// The start in video where the space starts
+        /// </summary>
+        public double StartInVideo
         {
             set
             {
-                _startTime = value;
-                NotifyPropertyChanged("StartTime");
+                _startInVideo = value;
+                NotifyPropertyChanged("StartInVideo");
             }
-            get { return _startTime; }
+            get { return _startInVideo; }
         }
 
-        public double EndTime
+        /// <summary>
+        /// The the time in the video where the space ends
+        /// </summary>
+        public double EndInVideo
         {
             set
             {
-                _endTime = value;
-                NotifyPropertyChanged("EndTime");
+                _endInVideo = value;
+                NotifyPropertyChanged("EndInVideo");
             }
-            get { return _endTime; }
+            get { return _endInVideo; }
         }
 
         public double Length
@@ -60,6 +119,90 @@ namespace LiveDescribe.Model
             get { return _length; }
         }
 
+        public double X
+        {
+            set
+            {
+                _x = value;
+                NotifyPropertyChanged("X");
+            }
+            get { return _x; }
+        }
+
+        public double Y
+        {
+            set
+            {
+                _y = value;
+                NotifyPropertyChanged("Y");
+            }
+            get { return _y; }
+        }
+
+        public double Height
+        {
+            set
+            {
+                _height = value;
+                NotifyPropertyChanged("Height");
+            }
+            get { return _height; }
+        }
+
+        public double Width
+        {
+            set
+            {
+                _width = value;
+                NotifyPropertyChanged("Width");
+            }
+            get { return _width; }
+        }
+        #endregion
+
+        #region BindingFunctions
+
+        /// <summary>
+        /// Called when a delete space command is executed
+        /// </summary>
+        public void DeleteSpace()
+        {
+            Console.WriteLine("Space Deleted");
+            EventHandler handler = SpaceDeleteEvent;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Called when the mouse is down on the space
+        /// </summary>
+        /// <param name="e"></param>
+        public void SpaceMouseDown(MouseEventArgs e)
+        {
+            Console.WriteLine("Space Mouse Down");
+            EventHandler handler = SpaceMouseDownEvent;
+            if (handler != null) handler(this, e);
+        }
+
+        /// <summary>
+        /// Called when the mouse moves over the space
+        /// </summary>
+        /// <param name="e"></param>
+        public void SpaceMouseMove(MouseEventArgs e)
+        {
+            Console.WriteLine("Space Mouse Move");
+            EventHandler handler = SpaceMouseMoveEvent;
+            if (handler != null) handler(this, e);
+        }
+
+        /// <summary>
+        /// Called when the mouse is up over a space
+        /// </summary>
+        public void SpaceMouseUp()
+        {
+            Console.WriteLine("Space Mouse Up");
+            EventHandler handler = SpaceMouseUpEvent;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
         #endregion
 
         #region PropertyChanged
