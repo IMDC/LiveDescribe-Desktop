@@ -39,7 +39,15 @@ namespace LiveDescribe.Model
             SpaceMouseMoveCommand = new RelayCommand<MouseEventArgs>(SpaceMouseMove, param => true);
         }
 
-        public Space() { }
+        public Space() 
+        {
+            DeleteSpaceCommand = new RelayCommand(DeleteSpace, () => true);
+
+            SpaceMouseUpCommand = new RelayCommand(SpaceMouseUp, () => true);
+            SpaceMouseDownCommand = new RelayCommand<MouseEventArgs>(SpaceMouseDown, param => true);
+            SpaceMouseMoveCommand = new RelayCommand<MouseEventArgs>(SpaceMouseMove, param => true);
+        }
+
 
         #endregion
 
@@ -148,23 +156,22 @@ namespace LiveDescribe.Model
         #region BindingFunctions
         public void DeleteSpace()
         {
+            Console.WriteLine("Space Deleted");
             EventHandler handler = SpaceDeleteEvent;
             if (handler != null) handler(this, EventArgs.Empty);
         }
 
         public void SpaceMouseDown(MouseEventArgs e)
         {
-            Console.WriteLine("TEST");
+          
         }
 
         public void SpaceMouseMove(MouseEventArgs e)
         {
-            Console.WriteLine("TEST1");
         }
 
         public void SpaceMouseUp()
         {
-            Console.WriteLine("TEST2");
         }
         #endregion
 

@@ -196,7 +196,7 @@ namespace LiveDescribe.View
                 };
             #endregion
 
-            #region EventListeners for DescriptionViewModel
+            #region Event Listeners for DescriptionViewModel
 
             _descriptionViewModel.RecordRequestedMicrophoneNotPluggedIn += (sender, e) =>
                 {
@@ -243,6 +243,47 @@ namespace LiveDescribe.View
                             //change end in the wave file for resizing the end time
                         }
                     };
+                };
+            #endregion
+
+            #region Event Listeners for SpacesViewModel
+
+            _spacesViewModel.SpaceAddedEvent += (sender, e) =>
+                {
+                    //Adding a space depends on where you right clicked so we create and add it in the view
+                    Space space = e.Space;
+                    double middle = RightClickPointOnAudioCanvas.X;  // going to be the middle of the space
+                    double middleTime = (_videoDuration / AudioCanvas.Width) * middle;  // middle of the space in milliseconds
+                    double starttime = middleTime - (DefaultSpaceLengthInMilliSeconds / 2);
+                    double endtime = middleTime + (DefaultSpaceLengthInMilliSeconds / 2);
+
+                    //Bounds checking when creating a space
+                    if (starttime >= 0 && endtime <= _videoDuration)
+                    {
+                        space.StartInVideo = starttime;
+                        space.EndInVideo = endtime;
+                    }
+                    else if (starttime < 0 && endtime > _videoDuration)
+                    {
+                        space.StartInVideo = 0;
+                        space.EndInVideo = _videoDuration;
+                    }
+                    else if (starttime < 0)
+                    {
+                        space.StartInVideo = 0;
+                        space.EndInVideo = endtime;
+
+                    }
+                    else if (endtime > _videoDuration)
+                    {
+                        space.StartInVideo = starttime;
+                        space.EndInVideo = _videoDuration;
+                    }
+
+                    space.X = (AudioCanvas.Width / _videoDuration) * starttime;
+                    space.Y = 0;
+                    space.Height = AudioCanvas.ActualHeight;
+                    space.Width = (AudioCanvas.Width / _videoDuration) * (space.EndInVideo - space.StartInVideo);
                 };
             #endregion
         }
@@ -343,45 +384,6 @@ namespace LiveDescribe.View
             //record the position in which you right clicked on the canvas
             //this position is used to calculate where on the audio canvas to draw a space
             RightClickPointOnAudioCanvas = e.GetPosition(AudioCanvas);
-        }
-
-        private void AudioCanvas_AddSpaceClick(object sender, RoutedEventArgs e)
-        {
-            double middle = RightClickPointOnAudioCanvas.X;  // going to be the middle of the space
-            double middleTime = (_videoDuration / AudioCanvas.Width) * middle;  // middle of the space in milliseconds
-            double starttime = middleTime - (DefaultSpaceLengthInMilliSeconds / 2);
-            double endtime = middleTime + (DefaultSpaceLengthInMilliSeconds / 2);
-
-            Space space = new Space();
-
-            //Bounds checking when creating a space
-            if (starttime >= 0 && endtime <= _videoDuration)
-            {
-                space.StartInVideo = starttime;
-                space.EndInVideo = endtime;
-            }
-            else if (starttime < 0 && endtime > _videoDuration)
-            {
-                space.StartInVideo = 0;
-                space.EndInVideo = _videoDuration;
-            }
-            else if (starttime < 0)
-            {
-                space.StartInVideo = 0;
-                space.EndInVideo = endtime;
-                
-            }
-            else if (endtime > _videoDuration)
-            {
-                space.StartInVideo = starttime;
-                space.EndInVideo = _videoDuration;
-            }
-
-            space.X = (AudioCanvas.Width / _videoDuration) * starttime;
-            space.Y = 0;
-            space.Height = AudioCanvas.ActualHeight;
-            space.Width = (AudioCanvas.Width / _videoDuration) * (space.EndInVideo - space.StartInVideo);
-            _spacesViewModel.AddSpace(space);
         }
 
         /// <summary>

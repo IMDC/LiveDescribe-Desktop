@@ -392,7 +392,7 @@
                                     
                                     <Canvas.ContextMenu>
                                         <ContextMenu>
-                                            <MenuItem Header="Add Space" Click="AudioCanvas_AddSpaceClick"/>
+                                            <MenuItem DataContext="{Binding SpacesViewModel}" Header="Add Space" Command="{Binding AddSpaceCommand}"/>
                                         </ContextMenu>
                                     </Canvas.ContextMenu>
                                     
@@ -407,7 +407,7 @@
                                             MouseDown="NumberTimeline_OnMouseDown"
                                             Name="NumberTimeline" />
                                     </Border>
-                                   
+
                                     <ItemsControl
                                         Name="SpacesItemControl"
                                         DataContext="{Binding SpacesViewModel}"
@@ -457,8 +457,7 @@
                                                     </Rectangle.Style>
                                                     <i:Interaction.Triggers>
                                                         <i:EventTrigger
-                                                            EventName="MouseDown">
-                                                            <!--   <i:InvokeCommandAction Command="{Binding DescriptionMouseDownCommand}" /> -->
+                                                            EventName="MouseDown">                           
                                                             <cmd:EventToCommand
                                                                 Command="{Binding SpaceMouseDownCommand, Mode=OneWay}"
                                                                 PassEventArgsToCommand="True" />
@@ -470,7 +469,6 @@
                                                         </i:EventTrigger>
                                                         <i:EventTrigger
                                                             EventName="MouseMove">
-                                                            <!-- <i:InvokeCommandAction Command="{Binding DescriptionMouseMoveCommand}" />-->
                                                             <cmd:EventToCommand
                                                                 Command="{Binding SpaceMouseMoveCommand, Mode=OneWay}"
                                                                 PassEventArgsToCommand="True" />
