@@ -4,6 +4,7 @@ using LiveDescribe.Graphics;
 using LiveDescribe.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using LiveDescribe.Model;
 using Microsoft.Win32;
 using LiveDescribe.Utilities;
 using System.Collections.Generic;
@@ -18,7 +19,12 @@ namespace LiveDescribe.View_Model
         private List<short> _waveFormData;
         private readonly BackgroundWorker _stripAudioWorker;
         private LoadingViewModel _loadingViewModel;
+<<<<<<< HEAD
         private Header _audioHeader;
+=======
+
+        public Project Project { get; set; }
+>>>>>>> 22898603184d5333c8a205a90aedb68caa5b5e4b
         #endregion
 
         #region Event Handlers
@@ -259,7 +265,7 @@ namespace LiveDescribe.View_Model
         /// <param name="e"></param>
         public void StripAudio(object sender, DoWorkEventArgs e)
         {
-            _audioOperator = new AudioUtility(Path);
+            _audioOperator = new AudioUtility(Project);
             _audioOperator.StripAudio(_stripAudioWorker);
             _waveFormData = _audioOperator.ReadWavData(_stripAudioWorker);
             _audioHeader = _audioOperator.Header;
@@ -286,7 +292,7 @@ namespace LiveDescribe.View_Model
         /// <param name="e">progresschangedeventargs</param>
         public void StrippingAudioProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            _loadingViewModel.Value = e.ProgressPercentage;
+            _loadingViewModel.SetProgress("Importing Video", e.ProgressPercentage);
         }
         #endregion
 
@@ -416,15 +422,16 @@ namespace LiveDescribe.View_Model
         /// to strip the audio from the video
         /// </summary>
         /// <param name="path"></param>
-        public void SetupAndStripAudio(String path)
+        public void SetupAndStripAudio(Project p)
         {
             //changes the Path variable that is binded to the media element
-            Path = path;
+            Path = p.VideoFile;
+            Project = p;
             _stripAudioWorker.DoWork += StripAudio;
             _stripAudioWorker.RunWorkerCompleted += OnFinishedStrippingAudio;
             _stripAudioWorker.ProgressChanged += StrippingAudioProgressChanged;
             _stripAudioWorker.WorkerReportsProgress = true;
-            _loadingViewModel.Text = "Please wait while we import your video...";
+            _loadingViewModel.SetProgress("Importing Video", 0);
             _loadingViewModel.Visible = true;
             _stripAudioWorker.RunWorkerAsync();
         }

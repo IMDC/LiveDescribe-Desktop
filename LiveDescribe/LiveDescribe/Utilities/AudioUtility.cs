@@ -14,31 +14,16 @@ namespace LiveDescribe.Utilities
 {
     public class AudioUtility
     {
-        //public struct Header
-        //{
-        //    public byte[] ChunkId; 
-        //    public uint ChunkSize; 
-        //    public byte[] Fmt; 
-        //    public byte[] SubChunk1Id; 
-        //    public uint SubChunk1Size;
-        //    public ushort AudioFormat;
-        //    public ushort NumChannels;
-        //    public uint SampleRate;
-        //    public uint ByteRate; 
-        //    public ushort BlockAlign; 
-        //    public ushort BitsPerSample;   
-        //    public byte[] SubChunk2Id;
-        //    public uint SubChunk2Size;
-        //}
+
 
         private readonly string _videoFile;
         private readonly string _audioFile;
         private Header _header;
  
-        public AudioUtility(string videoFile)
+        public AudioUtility(Project p)
         {
-            _videoFile = videoFile;
-            _audioFile = Path.GetFileNameWithoutExtension(_videoFile) + ".wav";
+            _videoFile = p.VideoFile;
+            _audioFile = Path.Combine(p.CacheFolder, Path.GetFileNameWithoutExtension(_videoFile) + ".wav");
             _header = new Header();
         }
 
@@ -403,7 +388,7 @@ namespace LiveDescribe.Utilities
         {
             try
             {
-               // File.Delete(_audioFile);
+                File.Delete(_audioFile);
             }
             catch (Exception e)
             {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.UI;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
@@ -36,10 +37,7 @@ namespace LiveDescribe.View_Model
                 _text = value;
                 RaisePropertyChanged("Text");
             }
-            get
-            {
-                return _text;
-            }
+            get { return _text; }
         }
 
         /// <summary>
@@ -52,10 +50,7 @@ namespace LiveDescribe.View_Model
                 _value = value;
                 RaisePropertyChanged("Value");
             }
-            get
-            {
-                return _value;
-            }
+            get { return _value; }
         }
         /// <summary>
         /// This property represents the max value of the loading screen
@@ -67,10 +62,7 @@ namespace LiveDescribe.View_Model
                 _max = value;
                 RaisePropertyChanged("Max");
             }
-            get
-            {
-                return _max;
-            }
+            get { return _max; }
         }
 
         /// <summary>
@@ -83,11 +75,20 @@ namespace LiveDescribe.View_Model
                 _visible = value;
                 RaisePropertyChanged("Visible");
             }
-            get
-            {
-                return _visible;
-            }
+            get { return _visible; }
         }
         #endregion
+
+        /// <summary>
+        /// Sets the progress of the LoadingViewModel along with a message, in the form of
+        /// "message: progress%". An example with params "Loading" and "5" would be "Loading: 5%"
+        /// </summary>
+        /// <param name="message">Message to display.</param>
+        /// <param name="progress">LoadingProgress.</param>
+        public void SetProgress(string message, double progress)
+        {
+            Text = string.Format("{0}: {1}%", message, progress);
+            Value = progress;
+        }
     }
 }

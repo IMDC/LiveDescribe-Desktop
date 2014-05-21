@@ -81,6 +81,12 @@
                         Header="Preferences"
                         Command="{Binding ShowPreferencesCommand}" />
                 </MenuItem>
+                <MenuItem
+                    Header="Project">
+                    <MenuItem
+                        Header="Refresh Project Cache"
+                        Command="{Binding ClearCacheCommand}"/>
+                </MenuItem>
             </Menu>
 
             <!--Main Grid -->

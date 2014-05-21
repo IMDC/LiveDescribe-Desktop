@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -19,9 +20,8 @@ namespace LiveDescribe.Utilities
         /// <param name="project"></param>
         public static void WriteProjectFile(Project project)
         {
-            var serializer = new JsonSerializer();
-            serializer.Formatting = Formatting.Indented;
-            using (var sw = new StreamWriter(project.ProjectFile.AbsolutePath, false))
+            var serializer = new JsonSerializer {Formatting = Formatting.Indented};
+            using (var sw = new StreamWriter(project.ProjectFile, false))
             {
                 serializer.Serialize(sw, project, typeof (Project));
             }
@@ -34,10 +34,19 @@ namespace LiveDescribe.Utilities
         /// <param name="waveFormData"></param>
         public static void WriteWaveFormFile(Project project, List<short> waveFormData)
         {
-            using (var file = File.Open(project.WaveFormFile.AbsolutePath, FileMode.Create, FileAccess.Write))
+            using (var file = File.Open(project.WaveFormFile, FileMode.Create, FileAccess.Write))
             {
                 var bin = new BinaryFormatter();
                 bin.Serialize(file,waveFormData);
+            }
+        }
+
+        public static void WriteDescriptionsFile(Project project, ObservableCollection<Description> descriptions)
+        {
+            var serializer = new JsonSerializer { Formatting = Formatting.Indented };
+            using (var sw = new StreamWriter(project.DescriptionsFile))
+            {
+                
             }
         }
     }

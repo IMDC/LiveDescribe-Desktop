@@ -52,6 +52,7 @@ namespace LiveDescribe.View_Model
             NewProjectCommand = new RelayCommand(NewProject);
             OpenProjectCommand = new RelayCommand(OpenProject);
             SaveProjectCommand = new RelayCommand(SaveProject, CanSaveProject);
+            ClearCacheCommand = new RelayCommand(ClearCache, CanClearCache);
             ShowPreferencesCommand = new RelayCommand(ShowPreferences);
 
             _mediaVideo = mediaVideo;
@@ -125,6 +126,11 @@ namespace LiveDescribe.View_Model
         public RelayCommand SaveProjectCommand { private set; get; }
 
         /// <summary>
+        /// Command to clear the cache of the current project.
+        /// </summary>
+        public RelayCommand ClearCacheCommand { private set; get; }
+
+        /// <summary>
         /// Command to show preferences
         /// </summary>
         public RelayCommand ShowPreferencesCommand { private set; get; }
@@ -191,7 +197,31 @@ namespace LiveDescribe.View_Model
         public void SaveProject()
         {
             FileWriter.WriteProjectFile(_project);
+
+            if (!Directory.Exists(_project.CacheFolder))
+                Directory.CreateDirectory(_project.CacheFolder);
+
             FileWriter.WriteWaveFormFile(_project,_videocontrol.AudioData);
+        }
+
+        public bool CanClearCache()
+        {
+            return _project != null;
+        }
+
+        /// <summary>
+        /// Closes the current project, deletes its cache folder, and then reopens it again. This
+        /// will cause the program to re-import it.
+        /// </summary>
+        public void ClearCache()
+        {
+            var p = _project;
+
+            CloseProject();
+
+            Directory.Delete(p.CacheFolder, true);
+
+            SetProject(p);
         }
 
         /// <summary>
@@ -295,17 +325,31 @@ namespace LiveDescribe.View_Model
             //Set up environment
             Properties.Settings.Default.WorkingDirectory = _project.ProjectFolderPath + "\\";
 
-            if (File.Exists(_project.WaveFormFile.AbsolutePath))
+            if (Directory.Exists(_project.CacheFolder) && File.Exists(_project.WaveFormFile))
             {
                 _videocontrol.AudioData = FileReader.ReadWaveFormFile(_project);
-                _videocontrol.Path = _project.VideoFile.AbsolutePath;
+                _videocontrol.Path = _project.VideoFile;
             }
             else
             {
-                _videocontrol.SetupAndStripAudio(_project.VideoFile.AbsolutePath);
+                Directory.CreateDirectory(_project.CacheFolder);
+
+                _videocontrol.SetupAndStripAudio(_project);
+            }
+
+            if (Directory.Exists(_project.DescriptionsFolder))
+            {
+                //TODO: Load descriptions
+            }
+            else
+            {
+                Directory.CreateDirectory(_project.DescriptionsFolder);
             }
 
             _mediaVideo.CurrentState = LiveDescribeVideoStates.PausedVideo;
+
+            //Set Children
+            _descriptionviewmodel.Project = _project;
         }
 
         #endregion
