@@ -30,7 +30,7 @@ namespace LiveDescribe.View
 
         /// <summary>The width of the entire canvas.</summary>
         private Description _descriptionBeingDragged;
-        private Space _spaceBeingDragged;
+        private Space _spaceBeingDraggedOrResized;
         private double _canvasWidth = 0;
         private double _videoDuration = -1;
         private readonly VideoControl _videoControl;
@@ -287,15 +287,34 @@ namespace LiveDescribe.View
                     space.Height = AudioCanvas.ActualHeight;
                     space.Width = (AudioCanvas.Width / _videoDuration) * (space.EndInVideo - space.StartInVideo);
 
-
                     space.SpaceMouseDownEvent += (sender1, e1) =>
                         {
                             MouseEventArgs args = (MouseEventArgs)e1;
                             if (Mouse.LeftButton == MouseButtonState.Pressed)
                             {
-                                _originalPositionForDraggingSpace = args.GetPosition(AudioCanvas).X;
-                                _spaceBeingDragged = space;
+                                double xPos = args.GetPosition(AudioCanvas).X;
+                                //prepare space for dragging
+                                _originalPositionForDraggingSpace = xPos;
+                                _spaceBeingDraggedOrResized = space;
                                 AudioCanvas.CaptureMouse();
+                            }
+                        };
+
+                    space.SpaceMouseMoveEvent += (sender1, e1) =>
+                        {
+                            MouseEventArgs args = (MouseEventArgs)e1;
+                            if (Mouse.LeftButton == MouseButtonState.Released)
+                            {
+                                double xPos = args.GetPosition(AudioCanvas).X;
+                                if (xPos > (space.X + space.Width - 5))
+                                {
+                                    //resizing right side of the space
+                                    Mouse.SetCursor(Cursors.SizeWE);
+                                }
+                                else if (xPos < (space.X + 5))
+                                {
+                                    Mouse.SetCursor(Cursors.SizeWE);
+                                }
                             }
                         };
                 };
@@ -354,21 +373,21 @@ namespace LiveDescribe.View
         {
             if (AudioCanvas.IsMouseCaptured)
             {
-                double newPosition = _spaceBeingDragged.X + (e.GetPosition(AudioCanvas).X -_originalPositionForDraggingSpace);
+                double newPosition = _spaceBeingDraggedOrResized.X + (e.GetPosition(AudioCanvas).X - _originalPositionForDraggingSpace);
                 //size in pixels of the space
-                double size = (AudioCanvas.Width / _videoDuration) * (_spaceBeingDragged.EndInVideo - _spaceBeingDragged.StartInVideo);
-                Console.WriteLine("Size {0}, NewPosition {1}, Mouse.X {2}",size, newPosition, e.GetPosition(AudioCanvas).X);
-                
+                double size = (AudioCanvas.Width / _videoDuration) * (_spaceBeingDraggedOrResized.EndInVideo - _spaceBeingDraggedOrResized.StartInVideo);
+                Console.WriteLine("Size {0}, NewPosition {1}, Mouse.X {2}", size, newPosition, e.GetPosition(AudioCanvas).X);
+
                 if (newPosition < 0)
                     newPosition = 0;
                 else if (newPosition + size > AudioCanvas.Width)
                     newPosition = AudioCanvas.Width - size;
 
-                _spaceBeingDragged.X = newPosition;
+                _spaceBeingDraggedOrResized.X = newPosition;
                 _originalPositionForDraggingSpace = e.GetPosition(AudioCanvas).X;
-                _spaceBeingDragged.StartInVideo = (_videoDuration / AudioCanvas.Width) * (_spaceBeingDragged.X);
-                _spaceBeingDragged.EndInVideo = _spaceBeingDragged.StartInVideo + (_spaceBeingDragged.EndInVideo - _spaceBeingDragged.StartInVideo);
-                _spaceBeingDragged.EndInVideo = _spaceBeingDragged.StartInVideo + (_videoDuration / AudioCanvas.Width) * size;
+                _spaceBeingDraggedOrResized.StartInVideo = (_videoDuration / AudioCanvas.Width) * (_spaceBeingDraggedOrResized.X);
+                _spaceBeingDraggedOrResized.EndInVideo = _spaceBeingDraggedOrResized.StartInVideo + (_spaceBeingDraggedOrResized.EndInVideo - _spaceBeingDraggedOrResized.StartInVideo);
+                _spaceBeingDraggedOrResized.EndInVideo = _spaceBeingDraggedOrResized.StartInVideo + (_videoDuration / AudioCanvas.Width) * size;
             }
         }
 
