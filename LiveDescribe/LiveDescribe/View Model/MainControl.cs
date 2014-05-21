@@ -201,6 +201,7 @@ namespace LiveDescribe.View_Model
             if (!Directory.Exists(_project.CacheFolder))
                 Directory.CreateDirectory(_project.CacheFolder);
 
+            FileWriter.WriteWaveFormHeader(_project,_videocontrol.Header);
             FileWriter.WriteWaveFormFile(_project,_videocontrol.AudioData);
         }
 
@@ -327,6 +328,7 @@ namespace LiveDescribe.View_Model
 
             if (Directory.Exists(_project.CacheFolder) && File.Exists(_project.WaveFormFile))
             {
+                _videocontrol.Header = FileReader.ReadWaveFormHeader(_project);
                 _videocontrol.AudioData = FileReader.ReadWaveFormFile(_project);
                 _videocontrol.Path = _project.VideoFile;
             }

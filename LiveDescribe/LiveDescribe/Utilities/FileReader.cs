@@ -24,6 +24,15 @@ namespace LiveDescribe.Utilities
             return p;
         }
 
+        public static Header ReadWaveFormHeader(Project project)
+        {
+            using (var file = File.Open(project.WaveFormHeaderFile, FileMode.Open, FileAccess.Read))
+            {
+                var bin = new BinaryFormatter();
+                return (Header)bin.Deserialize(file);
+            }
+        }
+
         public static List<short> ReadWaveFormFile(Project project)
         {
             var waveFormData = new List<short>();

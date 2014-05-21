@@ -20,6 +20,8 @@ namespace LiveDescribe.Model
 
         public const string CacheFolderName = "projectCache";
 
+        public const string WaveFormHeaderName = "wfheader.bin";
+
         public const string WaveFormFileName = "waveform.bin";
 
         public const string DescriptionsFileName = "descriptions.json";
@@ -69,6 +71,12 @@ namespace LiveDescribe.Model
         public ProjectFile VideoFile { set; get; }
 
         /// <summary>
+        /// The file that contains .wav header data for the waveform file.
+        /// </summary>
+        [JsonProperty(Required = Required.Always)]
+        public ProjectFile WaveFormHeaderFile { set; get; }
+
+        /// <summary>
         /// The file that contains the waveform data.
         /// </summary>
         [JsonProperty(Required = Required.Always)]
@@ -99,6 +107,8 @@ namespace LiveDescribe.Model
             ProjectFile = new ProjectFile(ProjectFolderPath, ProjectName + ProjectExtension);
             DescriptionsFile = new ProjectFile(ProjectFolderPath, DescriptionsFileName);
             VideoFile = new ProjectFile(ProjectFolderPath, videoFileName);
+            WaveFormHeaderFile = new ProjectFile(ProjectFolderPath, Path.Combine(CacheFolder.RelativePath,
+                WaveFormHeaderName));
             WaveFormFile = new ProjectFile(ProjectFolderPath, Path.Combine(CacheFolder.RelativePath,
                 WaveFormFileName));
         }

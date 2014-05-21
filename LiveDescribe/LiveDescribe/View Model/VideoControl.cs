@@ -391,6 +391,7 @@ namespace LiveDescribe.View_Model
         /// </summary>
         public Header Header
         {
+            set { _audioHeader = value; }
             get { return this._audioHeader; }
         }
         #endregion

@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace LiveDescribe.Utilities
 {
+    /// <summary>
+    /// Represents the header for a .wav file.
+    /// </summary>
+    [Serializable]
     public class Header
     {
         public byte[] ChunkId;

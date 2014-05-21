@@ -27,6 +27,16 @@ namespace LiveDescribe.Utilities
             }
         }
 
+        ///
+        public static void WriteWaveFormHeader(Project project, Header header)
+        {
+            using (var file = File.Open(project.WaveFormHeaderFile, FileMode.Create, FileAccess.Write))
+            {
+                var bin = new BinaryFormatter();
+                bin.Serialize(file, header);
+            }
+        }
+
         /// <summary>
         /// Writes audio data to the file path specified by project.WaveFormFile.AbsolutePath.
         /// </summary>
