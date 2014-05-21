@@ -283,8 +283,8 @@ namespace LiveDescribe.View
                     }
 
                     space.X = (AudioCanvas.Width / _videoDuration) * starttime;
-                    space.Y = 0;
-                    space.Height = AudioCanvas.ActualHeight;
+                    space.Y = NumberTimeline.ActualHeight;
+                    space.Height = AudioCanvas.ActualHeight - NumberTimeline.ActualHeight;
                     space.Width = (AudioCanvas.Width / _videoDuration) * (space.EndInVideo - space.StartInVideo);
 
 
@@ -556,9 +556,7 @@ namespace LiveDescribe.View
 
             AudioCanvas.Children.Clear();
             //Re-add Children components
-            AudioCanvas.Children.Add(SpacesItemControl);
             AudioCanvas.Children.Add(NumberTimelineBorder);
-            AudioCanvas.Children.Add(Marker);
             
             int begin = (int)TimeLine.HorizontalOffset;
             int end = (int)(TimeLine.HorizontalOffset + width);
@@ -583,7 +581,8 @@ namespace LiveDescribe.View
                     });
                 }
             }
-
+            AudioCanvas.Children.Add(SpacesItemControl);
+            AudioCanvas.Children.Add(Marker);
             double canvasWidth = _canvasWidth;
 
             //Number of lines needed for the entire video
@@ -632,6 +631,15 @@ namespace LiveDescribe.View
         }
 
         /// <summary>
+        /// Resizes all the Spaces to fit the AudioCanvas and not overlap the NumberTimeline
+        /// </summary>
+        private void ResizeSpaces()
+        {
+            foreach (Space space in _spacesViewModel.Spaces)
+                space.Height = AudioCanvas.ActualHeight - NumberTimeline.ActualHeight;
+        }
+
+        /// <summary>
         /// Update's the instance variables that keep track of the timeline height and width, and
         /// calculates the size of the timeline if the width of the audio canvas is greater then the
         /// timeline width it automatically overflows and scrolls due to the scrollview then update
@@ -647,6 +655,7 @@ namespace LiveDescribe.View
 
             DrawWaveForm();
             ResizeDescriptions();
+            ResizeSpaces();
         }
         #endregion
     }
