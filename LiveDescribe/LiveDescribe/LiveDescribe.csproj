@@ -82,6 +82,7 @@
     <Compile Include="Model\Project.cs" />
     <Compile Include="Model\ProjectFile.cs" />
     <Compile Include="Model\Space.cs" />
+    <Compile Include="Utilities\Header.cs" />
     <Compile Include="Utilities\FileReader.cs" />
     <Compile Include="Utilities\FileWriter.cs" />
     <Compile Include="View Model\DescriptionInfoTabViewModel.cs" />

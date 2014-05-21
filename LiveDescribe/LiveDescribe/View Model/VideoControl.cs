@@ -18,6 +18,7 @@ namespace LiveDescribe.View_Model
         private List<short> _waveFormData;
         private readonly BackgroundWorker _stripAudioWorker;
         private LoadingViewModel _loadingViewModel;
+        private Header _audioHeader;
         #endregion
 
         #region Event Handlers
@@ -260,8 +261,9 @@ namespace LiveDescribe.View_Model
         {
             _audioOperator = new AudioUtility(Path);
             _audioOperator.StripAudio(_stripAudioWorker);
-            _waveFormData = _audioOperator.ReadWavData(_stripAudioWorker);          
-            _audioOperator.DeleteAudioFile();
+            _waveFormData = _audioOperator.ReadWavData(_stripAudioWorker);
+            _audioHeader = _audioOperator.Header;
+            //_audioOperator.DeleteAudioFile();
         }
 
         /// <summary>
@@ -379,6 +381,14 @@ namespace LiveDescribe.View_Model
         {
             set { _waveFormData = value; }
             get { return this._waveFormData; }
+        }
+
+        /// <summary>
+        /// Get the audio header
+        /// </summary>
+        public Header Header
+        {
+            get { return this._audioHeader; }
         }
         #endregion
 

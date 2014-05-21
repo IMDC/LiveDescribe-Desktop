@@ -14,22 +14,22 @@ namespace LiveDescribe.Utilities
 {
     public class AudioUtility
     {
-        private struct Header
-        {
-            public byte[] ChunkId; 
-            public uint ChunkSize; 
-            public byte[] Fmt; 
-            public byte[] SubChunk1Id; 
-            public uint SubChunk1Size;
-            public ushort AudioFormat;
-            public ushort NumChannels;
-            public uint SampleRate;
-            public uint ByteRate; 
-            public ushort BlockAlign; 
-            public ushort BitsPerSample;   
-            public byte[] SubChunk2Id;
-            public uint SubChunk2Size;
-        }
+        //public struct Header
+        //{
+        //    public byte[] ChunkId; 
+        //    public uint ChunkSize; 
+        //    public byte[] Fmt; 
+        //    public byte[] SubChunk1Id; 
+        //    public uint SubChunk1Size;
+        //    public ushort AudioFormat;
+        //    public ushort NumChannels;
+        //    public uint SampleRate;
+        //    public uint ByteRate; 
+        //    public ushort BlockAlign; 
+        //    public ushort BitsPerSample;   
+        //    public byte[] SubChunk2Id;
+        //    public uint SubChunk2Size;
+        //}
 
         private readonly string _videoFile;
         private readonly string _audioFile;
@@ -39,8 +39,15 @@ namespace LiveDescribe.Utilities
         {
             _videoFile = videoFile;
             _audioFile = Path.GetFileNameWithoutExtension(_videoFile) + ".wav";
+            _header = new Header();
         }
 
+        #region Getter / Setter
+        public Header Header
+        {
+            get { return this._header; }
+        }
+        #endregion
 
         /// <summary>
         /// Strips the audio from the given video file and outputs a wave file using FFMPEG.
@@ -396,7 +403,7 @@ namespace LiveDescribe.Utilities
         {
             try
             {
-                File.Delete(_audioFile);
+               // File.Delete(_audioFile);
             }
             catch (Exception e)
             {
