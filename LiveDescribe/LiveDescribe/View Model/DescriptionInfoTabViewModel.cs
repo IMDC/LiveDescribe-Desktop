@@ -12,24 +12,29 @@ namespace LiveDescribe.View_Model
 {
     class DescriptionInfoTabViewModel : ViewModelBase
     {
+        private const int SPACE_TAB = 0;
         private const int REGULAR_DESCRIPTION_TAB = 1;
         private const int EXTENDED_DESCRIPTION_TAB = 2;
         private DescriptionViewModel _descriptionViewModel;
+        private SpacesViewModel _spacesViewModel;
         private Description _regularDescriptionSelectedInList;
         private Description _extendedDescriptionSelectedInList;
-        private String _descriptionText;
+        private Space _spaceSelectedInList;
+        private String _descriptionAndSpaceText;
         private int _tabSelectedIndex;
 
-        public DescriptionInfoTabViewModel(DescriptionViewModel DescriptionViewModel)
+        public DescriptionInfoTabViewModel(DescriptionViewModel DescriptionViewModel, SpacesViewModel SpaceViewModel)
         {
             this._descriptionViewModel = DescriptionViewModel;
+            this._spacesViewModel = SpaceViewModel;
 
             SaveDescriptionTextCommand = new RelayCommand(SaveDescriptionText, SaveDescriptionTextStateCheck);
             ClearDescriptionTextCommand = new RelayCommand(ClearDescriptionText, () => true);
 
             RegularDescriptionSelectedInList = null;
             ExtendedDescriptionSelectedInList = null;
-            DescriptionText = null;
+            SpaceSelectedInList = null;
+            DescriptionAndSpaceText = null;
         }
 
         #region Commands
@@ -74,6 +79,22 @@ namespace LiveDescribe.View_Model
         }
 
         /// <summary>
+        /// Sets or gets the space selected in the tab control
+        /// </summary>
+        public Space SpaceSelectedInList
+        {
+            set
+            {
+                _spaceSelectedInList = value;
+                RaisePropertyChanged("SpaceSelectedInList");
+            }
+            get
+            {
+                return _spaceSelectedInList;
+            }
+        }
+
+        /// <summary>
         /// The index of the current tab selected in the tab control
         /// </summary>
         public int TabSelectedIndex
@@ -92,16 +113,16 @@ namespace LiveDescribe.View_Model
         /// <summary>
         /// The description text to be saved to the selected description
         /// </summary>
-        public string DescriptionText
+        public string DescriptionAndSpaceText
         {
             set
             {
-                _descriptionText = value;
-                RaisePropertyChanged("DescriptionText");
+                _descriptionAndSpaceText = value;
+                RaisePropertyChanged("DescriptionAndSpaceText");
             }
             get
             {
-                return _descriptionText;
+                return _descriptionAndSpaceText;
             }
         }
 
@@ -128,6 +149,18 @@ namespace LiveDescribe.View_Model
                 return _descriptionViewModel.RegularDescriptions;
             }
         }
+
+        /// <summary>
+        /// returns a list of all the spaces to be viewed in the tab control
+        /// </summary>
+        public ObservableCollection<Space> Spaces
+        {
+            get
+            {
+                return _spacesViewModel.Spaces;
+            }
+        }
+
         #endregion
 
         #region Binding Functions
@@ -137,7 +170,7 @@ namespace LiveDescribe.View_Model
         /// </summary>
         public void ClearDescriptionText()
         {
-            DescriptionText = "";
+            DescriptionAndSpaceText = "";
         }
         /// <summary>
         /// Depending on which tab is selected it will overwrite the appropriate description text
@@ -145,9 +178,11 @@ namespace LiveDescribe.View_Model
         public void SaveDescriptionText()
         {
             if (TabSelectedIndex == REGULAR_DESCRIPTION_TAB)
-                RegularDescriptionSelectedInList.DescriptionText = DescriptionText;
+                RegularDescriptionSelectedInList.DescriptionText = DescriptionAndSpaceText;
             else if (TabSelectedIndex == EXTENDED_DESCRIPTION_TAB)
-                ExtendedDescriptionSelectedInList.DescriptionText = DescriptionText;
+                ExtendedDescriptionSelectedInList.DescriptionText = DescriptionAndSpaceText;
+            else if (TabSelectedIndex == SPACE_TAB)
+                SpaceSelectedInList.SpaceText = DescriptionAndSpaceText;
 
         }
         #endregion
@@ -162,6 +197,8 @@ namespace LiveDescribe.View_Model
             if (ExtendedDescriptionSelectedInList != null && TabSelectedIndex == EXTENDED_DESCRIPTION_TAB)
                 return true;
             else if (RegularDescriptionSelectedInList != null && TabSelectedIndex == REGULAR_DESCRIPTION_TAB)
+                return true;
+            else if (SpaceSelectedInList != null && TabSelectedIndex == SPACE_TAB)
                 return true;
 
             return false;

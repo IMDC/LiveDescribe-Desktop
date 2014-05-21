@@ -384,17 +384,6 @@ namespace LiveDescribe.Model
         #endregion
 
         #region Binding Functions
-        /// <summary>
-        /// Called when the mouse is down on this description
-        /// </summary>
-        /// <param name="param"></param>
-        public void DescriptionMouseDown()
-        {
-            EventHandler handler = DescriptionMouseDownEvent;
-            Console.WriteLine("Mouse Down");
-            if (handler == null) return;
-            handler(this, EventArgs.Empty);
-        }
 
         /// <summary>
         /// Called when the mouse is up on this description
@@ -403,7 +392,7 @@ namespace LiveDescribe.Model
         public void DescriptionMouseUp()
         {
             EventHandler handler = DescriptionMouseUpEvent;
-            Console.WriteLine("MOUSE UP");
+            Console.WriteLine("Description Mouse Up");
             if (handler == null) return;
             handler(this, EventArgs.Empty);
         }
@@ -428,6 +417,9 @@ namespace LiveDescribe.Model
             if (handler != null) handler(this, e);
         }
 
+        /// <summary>
+        /// Called when a description is deleted
+        /// </summary>
         public void DescriptionDelete()
         {
             EventHandler handler = DescriptionDeleteEvent;
