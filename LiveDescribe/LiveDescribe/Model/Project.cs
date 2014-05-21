@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace LiveDescribe.Model
 {
@@ -21,38 +22,56 @@ namespace LiveDescribe.Model
 
         public const string WaveFormFileName = "waveform.bin";
 
+        public const string DescriptionsFileName = "descriptions.json";
+
         public const string DescriptionsFolderName = "descriptions";
 
         /// <summary>
         /// The name of the project.
         /// </summary>
+        [JsonProperty(Required = Required.Always)]
         public string ProjectName { set; get; }
 
         /// <summary>
         /// The absolute path to the project folder.
         /// </summary>
+        [JsonProperty(Required = Required.Always)]
         public string ProjectFolderPath { set; get; }
 
         /// <summary>
-        /// The Folder containing cacheable data relating to the project
+        /// The Folder containing cacheable data relating to the project.
         /// </summary>
+        [JsonProperty(Required = Required.Always)]
         public ProjectFile CacheFolder { set; get; }
 
+        /// <summary>
+        /// The folder containing the description sound files.
+        /// </summary>
+        [JsonProperty(Required = Required.Always)]
         public ProjectFile DescriptionsFolder { set; get; }
+
+        /// <summary>
+        /// The file containing a list of descriptions.
+        /// </summary>
+        [JsonProperty(Required = Required.Always)]
+        public ProjectFile DescriptionsFile { set; get; }
 
         /// <summary>
         /// The file containing all project info on disk.
         /// </summary>
+        [JsonProperty(Required = Required.Always)]
         public ProjectFile ProjectFile { set; get; }
 
         /// <summary>
         /// The video file used in the project.
         /// </summary>
+        [JsonProperty(Required = Required.Always)]
         public ProjectFile VideoFile { set; get; }
 
         /// <summary>
         /// The file that contains the waveform data.
         /// </summary>
+        [JsonProperty(Required = Required.Always)]
         public ProjectFile WaveFormFile { set; get; }
 
         /// <summary>
@@ -73,11 +92,12 @@ namespace LiveDescribe.Model
             ProjectFolderPath = Path.Combine(projectPath, projectName);
 
             //Folders
-            CacheFolder = new ProjectFile(ProjectFolderPath,CacheFolderName);
-            DescriptionsFolder = new ProjectFile(ProjectFolderPath,DescriptionsFolderName);
+            CacheFolder = new ProjectFile(ProjectFolderPath, CacheFolderName);
+            DescriptionsFolder = new ProjectFile(ProjectFolderPath, DescriptionsFolderName);
 
             //Files
             ProjectFile = new ProjectFile(ProjectFolderPath, ProjectName + ProjectExtension);
+            DescriptionsFile = new ProjectFile(ProjectFolderPath, DescriptionsFileName);
             VideoFile = new ProjectFile(ProjectFolderPath, videoFileName);
             WaveFormFile = new ProjectFile(ProjectFolderPath, Path.Combine(CacheFolder.RelativePath,
                 WaveFormFileName));

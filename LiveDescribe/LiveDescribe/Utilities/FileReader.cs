@@ -18,6 +18,7 @@ namespace LiveDescribe.Utilities
             Project p;
             using (var r = new StreamReader(path))
             {
+                //TODO: Error handling when missing a property
                 p = JsonConvert.DeserializeObject<Project>(r.ReadToEnd());
             }
             return p;
