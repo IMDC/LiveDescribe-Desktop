@@ -56,7 +56,7 @@ namespace LiveDescribe.Utilities
             var json = new JsonSerializer { Formatting = Formatting.Indented };
             using (var sw = new StreamWriter(project.DescriptionsFile))
             {
-                json.Serialize(sw,descriptions);
+                json.Serialize(sw,descriptions.ToList());
             }
         }
     }

@@ -309,10 +309,16 @@ namespace LiveDescribe.View_Model
         /// <param name="endwavefiletime">The end time in the wav file of the description</param>
         /// <param name="startinvideo">The time in the video the description should start playing</param>
         /// <param name="isExtendedDescription">Whether it is an extended description or not</param>
-        public void AddDescription(string filename, double startwavefiletime, double endwavefiletime, double startinvideo, bool isExtendedDescription)
+        public void AddDescription(string filename, double startwavefiletime, double endwavefiletime,
+            double startinvideo, bool isExtendedDescription)
         {
-            Description desc = new Description(filename, startwavefiletime, endwavefiletime, startinvideo, isExtendedDescription);
-            if (isExtendedDescription)
+            AddDescription(new Description(filename, startwavefiletime, endwavefiletime, startinvideo,
+                isExtendedDescription));
+        }
+
+        public void AddDescription(Description desc)
+        {
+            if (desc.IsExtendedDescription)
                 ExtendedDescriptions.Add(desc);
             else
                 RegularDescriptions.Add(desc);

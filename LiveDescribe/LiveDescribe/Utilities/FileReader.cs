@@ -47,11 +47,11 @@ namespace LiveDescribe.Utilities
             return waveFormData;
         }
 
-        public static ObservableCollection<Description> ReadDescriptionsFile(Project project)
+        public static List<Description> ReadDescriptionsFile(Project project)
         {
             using (var r = new StreamReader(project.DescriptionsFile))
             {
-                return JsonConvert.DeserializeObject<ObservableCollection<Description>>(r.ReadToEnd());
+                return JsonConvert.DeserializeObject<List<Description>>(r.ReadToEnd());
             }
         }
     }

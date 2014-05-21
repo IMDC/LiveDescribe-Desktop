@@ -141,6 +141,7 @@ namespace LiveDescribe.Model
         /// <summary>
         /// Keeps track of the description's X values
         /// </summary>
+        [JsonIgnore]
         public double X
         {
             set
@@ -157,6 +158,7 @@ namespace LiveDescribe.Model
         /// <summary>
         /// Keeps track of the description's Y value
         /// </summary>
+        [JsonIgnore]
         public double Y
         {
             set
@@ -172,6 +174,7 @@ namespace LiveDescribe.Model
         /// <summary>
         /// Keeps track of the height of the description
         /// </summary>
+        [JsonIgnore]
         public double Height
         {
             set
@@ -188,6 +191,7 @@ namespace LiveDescribe.Model
         /// <summary>
         /// Keeps track of the Width of the description
         /// </summary>
+        [JsonIgnore]
         public double Width
         {
             set
@@ -311,6 +315,7 @@ namespace LiveDescribe.Model
             }
         }
 
+        [JsonIgnore]
         public bool MouseMoveIsSelected
         {
             set
@@ -337,6 +342,7 @@ namespace LiveDescribe.Model
             }
         }
 
+        [JsonIgnore]
         public bool IsPlaying
         {
             set

@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Threading;
 using System.Web.Script.Serialization;
 using LiveDescribe.Interfaces;
 using GalaSoft.MvvmLight;
@@ -12,6 +13,7 @@ using LiveDescribe.Utilities;
 using LiveDescribe.View;
 using Microsoft.Win32;
 using Newtonsoft.Json;
+using Timer = System.Timers.Timer;
 
 namespace LiveDescribe.View_Model
 {
@@ -344,14 +346,11 @@ namespace LiveDescribe.View_Model
             {
                 if (File.Exists(_project.DescriptionsFile))
                 {
-                    _descriptionviewmodel.AllDescriptions = FileReader.ReadDescriptionsFile(_project);
+                    var descriptions = FileReader.ReadDescriptionsFile(_project);
 
-                    foreach (Description d in _descriptionviewmodel.AllDescriptions)
+                    foreach (Description d in descriptions)
                     {
-                        if(d.IsExtendedDescription)
-                            _descriptionviewmodel.ExtendedDescriptions.Add(d);
-                        else
-                            _descriptionviewmodel.RegularDescriptions.Add(d);
+                        _descriptionviewmodel.AddDescription(d);
                     }
                 }
             }

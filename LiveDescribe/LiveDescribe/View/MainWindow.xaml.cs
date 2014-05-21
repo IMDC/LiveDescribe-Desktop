@@ -130,6 +130,11 @@ namespace LiveDescribe.View
                     _canvasWidth = calculateWidth();
                     Marker.IsEnabled = true;
                     SetTimeline();
+
+                    foreach (var desc in _descriptionViewModel.AllDescriptions)
+                    {
+                        DrawDescription(desc);
+                    }
                 };
 
             //listens for when the audio stripping is complete then draws the timeline and the wave form
@@ -205,11 +210,12 @@ namespace LiveDescribe.View
             //so when those properties change it redraws them
             _descriptionViewModel.AddDescriptionEvent += (sender, e) =>
                 {
-                    //set the Description values that are bound to the graphics in MainWindow.xaml
-                    e.Description.X = (e.Description.StartInVideo / _videoDuration) * AudioCanvas.Width;
-                    e.Description.Y = 0;
-                    e.Description.Width = (AudioCanvas.Width / _videoDuration) * (e.Description.EndWaveFileTime - e.Description.StartWaveFileTime);
-                    e.Description.Height = DescriptionCanvas.ActualHeight;
+                    /* Draw the description only if the video is loaded, because there is currently
+                     * an issue with the video loading after the descriptions are added from an
+                     * opened project.
+                     */
+                    if (VideoMedia.CurrentState != LiveDescribeVideoStates.VideoNotLoaded)
+                        DrawDescription(e.Description);
 
                     e.Description.DescriptionMouseDownEvent += (sender1, e1) =>
                     {
@@ -512,6 +518,16 @@ namespace LiveDescribe.View
                     });
                 }
             }
+        }
+
+        private void DrawDescription(Description description)
+        {
+            //set the Description values that are bound to the graphics in MainWindow.xaml
+            description.X = (description.StartInVideo / _videoDuration) * AudioCanvas.Width;
+            description.Y = 0;
+            description.Width = (AudioCanvas.Width / _videoDuration) * (description.EndWaveFileTime - 
+                description.StartWaveFileTime);
+            description.Height = DescriptionCanvas.ActualHeight;
         }
 
         /// <summary>
