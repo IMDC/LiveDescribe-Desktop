@@ -388,7 +388,9 @@
                                     VirtualizingPanel.IsVirtualizing="True"
                                     Name="AudioCanvas"
                                     HorizontalAlignment="Left"
-                                    MouseRightButtonDown="AudioCanvas_RecordRightClickPosition">
+                                    MouseRightButtonDown="AudioCanvas_RecordRightClickPosition"
+                                    MouseUp="AudioCanvas_MouseUp"
+                                    MouseMove="AudioCanvas_MouseMove">
                                     
                                     <Canvas.ContextMenu>
                                         <ContextMenu>

@@ -25,6 +25,9 @@ namespace LiveDescribe.Model
 
         #region Event Handlers
         public EventHandler SpaceDeleteEvent;
+        public EventHandler SpaceMouseUpEvent;
+        public EventHandler SpaceMouseDownEvent;
+        public EventHandler SpaceMouseMoveEvent;
         #endregion
 
         #region Constructors
@@ -52,6 +55,10 @@ namespace LiveDescribe.Model
         #endregion
 
         #region Commands
+        /// <summary>
+        /// Setter and Getters for all Commands related to a Space
+        /// </summary>
+
         public RelayCommand DeleteSpaceCommand { get; private set; }
         public RelayCommand<MouseEventArgs> SpaceMouseDownCommand { get; private set; }
         public RelayCommand<MouseEventArgs> SpaceMouseMoveCommand { get; private set; }
@@ -154,6 +161,10 @@ namespace LiveDescribe.Model
         #endregion
 
         #region BindingFunctions
+
+        /// <summary>
+        /// Called when a delete space command is executed
+        /// </summary>
         public void DeleteSpace()
         {
             Console.WriteLine("Space Deleted");
@@ -161,17 +172,36 @@ namespace LiveDescribe.Model
             if (handler != null) handler(this, EventArgs.Empty);
         }
 
+        /// <summary>
+        /// Called when the mouse is down on the space
+        /// </summary>
+        /// <param name="e"></param>
         public void SpaceMouseDown(MouseEventArgs e)
         {
-          
+            Console.WriteLine("Space Mouse Down");
+            EventHandler handler = SpaceMouseDownEvent;
+            if (handler != null) handler(this, e);
         }
 
+        /// <summary>
+        /// Called when the mouse moves over the space
+        /// </summary>
+        /// <param name="e"></param>
         public void SpaceMouseMove(MouseEventArgs e)
         {
+            Console.WriteLine("Space Mouse Move");
+            EventHandler handler = SpaceMouseMoveEvent;
+            if (handler != null) handler(this, e);
         }
 
+        /// <summary>
+        /// Called when the mouse is up over a space
+        /// </summary>
         public void SpaceMouseUp()
         {
+            Console.WriteLine("Space Mouse Up");
+            EventHandler handler = SpaceMouseUpEvent;
+            if (handler != null) handler(this, EventArgs.Empty);
         }
         #endregion
 

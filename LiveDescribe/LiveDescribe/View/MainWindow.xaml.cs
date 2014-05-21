@@ -30,6 +30,7 @@ namespace LiveDescribe.View
 
         /// <summary>The width of the entire canvas.</summary>
         private Description _descriptionBeingDragged;
+        private Space _spaceBeingDragged;
         private double _canvasWidth = 0;
         private double _videoDuration = -1;
         private readonly VideoControl _videoControl;
@@ -39,6 +40,7 @@ namespace LiveDescribe.View
         private readonly DescriptionViewModel _descriptionViewModel;
         private readonly TimeConverterFormatter _formatter;
         private double _originalPositionForDraggingDescription = -1;
+        private double _originalPositionForDraggingSpace = -1;
         private Point RightClickPointOnAudioCanvas;
 
         public MainWindow()
@@ -284,6 +286,18 @@ namespace LiveDescribe.View
                     space.Y = 0;
                     space.Height = AudioCanvas.ActualHeight;
                     space.Width = (AudioCanvas.Width / _videoDuration) * (space.EndInVideo - space.StartInVideo);
+
+
+                    space.SpaceMouseDownEvent += (sender1, e1) =>
+                        {
+                            MouseEventArgs args = (MouseEventArgs)e1;
+                            if (Mouse.LeftButton == MouseButtonState.Pressed)
+                            {
+                                _originalPositionForDraggingSpace = args.GetPosition(AudioCanvas).X;
+                                _spaceBeingDragged = space;
+                                AudioCanvas.CaptureMouse();
+                            }
+                        };
                 };
             #endregion
         }
@@ -317,6 +331,47 @@ namespace LiveDescribe.View
         }
 
         #region View Listeners
+
+        /// <summary>
+        /// Called when mouse is up on the audio canvas
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AudioCanvas_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (Mouse.LeftButton == MouseButtonState.Released)
+            {
+                AudioCanvas.ReleaseMouseCapture();
+            }
+        }
+
+        /// <summary>
+        /// Caled when the mouse is being dragged on the audio canvas
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AudioCanvas_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (AudioCanvas.IsMouseCaptured)
+            {
+                double newPosition = _spaceBeingDragged.X + (e.GetPosition(AudioCanvas).X -_originalPositionForDraggingSpace);
+                //size in pixels of the space
+                double size = (AudioCanvas.Width / _videoDuration) * (_spaceBeingDragged.EndInVideo - _spaceBeingDragged.StartInVideo);
+                Console.WriteLine("Size {0}, NewPosition {1}, Mouse.X {2}",size, newPosition, e.GetPosition(AudioCanvas).X);
+                
+                if (newPosition < 0)
+                    newPosition = 0;
+                else if (newPosition + size > AudioCanvas.Width)
+                    newPosition = AudioCanvas.Width - size;
+
+                _spaceBeingDragged.X = newPosition;
+                _originalPositionForDraggingSpace = e.GetPosition(AudioCanvas).X;
+                _spaceBeingDragged.StartInVideo = (_videoDuration / AudioCanvas.Width) * (_spaceBeingDragged.X);
+                _spaceBeingDragged.EndInVideo = _spaceBeingDragged.StartInVideo + (_spaceBeingDragged.EndInVideo - _spaceBeingDragged.StartInVideo);
+                _spaceBeingDragged.EndInVideo = _spaceBeingDragged.StartInVideo + (_videoDuration / AudioCanvas.Width) * size;
+            }
+        }
+
         /// <summary>
         /// Updates the canvasWidth and canvasHeight variables everytime the canvas size is changed
         /// </summary>
@@ -351,7 +406,6 @@ namespace LiveDescribe.View
                 //and stop dragging the description
                 //the mouse gets captured when a description is left clicked
                 DescriptionCanvas.ReleaseMouseCapture();
-                Console.WriteLine("DescriptionMouseCaptured False");
             }
         }
 

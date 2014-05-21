@@ -63,5 +63,13 @@ namespace LiveDescribe.View_Model
             
         }
         #endregion
+
+        #region Helper Methods
+        public void CloseSpacesViewModel()
+        {
+            Spaces = null;
+            Spaces = new ObservableCollection<Space>();
+        }
+        #endregion
     }
 }

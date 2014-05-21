@@ -152,6 +152,7 @@ namespace LiveDescribe.View_Model
 
             _descriptionviewmodel.CloseDescriptionViewModel();
             _videocontrol.CloseVideoControl();
+            _spacesviewmodel.CloseSpacesViewModel();
             _project = null;
 
             EventHandler handler = ProjectClosed;
