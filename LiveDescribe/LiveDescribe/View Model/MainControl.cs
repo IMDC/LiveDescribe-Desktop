@@ -19,6 +19,10 @@ namespace LiveDescribe.View_Model
 {
     class MainControl : ViewModelBase
     {
+        #region Constants
+        public const string DefaultWindowTitle = "Live Describe";
+        #endregion
+
         #region Instance Variables
         private Timer _descriptiontimer;
         private VideoControl _videocontrol;
@@ -29,6 +33,7 @@ namespace LiveDescribe.View_Model
         private ILiveDescribePlayer _mediaVideo;
         private DescriptionInfoTabViewModel _descriptionInfoTabViewModel;
         private Project _project;
+        private string _windowTitle;
         #endregion
 
         #region Events
@@ -44,6 +49,7 @@ namespace LiveDescribe.View_Model
         public MainControl(ILiveDescribePlayer mediaVideo)
         {
             DispatcherHelper.Initialize();
+            WindowTitle = DefaultWindowTitle;
             _spacesviewmodel = new SpacesViewModel();
             _loadingViewModel = new LoadingViewModel(100, null, 0, false);
             _videocontrol = new VideoControl(mediaVideo, _loadingViewModel);
@@ -165,6 +171,8 @@ namespace LiveDescribe.View_Model
 
             EventHandler handler = ProjectClosed;
             if (handler != null) handler(this, EventArgs.Empty);
+
+            WindowTitle = DefaultWindowTitle;
         }
 
         /// <summary>
@@ -243,6 +251,20 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Binding Properties
+
+        /// <summary>
+        /// The window title.
+        /// </summary>
+        public string WindowTitle
+        {
+            set
+            {
+                _windowTitle = value;
+                RaisePropertyChanged("WindowTitle");
+            }
+            get { return _windowTitle; }
+        }
+
 
         /// <summary>
         /// returns the spaces view model so a control in the main window can use it as a data context
@@ -337,6 +359,8 @@ namespace LiveDescribe.View_Model
                 CloseProject();
 
             _project = p;
+
+            WindowTitle = string.Format("{0} - LiveDescribe", _project.ProjectName);
 
             //Set up environment
             Properties.Settings.Default.WorkingDirectory = _project.ProjectFolderPath + "\\";

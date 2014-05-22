@@ -6,7 +6,7 @@
     xmlns:cmd="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Extras.WPF45"
     xmlns:controls="clr-namespace:LiveDescribe.Controls"
     xmlns:converters="clr-namespace:LiveDescribe.Converters"
-    Title="MainWindow"
+    Title="{Binding WindowTitle}"
     Height="600"
     Width="950"
     MinHeight="600"
