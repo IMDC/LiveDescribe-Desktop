@@ -26,6 +26,7 @@ namespace LiveDescribe.View_Model
         private NAudio.Wave.WaveFileWriter _waveWriter;
         private readonly ILiveDescribePlayer _mediaVideo;
         private bool _usingExistingMicrophone;
+        /// <summary>Keeps track of the starting time of a description on recording.</summary>
         private double _descriptionStartTime;
 
         //this variable should be used as little as possible in this class
@@ -369,13 +370,10 @@ namespace LiveDescribe.View_Model
         /// </summary>
         public void CloseDescriptionViewModel()
         {
-            AllDescriptions = null;
-            ExtendedDescriptions = null;
-            RegularDescriptions = null;
+            AllDescriptions.Clear();
+            ExtendedDescriptions.Clear();
+            RegularDescriptions.Clear();
             _waveWriter = null;
-            AllDescriptions = new ObservableCollection<Description>();
-            ExtendedDescriptions = new ObservableCollection<Description>();
-            RegularDescriptions = new ObservableCollection<Description>();
         }
         #endregion
     }
