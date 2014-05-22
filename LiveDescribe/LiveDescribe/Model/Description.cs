@@ -9,6 +9,7 @@ using LiveDescribe.Events;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using System.Windows.Input;
+using Newtonsoft.Json;
 
 namespace LiveDescribe.Model
 {
@@ -16,7 +17,6 @@ namespace LiveDescribe.Model
     {
         //All units of time is in milliseconds
         #region Instance variables
-        private AudioUtility _audioutility;
         private string _filename;
         private string _descriptiontext;
         private bool _isextendeddescription;
@@ -34,10 +34,15 @@ namespace LiveDescribe.Model
         #endregion
 
         #region Event Handlers
+        [JsonIgnore]
         public EventHandler DescriptionDeleteEvent;
+        [JsonIgnore]
         public EventHandler DescriptionMouseDownEvent;
+        [JsonIgnore]
         public EventHandler DescriptionMouseUpEvent;
+        [JsonIgnore]
         public EventHandler DescriptionMouseMoveEvent;
+        [JsonIgnore]
         public EventHandler DescriptionFinishedPlaying;
         #endregion
 
@@ -136,6 +141,7 @@ namespace LiveDescribe.Model
         /// <summary>
         /// Keeps track of the description's X values
         /// </summary>
+        [JsonIgnore]
         public double X
         {
             set
@@ -152,6 +158,7 @@ namespace LiveDescribe.Model
         /// <summary>
         /// Keeps track of the description's Y value
         /// </summary>
+        [JsonIgnore]
         public double Y
         {
             set
@@ -167,6 +174,7 @@ namespace LiveDescribe.Model
         /// <summary>
         /// Keeps track of the height of the description
         /// </summary>
+        [JsonIgnore]
         public double Height
         {
             set
@@ -183,6 +191,7 @@ namespace LiveDescribe.Model
         /// <summary>
         /// Keeps track of the Width of the description
         /// </summary>
+        [JsonIgnore]
         public double Width
         {
             set
@@ -196,21 +205,6 @@ namespace LiveDescribe.Model
             }
         }
 
-        /// <summary>
-        /// Audio Utility that contains information about the wav description file
-        /// </summary>
-        public AudioUtility AudioUtility
-        {
-            set
-            {
-                _audioutility = value;
-                NotifyPropertyChanged("AudioUtility");
-            }
-            get
-            {
-                return _audioutility;
-            }
-        }
         /// <summary>
         /// Filename of the wav file
         /// </summary>
@@ -321,6 +315,7 @@ namespace LiveDescribe.Model
             }
         }
 
+        [JsonIgnore]
         public bool MouseMoveIsSelected
         {
             set
@@ -347,6 +342,7 @@ namespace LiveDescribe.Model
             }
         }
 
+        [JsonIgnore]
         public bool IsPlaying
         {
             set
@@ -365,36 +361,29 @@ namespace LiveDescribe.Model
         /// <summary>
         /// Setter and getter for the DescriptionMouseDown Command
         /// </summary>
+        [JsonIgnore]
         public RelayCommand<MouseEventArgs> DescriptionMouseDownCommand { get; private set; }
 
         /// <summary>
         /// Setter and getter for the DescriptionMouseUp Command
         /// </summary>
+        [JsonIgnore]
         public RelayCommand DescriptionMouseUpCommand { get; private set; }
 
         /// <summary>
         /// Setter and getter for the DescriptionMouseMove Command
         /// </summary>
+        [JsonIgnore]
         public RelayCommand<MouseEventArgs> DescriptionMouseMoveCommand { get; private set; }
 
         /// <summary>
         /// Setter and getter for DescriptionDeletecommand 
         /// </summary>
+        [JsonIgnore]
         public RelayCommand DescriptionDeleteCommand { get; private set; }
         #endregion
 
         #region Binding Functions
-        /// <summary>
-        /// Called when the mouse is down on this description
-        /// </summary>
-        /// <param name="param"></param>
-        public void DescriptionMouseDown()
-        {
-            EventHandler handler = DescriptionMouseDownEvent;
-            Console.WriteLine("Mouse Down");
-            if (handler == null) return;
-            handler(this, EventArgs.Empty);
-        }
 
         /// <summary>
         /// Called when the mouse is up on this description
@@ -403,7 +392,7 @@ namespace LiveDescribe.Model
         public void DescriptionMouseUp()
         {
             EventHandler handler = DescriptionMouseUpEvent;
-            Console.WriteLine("MOUSE UP");
+            Console.WriteLine("Description Mouse Up");
             if (handler == null) return;
             handler(this, EventArgs.Empty);
         }
@@ -428,6 +417,9 @@ namespace LiveDescribe.Model
             if (handler != null) handler(this, e);
         }
 
+        /// <summary>
+        /// Called when a description is deleted
+        /// </summary>
         public void DescriptionDelete()
         {
             EventHandler handler = DescriptionDeleteEvent;

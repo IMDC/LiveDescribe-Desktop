@@ -53,10 +53,10 @@ namespace LiveDescribe.Utilities
 
         public static void WriteDescriptionsFile(Project project, ObservableCollection<Description> descriptions)
         {
-            var serializer = new JsonSerializer { Formatting = Formatting.Indented };
+            var json = new JsonSerializer { Formatting = Formatting.Indented };
             using (var sw = new StreamWriter(project.DescriptionsFile))
             {
-                
+                json.Serialize(sw,descriptions.ToList());
             }
         }
     }

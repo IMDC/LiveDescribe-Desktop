@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Threading;
 using System.Web.Script.Serialization;
 using LiveDescribe.Interfaces;
 using GalaSoft.MvvmLight;
@@ -12,6 +13,7 @@ using LiveDescribe.Utilities;
 using LiveDescribe.View;
 using Microsoft.Win32;
 using Newtonsoft.Json;
+using Timer = System.Timers.Timer;
 
 namespace LiveDescribe.View_Model
 {
@@ -22,6 +24,7 @@ namespace LiveDescribe.View_Model
         private VideoControl _videocontrol;
         private PreferencesViewModel _preferences;
         private DescriptionViewModel _descriptionviewmodel;
+        private SpacesViewModel _spacesviewmodel;
         private LoadingViewModel _loadingViewModel;
         private ILiveDescribePlayer _mediaVideo;
         private DescriptionInfoTabViewModel _descriptionInfoTabViewModel;
@@ -41,11 +44,12 @@ namespace LiveDescribe.View_Model
         public MainControl(ILiveDescribePlayer mediaVideo)
         {
             DispatcherHelper.Initialize();
+            _spacesviewmodel = new SpacesViewModel();
             _loadingViewModel = new LoadingViewModel(100, null, 0, false);
             _videocontrol = new VideoControl(mediaVideo, _loadingViewModel);
             _preferences = new PreferencesViewModel();
             _descriptionviewmodel = new DescriptionViewModel(mediaVideo, _videocontrol);
-            _descriptionInfoTabViewModel = new DescriptionInfoTabViewModel(_descriptionviewmodel);
+            _descriptionInfoTabViewModel = new DescriptionInfoTabViewModel(_descriptionviewmodel, _spacesviewmodel);
 
             //Commands
             CloseProjectCommand = new RelayCommand(CloseProject, CanCloseProject);
@@ -156,6 +160,7 @@ namespace LiveDescribe.View_Model
 
             _descriptionviewmodel.CloseDescriptionViewModel();
             _videocontrol.CloseVideoControl();
+            _spacesviewmodel.CloseSpacesViewModel();
             _project = null;
 
             EventHandler handler = ProjectClosed;
@@ -203,6 +208,7 @@ namespace LiveDescribe.View_Model
 
             FileWriter.WriteWaveFormHeader(_project,_videocontrol.Header);
             FileWriter.WriteWaveFormFile(_project,_videocontrol.AudioData);
+            FileWriter.WriteDescriptionsFile(_project,_descriptionviewmodel.AllDescriptions);
         }
 
         public bool CanClearCache()
@@ -237,6 +243,15 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Binding Properties
+
+        /// <summary>
+        /// returns the spaces view model so a control in the main window can use it as a data context
+        /// </summary>
+        public SpacesViewModel SpacesViewModel
+        {
+            get { return _spacesviewmodel; }
+        }
+
         /// <summary>
         /// returns the video control so it can be binded to a control in the mainwindow
         /// </summary>
@@ -341,7 +356,15 @@ namespace LiveDescribe.View_Model
 
             if (Directory.Exists(_project.DescriptionsFolder))
             {
-                //TODO: Load descriptions
+                if (File.Exists(_project.DescriptionsFile))
+                {
+                    var descriptions = FileReader.ReadDescriptionsFile(_project);
+
+                    foreach (Description d in descriptions)
+                    {
+                        _descriptionviewmodel.AddDescription(d);
+                    }
+                }
             }
             else
             {
