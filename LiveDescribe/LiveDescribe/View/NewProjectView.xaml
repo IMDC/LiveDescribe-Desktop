@@ -116,7 +116,7 @@
 
         <!--Controls for Project Folder-->
         <TextBlock
-            Text="Project Path"
+            Text="Project Location"
             Grid.Row="2"
             Style="{StaticResource LabelStyle}" />
         <TextBox
