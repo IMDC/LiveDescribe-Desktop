@@ -141,7 +141,7 @@ namespace LiveDescribe.View_Model
             //Ensure that path is absolute
             if (!Path.IsPathRooted(p.ProjectFolderPath))
             {
-                MessageBox.Show("Project path must be a root path.", "Error", MessageBoxButton.OK,
+                MessageBox.Show("Project location must be a root path.", "Error", MessageBoxButton.OK,
                     MessageBoxImage.Error);
                 return;
             }

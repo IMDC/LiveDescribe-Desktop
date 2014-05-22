@@ -1,6 +1,8 @@
 ﻿using System.IO;
+using System.Text;
 using System.Threading;
 using System.Web.Script.Serialization;
+using System.Windows;
 using LiveDescribe.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Threading;
@@ -195,10 +197,19 @@ namespace LiveDescribe.View_Model
             };
 
             bool? dialogSuccess = projectChooser.ShowDialog();
-            if (dialogSuccess == true)
+            if (dialogSuccess != true)
+                return;
+
+            //Attempt to read project. If object fields are missing, an error window pops up.
+            try
             {
                 Project p = FileReader.ReadProjectFile(projectChooser.FileName);
                 SetProject(p);
+            }
+            catch (JsonSerializationException)
+            {
+                MessageBox.Show("The selected project is missing file locations.", "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
