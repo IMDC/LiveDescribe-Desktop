@@ -436,9 +436,7 @@ namespace LiveDescribe.View
             if (data == null || _canvasWidth == 0 || width == 0)
                 return;
 
-            double bytesPerFloat = 1;
-
-            double samplesPerPixel = ((data.Count / bytesPerFloat) / (_canvasWidth));
+            double samplesPerPixel = data.Count / _canvasWidth;
 
             Console.WriteLine("Horizontal Offset: {0}, Witdh {1}", TimeLine.HorizontalOffset, width);
 
@@ -453,17 +451,22 @@ namespace LiveDescribe.View
             AudioCanvas.Children.Add(Marker);
 
             int begin = (int)TimeLine.HorizontalOffset;
-            int end = (int)(TimeLine.HorizontalOffset + width);
+            int ratio = _videoControl.Header.NumChannels == 2 ? 40 : 80;
+            double samples_per_second = (_videoControl.Header.SampleRate * (_videoControl.Header.BlockAlign / (double)ratio));
+            
+            double offset_time;
+            double sample_start;
+            double pixel = begin;
 
-            for (int sampleIndex = (int)(begin * samplesPerPixel), pixel = begin;
-                pixel <= end;
-                sampleIndex += (int)samplesPerPixel, pixel++)
+            while ( pixel <= begin + width )
             {
-                if (sampleIndex + samplesPerPixel < data.Count)
-                {
-                    double max = (double)data.GetRange(sampleIndex, (int)samplesPerPixel).Max() / short.MaxValue;
-                    double min = (double)data.GetRange(sampleIndex, (int)samplesPerPixel).Min() / short.MaxValue;
+                offset_time = (_videoDuration / (_canvasWidth * 1000)) * pixel;
+                sample_start = samples_per_second * offset_time;
 
+                if (sample_start + samplesPerPixel < data.Count)
+                { 
+                    double max = (double)data.GetRange((int)sample_start, (int)samplesPerPixel).Max() / short.MaxValue;
+                    double min = (double)data.GetRange((int)sample_start, (int)samplesPerPixel).Min() / short.MaxValue;
                     AudioCanvas.Children.Add(new Line
                     {
                         Stroke = System.Windows.Media.Brushes.Black,
@@ -473,7 +476,9 @@ namespace LiveDescribe.View
                         X1 = pixel,
                         X2 = pixel,
                     });
+    
                 }
+                pixel++;
             }
 
             double canvasWidth = _canvasWidth;
