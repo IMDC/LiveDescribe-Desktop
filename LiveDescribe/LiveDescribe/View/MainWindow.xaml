@@ -27,7 +27,7 @@
         <Border
             Name="LoadingBorder"
             DataContext="{Binding LoadingViewModel}"
-            Grid.ZIndex="2"
+            Grid.ZIndex="-1"
             BorderBrush="Black"
             BorderThickness="1"
             Background="#80000000"

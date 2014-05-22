@@ -306,6 +306,22 @@ namespace LiveDescribe.View
                         };
                 };
             #endregion
+
+            #region Event Listeners for LoadingViewModel
+            maincontrol.LoadingViewModel.PropertyChanged += (sender, e) =>
+            {
+                /* Set LoadingBorder to appear in front of everything when visible, otherwise put
+                 * it behind everything. This allows it to sit behind in the XAML viewer.
+                 */
+                if (e.PropertyName.Equals("Visible"))
+                {
+                    if (maincontrol.LoadingViewModel.Visible)
+                        Grid.SetZIndex(LoadingBorder, 2);
+                    else
+                        Grid.SetZIndex(LoadingBorder, -1);
+                }
+            };
+            #endregion
         }
 
         /// <summary>
