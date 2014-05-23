@@ -19,13 +19,19 @@ namespace LiveDescribe.Converters
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             _builder.Clear();
-            if (value.ToString().Length == 16)
+            String val = value.ToString();
+
+            if (val.Length == 16)
             {
-                _builder.Append(value.ToString().Substring(3, 2));
+                _builder.Append(val.Substring(0, 2));
                 _builder.Append(":");
-                _builder.Append(value.ToString().Substring(6, 2));
+                _builder.Append(val.Substring(3, 2));
                 _builder.Append(":");
-                _builder.Append(value.ToString().Substring(9, 3));
+                _builder.Append(val.Substring(6, 2));
+                _builder.Append(":");
+                _builder.Append(val.Substring(9, 3));
+
+                Console.WriteLine(value.ToString());
                 return _builder.ToString();
             }
 

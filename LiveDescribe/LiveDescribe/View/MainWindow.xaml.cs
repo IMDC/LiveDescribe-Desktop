@@ -135,7 +135,7 @@ namespace LiveDescribe.View
                 AudioCanvas.Children.Add(Marker);
 
                 UpdateMarkerPosition(-MarkerOffset);
-                CurrentTimeLabel.Text = "00:00:000";
+                CurrentTimeLabel.Text = "00:00:00:000";
                 Marker.IsEnabled = false;
             };
 

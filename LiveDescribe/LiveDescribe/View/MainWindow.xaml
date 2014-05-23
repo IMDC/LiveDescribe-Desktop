@@ -8,9 +8,9 @@
     xmlns:converters="clr-namespace:LiveDescribe.Converters"
     Title="{Binding WindowTitle}"
     Height="600"
-    Width="950"
+    Width="960"
     MinHeight="600"
-    MinWidth="950">
+    MinWidth="960">
     <Window.Resources>
         <converters:BoolToVisibilityConverter
             x:Key="BoolConverter" />
@@ -85,7 +85,7 @@
                     Header="Project">
                     <MenuItem
                         Header="Refresh Project Cache"
-                        Command="{Binding ClearCacheCommand}"/>
+                        Command="{Binding ClearCacheCommand}" />
                 </MenuItem>
             </Menu>
 
@@ -208,12 +208,13 @@
                         Style="{StaticResource ControlPanelStyle}"
                         Content="Fast Forward" />
                     <TextBlock
-                        Text="00:00:000"
-                        Name="CurrentTimeLabel"
+                        Text="00:00:00:000"
+                        x:Name="CurrentTimeLabel"
                         MinWidth="40"
-                        Margin="5,15,0,5"
+                        Margin="2,15,0,5"
                         FontSize="16"
-                        FontFamily="Trebuchet MS" />
+                        FontFamily="Trebuchet MS"
+                        Width="95" />
                 </StackPanel>
 
                 <!--Description Information-->
@@ -385,7 +386,7 @@
                             <Border
                                 Grid.Row="0"
                                 Grid.RowSpan="2"
-                                SizeChanged="AudioCanvasBorder_SizeChanged_1"                             
+                                SizeChanged="AudioCanvasBorder_SizeChanged_1"
                                 Name="AudioCanvasBorder"
                                 BorderBrush="Black"
                                 BorderThickness="1">
@@ -397,13 +398,16 @@
                                     MouseRightButtonDown="AudioCanvas_RecordRightClickPosition"
                                     MouseUp="AudioCanvas_MouseUp"
                                     MouseMove="AudioCanvas_MouseMove">
-                                    
+
                                     <Canvas.ContextMenu>
                                         <ContextMenu>
-                                            <MenuItem DataContext="{Binding SpacesViewModel}" Header="Add Space" Command="{Binding AddSpaceCommand}"/>
+                                            <MenuItem
+                                                DataContext="{Binding SpacesViewModel}"
+                                                Header="Add Space"
+                                                Command="{Binding AddSpaceCommand}" />
                                         </ContextMenu>
                                     </Canvas.ContextMenu>
-                                    
+
                                     <Border
                                         Name="NumberTimelineBorder"
                                         Background="White"
@@ -425,7 +429,7 @@
                                                 <Canvas />
                                             </ItemsPanelTemplate>
                                         </ItemsControl.ItemsPanel>
-                                        
+
                                         <ItemsControl.ItemContainerStyle>
                                             <Style>
                                                 <Setter
@@ -465,7 +469,7 @@
                                                     </Rectangle.Style>
                                                     <i:Interaction.Triggers>
                                                         <i:EventTrigger
-                                                            EventName="MouseDown">                           
+                                                            EventName="MouseDown">
                                                             <cmd:EventToCommand
                                                                 Command="{Binding SpaceMouseDownCommand, Mode=OneWay}"
                                                                 PassEventArgsToCommand="True" />
@@ -653,11 +657,24 @@
                     DataContext="{Binding DescriptionInfoTabViewModel}"
                     Grid.Column="4"
                     Grid.Row="6"
-                    Grid.ColumnSpan="2"
+                    Grid.ColumnSpan="3"
                     Grid.RowSpan="2"
                     ScrollViewer.VerticalScrollBarVisibility="Auto"
                     TextWrapping="Wrap"
-                    Text="{Binding DescriptionAndSpaceText}" />
+                    Text="{Binding DescriptionAndSpaceText}"
+                    Margin="1,0,130,0"
+                    RenderTransformOrigin="0.5,0.5">
+                    <TextBox.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform />
+                            <SkewTransform
+                                AngleY="0.22" />
+                            <RotateTransform />
+                            <TranslateTransform
+                                Y="-0.507" />
+                        </TransformGroup>
+                    </TextBox.RenderTransform>
+                </TextBox>
 
                 <!--Text Controls-->
                 <StackPanel
