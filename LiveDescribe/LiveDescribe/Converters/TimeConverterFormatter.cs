@@ -30,8 +30,6 @@ namespace LiveDescribe.Converters
                 _builder.Append(val.Substring(6, 2));
                 _builder.Append(":");
                 _builder.Append(val.Substring(9, 3));
-
-                Console.WriteLine(value.ToString());
                 return _builder.ToString();
             }
 
