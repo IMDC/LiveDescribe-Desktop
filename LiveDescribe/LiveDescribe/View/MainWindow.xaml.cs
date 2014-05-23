@@ -32,7 +32,7 @@ namespace LiveDescribe.View
         // resizing the space only happens at ResizeSpaceOffset amount of pixels 
         // away from the beginning and ending of a space
         private const int ResizeSpaceOffset = 10;
-        private const int SmallestSizeInMillisecondsForASpace = 500;
+        private const int SmallestSizeInMillisecondsForASpace = 333;
         #endregion
 
         #region Instance Variables

@@ -252,7 +252,7 @@
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
                                     <GridViewColumn
-                                        Header="Start In Video(ms)">
+                                        Header="Start In Video">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
                                                 <TextBlock
@@ -264,7 +264,7 @@
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
                                     <GridViewColumn
-                                        Header="End In Video(ms)">
+                                        Header="End In Video">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
                                                 <TextBlock
@@ -303,7 +303,7 @@
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
                                     <GridViewColumn
-                                        Header="Start In Video(ms)">
+                                        Header="Start In Video">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
                                                 <TextBlock
@@ -315,7 +315,7 @@
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
                                     <GridViewColumn
-                                        Header="End In Video(ms)">
+                                        Header="End In Video">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
                                                 <TextBlock
@@ -354,7 +354,7 @@
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
                                     <GridViewColumn
-                                        Header="Start In Video(ms)">
+                                        Header="Start In Video">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
                                                 <TextBlock
@@ -366,7 +366,7 @@
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
                                     <GridViewColumn
-                                        Header="End In Video(ms)">
+                                        Header="End In Video">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
                                                 <TextBlock
