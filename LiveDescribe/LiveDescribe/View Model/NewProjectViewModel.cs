@@ -162,7 +162,7 @@ namespace LiveDescribe.View_Model
             {
                 Directory.CreateDirectory(p.ProjectFolderPath);
                 Directory.CreateDirectory(p.CacheFolder);
-                File.Copy(_videoPath, p.VideoFile, true);
+                //File.Copy(_videoPath, p.VideoFile, true);
 
                 FileWriter.WriteProjectFile(p);
             }
