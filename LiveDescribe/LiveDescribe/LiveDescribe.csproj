@@ -162,6 +162,8 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\LiveDescribe-Splashscreen.png" />
+    <Resource Include="Resources\Cursors\grab.cur" />
+    <Resource Include="Resources\Cursors\grabbing.cur" />
     <Content Include="Utilities\ffmpeg.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
