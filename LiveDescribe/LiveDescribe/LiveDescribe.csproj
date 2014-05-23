@@ -84,8 +84,10 @@
     <Compile Include="Model\ProjectFile.cs" />
     <Compile Include="Model\Space.cs" />
     <Compile Include="Model\Header.cs" />
+    <Compile Include="Utilities\CopyFileProgressChangedEventArgs.cs" />
     <Compile Include="Utilities\FileReader.cs" />
     <Compile Include="Utilities\FileWriter.cs" />
+    <Compile Include="Utilities\ProgressFileCopier.cs" />
     <Compile Include="View Model\DescriptionInfoTabViewModel.cs" />
     <Compile Include="View Model\LoadingViewModel.cs" />
     <Compile Include="View Model\SpacesViewModel.cs" />
