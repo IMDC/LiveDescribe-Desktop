@@ -685,16 +685,6 @@
                     Text="{Binding DescriptionAndSpaceText}"
                     Margin="1,0,130,0"
                     RenderTransformOrigin="0.5,0.5">
-                    <TextBox.RenderTransform>
-                        <TransformGroup>
-                            <ScaleTransform />
-                            <SkewTransform
-                                AngleY="0.22" />
-                            <RotateTransform />
-                            <TranslateTransform
-                                Y="-0.507" />
-                        </TransformGroup>
-                    </TextBox.RenderTransform>
                 </TextBox>
 
                 <!--Text Controls-->
