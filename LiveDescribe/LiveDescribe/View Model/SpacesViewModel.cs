@@ -31,6 +31,9 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Commands
+        /// <summary>
+        /// Command used for when a space is added
+        /// </summary>
         public RelayCommand AddSpaceCommand { get; private set; }
         #endregion
 
@@ -59,7 +62,7 @@ namespace LiveDescribe.View_Model
             EventHandler<SpaceEventArgs> handler = SpaceAddedEvent;
             if (handler != null) handler(this, new SpaceEventArgs(space));
             Spaces.Add(space);
-            SetupEventsOnSpace(space);           
+            SetupEventsOnSpace(space);
         }
         #endregion
 
