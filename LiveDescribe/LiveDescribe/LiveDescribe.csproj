@@ -77,6 +77,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\SpaceAndDescriptionsTabControl.xaml.cs">
+      <DependentUpon>SpaceAndDescriptionsTabControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Converters\MillisecondsTimeConverterFormatter.cs" />
     <Compile Include="Events\AddDescriptionEventArgs.cs" />
     <Compile Include="Events\SpaceEventArgs.cs" />
@@ -97,6 +100,10 @@
     <Compile Include="View\PreferencesWindow.xaml.cs">
       <DependentUpon>PreferencesWindow.xaml</DependentUpon>
     </Compile>
+    <Page Include="Controls\SpaceAndDescriptionsTabControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\NewProjectView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
