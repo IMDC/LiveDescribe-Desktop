@@ -82,7 +82,6 @@ namespace LiveDescribe.View_Model
 
         public void CloseSpacesViewModel()
         {
-            Spaces = null;
             Spaces.Clear();
         }
         #endregion

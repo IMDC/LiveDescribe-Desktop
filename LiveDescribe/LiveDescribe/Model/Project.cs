@@ -89,12 +89,12 @@ namespace LiveDescribe.Model
         { }
 
         /// <summary>
-        /// Constructs an instance of Project.
+        /// Constructs an instance of Project. The VideoFile Property does not get set, and must be
+        /// set externally.
         /// </summary>
         /// <param name="projectName">Name of the project.</param>
-        /// <param name="videoFileName">Name and extension of the video.</param>
         /// <param name="projectPath">Absolute path to the project folder.</param>
-        public Project(string projectName, string videoFileName, string projectPath)
+        public Project(string projectName, string projectPath)
         {
             ProjectName = projectName;
             ProjectFolderPath = Path.Combine(projectPath, projectName);
@@ -106,11 +106,22 @@ namespace LiveDescribe.Model
             //Files
             ProjectFile = new ProjectFile(ProjectFolderPath, ProjectName + ProjectExtension);
             DescriptionsFile = new ProjectFile(ProjectFolderPath, DescriptionsFileName);
-            VideoFile = new ProjectFile(ProjectFolderPath, videoFileName);
             WaveFormHeaderFile = new ProjectFile(ProjectFolderPath, Path.Combine(CacheFolder.RelativePath,
                 WaveFormHeaderName));
             WaveFormFile = new ProjectFile(ProjectFolderPath, Path.Combine(CacheFolder.RelativePath,
                 WaveFormFileName));
+        }
+
+        /// <summary>
+        /// Constructs an instance of Project.
+        /// </summary>
+        /// <param name="projectName">Name of the project.</param>
+        /// <param name="videoFileName">Name and extension of the video.</param>
+        /// <param name="projectPath">Absolute path to the project folder.</param>
+        public Project(string projectName, string videoFileName, string projectPath) :
+            this(projectName, projectPath)
+        {
+            VideoFile = new ProjectFile(ProjectFolderPath, videoFileName);
         }
     }
 }

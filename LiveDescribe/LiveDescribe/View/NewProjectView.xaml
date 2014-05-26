@@ -57,9 +57,21 @@
                 Property="Padding"
                 Value="5" />
         </Style>
+        <Style
+            x:Key="RadioButtonStyle"
+            TargetType="RadioButton">
+            <Setter
+                Property="Margin"
+                Value="5" />
+            <Setter
+                Property="Padding"
+                Value="5" />
+        </Style>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition
+                Height="Auto" />
             <RowDefinition
                 Height="Auto" />
             <RowDefinition
@@ -114,14 +126,40 @@
             Style="{StaticResource OpenButtonStyle}"
             Command="{Binding ChooseVideoCommand}" />
 
+        <!--Controls for Copy Confirmation-->
+        <TextBlock
+            Text="Make a copy of video?"
+            Grid.Row="2"
+            Style="{StaticResource LabelStyle}" />
+        <StackPanel
+            Grid.Row="2"
+            Grid.Column="1"
+            HorizontalAlignment="Left"
+            Orientation="Horizontal">
+            <RadioButton
+                x:Name="YesCopyButton"
+                GroupName="CopyVideo"
+                Content=" Yes"
+                IsChecked="True"
+                Checked="CopyVideo_OnChecked"
+                Style="{StaticResource RadioButtonStyle}" />
+            <RadioButton
+                x:Name="NoCopyButton"
+                GroupName="CopyVideo"
+                Content="No"
+                IsChecked="False"
+                Checked="CopyVideo_OnChecked"
+                Style="{StaticResource RadioButtonStyle}" />
+        </StackPanel>
+
         <!--Controls for Project Folder-->
         <TextBlock
             Text="Project Location"
-            Grid.Row="2"
+            Grid.Row="3"
             Style="{StaticResource LabelStyle}" />
         <TextBox
             x:Name="ProjectPathTextBox"
-            Grid.Row="2"
+            Grid.Row="3"
             Style="{StaticResource TextBoxStyle}">
             <TextBox.Text>
                 <Binding
@@ -130,14 +168,14 @@
             </TextBox.Text>
         </TextBox>
         <Button
-            Grid.Row="2"
+            Grid.Row="3"
             Style="{StaticResource OpenButtonStyle}"
             Command="{Binding ChoosePathCommand}" />
 
         <!--Controls for Creating/Cancelling-->
         <StackPanel
             Orientation="Horizontal"
-            Grid.Row="3"
+            Grid.Row="4"
             Grid.Column="1"
             Grid.ColumnSpan="2"
             HorizontalAlignment="Right">

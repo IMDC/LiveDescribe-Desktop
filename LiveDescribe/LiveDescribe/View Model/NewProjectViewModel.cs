@@ -20,6 +20,7 @@ namespace LiveDescribe.View_Model
         private string _videoPath;
         private string _projectName;
         private string _projectPath;
+        private bool _copyVideo;
 
         public bool? DialogResult { set; get; }
         public Project Project { private set; get; }
@@ -94,6 +95,16 @@ namespace LiveDescribe.View_Model
             }
             get { return _projectPath; }
         }
+
+        public bool CopyVideo
+        {
+            set
+            {
+                _copyVideo = value;
+                RaisePropertyChanged("CopyVideo");
+            }
+            get { return _copyVideo; }
+        }
         #endregion
 
         #region Commands and Command Functions
@@ -136,7 +147,22 @@ namespace LiveDescribe.View_Model
         /// </summary>
         private void CreateProject()
         {
-            Project p = new Project(_projectName, Path.GetFileName(_videoPath), _projectPath);
+            Project p;
+            if(_copyVideo)
+                p = new Project(_projectName, Path.GetFileName(_videoPath), _projectPath);
+            else
+            {
+                //Get a video path relative to the project folder
+                p = new Project(_projectName,_projectPath);
+                var projectPath = new Uri(p.ProjectFolderPath, UriKind.Absolute);
+                var relativeRoot = new Uri(_videoPath, UriKind.Absolute);
+
+                p.VideoFile = new ProjectFile
+                {
+                    AbsolutePath = _videoPath,
+                    RelativePath = relativeRoot.MakeRelativeUri(projectPath).ToString(),
+                };
+            }
 
             //Ensure that path is absolute
             if (!Path.IsPathRooted(p.ProjectFolderPath))
@@ -162,7 +188,7 @@ namespace LiveDescribe.View_Model
             {
                 Directory.CreateDirectory(p.ProjectFolderPath);
                 Directory.CreateDirectory(p.CacheFolder);
-                File.Copy(_videoPath, p.VideoFile, true);
+                //File.Copy(_videoPath, p.VideoFile, true);
 
                 FileWriter.WriteProjectFile(p);
             }
