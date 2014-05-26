@@ -158,6 +158,11 @@ namespace LiveDescribe.View
                     {
                         DrawDescription(desc);
                     }
+
+                    foreach (var space in _spacesViewModel.Spaces)
+                    {
+                        SetSpaceLocation(space);
+                    }
                 };
 
             //listens for when the audio stripping is complete then draws the timeline and the wave form
@@ -280,38 +285,10 @@ namespace LiveDescribe.View
                 {
                     //Adding a space depends on where you right clicked so we create and add it in the view
                     Space space = e.Space;
-                    double middle = RightClickPointOnAudioCanvas.X;  // going to be the middle of the space
-                    double middleTime = (_videoDuration / AudioCanvas.Width) * middle;  // middle of the space in milliseconds
-                    double starttime = middleTime - (DefaultSpaceLengthInMilliSeconds / 2);
-                    double endtime = middleTime + (DefaultSpaceLengthInMilliSeconds / 2);
 
-                    //Bounds checking when creating a space
-                    if (starttime >= 0 && endtime <= _videoDuration)
-                    {
-                        space.StartInVideo = starttime;
-                        space.EndInVideo = endtime;
-                    }
-                    else if (starttime < 0 && endtime > _videoDuration)
-                    {
-                        space.StartInVideo = 0;
-                        space.EndInVideo = _videoDuration;
-                    }
-                    else if (starttime < 0)
-                    {
-                        space.StartInVideo = 0;
-                        space.EndInVideo = endtime;
-
-                    }
-                    else if (endtime > _videoDuration)
-                    {
-                        space.StartInVideo = starttime;
-                        space.EndInVideo = _videoDuration;
-                    }
-
-                    space.X = (AudioCanvas.Width / _videoDuration) * starttime;
-                    space.Y = NumberTimeline.ActualHeight;
-                    space.Height = AudioCanvas.ActualHeight - NumberTimeline.ActualHeight;
-                    space.Width = (AudioCanvas.Width / _videoDuration) * (space.EndInVideo - space.StartInVideo);
+                    //Set
+                    if (VideoMedia.CurrentState != LiveDescribeVideoStates.VideoNotLoaded)
+                        SetSpaceLocation(space);
 
                     space.SpaceMouseDownEvent += (sender1, e1) =>
                         {
@@ -818,6 +795,53 @@ namespace LiveDescribe.View
             ResizeDescriptions();
             ResizeSpaces();
         }
+
+        /// <summary>
+        /// Sets the location of the given space on the canvas.
+        /// </summary>
+        /// <param name="space"></param>
+        private void SetSpaceLocation(Space space)
+        {
+            space.X = (AudioCanvas.Width / _videoDuration) * space.StartInVideo;
+            space.Y = NumberTimeline.ActualHeight;
+            space.Height = AudioCanvas.ActualHeight - NumberTimeline.ActualHeight;
+            space.Width = (AudioCanvas.Width / _videoDuration) * (space.EndInVideo - space.StartInVideo);
+        }
         #endregion
+
+        private void ContextMenu_AddSpace(object sender, RoutedEventArgs e)
+        {
+            var space = new Space();
+
+            double middle = RightClickPointOnAudioCanvas.X;  // going to be the middle of the space
+            double middleTime = (_videoDuration / AudioCanvas.Width) * middle;  // middle of the space in milliseconds
+            double starttime = middleTime - (DefaultSpaceLengthInMilliSeconds / 2);
+            double endtime = middleTime + (DefaultSpaceLengthInMilliSeconds / 2);
+
+            //Bounds checking when creating a space
+            if (starttime >= 0 && endtime <= _videoDuration)
+            {
+                space.StartInVideo = starttime;
+                space.EndInVideo = endtime;
+            }
+            else if (starttime < 0 && endtime > _videoDuration)
+            {
+                space.StartInVideo = 0;
+                space.EndInVideo = _videoDuration;
+            }
+            else if (starttime < 0)
+            {
+                space.StartInVideo = 0;
+                space.EndInVideo = endtime;
+
+            }
+            else if (endtime > _videoDuration)
+            {
+                space.StartInVideo = starttime;
+                space.EndInVideo = _videoDuration;
+            }
+
+            _spacesViewModel.AddSpace(space);
+        }
     }
 }

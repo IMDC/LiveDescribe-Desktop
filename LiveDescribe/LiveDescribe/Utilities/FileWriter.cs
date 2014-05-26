@@ -20,14 +20,18 @@ namespace LiveDescribe.Utilities
         /// <param name="project"></param>
         public static void WriteProjectFile(Project project)
         {
-            var serializer = new JsonSerializer {Formatting = Formatting.Indented};
+            var serializer = new JsonSerializer { Formatting = Formatting.Indented };
             using (var sw = new StreamWriter(project.ProjectFile, false))
             {
-                serializer.Serialize(sw, project, typeof (Project));
+                serializer.Serialize(sw, project, typeof(Project));
             }
         }
 
-        ///
+        /// <summary>
+        /// Writes the header for the WAV file that the waveform data was sampled from.
+        /// </summary>
+        /// <param name="project"></param>
+        /// <param name="header"></param>
         public static void WriteWaveFormHeader(Project project, Header header)
         {
             using (var file = File.Open(project.WaveFormHeaderFile, FileMode.Create, FileAccess.Write))
@@ -47,7 +51,7 @@ namespace LiveDescribe.Utilities
             using (var file = File.Open(project.WaveFormFile, FileMode.Create, FileAccess.Write))
             {
                 var bin = new BinaryFormatter();
-                bin.Serialize(file,waveFormData);
+                bin.Serialize(file, waveFormData);
             }
         }
 
@@ -56,7 +60,16 @@ namespace LiveDescribe.Utilities
             var json = new JsonSerializer { Formatting = Formatting.Indented };
             using (var sw = new StreamWriter(project.DescriptionsFile))
             {
-                json.Serialize(sw,descriptions.ToList());
+                json.Serialize(sw, descriptions.ToList());
+            }
+        }
+
+        public static void WriteSpacesFile(Project project, ObservableCollection<Space> spaces)
+        {
+            var json = new JsonSerializer() { Formatting = Formatting.Indented };
+            using (var sw = new StreamWriter(project.SpacesFile))
+            {
+                json.Serialize(sw, spaces.ToList());
             }
         }
     }

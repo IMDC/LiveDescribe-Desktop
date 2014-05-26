@@ -54,5 +54,13 @@ namespace LiveDescribe.Utilities
                 return JsonConvert.DeserializeObject<List<Description>>(r.ReadToEnd());
             }
         }
+
+        public static List<Space> ReadSpacesFile(Project project)
+        {
+            using (var r = new StreamReader(project.SpacesFile))
+            {
+                return JsonConvert.DeserializeObject<List<Space>>(r.ReadToEnd());
+            }
+        }
     }
 }

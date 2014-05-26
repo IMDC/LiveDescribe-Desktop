@@ -254,6 +254,7 @@ namespace LiveDescribe.View_Model
             FileWriter.WriteWaveFormHeader(_project,_videocontrol.Header);
             FileWriter.WriteWaveFormFile(_project,_videocontrol.AudioData);
             FileWriter.WriteDescriptionsFile(_project,_descriptionviewmodel.AllDescriptions);
+            FileWriter.WriteSpacesFile(_project,_spacesviewmodel.Spaces);
         }
 
         public bool CanClearCache()
@@ -430,6 +431,15 @@ namespace LiveDescribe.View_Model
             else
             {
                 Directory.CreateDirectory(_project.DescriptionsFolder);
+            }
+
+            if (File.Exists(_project.SpacesFile))
+            {
+                var spaces = FileReader.ReadSpacesFile(_project);
+                foreach (var s in spaces)
+                {
+                    _spacesviewmodel.AddSpace(s);
+                }
             }
 
             _mediaVideo.CurrentState = LiveDescribeVideoStates.PausedVideo;

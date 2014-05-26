@@ -58,7 +58,11 @@ namespace LiveDescribe.View_Model
         /// </summary>
         public void AddSpace()
         {
-            Space space = new Space();
+            this.AddSpace(new Space());
+        }
+
+        public void AddSpace(Space space)
+        {
             EventHandler<SpaceEventArgs> handler = SpaceAddedEvent;
             if (handler != null) handler(this, new SpaceEventArgs(space));
             Spaces.Add(space);

@@ -270,7 +270,7 @@
                                             <MenuItem
                                                 DataContext="{Binding SpacesViewModel}"
                                                 Header="Add Space"
-                                                Command="{Binding AddSpaceCommand}" />
+                                                Click="ContextMenu_AddSpace" />
                                         </ContextMenu>
                                     </Canvas.ContextMenu>
 

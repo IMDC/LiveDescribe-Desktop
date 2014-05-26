@@ -28,6 +28,8 @@ namespace LiveDescribe.Model
 
         public const string DescriptionsFolderName = "descriptions";
 
+        public const string SpacesFileName = "spaces.json";
+
         /// <summary>
         /// The name of the project.
         /// </summary>
@@ -63,6 +65,12 @@ namespace LiveDescribe.Model
         /// </summary>
         [JsonProperty(Required = Required.Always)]
         public ProjectFile ProjectFile { set; get; }
+
+        /// <summary>
+        /// The file containing spaces.
+        /// </summary>
+        [JsonProperty(Required = Required.Always)]
+        public ProjectFile SpacesFile { set; get; }
 
         /// <summary>
         /// The video file used in the project.
@@ -106,6 +114,7 @@ namespace LiveDescribe.Model
             //Files
             ProjectFile = new ProjectFile(ProjectFolderPath, ProjectName + ProjectExtension);
             DescriptionsFile = new ProjectFile(ProjectFolderPath, DescriptionsFileName);
+            SpacesFile = new ProjectFile(ProjectFolderPath, SpacesFileName);
             WaveFormHeaderFile = new ProjectFile(ProjectFolderPath, Path.Combine(CacheFolder.RelativePath,
                 WaveFormHeaderName));
             WaveFormFile = new ProjectFile(ProjectFolderPath, Path.Combine(CacheFolder.RelativePath,

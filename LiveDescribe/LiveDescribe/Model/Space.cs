@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using System.Windows.Input;
+using Newtonsoft.Json;
 
 namespace LiveDescribe.Model
 {
@@ -24,9 +25,13 @@ namespace LiveDescribe.Model
         #endregion
 
         #region Event Handlers
+        [JsonIgnore]
         public EventHandler SpaceDeleteEvent;
+        [JsonIgnore]
         public EventHandler SpaceMouseUpEvent;
+        [JsonIgnore]
         public EventHandler SpaceMouseDownEvent;
+        [JsonIgnore]
         public EventHandler SpaceMouseMoveEvent;
         #endregion
 
@@ -58,15 +63,17 @@ namespace LiveDescribe.Model
         /// <summary>
         /// Setter and Getters for all Commands related to a Space
         /// </summary>
-
+        [JsonIgnore]
         public RelayCommand DeleteSpaceCommand { get; private set; }
+        [JsonIgnore]
         public RelayCommand<MouseEventArgs> SpaceMouseDownCommand { get; private set; }
+        [JsonIgnore]
         public RelayCommand<MouseEventArgs> SpaceMouseMoveCommand { get; private set; }
+        [JsonIgnore]
         public RelayCommand SpaceMouseUpCommand { get; private set; }
         #endregion
 
         #region Properties
-
         /// <summary>
         /// Sets the text for the space
         /// </summary>
@@ -109,6 +116,7 @@ namespace LiveDescribe.Model
             get { return _endInVideo; }
         }
 
+        [JsonIgnore]
         public double Length
         {
             set
@@ -119,6 +127,7 @@ namespace LiveDescribe.Model
             get { return _length; }
         }
 
+        [JsonIgnore]
         public double X
         {
             set
@@ -129,6 +138,7 @@ namespace LiveDescribe.Model
             get { return _x; }
         }
 
+        [JsonIgnore]
         public double Y
         {
             set
@@ -139,6 +149,7 @@ namespace LiveDescribe.Model
             get { return _y; }
         }
 
+        [JsonIgnore]
         public double Height
         {
             set
@@ -149,6 +160,7 @@ namespace LiveDescribe.Model
             get { return _height; }
         }
 
+        [JsonIgnore]
         public double Width
         {
             set
