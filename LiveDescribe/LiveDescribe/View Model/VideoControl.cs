@@ -17,7 +17,6 @@ namespace LiveDescribe.View_Model
         private readonly ILiveDescribePlayer _mediaVideo;
         private AudioUtility _audioOperator;
         private List<short> _waveFormData;
-        private readonly BackgroundWorker _stripAudioWorker;
         private LoadingViewModel _loadingViewModel;
         private Header _audioHeader;
 
@@ -61,8 +60,6 @@ namespace LiveDescribe.View_Model
             MediaFailedCommand = new RelayCommand(MediaFailed, () => true);
 
             MediaEndedCommand = new RelayCommand(MediaEnded, () => true);
-            
-            _stripAudioWorker = new BackgroundWorker();
         }
         #endregion
 
@@ -254,44 +251,6 @@ namespace LiveDescribe.View_Model
         }
         #endregion
 
-        #region Background Workers
-        /// <summary>
-        /// this method works in the background to strip the audio from the current video
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        public void StripAudio(object sender, DoWorkEventArgs e)
-        {
-            _audioOperator = new AudioUtility(Project);
-            _audioOperator.StripAudio(_stripAudioWorker);
-            _waveFormData = _audioOperator.ReadWavData(_stripAudioWorker);
-            _audioHeader = _audioOperator.Header;
-            //_audioOperator.DeleteAudioFile();
-        }
-
-        /// <summary>
-        /// Gets called when the background worker is finished stripping the audio
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        public void OnFinishedStrippingAudio(object sender, RunWorkerCompletedEventArgs e)
-        {
-            EventHandler handler = OnStrippingAudioCompleted;
-            if (handler == null) return;
-            handler(this, EventArgs.Empty);
-        }
-
-        /// <summary>
-        /// Method that gets bounded to the _stripAudioWorker.ProgressChanged
-        /// everytime the progress changes in the audio worker it updates the property CurrentProgressAudioStripping
-        /// </summary>
-        /// <param name="sender">sender</param>
-        /// <param name="e">progresschangedeventargs</param>
-        public void StrippingAudioProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            _loadingViewModel.SetProgress("Importing Video", e.ProgressPercentage);
-        }
-        #endregion
 
         #region State Checks
         /// <summary>
@@ -408,11 +367,6 @@ namespace LiveDescribe.View_Model
             _mediaVideo.Stop();
             _mediaVideo.Close();
             _mediaVideo.CurrentState = LiveDescribeVideoStates.VideoNotLoaded;
-
-            //Unhook events from _stripAudioWorker
-            _stripAudioWorker.DoWork -= StripAudio;
-            _stripAudioWorker.RunWorkerCompleted -= OnFinishedStrippingAudio;
-            _stripAudioWorker.ProgressChanged -= StrippingAudioProgressChanged;
         }
 
         /// <summary>
@@ -425,13 +379,34 @@ namespace LiveDescribe.View_Model
             //changes the Path variable that is binded to the media element
             Path = p.VideoFile;
             Project = p;
-            _stripAudioWorker.DoWork += StripAudio;
-            _stripAudioWorker.RunWorkerCompleted += OnFinishedStrippingAudio;
-            _stripAudioWorker.ProgressChanged += StrippingAudioProgressChanged;
-            _stripAudioWorker.WorkerReportsProgress = true;
+
+            var worker = new BackgroundWorker { WorkerReportsProgress = true, };
+
+            //Strip the audio from the given project video
+            worker.DoWork += (sender, args) =>
+            {
+                _audioOperator = new AudioUtility(Project);
+                _audioOperator.StripAudio(worker);
+                _waveFormData = _audioOperator.ReadWavData(worker);
+                _audioHeader = _audioOperator.Header;
+            };
+
+            //Notify subscribers of stripping completion
+            worker.RunWorkerCompleted += (sender, args) =>
+            {
+                EventHandler handler = OnStrippingAudioCompleted;
+                if (handler == null) return;
+                handler(this, EventArgs.Empty);
+            };
+
+            worker.ProgressChanged += (sender, args) =>
+            {
+                _loadingViewModel.SetProgress("Importing Video", args.ProgressPercentage);
+            };
+
             _loadingViewModel.SetProgress("Importing Video", 0);
             _loadingViewModel.Visible = true;
-            _stripAudioWorker.RunWorkerAsync();
+            worker.RunWorkerAsync();
         }
         #endregion
     }
