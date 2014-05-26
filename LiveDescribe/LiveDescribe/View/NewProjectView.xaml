@@ -137,17 +137,20 @@
             HorizontalAlignment="Left"
             Orientation="Horizontal">
             <RadioButton
+                x:Name="YesCopyButton"
                 GroupName="CopyVideo"
                 Content=" Yes"
                 IsChecked="True"
+                Checked="CopyVideo_OnChecked"
                 Style="{StaticResource RadioButtonStyle}" />
             <RadioButton
+                x:Name="NoCopyButton"
                 GroupName="CopyVideo"
                 Content="No"
                 IsChecked="False"
+                Checked="CopyVideo_OnChecked"
                 Style="{StaticResource RadioButtonStyle}" />
         </StackPanel>
-
 
         <!--Controls for Project Folder-->
         <TextBlock

@@ -13,6 +13,7 @@ namespace LiveDescribe.Utilities
     /// </summary>
     public class ProgressFileCopier
     {
+        #region CopyFileEx Definitions
         /// <summary>
         /// Copies a file while using a callback function to notify progress.
         /// </summary>
@@ -25,7 +26,6 @@ namespace LiveDescribe.Utilities
         /// cancelled.</param>
         /// <param name="dwCopyFlags">Flags that determine how the file should be copied.</param>
         /// <returns>True on success and false on failure.</returns>
-        #region CopyFileEx Definitions
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool CopyFileEx(

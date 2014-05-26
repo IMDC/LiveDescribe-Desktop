@@ -20,6 +20,7 @@ namespace LiveDescribe.View_Model
         private string _videoPath;
         private string _projectName;
         private string _projectPath;
+        private bool _copyVideo;
 
         public bool? DialogResult { set; get; }
         public Project Project { private set; get; }
@@ -93,6 +94,16 @@ namespace LiveDescribe.View_Model
                 RaisePropertyChanged("ProjectPath");
             }
             get { return _projectPath; }
+        }
+
+        public bool CopyVideo
+        {
+            set
+            {
+                _copyVideo = value;
+                RaisePropertyChanged("CopyVideo");
+            }
+            get { return _copyVideo; }
         }
         #endregion
 
