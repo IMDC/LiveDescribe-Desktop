@@ -77,6 +77,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\SpaceAndDescriptionsTabControl.xaml.cs">
+      <DependentUpon>SpaceAndDescriptionsTabControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Converters\MillisecondsTimeConverterFormatter.cs" />
     <Compile Include="Events\AddDescriptionEventArgs.cs" />
     <Compile Include="Events\SpaceEventArgs.cs" />
     <Compile Include="LiveDescribeConstants.cs" />
@@ -98,6 +102,10 @@
     <Compile Include="View\PreferencesWindow.xaml.cs">
       <DependentUpon>PreferencesWindow.xaml</DependentUpon>
     </Compile>
+    <Page Include="Controls\SpaceAndDescriptionsTabControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\NewProjectView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -165,6 +173,8 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\LiveDescribe-Splashscreen.png" />
+    <Resource Include="Resources\Cursors\grab.cur" />
+    <Resource Include="Resources\Cursors\grabbing.cur" />
     <Content Include="Utilities\ffmpeg.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

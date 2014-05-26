@@ -7,11 +7,12 @@ using System.Windows.Data;
 
 namespace LiveDescribe.Converters
 {
-    class TimeConverterFormatter : IValueConverter
+
+    public class MillisecondsTimeConverterFormatter : IValueConverter
     {
         private StringBuilder _builder;
 
-        public TimeConverterFormatter()
+        public MillisecondsTimeConverterFormatter()
         {
             _builder = new StringBuilder();
         }
@@ -19,9 +20,19 @@ namespace LiveDescribe.Converters
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             _builder.Clear();
-            TimeSpan timespan = (TimeSpan)value;
 
-            return timespan.ToString("hh\\:mm\\:ss\\.fff");
+            int val = System.Convert.ToInt32(value);
+
+            int totalTimeLeft;
+
+            int hours = val / 3600000;
+            totalTimeLeft = (val - (hours * 3600000));
+            int minutes = totalTimeLeft / 60000;
+            totalTimeLeft = totalTimeLeft - (minutes * 60000);
+            int seconds = totalTimeLeft / 1000;
+            int milliseconds = totalTimeLeft - (seconds * 1000);
+            TimeSpan timespan = new TimeSpan(0, hours, minutes, seconds, milliseconds);
+            return timespan.ToString("h\\:mm\\:ss\\.fff");
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

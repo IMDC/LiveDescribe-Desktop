@@ -31,6 +31,9 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Commands
+        /// <summary>
+        /// Command used for when a space is added
+        /// </summary>
         public RelayCommand AddSpaceCommand { get; private set; }
         #endregion
 
@@ -59,16 +62,28 @@ namespace LiveDescribe.View_Model
             EventHandler<SpaceEventArgs> handler = SpaceAddedEvent;
             if (handler != null) handler(this, new SpaceEventArgs(space));
             Spaces.Add(space);
-            //Setup events for the space here that do not concern UI
-            
+            SetupEventsOnSpace(space);
         }
         #endregion
 
         #region Helper Methods
+
+        /// <summary>
+        /// Setup all the events on space that don't require any info from the UI
+        /// </summary>
+        /// <param name="space">The space that the events are setup on</param>
+        private void SetupEventsOnSpace(Space space)
+        {
+            space.SpaceDeleteEvent += (sender, e) =>
+                {
+                    Spaces.Remove(space);
+                };
+        }
+
         public void CloseSpacesViewModel()
         {
             Spaces = null;
-            Spaces = new ObservableCollection<Space>();
+            Spaces.Clear();
         }
         #endregion
     }

@@ -360,6 +360,12 @@ namespace LiveDescribe.View_Model
             desc.DescriptionDeleteEvent += (sender1, e1) =>
                 {
                     //remove description from appropriate lists
+                    if (desc.IsExtendedDescription)
+                        ExtendedDescriptions.Remove(desc);
+                    else if (!desc.IsExtendedDescription)
+                        RegularDescriptions.Remove(desc);
+
+                    AllDescriptions.Remove(desc);
                 };
         }
         #endregion
