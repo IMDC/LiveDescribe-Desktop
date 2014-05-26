@@ -187,26 +187,31 @@ namespace LiveDescribe.View_Model
             if (viewModel.DialogResult != true)
                 return;
 
-            LoadingViewModel.Visible = true;
+            if (viewModel.CopyVideo)
+            {
+                LoadingViewModel.Visible = true;
 
-            //Copy video file in background while updating the LoadingBorder
-            var worker = new BackgroundWorker()
-            {
-                WorkerReportsProgress = true,
-            };
-            var copier = new ProgressFileCopier();
-            worker.DoWork += (sender, args) =>
-            {
-                copier.ProgressChanged += (o, eventArgs) => worker.ReportProgress(eventArgs.ProgressPercentage);
-                copier.CopyFile(viewModel.VideoPath,viewModel.Project.VideoFile);
-            };
-            worker.ProgressChanged += (sender, args) =>
-            {
-                LoadingViewModel.SetProgress("Copying Video File", args.ProgressPercentage);
-            };
-            worker.RunWorkerCompleted += (sender, args) => SetProject(viewModel.Project);
+                //Copy video file in background while updating the LoadingBorder
+                var worker = new BackgroundWorker()
+                {
+                    WorkerReportsProgress = true,
+                };
+                var copier = new ProgressFileCopier();
+                worker.DoWork += (sender, args) =>
+                {
+                    copier.ProgressChanged += (o, eventArgs) => worker.ReportProgress(eventArgs.ProgressPercentage);
+                    copier.CopyFile(viewModel.VideoPath, viewModel.Project.VideoFile);
+                };
+                worker.ProgressChanged += (sender, args) =>
+                {
+                    LoadingViewModel.SetProgress("Copying Video File", args.ProgressPercentage);
+                };
+                worker.RunWorkerCompleted += (sender, args) => SetProject(viewModel.Project);
 
-            worker.RunWorkerAsync();
+                worker.RunWorkerAsync();
+            }
+            else
+                SetProject(viewModel.Project);
         }
 
         public void OpenProject()

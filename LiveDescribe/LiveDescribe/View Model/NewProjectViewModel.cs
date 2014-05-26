@@ -147,7 +147,22 @@ namespace LiveDescribe.View_Model
         /// </summary>
         private void CreateProject()
         {
-            Project p = new Project(_projectName, Path.GetFileName(_videoPath), _projectPath);
+            Project p;
+            if(_copyVideo)
+                p = new Project(_projectName, Path.GetFileName(_videoPath), _projectPath);
+            else
+            {
+                //Get a video path relative to the project folder
+                p = new Project(_projectName,_projectPath);
+                var projectPath = new Uri(p.ProjectFolderPath, UriKind.Absolute);
+                var relativeRoot = new Uri(_videoPath, UriKind.Absolute);
+
+                p.VideoFile = new ProjectFile
+                {
+                    AbsolutePath = _videoPath,
+                    RelativePath = relativeRoot.MakeRelativeUri(projectPath).ToString(),
+                };
+            }
 
             //Ensure that path is absolute
             if (!Path.IsPathRooted(p.ProjectFolderPath))
