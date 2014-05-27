@@ -206,12 +206,12 @@ namespace LiveDescribe.View_Model
             //Attempt to create files
             try
             {
-                log.Info("Attempting to create project directories");
+                log.Info("Creating project directories");
                 Directory.CreateDirectory(p.ProjectFolderPath);
                 Directory.CreateDirectory(p.CacheFolder);
                 Directory.CreateDirectory(p.DescriptionsFolder);
 
-                log.Info("Attempting to create project file");
+                log.Info("Creating project file");
                 FileWriter.WriteProjectFile(p);
             }
             //TODO: Catch individual exceptions?

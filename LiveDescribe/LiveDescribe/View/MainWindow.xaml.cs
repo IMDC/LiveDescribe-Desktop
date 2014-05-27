@@ -18,6 +18,11 @@ namespace LiveDescribe.View
     /// </summary>
     public partial class MainWindow : Window
     {
+        #region Logger
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger
+            (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        #endregion
+
         private enum SpacesActionState { None, Dragging, ResizingEndOfSpace, ResizingBeginningOfSpace };
 
         #region Constants
@@ -179,14 +184,12 @@ namespace LiveDescribe.View
             //captures the mouse when a mousedown request is sent to the Marker
             maincontrol.VideoControl.OnMarkerMouseDownRequested += (sender, e) =>
             {
-                Console.WriteLine("Marker Mouse Down");
                 Marker.CaptureMouse();
             };
 
             //updates the video position when the mouse is released on the Marker
             maincontrol.VideoControl.OnMarkerMouseUpRequested += (sender, e) =>
                 {
-                    Console.WriteLine("Marker Mouse Up");
                     var newValue = ((Canvas.GetLeft(Marker) + MarkerOffset) / AudioCanvas.Width) * _videoDuration;
 
                     UpdateVideoPosition((int)newValue);
@@ -196,7 +199,6 @@ namespace LiveDescribe.View
             //updates the canvas and video position when the Marker is moved
             maincontrol.VideoControl.OnMarkerMouseMoveRequested += (sender, e) =>
                 {
-                    Console.WriteLine("Marker Mouse Move");
                     if (!Marker.IsMouseCaptured) return;
 
                     if (ScrollRightIfCan(Canvas.GetLeft(Marker)))
@@ -232,7 +234,7 @@ namespace LiveDescribe.View
             _descriptionViewModel.RecordRequestedMicrophoneNotPluggedIn += (sender, e) =>
                 {
                     //perhaps show a popup when the Record button is pressed and there is no microphone plugged in
-                    Console.WriteLine("NO MICROPHONE CONNECTED!");
+                    log.Warn("No microphone connected");
                 };
 
             //When a description is added, attach an event to the StartInVideo and EndInVideo properties
@@ -254,7 +256,6 @@ namespace LiveDescribe.View
                         {
                             _originalPositionForDraggingDescription = e2.GetPosition(DescriptionCanvas).X;
                             _descriptionBeingDragged = e.Description;
-                            Console.WriteLine("Description Mouse Down");
                             DescriptionCanvas.CaptureMouse();
                             Mouse.SetCursor(_grabbingCursor);
                         }
@@ -500,7 +501,7 @@ namespace LiveDescribe.View
         /// <param name="e"></param>
         private void AudioCanvasBorder_SizeChanged_1(object sender, SizeChangedEventArgs e)
         {
-            Console.WriteLine("Audio Canvas Border Sized Changed");
+            log.Info("Audio Canvas Border Sized Changed");
 
             //Video is loaded
             if (_videoDuration != -1)
@@ -572,11 +573,9 @@ namespace LiveDescribe.View
         /// <param name="e"></param>
         private void NumberTimeline_OnMouseDown(object sender, MouseButtonEventArgs e)
         {
-
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 //execute the pause command because we want to pause the video when someone is clicking through the video
-                Console.WriteLine("Number TimeLine Mouse Down");
                 _videoControl.PauseCommand.Execute(this);
 
                 var xPosition = e.GetPosition(NumberTimelineBorder).X;
@@ -661,7 +660,7 @@ namespace LiveDescribe.View
         /// </summary>
         private void DrawWaveForm()
         {
-            Console.WriteLine("Drawing wave form");
+            log.Info("Drawing wave form");
 
             double width = TimeLine.ActualWidth;
 
@@ -786,7 +785,7 @@ namespace LiveDescribe.View
         /// </summary>
         private void SetTimeline()
         {
-            Console.WriteLine("Setting Timeline");
+            log.Info("Setting timeline");
             NumberTimeline.Width = _canvasWidth;
             AudioCanvas.Width = _canvasWidth;
             DescriptionCanvas.Width = _canvasWidth;

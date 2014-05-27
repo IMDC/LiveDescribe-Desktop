@@ -13,6 +13,11 @@ namespace LiveDescribe.Model
 {
     public class Space : INotifyPropertyChanged
     {
+        #region Logger
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger
+            (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        #endregion
+
         #region Instance Variables
         private double _startInVideo;
         private string _spaceText;
@@ -179,7 +184,7 @@ namespace LiveDescribe.Model
         /// </summary>
         public void DeleteSpace()
         {
-            Console.WriteLine("Space Deleted");
+            log.Info("Space deleted");
             EventHandler handler = SpaceDeleteEvent;
             if (handler != null) handler(this, EventArgs.Empty);
         }
@@ -190,7 +195,6 @@ namespace LiveDescribe.Model
         /// <param name="e"></param>
         public void SpaceMouseDown(MouseEventArgs e)
         {
-            Console.WriteLine("Space Mouse Down");
             EventHandler handler = SpaceMouseDownEvent;
             if (handler != null) handler(this, e);
         }
@@ -201,7 +205,6 @@ namespace LiveDescribe.Model
         /// <param name="e"></param>
         public void SpaceMouseMove(MouseEventArgs e)
         {
-            Console.WriteLine("Space Mouse Move");
             EventHandler handler = SpaceMouseMoveEvent;
             if (handler != null) handler(this, e);
         }
@@ -211,7 +214,6 @@ namespace LiveDescribe.Model
         /// </summary>
         public void SpaceMouseUp()
         {
-            Console.WriteLine("Space Mouse Up");
             EventHandler handler = SpaceMouseUpEvent;
             if (handler != null) handler(this, EventArgs.Empty);
         }

@@ -15,6 +15,11 @@ namespace LiveDescribe.Model
 {
     public class Description: INotifyPropertyChanged
     {
+        #region Logger
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger
+            (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        #endregion
+
         //All units of time is in milliseconds
         #region Instance variables
         private string _filename;
@@ -392,7 +397,6 @@ namespace LiveDescribe.Model
         public void DescriptionMouseUp()
         {
             EventHandler handler = DescriptionMouseUpEvent;
-            Console.WriteLine("Description Mouse Up");
             if (handler == null) return;
             handler(this, EventArgs.Empty);
         }
@@ -422,6 +426,7 @@ namespace LiveDescribe.Model
         /// </summary>
         public void DescriptionDelete()
         {
+            log.Info("Description deleted");
             EventHandler handler = DescriptionDeleteEvent;
             if (handler != null) handler(this, EventArgs.Empty);
         }
