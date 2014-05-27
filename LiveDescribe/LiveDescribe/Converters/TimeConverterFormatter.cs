@@ -9,18 +9,12 @@ namespace LiveDescribe.Converters
 {
     class TimeConverterFormatter : IValueConverter
     {
-        private StringBuilder _builder;
 
-        public TimeConverterFormatter()
-        {
-            _builder = new StringBuilder();
-        }
+        public TimeConverterFormatter() {}
 
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            _builder.Clear();
             TimeSpan timespan = (TimeSpan)value;
-
             return timespan.ToString("hh\\:mm\\:ss\\.fff");
         }
 
