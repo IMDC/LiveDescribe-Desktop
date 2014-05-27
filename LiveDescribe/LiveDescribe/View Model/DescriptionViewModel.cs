@@ -17,6 +17,10 @@ namespace LiveDescribe.View_Model
 {
     public class DescriptionViewModel : ViewModelBase
     {
+        #region Logger
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger
+            (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        #endregion
 
         #region Instance Variables
         private ObservableCollection<Description> _alldescriptions;      //this list contains all the descriptions both regular and extended
@@ -88,7 +92,7 @@ namespace LiveDescribe.View_Model
         /// <param name="param"></param>
         public void Record()
         {
-            Console.WriteLine("----------------------");
+            log.Info("Beginning to record audio");
             //if the button was clicked once already it is in the RecordingDescription State
             //so end the recording because it is the second click
             if (_mediaVideo.CurrentState == LiveDescribeVideoStates.RecordingDescription)
@@ -108,17 +112,17 @@ namespace LiveDescribe.View_Model
                         DeviceNumber = 0,
                         WaveFormat = new NAudio.Wave.WaveFormat(44100, NAudio.Wave.WaveIn.GetCapabilities(0).Channels)
                     };
-                    Console.WriteLine("Product Name of Microphone: " + NAudio.Wave.WaveIn.GetCapabilities(0).ProductName);
+                    log.Info("Product Name of Microphone: " + NAudio.Wave.WaveIn.GetCapabilities(0).ProductName);
                 }
                 catch (NAudio.MmException e)
                 {
                     //Microphone not plugged in
-                    Console.WriteLine("Creating new microphone (No Microphone) Exception....");
+                    log.Warn("Microphone not found");
                     HandleNoMicrophoneException(e);
                     return;
                 }
             }
-            Console.WriteLine("Recording..");
+            log.Info("Recording...");
          
             // get a random guid to name the wave file
             // there is an EXTREMELY small chance that the guid used has been used before
@@ -134,7 +138,7 @@ namespace LiveDescribe.View_Model
             catch (NAudio.MmException e)
             {
                 //Microphone not plugged in
-                Console.WriteLine("Previous Microphone was found then unplugged (No Microphone) Exception...");
+                log.Error("Previous Microphone was found then unplugged (No Microphone) Exception...");
                 HandleNoMicrophoneException(e);
                 return;
             }
@@ -282,7 +286,7 @@ namespace LiveDescribe.View_Model
         /// </summary>
         private void FinishRecordingDescription()
         {
-            Console.WriteLine("Finished Recording");
+            log.Info("Finished Recording");
             MicrophoneStream.StopRecording();
             string filename = _waveWriter.Filename;
             _waveWriter.Dispose();
@@ -296,7 +300,7 @@ namespace LiveDescribe.View_Model
 
         private void HandleNoMicrophoneException(NAudio.MmException e)
         {
-            Console.WriteLine(e.StackTrace);
+            log.Error("No microphone", e);
             EventHandler handlerNotPluggedIn = RecordRequestedMicrophoneNotPluggedIn;
             if (handlerNotPluggedIn == null) return;
             RecordRequestedMicrophoneNotPluggedIn(this, EventArgs.Empty);
@@ -351,7 +355,7 @@ namespace LiveDescribe.View_Model
                         int newStartInVideo = (int)(_mediaVideo.Position.TotalMilliseconds + (LiveDescribeConstants.EXTENDED_DESCRIPTION_START_INTERVAL_MAX - offset + 1)); 
                         _mediaVideo.Position = new TimeSpan(0,0,0,0,newStartInVideo);
                         _videoControl.PlayCommand.Execute(this);
-                        Console.WriteLine("Extended Description Finished!");
+                        log.Info("Extended description finished");
                     }
 
                 };

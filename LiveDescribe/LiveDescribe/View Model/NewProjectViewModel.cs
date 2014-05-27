@@ -217,7 +217,6 @@ namespace LiveDescribe.View_Model
             //TODO: Catch individual exceptions?
             catch (Exception e)
             {
-                Console.WriteLine(e.StackTrace);
                 MessageBox.Show("An error occured while attempting to create the project.",
                     "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 

@@ -21,6 +21,11 @@ namespace LiveDescribe.View_Model
 {
     class MainControl : ViewModelBase
     {
+        #region Logger
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger
+            (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        #endregion
+
         #region Constants
         public const string DefaultWindowTitle = "Live Describe";
         #endregion
@@ -77,7 +82,7 @@ namespace LiveDescribe.View_Model
             _preferences.ApplyRequested += (sender, e) =>
                 {
                     _descriptionviewmodel.MicrophoneStream = Properties.Settings.Default.Microphone;
-                    Console.WriteLine("Product Name of Apply Requested Microphone: " + NAudio.Wave.WaveIn.GetCapabilities(_descriptionviewmodel.MicrophoneStream.DeviceNumber).ProductName);
+                    log.Info("Product Name of Apply Requested Microphone: " + NAudio.Wave.WaveIn.GetCapabilities(_descriptionviewmodel.MicrophoneStream.DeviceNumber).ProductName);
                 };
 
             _videocontrol.PlayRequested += (sender, e) =>
@@ -164,7 +169,7 @@ namespace LiveDescribe.View_Model
         {
             //TODO: ask to save here before closing everything
             //TODO: put it in a background worker and create a loading screen (possibly a general use control)
-            Console.WriteLine("Closed Project");
+            log.Info("Closed Project");
 
             _descriptionviewmodel.CloseDescriptionViewModel();
             _videocontrol.CloseVideoControl();
@@ -373,7 +378,7 @@ namespace LiveDescribe.View_Model
                 if (!currentDescription.IsExtendedDescription &&
                     offset >= 0 && offset < (currentDescription.EndWaveFileTime - currentDescription.StartWaveFileTime))
                 {
-                    Console.WriteLine("Playing Regular Description");
+                    log.Info("Playing Regular Description");
                     currentDescription.Play(offset);
                     break;
                 }
@@ -381,7 +386,7 @@ namespace LiveDescribe.View_Model
                     //if it is equal then the video time matches when the description should start dead on
                     offset < LiveDescribeConstants.EXTENDED_DESCRIPTION_START_INTERVAL_MAX && offset >= 0)
                 {
-                    DispatcherHelper.UIDispatcher.Invoke(delegate { _videocontrol.PauseCommand.Execute(this); Console.WriteLine("Playing Extended Description"); currentDescription.Play(); });
+                    DispatcherHelper.UIDispatcher.Invoke(delegate { _videocontrol.PauseCommand.Execute(this); log.Info("Playing Extended Description"); currentDescription.Play(); });
                     break;
                 }
             }

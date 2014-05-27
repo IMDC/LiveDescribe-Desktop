@@ -13,6 +13,11 @@ namespace LiveDescribe.View_Model
 {
     public class VideoControl : ViewModelBase
     {
+        #region Logger
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger
+            (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        #endregion
+
         #region Instance Variables
         private readonly ILiveDescribePlayer _mediaVideo;
         private AudioUtility _audioOperator;
@@ -130,7 +135,6 @@ namespace LiveDescribe.View_Model
         public void OnMarkerMouseUp()
         {
             EventHandler handler = OnMarkerMouseUpRequested;
-            Console.WriteLine("Marker MouseUp");
             if (handler == null) return;
             handler(this, EventArgs.Empty);
         }
@@ -141,7 +145,6 @@ namespace LiveDescribe.View_Model
         /// <param name="param"></param>
         public void OnMarkerMouseDown()
         {
-            Console.WriteLine("Marker was pressed down");
             this.PauseCommand.Execute(this);
             EventHandler handler = OnMarkerMouseDownRequested;
             if (handler == null) return;
@@ -153,7 +156,7 @@ namespace LiveDescribe.View_Model
         /// <param name="param">params</param>
         public void Play()
         {
-            Console.WriteLine("Play");
+            log.Info("Play video");
 
             EventHandler handler = PlayRequested;
             _mediaVideo.CurrentState = LiveDescribeVideoStates.PlayingVideo;
@@ -169,7 +172,7 @@ namespace LiveDescribe.View_Model
         /// <param name="param">params</param>
         public void Pause()
         {
-            Console.WriteLine("Pause");
+            log.Info("Pause video");
 
             EventHandler handler = PauseRequested;
             _mediaVideo.CurrentState = LiveDescribeVideoStates.PausedVideo;
@@ -200,7 +203,7 @@ namespace LiveDescribe.View_Model
         public void VideoOpen()
         {
             EventHandler handler = VideoOpenedRequested;
-            Console.WriteLine("LOADED");
+            log.Info("Video loaded");
             _mediaVideo.CurrentState = LiveDescribeVideoStates.VideoLoaded;
 
             if (handler == null) return;
@@ -213,7 +216,7 @@ namespace LiveDescribe.View_Model
         /// <param name="param">params</param>
         public void Mute()
         {
-            Console.WriteLine("Mute");
+            log.Info("Video muted");
 
             EventHandler handler = MuteRequested;
 
@@ -230,7 +233,7 @@ namespace LiveDescribe.View_Model
         public void MediaFailed()
         {
             EventHandler handler = MediaFailedEvent;
-            Console.WriteLine("Media Failed to load...");
+            log.Warn("Media Failed to load...");
             _mediaVideo.CurrentState = LiveDescribeVideoStates.VideoNotLoaded;
             if (handler == null) return;
             handler(this, EventArgs.Empty);
@@ -243,7 +246,7 @@ namespace LiveDescribe.View_Model
         public void MediaEnded()
         {
             EventHandler handler = MediaEndedEvent;
-            Console.WriteLine("Media Finished");
+            log.Info("Video has ended");
             //Changing state back to video loaded because it is starting from the beginning
             _mediaVideo.CurrentState = LiveDescribeVideoStates.VideoLoaded;
             if (handler == null) return;

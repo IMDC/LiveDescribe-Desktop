@@ -385,7 +385,7 @@ namespace LiveDescribe.View
             catch (System.Threading.Tasks.TaskCanceledException exception)
             {
                 //do nothing this exception is thrown when the application is exited
-                Console.WriteLine(exception.ToString());
+                log.Warn("Task Cancelled exception", exception);
             }
         }
 
@@ -554,7 +554,6 @@ namespace LiveDescribe.View
                 _descriptionBeingDragged.StartInVideo = (_videoDuration / AudioCanvas.Width) * (_descriptionBeingDragged.X);
                 _descriptionBeingDragged.EndInVideo = _descriptionBeingDragged.StartInVideo + (_descriptionBeingDragged.EndWaveFileTime - _descriptionBeingDragged.StartWaveFileTime);
                 Mouse.SetCursor(_grabbingCursor);
-                Console.WriteLine("DescriptionMouse Move");
             }
         }
 
