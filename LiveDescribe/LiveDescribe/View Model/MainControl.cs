@@ -120,7 +120,15 @@ namespace LiveDescribe.View_Model
                     if (handler != null) handler(sender, e);
                 };
 
-            _videocontrol.OnStrippingAudioCompleted += (sender, args) => SaveProject();
+            _videocontrol.OnStrippingAudioCompleted += (sender, args) =>
+            {
+                foreach (var space in _videocontrol.Spaces)
+                {
+                    _spacesviewmodel.AddSpace(space);
+                }
+
+                SaveProject();
+            };
         }
         #endregion
 
