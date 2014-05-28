@@ -33,6 +33,8 @@ namespace LiveDescribe.View_Model
         /// <summary>Keeps track of the starting time of a description on recording.</summary>
         private double _descriptionStartTime;
 
+        private bool _recordingExtendedDescription;
+
         //this variable should be used as little as possible in this class
         //most interactions between the  descriptionviewmodel and the videocontrol should be in the maincontrol
         private VideoControl _videoControl;
@@ -43,10 +45,9 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Event Handlers
-        public EventHandler<DescriptionEventArgs> AddDescriptionEvent;
-        public EventHandler RecordRequested;
-        public EventHandler RecordRequestedMicrophoneNotPluggedIn;
-        public bool _recordingExtendedDescription;
+        public event EventHandler<DescriptionEventArgs> AddDescriptionEvent;
+        public event EventHandler RecordRequested;
+        public event EventHandler RecordRequestedMicrophoneNotPluggedIn;
         #endregion
 
         #region Constructors
@@ -145,10 +146,9 @@ namespace LiveDescribe.View_Model
             //save the current state so when the button is pressed again you can restore it back to that state
             _previousVideoState = _mediaVideo.CurrentState;
 
-            EventHandler handlerRecordRequested = RecordRequested;
             if (_mediaVideo != null) _mediaVideo.CurrentState = LiveDescribeVideoStates.RecordingDescription;
-            if (handlerRecordRequested == null) return;
-            handlerRecordRequested(this, EventArgs.Empty);
+
+            OnRecordRequested();
         }
         #endregion
 
@@ -263,7 +263,7 @@ namespace LiveDescribe.View_Model
 
         #endregion
 
-        #region Private Event Methods
+        #region Private Handler Event Methods
         /// <summary>
         /// Write to the wave file, on data available in the microphone stream
         /// </summary>
@@ -301,9 +301,7 @@ namespace LiveDescribe.View_Model
         private void HandleNoMicrophoneException(NAudio.MmException e)
         {
             log.Error("No microphone", e);
-            EventHandler handlerNotPluggedIn = RecordRequestedMicrophoneNotPluggedIn;
-            if (handlerNotPluggedIn == null) return;
-            RecordRequestedMicrophoneNotPluggedIn(this, EventArgs.Empty);
+            OnRecordRequestedMicrophoneNotPluggedIn();
         }
 
         /// <summary>
@@ -331,9 +329,7 @@ namespace LiveDescribe.View_Model
             SetupEventsOnDescription(desc);
 
             AllDescriptions.Add(desc);
-            EventHandler<DescriptionEventArgs> addDescriptionHandler = AddDescriptionEvent;
-            if (addDescriptionHandler == null) return;
-            addDescriptionHandler(this, new DescriptionEventArgs(desc));
+            OnAddDescription(desc);
         }
 
         /// <summary>
@@ -384,6 +380,30 @@ namespace LiveDescribe.View_Model
             ExtendedDescriptions.Clear();
             RegularDescriptions.Clear();
             _waveWriter = null;
+        }
+        #endregion
+
+        #region Event Invokation Methods
+
+        private void OnAddDescription(Description desc)
+        {
+            EventHandler<DescriptionEventArgs> addDescriptionHandler = AddDescriptionEvent;
+            if (addDescriptionHandler != null)
+                addDescriptionHandler(this, new DescriptionEventArgs(desc));
+        }
+
+        private void OnRecordRequested()
+        {
+            EventHandler handlerRecordRequested = RecordRequested;
+            if (handlerRecordRequested != null)
+                handlerRecordRequested(this, EventArgs.Empty);
+        }
+
+        private void OnRecordRequestedMicrophoneNotPluggedIn()
+        {
+            EventHandler handlerNotPluggedIn = RecordRequestedMicrophoneNotPluggedIn;
+            if (handlerNotPluggedIn != null)
+                RecordRequestedMicrophoneNotPluggedIn(this, EventArgs.Empty);
         }
         #endregion
     }
