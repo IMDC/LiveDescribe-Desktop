@@ -24,6 +24,7 @@ namespace LiveDescribe.View_Model
         private List<short> _waveFormData;
         private LoadingViewModel _loadingViewModel;
         private Header _audioHeader;
+        private List<Space> _spaceData;
 
         public Project Project { get; set; }
         #endregion
@@ -356,6 +357,14 @@ namespace LiveDescribe.View_Model
             set { _audioHeader = value; }
             get { return this._audioHeader; }
         }
+
+        /// <summary>
+        /// Get the space data 
+        /// </summary>
+        public List<Space> Spaces
+        {
+            get { return this._spaceData; }
+        }
         #endregion
 
         #region Helper Methods
@@ -392,6 +401,7 @@ namespace LiveDescribe.View_Model
                 _audioOperator.StripAudio(worker);
                 _waveFormData = _audioOperator.ReadWavData(worker);
                 _audioHeader = _audioOperator.Header;
+                _spaceData = _audioOperator.findSpaces(_waveFormData);
             };
 
             //Notify subscribers of stripping completion
