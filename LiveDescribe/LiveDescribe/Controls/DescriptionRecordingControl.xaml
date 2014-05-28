@@ -28,7 +28,8 @@
                 Style="{StaticResource ControlPanelStyle}"
                 Content="{Binding Path=IsRecording,
                 Converter={StaticResource BoolToRecordingContentConverter}}"
-                Width="100" />
+                Width="100"
+                Height="20"/>
         </StackPanel>
     </Grid>
 </UserControl>

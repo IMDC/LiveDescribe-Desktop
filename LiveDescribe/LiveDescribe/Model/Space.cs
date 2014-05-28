@@ -22,6 +22,7 @@ namespace LiveDescribe.Model
         private double _y;
         private double _height;
         private double _width;
+        private bool _isSelected;
         #endregion
 
         #region Event Handlers
@@ -38,6 +39,7 @@ namespace LiveDescribe.Model
         #region Constructors
         public Space(double starttime, double endtime)
         {
+            IsSelected = false;
             StartInVideo = starttime;
             EndInVideo = endtime;
             DeleteSpaceCommand = new RelayCommand(DeleteSpace, () => true);
@@ -49,6 +51,8 @@ namespace LiveDescribe.Model
 
         public Space() 
         {
+            IsSelected = false;
+
             DeleteSpaceCommand = new RelayCommand(DeleteSpace, () => true);
 
             SpaceMouseUpCommand = new RelayCommand(SpaceMouseUp, () => true);
@@ -170,6 +174,18 @@ namespace LiveDescribe.Model
             }
             get { return _width; }
         }
+
+        [JsonIgnore]
+        public bool IsSelected
+        {
+            set
+            {
+                _isSelected = value;
+                NotifyPropertyChanged("IsSelected");
+            }
+            get { return _isSelected; }
+        }
+
         #endregion
 
         #region BindingFunctions

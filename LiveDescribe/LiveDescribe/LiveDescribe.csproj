@@ -83,6 +83,9 @@
     <Compile Include="Controls\DescriptionRecordingControl.xaml.cs">
       <DependentUpon>DescriptionRecordingControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\MarkingSpacesControl.xaml.cs">
+      <DependentUpon>MarkingSpacesControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\MediaControl.xaml.cs">
       <DependentUpon>MediaControl.xaml</DependentUpon>
     </Compile>
@@ -113,6 +116,10 @@
       <DependentUpon>PreferencesWindow.xaml</DependentUpon>
     </Compile>
     <Page Include="Controls\DescriptionRecordingControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\MarkingSpacesControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

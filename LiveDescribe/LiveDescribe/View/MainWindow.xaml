@@ -124,7 +124,7 @@
                     <ColumnDefinition Width="142*" />
                     <ColumnDefinition Width="140*" />
                 </Grid.ColumnDefinitions>
-
+                
                 <controls:DescriptionRecordingControl
                     DataContext="{Binding DescriptionViewModel}"
                     Grid.Column="0"
@@ -245,12 +245,29 @@
                                                     <Rectangle.Style>
                                                         <Style
                                                             TargetType="Rectangle">
-                                                            <Setter
-                                                                Property="Fill"
-                                                                Value="Blue" />
-                                                            <Setter
-                                                                Property="Opacity"
-                                                                Value="0.2" />
+                                                            
+                                                            <Style.Triggers>
+                                                                <DataTrigger
+                                                                    Binding="{Binding IsSelected}"
+                                                                    Value="false">
+                                                                    <Setter
+                                                                        Property="Fill"
+                                                                        Value="Blue" />
+                                                                    <Setter
+                                                                        Property="Opacity"
+                                                                        Value="0.2" />
+                                                                </DataTrigger>
+                                                                <DataTrigger
+                                                                    Binding="{Binding IsSelected}"
+                                                                    Value="true">
+                                                                    <Setter
+                                                                        Property="Fill"
+                                                                        Value="Yellow" />
+                                                                    <Setter
+                                                                        Property="Opacity"
+                                                                        Value="0.2" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
                                                         </Style>
                                                     </Rectangle.Style>
                                                     <i:Interaction.Triggers>
@@ -382,27 +399,48 @@
                                                         <Style
                                                             TargetType="Rectangle">
                                                             <Style.Triggers>
-                                                                <!--If the description is not an extended description fill it Green-->
-                                                                <DataTrigger
-                                                                    Binding="{Binding IsExtendedDescription}"
-                                                                    Value="false">
-                                                                    <Setter
+                                                                <MultiDataTrigger>
+                                                                    <MultiDataTrigger.Conditions>
+                                                                        <Condition
+                                                                            Binding="{Binding IsExtendedDescription}"
+                                                                            Value="true"/>
+                                                                        <Condition
+                                                                            Binding="{Binding IsSelected}"
+                                                                            Value="false"/>
+                                                                    </MultiDataTrigger.Conditions>
+                                                                    <Setter 
                                                                         Property="Fill"
-                                                                        Value="Green" />
+                                                                        Value="Red"/>
                                                                     <Setter
                                                                         Property="Opacity"
-                                                                        Value="0.25" />
-                                                                </DataTrigger>
-                                                                <!--If the description is an extended description fill it Red-->
+                                                                        Value="0.25"/>
+                                                                </MultiDataTrigger>
+                                                                
+                                                                <MultiDataTrigger>
+                                                                    <MultiDataTrigger.Conditions>
+                                                                        <Condition
+                                                                            Binding="{Binding IsExtendedDescription}"
+                                                                            Value="false"/>
+                                                                        <Condition
+                                                                            Binding="{Binding IsSelected}"
+                                                                            Value="false"/>
+                                                                    </MultiDataTrigger.Conditions>
+                                                                    <Setter 
+                                                                        Property="Fill"
+                                                                        Value="Green"/>
+                                                                    <Setter
+                                                                        Property="Opacity"
+                                                                        Value="0.25"/>
+                                                                </MultiDataTrigger>
                                                                 <DataTrigger
-                                                                    Binding="{Binding IsExtendedDescription}"
+                                                                    Binding="{Binding IsSelected}"
                                                                     Value="true">
                                                                     <Setter
                                                                         Property="Fill"
-                                                                        Value="Red" />
+                                                                        Value="Yellow"/>
                                                                     <Setter
                                                                         Property="Opacity"
-                                                                        Value="0.25" />
+                                                                        Value="0.25"/>
                                                                 </DataTrigger>
                                                             </Style.Triggers>
                                                         </Style>
