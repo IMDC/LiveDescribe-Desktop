@@ -34,51 +34,51 @@ namespace LiveDescribe.Utilities
 
         public static Header ReadWaveFormHeader(Project project)
         {
-            log.Info("Reading waveform header from " + project.WaveFormHeaderFile);
+            log.Info("Reading waveform header from " + project.Files.WaveFormHeader);
             Header header;
-            using (var file = File.Open(project.WaveFormHeaderFile, FileMode.Open, FileAccess.Read))
+            using (var file = File.Open(project.Files.WaveFormHeader, FileMode.Open, FileAccess.Read))
             {
                 var bin = new BinaryFormatter();
                 header = (Header)bin.Deserialize(file);
             }
-            log.Info("Waveform header successfully read from " + project.WaveFormHeaderFile);
+            log.Info("Waveform header successfully read from " + project.Files.WaveFormHeader);
             return header;
         }
 
         public static List<short> ReadWaveFormFile(Project project)
         {
             List<short> waveFormData;
-            log.Info("Reading waveform data from " + project.WaveFormFile);
-            using (var file = File.Open(project.WaveFormFile, FileMode.Open, FileAccess.Read))
+            log.Info("Reading waveform data from " + project.Files.WaveForm);
+            using (var file = File.Open(project.Files.WaveForm, FileMode.Open, FileAccess.Read))
             {
                 var bin = new BinaryFormatter();
                 waveFormData = (List<short>) bin.Deserialize(file);
             }
-            log.Info("Waveform data successfully read from " + project.WaveFormFile);
+            log.Info("Waveform data successfully read from " + project.Files.WaveForm);
             return waveFormData;
         }
 
         public static List<Description> ReadDescriptionsFile(Project project)
         {
             List<Description> descriptions;
-            log.Info("Reading descriptions from " + project.DescriptionsFile);
-            using (var r = new StreamReader(project.DescriptionsFile))
+            log.Info("Reading descriptions from " + project.Files.Descriptions);
+            using (var r = new StreamReader(project.Files.Descriptions))
             {
                 descriptions = JsonConvert.DeserializeObject<List<Description>>(r.ReadToEnd());
             }
-            log.Info("Descriptions successfully read from " + project.DescriptionsFile);
+            log.Info("Descriptions successfully read from " + project.Files.Descriptions);
             return descriptions;
         }
 
         public static List<Space> ReadSpacesFile(Project project)
         {
             List<Space> spaces;
-            log.Info("Reading spaces from " + project.SpacesFile);
-            using (var r = new StreamReader(project.SpacesFile))
+            log.Info("Reading spaces from " + project.Files.Spaces);
+            using (var r = new StreamReader(project.Files.Spaces))
             {
                 spaces = JsonConvert.DeserializeObject<List<Space>>(r.ReadToEnd());
             }
-            log.Info("Spaces successfully read from " + project.SpacesFile);
+            log.Info("Spaces successfully read from " + project.Files.Spaces);
             return spaces;
         }
     }

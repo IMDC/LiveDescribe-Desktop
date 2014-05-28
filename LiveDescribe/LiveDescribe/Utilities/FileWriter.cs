@@ -25,9 +25,9 @@ namespace LiveDescribe.Utilities
         /// <param name="project"></param>
         public static void WriteProjectFile(Project project)
         {
-            log.Info("Saving project file to " + project.ProjectFile);
+            log.Info("Saving project file to " + project.Files.Project);
             var serializer = new JsonSerializer { Formatting = Formatting.Indented };
-            using (var sw = new StreamWriter(project.ProjectFile, false))
+            using (var sw = new StreamWriter(project.Files.Project, false))
             {
                 serializer.Serialize(sw, project, typeof(Project));
             }
@@ -41,8 +41,8 @@ namespace LiveDescribe.Utilities
         /// <param name="header"></param>
         public static void WriteWaveFormHeader(Project project, Header header)
         {
-            log.Info("Saving waveform header file to " + project.WaveFormHeaderFile);
-            using (var file = File.Open(project.WaveFormHeaderFile, FileMode.Create, FileAccess.Write))
+            log.Info("Saving waveform header file to " + project.Files.WaveFormHeader);
+            using (var file = File.Open(project.Files.WaveFormHeader, FileMode.Create, FileAccess.Write))
             {
                 var bin = new BinaryFormatter();
                 bin.Serialize(file, header);
@@ -51,14 +51,14 @@ namespace LiveDescribe.Utilities
         }
 
         /// <summary>
-        /// Writes audio data to the file path specified by project.WaveFormFile.AbsolutePath.
+        /// Writes audio data to the file path specified by project.Files.WaveForm.AbsolutePath.
         /// </summary>
         /// <param name="project"></param>
         /// <param name="waveFormData"></param>
         public static void WriteWaveFormFile(Project project, List<short> waveFormData)
         {
-            log.Info("Saving waveform data file to " + project.WaveFormHeaderFile);
-            using (var file = File.Open(project.WaveFormFile, FileMode.Create, FileAccess.Write))
+            log.Info("Saving waveform data file to " + project.Files.WaveForm);
+            using (var file = File.Open(project.Files.WaveForm, FileMode.Create, FileAccess.Write))
             {
                 var bin = new BinaryFormatter();
                 bin.Serialize(file, waveFormData);
@@ -68,9 +68,9 @@ namespace LiveDescribe.Utilities
 
         public static void WriteDescriptionsFile(Project project, ObservableCollection<Description> descriptions)
         {
-            log.Info("Saving descriptions file to " + project.DescriptionsFile);
+            log.Info("Saving descriptions file to " + project.Files.Descriptions);
             var json = new JsonSerializer { Formatting = Formatting.Indented };
-            using (var sw = new StreamWriter(project.DescriptionsFile))
+            using (var sw = new StreamWriter(project.Files.Descriptions))
             {
                 json.Serialize(sw, descriptions.ToList());
             }
@@ -79,9 +79,9 @@ namespace LiveDescribe.Utilities
 
         public static void WriteSpacesFile(Project project, ObservableCollection<Space> spaces)
         {
-            log.Info("Saving spaces file to " + project.SpacesFile);
+            log.Info("Saving spaces file to " + project.Files.Spaces);
             var json = new JsonSerializer() { Formatting = Formatting.Indented };
-            using (var sw = new StreamWriter(project.SpacesFile))
+            using (var sw = new StreamWriter(project.Files.Spaces))
             {
                 json.Serialize(sw, spaces.ToList());
             }

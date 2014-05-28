@@ -380,7 +380,7 @@ namespace LiveDescribe.View_Model
         public void SetupAndStripAudio(Project p)
         {
             //changes the Path variable that is binded to the media element
-            Path = p.VideoFile;
+            Path = p.Files.Video;
             Project = p;
 
             var worker = new BackgroundWorker { WorkerReportsProgress = true, };

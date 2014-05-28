@@ -168,10 +168,10 @@ namespace LiveDescribe.View_Model
             {
                 //Get a video path relative to the project folder
                 p = new Project(_projectName, _projectPath);
-                var projectPath = new Uri(p.ProjectFolderPath, UriKind.Absolute);
+                var projectPath = new Uri(p.Folders.Project, UriKind.Absolute);
                 var relativeRoot = new Uri(_videoPath, UriKind.Absolute);
 
-                p.VideoFile = new ProjectFile
+                p.Files.Video = new ProjectFile
                 {
                     AbsolutePath = _videoPath,
                     RelativePath = relativeRoot.MakeRelativeUri(projectPath).ToString(),
@@ -180,7 +180,7 @@ namespace LiveDescribe.View_Model
             }
 
             //Ensure that path is absolute
-            if (!Path.IsPathRooted(p.ProjectFolderPath))
+            if (!Path.IsPathRooted(p.Folders.Project))
             {
                 MessageBox.Show("Project location must be a root path.", "Error", MessageBoxButton.OK,
                     MessageBoxImage.Error);
@@ -188,10 +188,10 @@ namespace LiveDescribe.View_Model
                 return;
             }
 
-            if (Directory.Exists(p.ProjectFolderPath))
+            if (Directory.Exists(p.Folders.Project))
             {
                 var text = string.Format("The folder {0} already exists. Do you wish to overwrite its contents?",
-                    p.ProjectFolderPath);
+                    p.Folders.Project);
                 var result = MessageBox.Show(text, "Warning", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
 
                 log.Warn("Project folder already exists");
@@ -207,9 +207,9 @@ namespace LiveDescribe.View_Model
             try
             {
                 log.Info("Creating project directories");
-                Directory.CreateDirectory(p.ProjectFolderPath);
-                Directory.CreateDirectory(p.CacheFolder);
-                Directory.CreateDirectory(p.DescriptionsFolder);
+                Directory.CreateDirectory(p.Folders.Project);
+                Directory.CreateDirectory(p.Folders.Cache);
+                Directory.CreateDirectory(p.Folders.Descriptions);
 
                 log.Info("Creating project file");
                 FileWriter.WriteProjectFile(p);

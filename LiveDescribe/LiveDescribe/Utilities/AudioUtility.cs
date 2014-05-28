@@ -26,8 +26,8 @@ namespace LiveDescribe.Utilities
  
         public AudioUtility(Project p)
         {
-            _videoFile = p.VideoFile;
-            _audioFile = Path.Combine(p.CacheFolder, Path.GetFileNameWithoutExtension(_videoFile) + ".wav");
+            _videoFile = p.Files.Video;
+            _audioFile = Path.Combine(p.Folders.Cache, Path.GetFileNameWithoutExtension(_videoFile) + ".wav");
             _header = new Header();
         }
 

@@ -13,6 +13,7 @@ namespace LiveDescribe.Model
     /// </summary>
     public class Project
     {
+        #region Inner Class definitions
         /// <summary>
         /// Contains the default file names and extensions for program files.
         /// </summary>
@@ -22,7 +23,7 @@ namespace LiveDescribe.Model
             /// The file extension for a project file.
             /// </summary>
             public const string ProjectExtension = ".ld";
-            
+
             public const string CacheFolder = "projectCache";
 
             public const string WaveFormHeader = "wfheader.bin";
@@ -37,64 +38,87 @@ namespace LiveDescribe.Model
         }
 
         /// <summary>
+        /// Contains all the files relevant to the project.
+        /// </summary>
+        public class ProjectFiles
+        {
+            /// <summary>
+            /// The file containing a list of descriptions.
+            /// </summary>
+            [JsonProperty(Required = Required.Always)]
+            public ProjectFile Descriptions { set; get; }
+
+            /// <summary>
+            /// The file containing all project info on disk.
+            /// </summary>
+            [JsonProperty(Required = Required.Always)]
+            public ProjectFile Project { set; get; }
+
+            /// <summary>
+            /// The file containing spaces.
+            /// </summary>
+            [JsonProperty(Required = Required.Always)]
+            public ProjectFile Spaces { set; get; }
+
+            /// <summary>
+            /// The video file used in the project.
+            /// </summary>
+            [JsonProperty(Required = Required.Always)]
+            public ProjectFile Video { set; get; }
+
+            /// <summary>
+            /// The file that contains .wav header data for the waveform file.
+            /// </summary>
+            [JsonProperty(Required = Required.Always)]
+            public ProjectFile WaveFormHeader { set; get; }
+
+            /// <summary>
+            /// The file that contains the waveform data.
+            /// </summary>
+            [JsonProperty(Required = Required.Always)]
+            public ProjectFile WaveForm { set; get; }
+
+            public ProjectFiles()
+            { }
+        }
+
+        /// <summary>
+        /// Contains all the folders relevant to the project.
+        /// </summary>
+        public class ProjectFolders
+        {
+            /// <summary>
+            /// The absolute path to the project folder.
+            /// </summary>
+            [JsonProperty(Required = Required.Always)]
+            public string Project { set; get; }
+
+            /// <summary>
+            /// The Folder containing cacheable data relating to the project.
+            /// </summary>
+            [JsonProperty(Required = Required.Always)]
+            public ProjectFile Cache { set; get; }
+
+            /// <summary>
+            /// The folder containing the description sound files.
+            /// </summary>
+            [JsonProperty(Required = Required.Always)]
+            public ProjectFile Descriptions { set; get; }
+
+            public ProjectFolders()
+            { }
+        }
+        #endregion
+
+        /// <summary>
         /// The name of the project.
         /// </summary>
         [JsonProperty(Required = Required.Always)]
         public string ProjectName { set; get; }
 
-        /// <summary>
-        /// The absolute path to the project folder.
-        /// </summary>
-        [JsonProperty(Required = Required.Always)]
-        public string ProjectFolderPath { set; get; }
+        public ProjectFiles Files { set; get; }
 
-        /// <summary>
-        /// The Folder containing cacheable data relating to the project.
-        /// </summary>
-        [JsonProperty(Required = Required.Always)]
-        public ProjectFile CacheFolder { set; get; }
-
-        /// <summary>
-        /// The folder containing the description sound files.
-        /// </summary>
-        [JsonProperty(Required = Required.Always)]
-        public ProjectFile DescriptionsFolder { set; get; }
-
-        /// <summary>
-        /// The file containing a list of descriptions.
-        /// </summary>
-        [JsonProperty(Required = Required.Always)]
-        public ProjectFile DescriptionsFile { set; get; }
-
-        /// <summary>
-        /// The file containing all project info on disk.
-        /// </summary>
-        [JsonProperty(Required = Required.Always)]
-        public ProjectFile ProjectFile { set; get; }
-
-        /// <summary>
-        /// The file containing spaces.
-        /// </summary>
-        [JsonProperty(Required = Required.Always)]
-        public ProjectFile SpacesFile { set; get; }
-
-        /// <summary>
-        /// The video file used in the project.
-        /// </summary>
-        [JsonProperty(Required = Required.Always)]
-        public ProjectFile VideoFile { set; get; }
-
-        /// <summary>
-        /// The file that contains .wav header data for the waveform file.
-        /// </summary>
-        [JsonProperty(Required = Required.Always)]
-        public ProjectFile WaveFormHeaderFile { set; get; }
-
-        /// <summary>
-        /// The file that contains the waveform data.
-        /// </summary>
-        [JsonProperty(Required = Required.Always)]
-        public ProjectFile WaveFormFile { set; get; }
+        public ProjectFolders Folders { set; get; }
 
         /// <summary>
         /// Empty Constructor to allow for JSON serialization.
@@ -111,20 +135,26 @@ namespace LiveDescribe.Model
         public Project(string projectName, string projectPath)
         {
             ProjectName = projectName;
-            ProjectFolderPath = Path.Combine(projectPath, projectName);
 
-            //Folders
-            CacheFolder = new ProjectFile(ProjectFolderPath, Names.CacheFolder);
-            DescriptionsFolder = new ProjectFile(ProjectFolderPath, Names.DescriptionsFolder);
+            string projectFolder = Path.Combine(projectPath, projectName);
 
-            //Files
-            ProjectFile = new ProjectFile(ProjectFolderPath, ProjectName + Names.ProjectExtension);
-            DescriptionsFile = new ProjectFile(ProjectFolderPath, Names.DescriptionsFile);
-            SpacesFile = new ProjectFile(ProjectFolderPath, Names.SpacesFile);
-            WaveFormHeaderFile = new ProjectFile(ProjectFolderPath, Path.Combine(CacheFolder.RelativePath,
-                Names.WaveFormHeader));
-            WaveFormFile = new ProjectFile(ProjectFolderPath, Path.Combine(CacheFolder.RelativePath,
-                Names.WaveFormFile));
+            Folders = new ProjectFolders
+            {
+                Project = projectFolder,
+                Cache = new ProjectFile(projectFolder, Names.CacheFolder),
+                Descriptions = new ProjectFile(projectFolder, Names.DescriptionsFolder),
+            };
+
+            Files = new ProjectFiles
+            {
+                Project = new ProjectFile(Folders.Project, ProjectName + Names.ProjectExtension),
+                Descriptions = new ProjectFile(Folders.Project, Names.DescriptionsFile),
+                Spaces = new ProjectFile(Folders.Project, Names.SpacesFile),
+                WaveFormHeader = new ProjectFile(Folders.Project, Path.Combine(Folders.Cache.RelativePath,
+                    Names.WaveFormHeader)),
+                WaveForm = new ProjectFile(Folders.Project, Path.Combine(Folders.Cache.RelativePath,
+                    Names.WaveFormFile)),
+            };
         }
 
         /// <summary>
@@ -136,7 +166,7 @@ namespace LiveDescribe.Model
         public Project(string projectName, string videoFileName, string projectPath) :
             this(projectName, projectPath)
         {
-            VideoFile = new ProjectFile(ProjectFolderPath, videoFileName);
+            Files.Video = new ProjectFile(Folders.Project, videoFileName);
         }
     }
 }

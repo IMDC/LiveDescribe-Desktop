@@ -205,7 +205,7 @@ namespace LiveDescribe.View_Model
                 worker.DoWork += (sender, args) =>
                 {
                     copier.ProgressChanged += (o, eventArgs) => worker.ReportProgress(eventArgs.ProgressPercentage);
-                    copier.CopyFile(viewModel.VideoPath, viewModel.Project.VideoFile);
+                    copier.CopyFile(viewModel.VideoPath, viewModel.Project.Files.Video);
                 };
                 worker.ProgressChanged += (sender, args) =>
                 {
@@ -253,8 +253,8 @@ namespace LiveDescribe.View_Model
         {
             FileWriter.WriteProjectFile(_project);
 
-            if (!Directory.Exists(_project.CacheFolder))
-                Directory.CreateDirectory(_project.CacheFolder);
+            if (!Directory.Exists(_project.Folders.Cache))
+                Directory.CreateDirectory(_project.Folders.Cache);
 
             FileWriter.WriteWaveFormHeader(_project,_videocontrol.Header);
             FileWriter.WriteWaveFormFile(_project,_videocontrol.AudioData);
@@ -277,7 +277,7 @@ namespace LiveDescribe.View_Model
 
             CloseProject();
 
-            Directory.Delete(p.CacheFolder, true);
+            Directory.Delete(p.Folders.Cache, true);
 
             SetProject(p);
         }
@@ -406,24 +406,24 @@ namespace LiveDescribe.View_Model
             WindowTitle = string.Format("{0} - LiveDescribe", _project.ProjectName);
 
             //Set up environment
-            Properties.Settings.Default.WorkingDirectory = _project.ProjectFolderPath + "\\";
+            Properties.Settings.Default.WorkingDirectory = _project.Folders.Project + "\\";
 
-            if (Directory.Exists(_project.CacheFolder) && File.Exists(_project.WaveFormFile))
+            if (Directory.Exists(_project.Folders.Cache) && File.Exists(_project.Files.WaveForm))
             {
                 _videocontrol.Header = FileReader.ReadWaveFormHeader(_project);
                 _videocontrol.AudioData = FileReader.ReadWaveFormFile(_project);
-                _videocontrol.Path = _project.VideoFile;
+                _videocontrol.Path = _project.Files.Video;
             }
             else
             {
-                Directory.CreateDirectory(_project.CacheFolder);
+                Directory.CreateDirectory(_project.Folders.Cache);
 
                 _videocontrol.SetupAndStripAudio(_project);
             }
 
-            if (Directory.Exists(_project.DescriptionsFolder))
+            if (Directory.Exists(_project.Folders.Descriptions))
             {
-                if (File.Exists(_project.DescriptionsFile))
+                if (File.Exists(_project.Files.Descriptions))
                 {
                     var descriptions = FileReader.ReadDescriptionsFile(_project);
 
@@ -435,10 +435,10 @@ namespace LiveDescribe.View_Model
             }
             else
             {
-                Directory.CreateDirectory(_project.DescriptionsFolder);
+                Directory.CreateDirectory(_project.Folders.Descriptions);
             }
 
-            if (File.Exists(_project.SpacesFile))
+            if (File.Exists(_project.Files.Spaces))
             {
                 var spaces = FileReader.ReadSpacesFile(_project);
                 foreach (var s in spaces)
