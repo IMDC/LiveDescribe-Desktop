@@ -224,7 +224,7 @@ namespace LiveDescribe.View_Model
             var projectChooser = new OpenFileDialog
             {
                 Filter = string.Format("LiveDescribe Files (*{0})|*{0}|All Files(*.*)|*.*",
-                    Project.ProjectExtension)
+                    Project.Names.ProjectExtension)
             };
 
             bool? dialogSuccess = projectChooser.ShowDialog();

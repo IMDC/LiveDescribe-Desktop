@@ -14,21 +14,27 @@ namespace LiveDescribe.Model
     public class Project
     {
         /// <summary>
-        /// The file extension for a project file.
+        /// Contains the default file names and extensions for program files.
         /// </summary>
-        public const string ProjectExtension = ".ld";
+        public static class Names
+        {
+            /// <summary>
+            /// The file extension for a project file.
+            /// </summary>
+            public const string ProjectExtension = ".ld";
+            
+            public const string CacheFolder = "projectCache";
 
-        public const string CacheFolderName = "projectCache";
+            public const string WaveFormHeader = "wfheader.bin";
 
-        public const string WaveFormHeaderName = "wfheader.bin";
+            public const string WaveFormFile = "waveform.bin";
 
-        public const string WaveFormFileName = "waveform.bin";
+            public const string DescriptionsFile = "descriptions.json";
 
-        public const string DescriptionsFileName = "descriptions.json";
+            public const string DescriptionsFolder = "descriptions";
 
-        public const string DescriptionsFolderName = "descriptions";
-
-        public const string SpacesFileName = "spaces.json";
+            public const string SpacesFile = "spaces.json";
+        }
 
         /// <summary>
         /// The name of the project.
@@ -108,17 +114,17 @@ namespace LiveDescribe.Model
             ProjectFolderPath = Path.Combine(projectPath, projectName);
 
             //Folders
-            CacheFolder = new ProjectFile(ProjectFolderPath, CacheFolderName);
-            DescriptionsFolder = new ProjectFile(ProjectFolderPath, DescriptionsFolderName);
+            CacheFolder = new ProjectFile(ProjectFolderPath, Names.CacheFolder);
+            DescriptionsFolder = new ProjectFile(ProjectFolderPath, Names.DescriptionsFolder);
 
             //Files
-            ProjectFile = new ProjectFile(ProjectFolderPath, ProjectName + ProjectExtension);
-            DescriptionsFile = new ProjectFile(ProjectFolderPath, DescriptionsFileName);
-            SpacesFile = new ProjectFile(ProjectFolderPath, SpacesFileName);
+            ProjectFile = new ProjectFile(ProjectFolderPath, ProjectName + Names.ProjectExtension);
+            DescriptionsFile = new ProjectFile(ProjectFolderPath, Names.DescriptionsFile);
+            SpacesFile = new ProjectFile(ProjectFolderPath, Names.SpacesFile);
             WaveFormHeaderFile = new ProjectFile(ProjectFolderPath, Path.Combine(CacheFolder.RelativePath,
-                WaveFormHeaderName));
+                Names.WaveFormHeader));
             WaveFormFile = new ProjectFile(ProjectFolderPath, Path.Combine(CacheFolder.RelativePath,
-                WaveFormFileName));
+                Names.WaveFormFile));
         }
 
         /// <summary>
