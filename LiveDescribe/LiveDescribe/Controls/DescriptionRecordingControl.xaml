@@ -4,7 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="300"
+             xmlns:converters="clr-namespace:LiveDescribe.Converters">
     
     <UserControl.Resources>
         <Style
@@ -14,6 +15,7 @@
                 Property="Margin"
                 Value="5" />
         </Style>
+        <converters:BoolToRecordingContentConverter x:Key="BoolToRecordingContentConverter"/>
     </UserControl.Resources>
     
     <Grid>
@@ -24,8 +26,9 @@
             <Button
                 Command="{Binding RecordCommand}"
                 Style="{StaticResource ControlPanelStyle}"
-                Content="Record"
-                Width="50"/>
+                Content="{Binding Path=IsRecording,
+                Converter={StaticResource BoolToRecordingContentConverter}}"
+                Width="100" />
         </StackPanel>
     </Grid>
 </UserControl>
