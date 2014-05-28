@@ -201,6 +201,7 @@ namespace LiveDescribe.View_Model
                     return;
 
                 log.Info("User has decided to overwrite an existing project directory");
+                FileDeleter.DeleteProject(p);
             }
 
             //Attempt to create files
