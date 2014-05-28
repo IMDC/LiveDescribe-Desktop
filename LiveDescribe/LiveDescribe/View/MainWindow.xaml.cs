@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Shapes;
+using LiveDescribe.Controls;
 
 namespace LiveDescribe.View
 {
@@ -53,6 +54,7 @@ namespace LiveDescribe.View
         private SpacesActionState _spacesActionState = SpacesActionState.None;
         private Cursor _grabCursor;
         private Cursor _grabbingCursor;
+        private LiveDescribeMediaPlayer VideoMedia;
         #endregion
 
         public MainWindow()
@@ -63,6 +65,8 @@ namespace LiveDescribe.View
             Thread.Sleep(2000);
             InitializeComponent();
 
+            VideoMedia = MediaControl.VideoMedia;
+            
             var maincontrol = new MainControl(VideoMedia);
 
             DataContext = maincontrol;
@@ -136,7 +140,6 @@ namespace LiveDescribe.View
                 AudioCanvas.Children.Add(Marker);
 
                 UpdateMarkerPosition(-MarkerOffset);
-                CurrentTimeLabel.Text = "00:00:00:000";
                 Marker.IsEnabled = false;
             };
 
@@ -598,8 +601,7 @@ namespace LiveDescribe.View
         private void UpdateMarkerPosition(double xPos)
         {
             Canvas.SetLeft(Marker, xPos);
-            CurrentTimeLabel.Text = (string)_formatter.Convert(VideoMedia.Position, VideoMedia.Position.GetType(),
-                this, CultureInfo.CurrentCulture);
+            _videoControl.PositionTimeLabel = VideoMedia.Position;
         }
 
         /// <summary>
@@ -609,8 +611,7 @@ namespace LiveDescribe.View
         private void UpdateVideoPosition(int vidPos)
         {
             VideoMedia.Position = new TimeSpan(0, 0, 0, 0, vidPos);
-            CurrentTimeLabel.Text = (string)_formatter.Convert(VideoMedia.Position, VideoMedia.Position.GetType(),
-                this, CultureInfo.CurrentCulture);
+            _videoControl.PositionTimeLabel = VideoMedia.Position;
         }
 
         /// <summary>
