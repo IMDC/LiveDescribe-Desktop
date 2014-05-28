@@ -90,8 +90,7 @@ namespace LiveDescribe.View_Model
                     _mediaVideo.Play();
                     _descriptiontimer.Start();
                     //this Handler should be attached to the view to update the graphics
-                    EventHandler handler = this.PlayRequested;
-                    if (handler != null) handler(sender, e);
+                    OnPlayRequested(sender, e);
                 };
 
             _videocontrol.PauseRequested += (sender, e) =>
@@ -99,8 +98,7 @@ namespace LiveDescribe.View_Model
                     _mediaVideo.Pause();
                     _descriptiontimer.Stop();
                     //this Handler should be attached to the view to update the graphics
-                    EventHandler handler = this.PauseRequested;
-                    if (handler != null) handler(sender, e);
+                    OnPauseRequested(sender, e);
                 };
 
             _videocontrol.MuteRequested += (sender, e) =>
@@ -108,16 +106,14 @@ namespace LiveDescribe.View_Model
 
                     //this Handler should be attached to the view to update the graphics
                     _mediaVideo.IsMuted = !_mediaVideo.IsMuted;
-                    EventHandler handler = this.MuteRequested;
-                    if (handler != null) handler(sender, e);
+                    OnMuteRequested(sender, e);
                 };
 
             _videocontrol.MediaEndedEvent += (sender, e) =>
                 {
                     _descriptiontimer.Stop();
                     _mediaVideo.Stop();
-                    EventHandler handler = this.MediaEnded;
-                    if (handler != null) handler(sender, e);
+                    OnMediaEnded(sender, e);
                 };
 
             _videocontrol.OnStrippingAudioCompleted += (sender, args) =>
@@ -184,8 +180,7 @@ namespace LiveDescribe.View_Model
             _spacesviewmodel.CloseSpacesViewModel();
             _project = null;
 
-            EventHandler handler = ProjectClosed;
-            if (handler != null) handler(this, EventArgs.Empty);
+            OnProjectClosed();
 
             WindowTitle = DefaultWindowTitle;
         }
@@ -371,9 +366,7 @@ namespace LiveDescribe.View_Model
         /// <param name="e"></param>
         private void Play_Tick(object sender, ElapsedEventArgs e)
         {
-
-            EventHandler handler = GraphicsTick;
-            if (handler != null) handler(sender, e);
+            OnGraphicsTick(sender, e);
             //I put this method in it's own timer in the MainControl for now, because I believe it should be separate from the view
             for (int i = 0; i < _descriptionviewmodel.AllDescriptions.Count; ++i)
             {
@@ -461,6 +454,45 @@ namespace LiveDescribe.View_Model
             _descriptionviewmodel.Project = _project;
         }
 
+        #endregion
+
+        #region Event Invokation Methods
+
+        private void OnProjectClosed()
+        {
+            EventHandler handler = ProjectClosed;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
+        private void OnGraphicsTick(object sender, ElapsedEventArgs e)
+        {
+            EventHandler handler = GraphicsTick;
+            if (handler != null) handler(sender, e);
+        }
+
+        private void OnPlayRequested(object sender, EventArgs e)
+        {
+            EventHandler handler = this.PlayRequested;
+            if (handler != null) handler(sender, e);
+        }
+
+        private void OnPauseRequested(object sender, EventArgs e)
+        {
+            EventHandler handler = this.PauseRequested;
+            if (handler != null) handler(sender, e);
+        }
+
+        private void OnMuteRequested(object sender, EventArgs e)
+        {
+            EventHandler handler = this.MuteRequested;
+            if (handler != null) handler(sender, e);
+        }
+
+        private void OnMediaEnded(object sender, EventArgs e)
+        {
+            EventHandler handler = this.MediaEnded;
+            if (handler != null) handler(sender, e);
+        }
         #endregion
     }
 }
