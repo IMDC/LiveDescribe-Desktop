@@ -59,7 +59,24 @@ namespace LiveDescribe.View_Model
         {
             set
             {
-                DeSelectPreviousDescscriptionsAndSpaces();
+
+                if (_regularDescriptionSelectedInList != null)
+                {
+                    _regularDescriptionSelectedInList.IsSelected = false;
+                    _regularDescriptionSelectedInList = null;
+                }
+
+                if (ExtendedDescriptionSelectedInList != null)
+                {
+                    ExtendedDescriptionSelectedInList.IsSelected = false;
+                    ExtendedDescriptionSelectedInList = null;
+                }
+
+                if (SpaceSelectedInList != null)
+                {
+                    SpaceSelectedInList.IsSelected = false;
+                    SpaceSelectedInList = null;
+                }
 
                 _regularDescriptionSelectedInList = value;
 
@@ -81,7 +98,24 @@ namespace LiveDescribe.View_Model
         {
             set
             {
-                DeSelectPreviousDescscriptionsAndSpaces();
+
+                if (RegularDescriptionSelectedInList != null)
+                {
+                    RegularDescriptionSelectedInList.IsSelected = false;
+                    RegularDescriptionSelectedInList = null;
+                }
+
+                if (_extendedDescriptionSelectedInList != null)
+                {
+                    _extendedDescriptionSelectedInList.IsSelected = false;
+                    _extendedDescriptionSelectedInList = null;
+                }
+
+                if (SpaceSelectedInList != null)
+                {
+                    SpaceSelectedInList.IsSelected = false;
+                    SpaceSelectedInList = null;
+                }
 
                 _extendedDescriptionSelectedInList = value;
 
@@ -103,7 +137,24 @@ namespace LiveDescribe.View_Model
         {
             set
             {
-                DeSelectPreviousDescscriptionsAndSpaces();
+
+                if (RegularDescriptionSelectedInList != null)
+                {
+                    RegularDescriptionSelectedInList.IsSelected = false;
+                    RegularDescriptionSelectedInList = null;
+                }
+
+                if (ExtendedDescriptionSelectedInList != null)
+                {
+                    ExtendedDescriptionSelectedInList.IsSelected = false;
+                    ExtendedDescriptionSelectedInList = null;
+                }
+
+                if (_spaceSelectedInList != null)
+                {
+                    _spaceSelectedInList.IsSelected = false;
+                    _spaceSelectedInList = null;
+                }
 
                 _spaceSelectedInList = value;
 
@@ -231,23 +282,6 @@ namespace LiveDescribe.View_Model
         #region Helper Functions
         private void DeSelectPreviousDescscriptionsAndSpaces()
         {
-            if (_regularDescriptionSelectedInList != null)
-            {          
-                _regularDescriptionSelectedInList.IsSelected = false;
-                _regularDescriptionSelectedInList = null;
-            }
-
-            if (_extendedDescriptionSelectedInList != null)
-            {
-                _extendedDescriptionSelectedInList.IsSelected = false;
-                _extendedDescriptionSelectedInList = null;
-            }
-
-            if (_spaceSelectedInList != null)
-            {
-                _spaceSelectedInList.IsSelected = false;
-                _spaceSelectedInList = null;
-            }
         }
         #endregion
     }

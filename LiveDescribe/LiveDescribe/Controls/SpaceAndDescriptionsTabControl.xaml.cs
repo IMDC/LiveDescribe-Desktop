@@ -30,7 +30,7 @@ namespace LiveDescribe.Controls
 
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (e.Source is TabControl)
+         /*   if (e.Source is TabControl)
             {
                 if (DescriptionsTabItem.IsSelected)
                 {
@@ -47,7 +47,7 @@ namespace LiveDescribe.Controls
                     SpacesListView.SelectedItem = null;
                     DescriptionsListView.SelectedItem = null;
                 }
-            }
+            }*/
         }
     }
 }
