@@ -148,7 +148,7 @@ namespace LiveDescribe.View_Model
             //save the current state so when the button is pressed again you can restore it back to that state
             _previousVideoState = _mediaVideo.CurrentState;
 
-            if (_mediaVideo != null) _mediaVideo.CurrentState = LiveDescribeVideoStates.RecordingDescription;
+            if (_mediaVideo != null) IsRecording = true;
             OnRecordRequested();
         }
         #endregion
