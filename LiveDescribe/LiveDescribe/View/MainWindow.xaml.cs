@@ -36,9 +36,11 @@ namespace LiveDescribe.View
         #endregion
 
         #region Instance Variables
-        /// <summary>The width of the entire canvas.</summary>
+        
         private Description _descriptionBeingDragged;
         private Space _spaceBeingDraggedOrResized;
+
+        /// <summary>The width of the entire canvas.</summary>
         private double _canvasWidth = 0;
         private double _videoDuration = -1;
         private readonly VideoControl _videoControl;
@@ -256,13 +258,25 @@ namespace LiveDescribe.View
                         MouseEventArgs e2 = (MouseEventArgs)e1;
                         if (Mouse.LeftButton == MouseButtonState.Pressed)
                         {
-
-                            if (e.Description.IsExtendedDescription)
-                                _descriptionInfoTabViewModel.ExtendedDescriptionSelectedInList = e.Description;
+                            //If the description is already selected, deselect it and set the description selected in the list
+                            //in the tab control to null so it isn't selected in the list either
+                            if (e.Description.IsSelected)
+                            {
+                                e.Description.IsSelected = false;
+                                if (e.Description.IsExtendedDescription)
+                                    _descriptionInfoTabViewModel.ExtendedDescriptionSelectedInList = null;
+                                else if (!e.Description.IsExtendedDescription)
+                                    _descriptionInfoTabViewModel.RegularDescriptionSelectedInList = null;
+                            }
                             else
-                                _descriptionInfoTabViewModel.RegularDescriptionSelectedInList = e.Description;
+                            {
 
-                           
+                                if (e.Description.IsExtendedDescription)
+                                    _descriptionInfoTabViewModel.ExtendedDescriptionSelectedInList = e.Description;
+                                else
+                                    _descriptionInfoTabViewModel.RegularDescriptionSelectedInList = e.Description;
+                            }
+
                             _originalPositionForDraggingDescription = e2.GetPosition(DescriptionCanvas).X;
                             _descriptionBeingDragged = e.Description;
                             Console.WriteLine("Description Mouse Down");
@@ -308,8 +322,20 @@ namespace LiveDescribe.View
 
                             if (Mouse.LeftButton == MouseButtonState.Pressed)
                             {
-                                _descriptionInfoTabViewModel.SpaceSelectedInList = space;
+                                //if the space was selected already, set it to null in the list
+                                //and the property to false
+                                if (space.IsSelected)
+                                {
+                                    space.IsSelected = false;
+                                    _descriptionInfoTabViewModel.SpaceSelectedInList = null;
+                                }
+                                else
+                                {
+                                    _descriptionInfoTabViewModel.SpaceSelectedInList = space;
+                                }
+
                                 double xPos = args.GetPosition(AudioCanvas).X;
+
                                 //prepare space for dragging
                                 _originalPositionForDraggingSpace = xPos;
                                 _spaceBeingDraggedOrResized = space;
@@ -855,5 +881,7 @@ namespace LiveDescribe.View
 
             _spacesViewModel.AddSpace(space);
         }
+
+
     }
 }

@@ -59,7 +59,6 @@ namespace LiveDescribe.View_Model
         {
             set
             {
-
                 if (_regularDescriptionSelectedInList != null)
                 {
                     _regularDescriptionSelectedInList.IsSelected = false;
@@ -80,9 +79,9 @@ namespace LiveDescribe.View_Model
 
                 _regularDescriptionSelectedInList = value;
 
-                if (_regularDescriptionSelectedInList != null)
+                if (_regularDescriptionSelectedInList != null && _regularDescriptionSelectedInList.IsSelected == false)
                     _regularDescriptionSelectedInList.IsSelected = true;
-
+                
                 RaisePropertyChanged("RegularDescriptionSelectedInList");
             }
             get
