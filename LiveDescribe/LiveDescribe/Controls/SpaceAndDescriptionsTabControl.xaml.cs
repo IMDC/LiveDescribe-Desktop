@@ -27,27 +27,5 @@ namespace LiveDescribe.Controls
         {
             InitializeComponent();
         }
-
-        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-         /*   if (e.Source is TabControl)
-            {
-                if (DescriptionsTabItem.IsSelected)
-                {
-                    ExtendedDescriptionsListView.SelectedItem = null;
-                    SpacesListView.SelectedItem = null;
-                }
-                else if (SpacesTabItem.IsSelected)
-                {
-                    ExtendedDescriptionsListView.SelectedItem = null;
-                    DescriptionsListView.SelectedItem = null;
-                }
-                else if (ExtendedDescriptionsTabItem.IsSelected)
-                {
-                    SpacesListView.SelectedItem = null;
-                    DescriptionsListView.SelectedItem = null;
-                }
-            }*/
-        }
     }
 }
