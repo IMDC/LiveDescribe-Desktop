@@ -366,9 +366,9 @@ namespace LiveDescribe.View
                 if (e.PropertyName.Equals("Visible"))
                 {
                     if (maincontrol.LoadingViewModel.Visible)
-                        Grid.SetZIndex(LoadingBorder, 2);
+                        Grid.SetZIndex(LoadingControl, 2);
                     else
-                        Grid.SetZIndex(LoadingBorder, -1);
+                        Grid.SetZIndex(LoadingControl, -1);
                 }
             };
             #endregion

@@ -83,6 +83,9 @@
     <Compile Include="Controls\DescriptionRecordingControl.xaml.cs">
       <DependentUpon>DescriptionRecordingControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\LoadingControl.xaml.cs">
+      <DependentUpon>LoadingControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\MediaControl.xaml.cs">
       <DependentUpon>MediaControl.xaml</DependentUpon>
     </Compile>
@@ -114,6 +117,10 @@
       <DependentUpon>PreferencesWindow.xaml</DependentUpon>
     </Compile>
     <Page Include="Controls\DescriptionRecordingControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\LoadingControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
