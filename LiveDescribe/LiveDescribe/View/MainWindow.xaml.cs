@@ -1,4 +1,5 @@
-﻿using LiveDescribe.Converters;
+﻿using System.ComponentModel;
+using LiveDescribe.Converters;
 using LiveDescribe.View_Model;
 using LiveDescribe.Model;
 using System;
@@ -53,6 +54,7 @@ namespace LiveDescribe.View
         private readonly DescriptionViewModel _descriptionViewModel;
         private readonly TimeConverterFormatter _formatter;
         private readonly DescriptionInfoTabViewModel _descriptionInfoTabViewModel;
+        private readonly MainControl _mainControl;
         private double _originalPositionForDraggingDescription = -1;
         private double _originalPositionForDraggingSpace = -1;
         private Point RightClickPointOnAudioCanvas;
@@ -75,6 +77,7 @@ namespace LiveDescribe.View
             var maincontrol = new MainControl(VideoMedia);
 
             DataContext = maincontrol;
+            _mainControl = maincontrol;
 
             _videoControl = maincontrol.VideoControl;
             _preferences = maincontrol.PreferencesViewModel;
@@ -852,6 +855,21 @@ namespace LiveDescribe.View
             }
 
             _spacesViewModel.AddSpace(space);
+        }
+
+        private void MainWindow_OnClosing(object sender, CancelEventArgs e)
+        {
+            bool success = _mainControl.TryExit();
+
+            if (!success)
+                e.Cancel = true;
+            else
+                log.Info("Exiting program...");
+        }
+
+        private void MenuItemExit_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }

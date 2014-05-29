@@ -171,7 +171,6 @@ namespace LiveDescribe.View_Model
         /// Command to show preferences
         /// </summary>
         public RelayCommand ShowPreferencesCommand { private set; get; }
-
         #endregion
 
         #region Command Functions
@@ -495,6 +494,35 @@ namespace LiveDescribe.View_Model
         {
             _projectModified = false;
             WindowTitle = string.Format("{0} - LiveDescribe", _project.ProjectName);
+        }
+
+        public bool TryExit()
+        {
+            if (_projectModified)
+            {
+                log.Info("Program is attempting to exit with an unsaved project");
+                var text = string.Format("The LiveDescribe project \"{0}\" has been modified." +
+                    " Do you want to save changes before closing?", _project.ProjectName);
+                var result = MessageBox.Show(text, "Warning", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    SaveProject();
+                    return true;
+                }
+                else if (result == MessageBoxResult.No) //Exit but don't save
+                {
+                    log.Info("User has chosen exit program and not save project");
+                    return true;
+                }
+                else
+                {
+                    log.Info("User has chosen not to exit program");
+                    return false;
+                }
+            }
+            else
+                return true;
         }
         #endregion
 

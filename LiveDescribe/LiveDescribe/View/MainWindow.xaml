@@ -10,7 +10,8 @@
     Height="600"
     Width="960"
     MinHeight="600"
-    MinWidth="960">
+    MinWidth="960"
+    Closing="MainWindow_OnClosing">
     <Window.Resources>
         <converters:MillisecondsTimeConverterFormatter
             x:Key="MillisecondsTimeConverter" />
@@ -51,6 +52,9 @@
                         Name="Preferences"
                         Header="Preferences"
                         Command="{Binding ShowPreferencesCommand}" />
+                    <MenuItem
+                        Header="Exit"
+                        Click="MenuItemExit_Click"/>
                 </MenuItem>
                 <MenuItem
                     Header="Project">
