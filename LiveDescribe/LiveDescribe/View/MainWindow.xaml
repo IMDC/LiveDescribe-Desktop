@@ -116,109 +116,29 @@
 
                 <!--Main Grid Column Definitions-->
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
+                    <ColumnDefinition Width="110"/>
+                    <ColumnDefinition Width="141*" />
+                    <ColumnDefinition Width="141*" />
+                    <ColumnDefinition Width="176*" />
+                    <ColumnDefinition Width="107*" />
+                    <ColumnDefinition Width="142*" />
+                    <ColumnDefinition Width="140*" />
                 </Grid.ColumnDefinitions>
+                
+                <controls:DescriptionRecordingControl
+                    DataContext="{Binding DescriptionViewModel}"
+                    Grid.Column="0"
+                    Grid.Row="8"
+                    Grid.RowSpan="1"/>
 
-                <!--Media Element-->
-                <Border
-                    Background="Black"
+                <controls:MediaControl
+                    x:Name="MediaControl"
+                    DataContext="{Binding VideoControl}"
                     Grid.Row="0"
-                    Grid.RowSpan="7"
-                    Grid.ColumnSpan="4">
-                    <controls:LiveDescribeMediaPlayer
-                        ScrubbingEnabled="True"
-                        DataContext="{Binding VideoControl}"
-                        x:Name="VideoMedia"
-                        Source="{Binding Path}"
-                        LoadedBehavior="Manual">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger
-                                EventName="MediaOpened">
-                                <i:InvokeCommandAction
-                                    Command="{Binding VideoOpenedCommand}" />
-                            </i:EventTrigger>
-                            <i:EventTrigger
-                                EventName="MediaFailed">
-                                <i:InvokeCommandAction
-                                    Command="{Binding MediaFailedCommand}" />
-                            </i:EventTrigger>
-                            <i:EventTrigger
-                                EventName="MediaEnded">
-                                <i:InvokeCommandAction
-                                    Command="{Binding MediaEndedCommand}" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </controls:LiveDescribeMediaPlayer>
-                </Border>
+                    Grid.Column="0"
+                    Grid.RowSpan="8"
+                    Grid.ColumnSpan="4"/>
 
-                <!--Button Controls for Video PLayer-->
-                <StackPanel
-                    Orientation="Horizontal"
-                    Grid.Row="7"
-                    Grid.ColumnSpan="4"
-                    Grid.Column="0">
-                    <StackPanel.Resources>
-                        <converters:TimeConverterFormatter
-                            x:Key="TimeConverterFormatter" />
-                    </StackPanel.Resources>
-                    <Button
-                        DataContext="{Binding VideoControl}"
-                        Style="{StaticResource ControlPanelStyle}"
-                        Command="{Binding MuteCommand}"
-                        Content="Mute" />
-                    <Slider
-                        DataContext="{Binding VideoControl}"
-                        Value="{Binding Path=Volume, ElementName=VideoMedia}"
-                        Name="VolumeControl"
-                        Maximum="1"
-                        Minimum="0"
-                        Style="{StaticResource ControlPanelStyle}"
-                        Width="100" />
-                    <CheckBox
-                        DataContext="{Binding DescriptionViewModel}"
-                        IsChecked="{Binding ExtendedIsChecked}" />
-                    <Button
-                        DataContext="{Binding DescriptionViewModel}"
-                        Command="{Binding RecordCommand}"
-                        Style="{StaticResource ControlPanelStyle}"
-                        Content="Record" />
-                    <Button
-                        DataContext="{Binding VideoControl}"
-                        Command="{Binding RewindCommand}"
-                        Style="{StaticResource ControlPanelStyle}"
-                        Content="Rewind" />
-                    <Button
-                        DataContext="{Binding VideoControl}"
-                        Name="PlayControl"
-                        Style="{StaticResource ControlPanelStyle}"
-                        Command="{Binding PlayCommand}"
-                        Content="Play" />
-                    <Button
-                        DataContext="{Binding VideoControl}"
-                        Name="PauseControl"
-                        Style="{StaticResource ControlPanelStyle}"
-                        Command="{Binding PauseCommand}"
-                        Content="Pause" />
-                    <Button
-                        DataContext="{Binding VideoControl}"
-                        Command="{Binding FastForwardCommand}"
-                        Style="{StaticResource ControlPanelStyle}"
-                        Content="Fast Forward" />
-                    <TextBlock
-                        Text="00:00:00:000"
-                        x:Name="CurrentTimeLabel"
-                        MinWidth="40"
-                        Margin="2,15,0,5"
-                        FontSize="16"
-                        FontFamily="Trebuchet MS"
-                        Width="95" />
-                </StackPanel>
 
                 <!--Description Information-->
                 <controls:SpaceAndDescriptionsTabControl 
@@ -230,9 +150,9 @@
 
                 <!--Timeline-->
                 <Border
-                    Grid.Column="0"
+                    Grid.Column="1"
                     BorderBrush="Black"
-                    Grid.ColumnSpan="7"
+                    Grid.ColumnSpan="6"
                     Grid.Row="8"
                     Grid.RowSpan="5"
                     BorderThickness="1"
@@ -325,12 +245,29 @@
                                                     <Rectangle.Style>
                                                         <Style
                                                             TargetType="Rectangle">
-                                                            <Setter
-                                                                Property="Fill"
-                                                                Value="Blue" />
-                                                            <Setter
-                                                                Property="Opacity"
-                                                                Value="0.2" />
+                                                            
+                                                            <Style.Triggers>
+                                                                <DataTrigger
+                                                                    Binding="{Binding IsSelected}"
+                                                                    Value="false">
+                                                                    <Setter
+                                                                        Property="Fill"
+                                                                        Value="Blue" />
+                                                                    <Setter
+                                                                        Property="Opacity"
+                                                                        Value="0.2" />
+                                                                </DataTrigger>
+                                                                <DataTrigger
+                                                                    Binding="{Binding IsSelected}"
+                                                                    Value="true">
+                                                                    <Setter
+                                                                        Property="Fill"
+                                                                        Value="Yellow" />
+                                                                    <Setter
+                                                                        Property="Opacity"
+                                                                        Value="0.2" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
                                                         </Style>
                                                     </Rectangle.Style>
                                                     <i:Interaction.Triggers>
@@ -462,27 +399,48 @@
                                                         <Style
                                                             TargetType="Rectangle">
                                                             <Style.Triggers>
-                                                                <!--If the description is not an extended description fill it Green-->
-                                                                <DataTrigger
-                                                                    Binding="{Binding IsExtendedDescription}"
-                                                                    Value="false">
-                                                                    <Setter
+                                                                <MultiDataTrigger>
+                                                                    <MultiDataTrigger.Conditions>
+                                                                        <Condition
+                                                                            Binding="{Binding IsExtendedDescription}"
+                                                                            Value="true"/>
+                                                                        <Condition
+                                                                            Binding="{Binding IsSelected}"
+                                                                            Value="false"/>
+                                                                    </MultiDataTrigger.Conditions>
+                                                                    <Setter 
                                                                         Property="Fill"
-                                                                        Value="Green" />
+                                                                        Value="Red"/>
                                                                     <Setter
                                                                         Property="Opacity"
-                                                                        Value="0.25" />
-                                                                </DataTrigger>
-                                                                <!--If the description is an extended description fill it Red-->
+                                                                        Value="0.25"/>
+                                                                </MultiDataTrigger>
+                                                                
+                                                                <MultiDataTrigger>
+                                                                    <MultiDataTrigger.Conditions>
+                                                                        <Condition
+                                                                            Binding="{Binding IsExtendedDescription}"
+                                                                            Value="false"/>
+                                                                        <Condition
+                                                                            Binding="{Binding IsSelected}"
+                                                                            Value="false"/>
+                                                                    </MultiDataTrigger.Conditions>
+                                                                    <Setter 
+                                                                        Property="Fill"
+                                                                        Value="Green"/>
+                                                                    <Setter
+                                                                        Property="Opacity"
+                                                                        Value="0.25"/>
+                                                                </MultiDataTrigger>
                                                                 <DataTrigger
-                                                                    Binding="{Binding IsExtendedDescription}"
+                                                                    Binding="{Binding IsSelected}"
                                                                     Value="true">
                                                                     <Setter
                                                                         Property="Fill"
-                                                                        Value="Red" />
+                                                                        Value="Yellow"/>
                                                                     <Setter
                                                                         Property="Opacity"
-                                                                        Value="0.25" />
+                                                                        Value="0.25"/>
                                                                 </DataTrigger>
                                                             </Style.Triggers>
                                                         </Style>

@@ -32,6 +32,7 @@ namespace LiveDescribe.View_Model
         private bool _usingExistingMicrophone;
         /// <summary>Keeps track of the starting time of a description on recording.</summary>
         private double _descriptionStartTime;
+        private bool _isRecording;
 
         private bool _recordingExtendedDescription;
 
@@ -53,6 +54,7 @@ namespace LiveDescribe.View_Model
         #region Constructors
         public DescriptionViewModel(ILiveDescribePlayer mediaVideo, VideoControl videoControl)
         {
+            _isRecording = false;
             _waveWriter = null;
             RecordCommand = new RelayCommand(Record, RecordStateCheck);
             _mediaVideo = mediaVideo;
@@ -147,7 +149,6 @@ namespace LiveDescribe.View_Model
             _previousVideoState = _mediaVideo.CurrentState;
 
             if (_mediaVideo != null) _mediaVideo.CurrentState = LiveDescribeVideoStates.RecordingDescription;
-
             OnRecordRequested();
         }
         #endregion
@@ -235,6 +236,20 @@ namespace LiveDescribe.View_Model
                 return _recordingExtendedDescription;
             }
         }
+
+        public bool IsRecording
+        {
+            set
+            {
+                _mediaVideo.CurrentState = value ? LiveDescribeVideoStates.RecordingDescription : _previousVideoState;
+                _isRecording = value;
+                RaisePropertyChanged("IsRecording");
+            }
+            get
+            {
+                return _isRecording;
+            }
+        }
         #endregion
 
         #region State Checks
@@ -295,7 +310,7 @@ namespace LiveDescribe.View_Model
             AddDescription(filename, 0, read.TotalTime.TotalMilliseconds, _descriptionStartTime, ExtendedIsChecked);
             read.Dispose();
             //have to change the state of recording
-            _mediaVideo.CurrentState = _previousVideoState;
+            IsRecording = false;
         }
 
         private void HandleNoMicrophoneException(NAudio.MmException e)

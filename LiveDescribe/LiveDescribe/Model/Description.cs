@@ -34,7 +34,7 @@ namespace LiveDescribe.Model
         private double _Y;
         private double _width;
         private double _height;
-        private bool _mousemoveisselected;
+        private bool _isSelected;
         private bool _isPlaying;
         #endregion
 
@@ -321,16 +321,16 @@ namespace LiveDescribe.Model
         }
 
         [JsonIgnore]
-        public bool MouseMoveIsSelected
+        public bool IsSelected
         {
             set
             {
-                _mousemoveisselected = value;
-                NotifyPropertyChanged("MosueMoveIsSelected");
+                _isSelected = value;
+                NotifyPropertyChanged("IsSelected");
             }
             get
             {
-                return _mousemoveisselected;
+                return _isSelected;
             }
         }
 

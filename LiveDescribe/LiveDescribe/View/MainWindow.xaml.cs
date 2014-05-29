@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Shapes;
+using LiveDescribe.Controls;
 
 namespace LiveDescribe.View
 {
@@ -37,7 +38,6 @@ namespace LiveDescribe.View
         // resizing the space only happens at ResizeSpaceOffset amount of pixels 
         // away from the beginning and ending of a space
         private const int ResizeSpaceOffset = 10;
-        private const int SmallestSizeInMillisecondsForASpace = 333;
         #endregion
 
         #region Instance Variables
@@ -52,12 +52,14 @@ namespace LiveDescribe.View
         /// <summary>used to format a timespan object which in this case in the videoMedia.Position</summary>
         private readonly DescriptionViewModel _descriptionViewModel;
         private readonly TimeConverterFormatter _formatter;
+        private readonly DescriptionInfoTabViewModel _descriptionInfoTabViewModel;
         private double _originalPositionForDraggingDescription = -1;
         private double _originalPositionForDraggingSpace = -1;
         private Point RightClickPointOnAudioCanvas;
         private SpacesActionState _spacesActionState = SpacesActionState.None;
         private Cursor _grabCursor;
         private Cursor _grabbingCursor;
+        private LiveDescribeMediaPlayer VideoMedia;
         #endregion
 
         public MainWindow()
@@ -68,6 +70,8 @@ namespace LiveDescribe.View
             Thread.Sleep(2000);
             InitializeComponent();
 
+            VideoMedia = MediaControl.VideoMedia;
+            
             var maincontrol = new MainControl(VideoMedia);
 
             DataContext = maincontrol;
@@ -76,6 +80,7 @@ namespace LiveDescribe.View
             _preferences = maincontrol.PreferencesViewModel;
             _descriptionViewModel = maincontrol.DescriptionViewModel;
             _spacesViewModel = maincontrol.SpacesViewModel;
+            _descriptionInfoTabViewModel = maincontrol.DescriptionInfoTabViewModel;
 
             _formatter = new TimeConverterFormatter();
 
@@ -141,7 +146,6 @@ namespace LiveDescribe.View
                 AudioCanvas.Children.Add(Marker);
 
                 UpdateMarkerPosition(-MarkerOffset);
-                CurrentTimeLabel.Text = "00:00:00:000";
                 Marker.IsEnabled = false;
             };
 
@@ -254,6 +258,13 @@ namespace LiveDescribe.View
                         MouseEventArgs e2 = (MouseEventArgs)e1;
                         if (Mouse.LeftButton == MouseButtonState.Pressed)
                         {
+
+                            if (e.Description.IsExtendedDescription)
+                                _descriptionInfoTabViewModel.ExtendedDescriptionSelectedInList = e.Description;
+                            else
+                                _descriptionInfoTabViewModel.RegularDescriptionSelectedInList = e.Description;
+
+                           
                             _originalPositionForDraggingDescription = e2.GetPosition(DescriptionCanvas).X;
                             _descriptionBeingDragged = e.Description;
                             DescriptionCanvas.CaptureMouse();
@@ -295,8 +306,10 @@ namespace LiveDescribe.View
                     space.SpaceMouseDownEvent += (sender1, e1) =>
                         {
                             MouseEventArgs args = (MouseEventArgs)e1;
+
                             if (Mouse.LeftButton == MouseButtonState.Pressed)
                             {
+                                _descriptionInfoTabViewModel.SpaceSelectedInList = space;
                                 double xPos = args.GetPosition(AudioCanvas).X;
                                 //prepare space for dragging
                                 _originalPositionForDraggingSpace = xPos;
@@ -423,9 +436,9 @@ namespace LiveDescribe.View
                     double lengthInMillisecondsNewWidth = (_videoDuration / AudioCanvas.Width) * newWidth;
                     
                     //bounds checking
-                    if (lengthInMillisecondsNewWidth < SmallestSizeInMillisecondsForASpace)
+                    if (lengthInMillisecondsNewWidth < SpacesViewModel.MAX_SPACE_LENGTH_IN_MILLISECONDS)
                     {
-                        newWidth = (AudioCanvas.Width / _videoDuration) * SmallestSizeInMillisecondsForASpace;
+                        newWidth = (AudioCanvas.Width / _videoDuration) * SpacesViewModel.MAX_SPACE_LENGTH_IN_MILLISECONDS;
                         //temporary fix, have to make the cursor attached to the end of the space somehow
                         AudioCanvas.ReleaseMouseCapture();
                     }
@@ -457,9 +470,9 @@ namespace LiveDescribe.View
                         //temporary fix, have to make the cursor attached to the end of the space somehow
                         AudioCanvas.ReleaseMouseCapture();
                     }
-                    else if ((_spaceBeingDraggedOrResized.EndInVideo - newPositionMilliseconds) < SmallestSizeInMillisecondsForASpace)
+                    else if ((_spaceBeingDraggedOrResized.EndInVideo - newPositionMilliseconds) < SpacesViewModel.MAX_SPACE_LENGTH_IN_MILLISECONDS)
                     {
-                        newPosition = (AudioCanvas.Width / _videoDuration) * (_spaceBeingDraggedOrResized.EndInVideo - SmallestSizeInMillisecondsForASpace);                      
+                        newPosition = (AudioCanvas.Width / _videoDuration) * (_spaceBeingDraggedOrResized.EndInVideo - SpacesViewModel.MAX_SPACE_LENGTH_IN_MILLISECONDS);                      
                         //temporary fix, have to make the cursor attached to the end of the space somehow
                         AudioCanvas.ReleaseMouseCapture();
                     }
@@ -596,8 +609,7 @@ namespace LiveDescribe.View
         private void UpdateMarkerPosition(double xPos)
         {
             Canvas.SetLeft(Marker, xPos);
-            CurrentTimeLabel.Text = (string)_formatter.Convert(VideoMedia.Position, VideoMedia.Position.GetType(),
-                this, CultureInfo.CurrentCulture);
+            _videoControl.PositionTimeLabel = VideoMedia.Position;
         }
 
         /// <summary>
@@ -607,8 +619,7 @@ namespace LiveDescribe.View
         private void UpdateVideoPosition(int vidPos)
         {
             VideoMedia.Position = new TimeSpan(0, 0, 0, 0, vidPos);
-            CurrentTimeLabel.Text = (string)_formatter.Convert(VideoMedia.Position, VideoMedia.Position.GetType(),
-                this, CultureInfo.CurrentCulture);
+            _videoControl.PositionTimeLabel = VideoMedia.Position;
         }
 
         /// <summary>

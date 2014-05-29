@@ -7,14 +7,19 @@ using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Model;
+using LiveDescribe.Interfaces;
 
 namespace LiveDescribe.View_Model
 {
     class DescriptionInfoTabViewModel : ViewModelBase
     {
+        #region Constants
         private const int SPACE_TAB = 0;
         private const int REGULAR_DESCRIPTION_TAB = 1;
         private const int EXTENDED_DESCRIPTION_TAB = 2;
+        #endregion
+
+        #region Instance Variables
         private DescriptionViewModel _descriptionViewModel;
         private SpacesViewModel _spacesViewModel;
         private Description _regularDescriptionSelectedInList;
@@ -22,6 +27,7 @@ namespace LiveDescribe.View_Model
         private Space _spaceSelectedInList;
         private String _descriptionAndSpaceText;
         private int _tabSelectedIndex;
+        #endregion
 
         public DescriptionInfoTabViewModel(DescriptionViewModel DescriptionViewModel, SpacesViewModel SpaceViewModel)
         {
@@ -53,7 +59,30 @@ namespace LiveDescribe.View_Model
         {
             set
             {
+
+                if (_regularDescriptionSelectedInList != null)
+                {
+                    _regularDescriptionSelectedInList.IsSelected = false;
+                    _regularDescriptionSelectedInList = null;
+                }
+
+                if (ExtendedDescriptionSelectedInList != null)
+                {
+                    ExtendedDescriptionSelectedInList.IsSelected = false;
+                    ExtendedDescriptionSelectedInList = null;
+                }
+
+                if (SpaceSelectedInList != null)
+                {
+                    SpaceSelectedInList.IsSelected = false;
+                    SpaceSelectedInList = null;
+                }
+
                 _regularDescriptionSelectedInList = value;
+
+                if (_regularDescriptionSelectedInList != null)
+                    _regularDescriptionSelectedInList.IsSelected = true;
+
                 RaisePropertyChanged("RegularDescriptionSelectedInList");
             }
             get
@@ -69,7 +98,30 @@ namespace LiveDescribe.View_Model
         {
             set
             {
+
+                if (RegularDescriptionSelectedInList != null)
+                {
+                    RegularDescriptionSelectedInList.IsSelected = false;
+                    RegularDescriptionSelectedInList = null;
+                }
+
+                if (_extendedDescriptionSelectedInList != null)
+                {
+                    _extendedDescriptionSelectedInList.IsSelected = false;
+                    _extendedDescriptionSelectedInList = null;
+                }
+
+                if (SpaceSelectedInList != null)
+                {
+                    SpaceSelectedInList.IsSelected = false;
+                    SpaceSelectedInList = null;
+                }
+
                 _extendedDescriptionSelectedInList = value;
+
+                if (_extendedDescriptionSelectedInList != null)
+                    _extendedDescriptionSelectedInList.IsSelected = true;
+
                 RaisePropertyChanged("ExtendedDescriptionSelectedInList");
             }
             get
@@ -85,7 +137,29 @@ namespace LiveDescribe.View_Model
         {
             set
             {
+
+                if (RegularDescriptionSelectedInList != null)
+                {
+                    RegularDescriptionSelectedInList.IsSelected = false;
+                    RegularDescriptionSelectedInList = null;
+                }
+
+                if (ExtendedDescriptionSelectedInList != null)
+                {
+                    ExtendedDescriptionSelectedInList.IsSelected = false;
+                    ExtendedDescriptionSelectedInList = null;
+                }
+
+                if (_spaceSelectedInList != null)
+                {
+                    _spaceSelectedInList.IsSelected = false;
+                    _spaceSelectedInList = null;
+                }
+
                 _spaceSelectedInList = value;
+
+                if (_spaceSelectedInList != null)
+                    _spaceSelectedInList.IsSelected = true;
                 RaisePropertyChanged("SpaceSelectedInList");
             }
             get
@@ -202,6 +276,12 @@ namespace LiveDescribe.View_Model
                 return true;
 
             return false;
+        }
+        #endregion
+
+        #region Helper Functions
+        private void DeSelectPreviousDescscriptionsAndSpaces()
+        {
         }
         #endregion
     }

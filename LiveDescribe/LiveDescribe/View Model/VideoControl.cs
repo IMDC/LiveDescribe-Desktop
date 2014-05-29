@@ -25,6 +25,7 @@ namespace LiveDescribe.View_Model
         private LoadingViewModel _loadingViewModel;
         private Header _audioHeader;
         private List<Space> _spaceData;
+        private TimeSpan _positionTimeLabel;
 
         public Project Project { get; set; }
         #endregion
@@ -255,7 +256,6 @@ namespace LiveDescribe.View_Model
         }
         #endregion
 
-
         #region State Checks
         /// <summary>
         /// Used for the RelayCommand "PlayCommand" to check whether the play button can be pressed or not
@@ -290,7 +290,7 @@ namespace LiveDescribe.View_Model
         /// <returns>true if the button can be enabled</returns>
         public bool RewindCheck()
         {
-            if (_mediaVideo.CurrentState == LiveDescribeVideoStates.VideoNotLoaded)
+            if (_mediaVideo.CurrentState == LiveDescribeVideoStates.VideoNotLoaded || _mediaVideo.CurrentState == LiveDescribeVideoStates.RecordingDescription)
                 return false;
             return true;
         }
@@ -302,7 +302,7 @@ namespace LiveDescribe.View_Model
         /// <returns></returns>
         public bool FastForwardCheck()
         {
-            if (_mediaVideo.CurrentState == LiveDescribeVideoStates.VideoNotLoaded)
+            if (_mediaVideo.CurrentState == LiveDescribeVideoStates.VideoNotLoaded || _mediaVideo.CurrentState == LiveDescribeVideoStates.RecordingDescription)
                 return false;
             return true;
         }
@@ -336,6 +336,22 @@ namespace LiveDescribe.View_Model
                 return _mediaVideo.Path;
             }
 
+        }
+
+        /// <summary>
+        /// Position in the video that gets shown to the user
+        /// </summary>
+        public TimeSpan PositionTimeLabel
+        {
+            set
+            {
+                _positionTimeLabel = value;
+                RaisePropertyChanged("PositionTimeLabel");
+            }
+            get
+            {
+                return _positionTimeLabel;
+            }
         }
         #endregion
 
