@@ -137,6 +137,8 @@ namespace LiveDescribe.View_Model
             _spacesviewmodel.Spaces.CollectionChanged += ObservableCollection_CollectionChanged;
             _descriptionviewmodel.ExtendedDescriptions.CollectionChanged += ObservableCollection_CollectionChanged;
             _descriptionviewmodel.RegularDescriptions.CollectionChanged += ObservableCollection_CollectionChanged;
+            _videocontrol.PropertyChanged += PropertyChangedHandler;
+
             #endregion
 
         }
@@ -191,9 +193,9 @@ namespace LiveDescribe.View_Model
                     " Do you want to save changes before closing?", _project.ProjectName);
                 var result = MessageBox.Show(text, "Warning", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
 
-                if(result == MessageBoxResult.Yes)
+                if (result == MessageBoxResult.Yes)
                     SaveProject();
-                else if(result == MessageBoxResult.Cancel)
+                else if (result == MessageBoxResult.Cancel)
                     return;
             }
 
@@ -535,7 +537,24 @@ namespace LiveDescribe.View_Model
         /// <param name="e">Event Args</param>
         private void ObservableCollectionElement_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            FlagProjectAsModified();
+            //TODO: Find a better way to implement this
+            switch (e.PropertyName)
+            {
+                //Fallthrough cases
+                case "FileName":
+                case "IsExtendedDescription":
+                case "StartWaveFileTime":
+                case "EndWaveFileTime":
+                case "ActualLength":
+                case "StartInVideo":
+                case "EndInVideo":
+                case "DescriptionText":
+                case "SpaceText":
+                case "AudioData":
+                case "Header":
+                    FlagProjectAsModified();
+                    break;
+            }
         }
         #endregion
 

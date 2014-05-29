@@ -361,7 +361,11 @@ namespace LiveDescribe.View_Model
         /// </summary>
         public List<short> AudioData
         {
-            set { _waveFormData = value; }
+            set
+            {
+                _waveFormData = value; 
+                RaisePropertyChanged("AudioData");
+            }
             get { return this._waveFormData; }
         }
 
@@ -370,7 +374,11 @@ namespace LiveDescribe.View_Model
         /// </summary>
         public Header Header
         {
-            set { _audioHeader = value; }
+            set
+            {
+                _audioHeader = value;
+                RaisePropertyChanged("Header");
+            }
             get { return this._audioHeader; }
         }
 
