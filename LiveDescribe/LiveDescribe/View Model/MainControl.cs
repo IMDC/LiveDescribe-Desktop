@@ -1,8 +1,10 @@
-﻿using System.IO;
+﻿using System.Collections.Specialized;
+using System.IO;
 using System.Text;
 using System.Threading;
 using System.Web.Script.Serialization;
 using System.Windows;
+using System.Windows.Forms;
 using LiveDescribe.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Threading;
@@ -13,8 +15,9 @@ using LiveDescribe.Model;
 using System.Timers;
 using LiveDescribe.Utilities;
 using LiveDescribe.View;
-using Microsoft.Win32;
 using Newtonsoft.Json;
+using MessageBox = System.Windows.MessageBox;
+using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 using Timer = System.Timers.Timer;
 
 namespace LiveDescribe.View_Model
@@ -41,6 +44,7 @@ namespace LiveDescribe.View_Model
         private DescriptionInfoTabViewModel _descriptionInfoTabViewModel;
         private Project _project;
         private string _windowTitle;
+        private bool _projectModified;
         #endregion
 
         #region Events
@@ -85,6 +89,7 @@ namespace LiveDescribe.View_Model
                     log.Info("Product Name of Apply Requested Microphone: " + NAudio.Wave.WaveIn.GetCapabilities(_descriptionviewmodel.MicrophoneStream.DeviceNumber).ProductName);
                 };
 
+            #region VideoControl Events
             _videocontrol.PlayRequested += (sender, e) =>
                 {
                     _mediaVideo.Play();
@@ -125,6 +130,15 @@ namespace LiveDescribe.View_Model
 
                 SaveProject();
             };
+            #endregion
+
+            #region Property Changed Events
+
+            _spacesviewmodel.Spaces.CollectionChanged += ObservableCollection_CollectionChanged;
+            _descriptionviewmodel.ExtendedDescriptions.CollectionChanged += ObservableCollection_CollectionChanged;
+            _descriptionviewmodel.RegularDescriptions.CollectionChanged += ObservableCollection_CollectionChanged;
+            #endregion
+
         }
         #endregion
 
@@ -171,8 +185,18 @@ namespace LiveDescribe.View_Model
         /// </summary>
         public void CloseProject()
         {
-            //TODO: ask to save here before closing everything
-            //TODO: put it in a background worker and create a loading screen (possibly a general use control)
+            if (_projectModified)
+            {
+                var text = string.Format("The LiveDescribe project \"{0}\" has been modified." +
+                    " Do you want to save changes before closing?", _project.ProjectName);
+                var result = MessageBox.Show(text, "Warning", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+
+                if(result == MessageBoxResult.Yes)
+                    SaveProject();
+                else if(result == MessageBoxResult.Cancel)
+                    return;
+            }
+
             log.Info("Closed Project");
 
             _descriptionviewmodel.CloseDescriptionViewModel();
@@ -249,7 +273,7 @@ namespace LiveDescribe.View_Model
 
         public bool CanSaveProject()
         {
-            return _project != null;
+            return _project != null && _projectModified;
         }
 
         public void SaveProject()
@@ -259,10 +283,12 @@ namespace LiveDescribe.View_Model
             if (!Directory.Exists(_project.Folders.Cache))
                 Directory.CreateDirectory(_project.Folders.Cache);
 
-            FileWriter.WriteWaveFormHeader(_project,_videocontrol.Header);
-            FileWriter.WriteWaveFormFile(_project,_videocontrol.AudioData);
-            FileWriter.WriteDescriptionsFile(_project,_descriptionviewmodel.AllDescriptions);
-            FileWriter.WriteSpacesFile(_project,_spacesviewmodel.Spaces);
+            FileWriter.WriteWaveFormHeader(_project, _videocontrol.Header);
+            FileWriter.WriteWaveFormFile(_project, _videocontrol.AudioData);
+            FileWriter.WriteDescriptionsFile(_project, _descriptionviewmodel.AllDescriptions);
+            FileWriter.WriteSpacesFile(_project, _spacesviewmodel.Spaces);
+
+            ResetProjectModifiedFlag();
         }
 
         public bool CanClearCache()
@@ -452,8 +478,65 @@ namespace LiveDescribe.View_Model
 
             //Set Children
             _descriptionviewmodel.Project = _project;
+
+            //Ensure that project is not modified.
+            ResetProjectModifiedFlag();
         }
 
+        private void FlagProjectAsModified()
+        {
+            _projectModified = true;
+            WindowTitle = string.Format("{0}* - LiveDescribe", _project.ProjectName);
+        }
+
+        private void ResetProjectModifiedFlag()
+        {
+            _projectModified = false;
+            WindowTitle = string.Format("{0} - LiveDescribe", _project.ProjectName);
+        }
+        #endregion
+
+        #region Event Handler Methods
+        /// <summary>
+        /// Adds a propertychanged handler to each new element of an observable collection, and
+        /// removes one from each removed element.
+        /// </summary>
+        /// <param name="sender">Sender</param>
+        /// <param name="e">Event Args</param>
+        private void ObservableCollection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (var item in e.NewItems)
+                {
+                    var notifier = item as INotifyPropertyChanged;
+
+                    if (notifier != null)
+                        notifier.PropertyChanged += ObservableCollectionElement_PropertyChanged;
+                }
+            }
+            else if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                foreach (var item in e.OldItems)
+                {
+                    var notifier = item as INotifyPropertyChanged;
+
+                    if (notifier != null)
+                        notifier.PropertyChanged -= ObservableCollectionElement_PropertyChanged;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Flags the current project as modified, so that the program (and user) know that it has
+        /// been modified since the last save.
+        /// </summary>
+        /// <param name="sender">Sender</param>
+        /// <param name="e">Event Args</param>
+        private void ObservableCollectionElement_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            FlagProjectAsModified();
+        }
         #endregion
 
         #region Event Invokation Methods
