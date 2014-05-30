@@ -703,9 +703,9 @@ namespace LiveDescribe.View
 
             double width = TimeLine.ActualWidth;
 
-            List<short> data = _videoControl.AudioData;
-            if (data == null || _canvasWidth == 0 || width == 0)
+            if (_videoControl.Waveform == null || _canvasWidth == 0 || width == 0)
                 return;
+            List<short> data = _videoControl.Waveform.Data;
 
             double samplesPerPixel = data.Count / _canvasWidth;
 
@@ -719,8 +719,9 @@ namespace LiveDescribe.View
             AudioCanvas.Children.Add(NumberTimelineBorder);
             
             int begin = (int)TimeLine.HorizontalOffset;
-            int ratio = _videoControl.Header.NumChannels == 2 ? 40 : 80;
-            double samples_per_second = (_videoControl.Header.SampleRate * (_videoControl.Header.BlockAlign / (double)ratio));
+            int ratio = _videoControl.Waveform.Header.NumChannels == 2 ? 40 : 80;
+            double samples_per_second =
+                (_videoControl.Waveform.Header.SampleRate * (_videoControl.Waveform.Header.BlockAlign / (double)ratio));
             
             double offset_time;
             double sample_start;

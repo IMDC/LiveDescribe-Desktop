@@ -173,8 +173,8 @@ namespace LiveDescribe.View_Model
                     if (!Directory.Exists(_project.Folders.Cache))
                         Directory.CreateDirectory(_project.Folders.Cache);
 
-                    FileWriter.WriteWaveFormHeader(_project, _videocontrol.Header);
-                    FileWriter.WriteWaveFormFile(_project, _videocontrol.AudioData);
+                    FileWriter.WriteWaveFormHeader(_project, _videocontrol.Waveform.Header);
+                    FileWriter.WriteWaveFormFile(_project, _videocontrol.Waveform.Data);
                     FileWriter.WriteDescriptionsFile(_project, _descriptionviewmodel.AllDescriptions);
                     FileWriter.WriteSpacesFile(_project, _spacesviewmodel.Spaces);
 
@@ -448,8 +448,9 @@ namespace LiveDescribe.View_Model
 
             if (Directory.Exists(_project.Folders.Cache) && File.Exists(_project.Files.WaveForm))
             {
-                _videocontrol.Header = FileReader.ReadWaveFormHeader(_project);
-                _videocontrol.AudioData = FileReader.ReadWaveFormFile(_project);
+                var header = FileReader.ReadWaveFormHeader(_project);
+                var audioData = FileReader.ReadWaveFormFile(_project);
+                _videocontrol.Waveform = new Waveform(header,audioData);
                 _videocontrol.Path = _project.Files.Video;
             }
             else
