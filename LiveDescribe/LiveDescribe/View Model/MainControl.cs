@@ -31,6 +31,10 @@ namespace LiveDescribe.View_Model
 
         #region Constants
         public const string DefaultWindowTitle = "Live Describe";
+        /// <summary>
+        /// The span of time into a regular description that it can still be played.
+        /// </summary>
+        public const double PlayDescriptionThreshold = 0.8;
         #endregion
 
         #region Instance Variables
@@ -395,26 +399,41 @@ namespace LiveDescribe.View_Model
         {
             OnGraphicsTick(sender, e);
             //I put this method in it's own timer in the MainControl for now, because I believe it should be separate from the view
-            for (int i = 0; i < _descriptionviewmodel.AllDescriptions.Count; ++i)
+            for (int i = 0; i < _descriptionviewmodel.AllDescriptions.Count; i++)
+            //foreach (var description in _descriptionviewmodel.AllDescriptions)
             {
-                Description currentDescription = _descriptionviewmodel.AllDescriptions[i];
+                var description = _descriptionviewmodel.AllDescriptions[i];
                 TimeSpan currentPositionInVideo = new TimeSpan();
                 //get the current position of the video from the UI thread
-                DispatcherHelper.UIDispatcher.Invoke(delegate { currentPositionInVideo = _mediaVideo.Position; });
-                double offset = currentPositionInVideo.TotalMilliseconds - currentDescription.StartInVideo;
+                DispatcherHelper.UIDispatcher.Invoke(() => { currentPositionInVideo = _mediaVideo.Position; });
+                double offset = currentPositionInVideo.TotalMilliseconds - description.StartInVideo;
 
-                if (!currentDescription.IsExtendedDescription &&
-                    offset >= 0 && offset < (currentDescription.EndWaveFileTime - currentDescription.StartWaveFileTime))
+                if (!description.IsExtendedDescription &&
+                    //
+                    0 <= offset && offset < description.WaveFileDuration * PlayDescriptionThreshold)
                 {
-                    log.Info("Playing Regular Description");
-                    currentDescription.Play(offset);
+                    if (!description.IsPlaying)
+                    {
+                        log.Info("Playing Regular Description");
+                        //Reduce volume on the graphics thread to avoid an invalid operation exception.
+                        DispatcherHelper.UIDispatcher.Invoke(() => _videocontrol.ReduceVolume());
+                    }
+
+                    description.Play(offset);
                     break;
                 }
-                else if (currentDescription.IsExtendedDescription &&
+                else if (description.IsExtendedDescription &&
                     //if it is equal then the video time matches when the description should start dead on
-                    offset < LiveDescribeConstants.EXTENDED_DESCRIPTION_START_INTERVAL_MAX && offset >= 0)
+                    0 <= offset && offset < LiveDescribeConstants.ExtendedDescriptionStartIntervalMax)
                 {
-                    DispatcherHelper.UIDispatcher.Invoke(delegate { _videocontrol.PauseCommand.Execute(this); log.Info("Playing Extended Description"); currentDescription.Play(); });
+                    log.Info("Playing Extended Description");
+
+                    DispatcherHelper.UIDispatcher.Invoke(() =>
+                    {
+                        _videocontrol.PauseCommand.Execute(this);
+                        log.Info("Playing Extended Description");
+                        description.Play();
+                    });
                     break;
                 }
             }

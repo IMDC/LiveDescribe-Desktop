@@ -848,6 +848,7 @@ namespace LiveDescribe.View
         }
         #endregion
 
+        #region Control Event Handlers
         private void ContextMenu_AddSpace(object sender, RoutedEventArgs e)
         {
             var space = new Space();
@@ -897,5 +898,6 @@ namespace LiveDescribe.View
         {
             this.Close();
         }
+        #endregion
     }
 }

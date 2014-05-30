@@ -27,7 +27,6 @@ namespace LiveDescribe.Model
         private bool _isextendeddescription;
         private double _startwavefiletime;
         private double _endwavefiletime;
-        private double _actuallength;
         private double _startinvideo;
         private double _endinvideo;
         private double _X;
@@ -38,7 +37,7 @@ namespace LiveDescribe.Model
         private bool _isPlaying;
         #endregion
 
-        #region Event Handlers
+        #region Events
         [JsonIgnore]
         public EventHandler DescriptionDeleteEvent;
         [JsonIgnore]
@@ -274,21 +273,7 @@ namespace LiveDescribe.Model
                 return _endwavefiletime;
             }
         }
-        /// <summary>
-        /// Actual Length of the description
-        /// </summary>
-        public double ActualLength
-        {
-            private set
-            {
-                _actuallength = value;
-                NotifyPropertyChanged("ActualLength");
-            }
-            get
-            {
-                return _actuallength;
-            }
-        }
+
         /// <summary>
         /// The time in the video that the description starts
         /// </summary>
@@ -359,6 +344,24 @@ namespace LiveDescribe.Model
             {
                 return _isPlaying;
             }
+        }
+
+        /// <summary>
+        /// The length of the span the description is set to play in the video.
+        /// </summary>
+        [JsonIgnore]
+        public double Duration
+        {
+            get { return _endinvideo - _startinvideo; }
+        }
+
+        /// <summary>
+        /// The length of time the wave file is set to play for.
+        /// </summary>
+        [JsonIgnore]
+        public double WaveFileDuration
+        {
+            get { return _endwavefiletime - _startwavefiletime; }
         }
         #endregion
 

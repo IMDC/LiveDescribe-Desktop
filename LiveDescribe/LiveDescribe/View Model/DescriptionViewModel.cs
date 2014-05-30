@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Threading;
 using LiveDescribe.Interfaces;
 using NAudio.Wave;
 using System.IO;
@@ -363,10 +364,14 @@ namespace LiveDescribe.View_Model
                     {
                         double offset = _mediaVideo.Position.TotalMilliseconds - desc.StartInVideo;
                         //+1 so we are out of the interval and it doesn't repeat the description
-                        int newStartInVideo = (int)(_mediaVideo.Position.TotalMilliseconds + (LiveDescribeConstants.EXTENDED_DESCRIPTION_START_INTERVAL_MAX - offset + 1)); 
+                        int newStartInVideo = (int)(_mediaVideo.Position.TotalMilliseconds + (LiveDescribeConstants.ExtendedDescriptionStartIntervalMax - offset + 1)); 
                         _mediaVideo.Position = new TimeSpan(0,0,0,0,newStartInVideo);
                         _videoControl.PlayCommand.Execute(this);
                         log.Info("Extended description finished");
+                    }
+                    else
+                    {
+                        DispatcherHelper.UIDispatcher.Invoke(() => _videoControl.RestoreVolume());
                     }
 
                 };

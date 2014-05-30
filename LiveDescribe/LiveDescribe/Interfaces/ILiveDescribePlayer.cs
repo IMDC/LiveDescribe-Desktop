@@ -21,6 +21,8 @@ namespace LiveDescribe.Interfaces
 
         bool IsMuted { set; get; }
 
+        double Volume { set; get; }
+
         void Play();
 
         void Pause();

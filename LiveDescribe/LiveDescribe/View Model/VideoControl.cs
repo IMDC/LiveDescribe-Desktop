@@ -18,6 +18,13 @@ namespace LiveDescribe.View_Model
             (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         #endregion
 
+        #region Constants
+        /// <summary>
+        /// How much the volume gets reduced to when a description plays
+        /// </summary>
+        public const double VolumeReductionFactor = 0.2;
+        #endregion
+
         #region Instance Variables
         private readonly ILiveDescribePlayer _mediaVideo;
         private AudioUtility _audioOperator;
@@ -26,6 +33,7 @@ namespace LiveDescribe.View_Model
         private Header _audioHeader;
         private List<Space> _spaceData;
         private TimeSpan _positionTimeLabel;
+        private double _originalVolume;
 
         public Project Project { get; set; }
         #endregion
@@ -444,6 +452,23 @@ namespace LiveDescribe.View_Model
             _loadingViewModel.SetProgress("Importing Video", 0);
             _loadingViewModel.Visible = true;
             worker.RunWorkerAsync();
+        }
+
+        /// <summary>
+        /// Reduces the volume to VolumeReductionFactor % of the original volume.
+        /// </summary>
+        public void ReduceVolume()
+        {
+            _originalVolume = _mediaVideo.Volume;
+            _mediaVideo.Volume *= VolumeReductionFactor;
+        }
+
+        /// <summary>
+        /// Restores the volume to its original volume level.
+        /// </summary>
+        public void RestoreVolume()
+        {
+            _mediaVideo.Volume = _originalVolume;
         }
         #endregion
     }
