@@ -59,6 +59,9 @@
                 <MenuItem
                     Header="Project">
                     <MenuItem
+                        Header="Find Spaces in Video"
+                        Command="{Binding FindSpaces}"/>
+                    <MenuItem
                         Header="Refresh Project Cache"
                         Command="{Binding ClearCacheCommand}" />
                 </MenuItem>

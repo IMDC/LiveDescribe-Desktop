@@ -5,6 +5,7 @@ using System.Threading;
 using System.Web.Script.Serialization;
 using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Input;
 using LiveDescribe.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Threading;
@@ -79,6 +80,17 @@ namespace LiveDescribe.View_Model
             SaveProjectCommand = new RelayCommand(SaveProject, CanSaveProject);
             ClearCacheCommand = new RelayCommand(ClearCache, CanClearCache);
             ShowPreferencesCommand = new RelayCommand(ShowPreferences);
+            FindSpaces = new RelayCommand(
+                canExecute: () => _project != null,
+                execute: () =>
+                {
+                    var spaces = _videocontrol.FindSpaces(_project);
+                    foreach (var space in spaces)
+                    {
+                        _spacesviewmodel.AddSpace(space);
+                    }
+                }
+            );
 
             _mediaVideo = mediaVideo;
 
@@ -175,6 +187,8 @@ namespace LiveDescribe.View_Model
         /// Command to show preferences
         /// </summary>
         public RelayCommand ShowPreferencesCommand { private set; get; }
+
+        public ICommand FindSpaces { private set; get; }
         #endregion
 
         #region Command Functions

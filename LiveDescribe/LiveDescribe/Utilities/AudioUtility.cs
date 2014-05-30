@@ -300,6 +300,11 @@ namespace LiveDescribe.Utilities
             return crosses;
         }
 
+        public List<Space> findSpaces(Header header, List<short> data)
+        {
+            _header = header;
+            return findSpaces(data);
+        }
 
         /// <summary>
         /// Finds the non-speech regions in audio data

@@ -471,5 +471,12 @@ namespace LiveDescribe.View_Model
             _mediaVideo.Volume = _originalVolume;
         }
         #endregion
+
+        public List<Space> FindSpaces(Project p)
+        {
+            if(_audioOperator == null)
+                _audioOperator = new AudioUtility(p);
+            return _audioOperator.findSpaces(_audioHeader, _waveFormData);
+        }
     }
 }
