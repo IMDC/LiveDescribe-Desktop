@@ -419,7 +419,7 @@ namespace LiveDescribe.View_Model
                 var waveFormData = _audioOperator.ReadWavData(worker);
                 var audioHeader = _audioOperator.Header;
                 _waveform = new Waveform(audioHeader, waveFormData);
-                _spaceData = _audioOperator.findSpaces(waveFormData);
+                _spaceData = AudioAnalyzer.FindSpaces(_waveform);
             };
 
             //Notify subscribers of stripping completion
@@ -457,12 +457,5 @@ namespace LiveDescribe.View_Model
             _mediaVideo.Volume = _originalVolume;
         }
         #endregion
-
-        public List<Space> FindSpaces(Project p)
-        {
-            if(_audioOperator == null)
-                _audioOperator = new AudioUtility(p);
-            return _audioOperator.findSpaces(Waveform.Header, Waveform.Data);
-        }
     }
 }

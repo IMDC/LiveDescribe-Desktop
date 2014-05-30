@@ -206,7 +206,7 @@ namespace LiveDescribe.View_Model
                 canExecute: () => _project != null,
                 execute: () =>
                 {
-                    var spaces = _videocontrol.FindSpaces(_project);
+                    var spaces = AudioAnalyzer.FindSpaces(_videocontrol.Waveform);
                     foreach (var space in spaces)
                     {
                         _spacesviewmodel.AddSpace(space);
