@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
 
 namespace LiveDescribe.View_Model
@@ -16,10 +17,11 @@ namespace LiveDescribe.View_Model
 
         private Space _selectedSpace;
         private DescriptionInfoTabViewModel _descriptionInfo;
+        private ILiveDescribePlayer _player;
         #endregion
 
         #region Constructors
-        public MarkingSpacesControlViewModel(DescriptionInfoTabViewModel descriptionInfo)
+        public MarkingSpacesControlViewModel(DescriptionInfoTabViewModel descriptionInfo, ILiveDescribePlayer player)
         {
             _descriptionInfo = descriptionInfo;
             _descriptionInfo.PropertyChanged += (sender, args) =>
@@ -27,6 +29,8 @@ namespace LiveDescribe.View_Model
                 if (args.PropertyName.Equals("SpaceSelectedInList"))
                     SelectedSpace = descriptionInfo.SpaceSelectedInList;
             };
+
+            _player = player;
         }
         #endregion
 
@@ -77,7 +81,10 @@ namespace LiveDescribe.View_Model
             set
             {
                 //Set value only if it is valid, otherwise update view with old value.
-                if (SelectedSpace != null && !double.IsNaN(value))
+                if (SelectedSpace != null
+                    && !double.IsNaN(value)
+                    && 0 <= value
+                    && value <= SelectedSpace.EndInVideo - SpacesViewModel.MinSpaceLengthInMSecs)
                     SelectedSpace.StartInVideo = value;
 
                 RaisePropertyChanged("SelectedSpace_StartInVideo");
@@ -89,7 +96,10 @@ namespace LiveDescribe.View_Model
         {
             set
             {
-                if (SelectedSpace != null && !double.IsNaN(value))
+                if (SelectedSpace != null
+                    && !double.IsNaN(value)
+                    && SelectedSpace.StartInVideo + SpacesViewModel.MinSpaceLengthInMSecs <= value
+                    && value <= _player.DurationMilliseconds)
                     SelectedSpace.EndInVideo = value;
 
                 RaisePropertyChanged("SelectedSpace_EndInVideo");

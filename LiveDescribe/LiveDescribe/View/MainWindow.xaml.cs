@@ -454,9 +454,9 @@ namespace LiveDescribe.View
                     double lengthInMillisecondsNewWidth = (_videoDuration / AudioCanvas.Width) * newWidth;
                     
                     //bounds checking
-                    if (lengthInMillisecondsNewWidth < SpacesViewModel.MAX_SPACE_LENGTH_IN_MILLISECONDS)
+                    if (lengthInMillisecondsNewWidth < SpacesViewModel.MinSpaceLengthInMSecs)
                     {
-                        newWidth = (AudioCanvas.Width / _videoDuration) * SpacesViewModel.MAX_SPACE_LENGTH_IN_MILLISECONDS;
+                        newWidth = (AudioCanvas.Width / _videoDuration) * SpacesViewModel.MinSpaceLengthInMSecs;
                         //temporary fix, have to make the cursor attached to the end of the space somehow
                         AudioCanvas.ReleaseMouseCapture();
                     }
@@ -488,9 +488,9 @@ namespace LiveDescribe.View
                         //temporary fix, have to make the cursor attached to the end of the space somehow
                         AudioCanvas.ReleaseMouseCapture();
                     }
-                    else if ((_spaceBeingDraggedOrResized.EndInVideo - newPositionMilliseconds) < SpacesViewModel.MAX_SPACE_LENGTH_IN_MILLISECONDS)
+                    else if ((_spaceBeingDraggedOrResized.EndInVideo - newPositionMilliseconds) < SpacesViewModel.MinSpaceLengthInMSecs)
                     {
-                        newPosition = (AudioCanvas.Width / _videoDuration) * (_spaceBeingDraggedOrResized.EndInVideo - SpacesViewModel.MAX_SPACE_LENGTH_IN_MILLISECONDS);                      
+                        newPosition = (AudioCanvas.Width / _videoDuration) * (_spaceBeingDraggedOrResized.EndInVideo - SpacesViewModel.MinSpaceLengthInMSecs);                      
                         //temporary fix, have to make the cursor attached to the end of the space somehow
                         AudioCanvas.ReleaseMouseCapture();
                     }

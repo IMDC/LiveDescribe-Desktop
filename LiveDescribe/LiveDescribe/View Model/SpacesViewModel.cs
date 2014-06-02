@@ -15,7 +15,7 @@ namespace LiveDescribe.View_Model
     public class SpacesViewModel : ViewModelBase
     {
 
-        public const double MAX_SPACE_LENGTH_IN_MILLISECONDS = 333;
+        public const double MinSpaceLengthInMSecs = 333;
 
         #region Instance Variables
         private ObservableCollection<Space> _spaces;

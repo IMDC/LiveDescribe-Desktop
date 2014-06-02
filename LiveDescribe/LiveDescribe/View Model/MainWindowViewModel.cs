@@ -74,7 +74,7 @@ namespace LiveDescribe.View_Model
             _preferences = new PreferencesViewModel();
             _descriptionviewmodel = new DescriptionViewModel(mediaVideo, _mediaControlViewModel);
             _descriptionInfoTabViewModel = new DescriptionInfoTabViewModel(_descriptionviewmodel, _spacesviewmodel);
-            _markingSpacesControlViewModel = new MarkingSpacesControlViewModel(_descriptionInfoTabViewModel);
+            _markingSpacesControlViewModel = new MarkingSpacesControlViewModel(_descriptionInfoTabViewModel, mediaVideo);
 
             #region Commands
             //Commands
@@ -228,7 +228,7 @@ namespace LiveDescribe.View_Model
             _preferences.ApplyRequested += (sender, e) =>
                 {
                     _descriptionviewmodel.MicrophoneStream = Properties.Settings.Default.Microphone;
-                    log.Info("Product Name of Apply Requested Microphone: " + 
+                    log.Info("Product Name of Apply Requested Microphone: " +
                         NAudio.Wave.WaveIn.GetCapabilities(_descriptionviewmodel.MicrophoneStream.DeviceNumber).ProductName);
                 };
 
