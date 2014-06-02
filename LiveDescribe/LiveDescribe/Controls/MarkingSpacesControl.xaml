@@ -11,7 +11,7 @@
             TargetType="Control">
             <Setter
                 Property="Margin"
-                Value="20" />
+                Value="4"/>
         </Style>
         
       </UserControl.Resources>
@@ -33,28 +33,28 @@
         
         <!-- Begin -->
         <TextBlock 
-            Grid.Row="0"
+            Grid.Row="1"
             Text="Begin"
             VerticalAlignment="Center"
             HorizontalAlignment="Center"/>
         
         <Button
-            Grid.Row="0"
-            Grid.Column="1"
-            Margin="20">
+            Grid.Row="1"
+            Grid.Column="1">
             {
         </Button>
         
         <TextBox
-            Grid.Row="1"
+            Grid.Row="2"
             Style="{StaticResource TextBoxStyle}"
-            MaxLength="2"/>
+            MaxLength="2"
+            Text="{Binding BeginHours}"/>
         
         <TextBlock
-            Grid.Row="1"
+            Grid.Row="2"
             VerticalAlignment="Center"
             Grid.Column="1"
-            FontSize="26">
+            FontSize="20">
             :
         </TextBlock>
 
@@ -62,105 +62,104 @@
         <TextBox
             Style="{StaticResource TextBoxStyle}"
             Grid.Column="1"
-            Grid.Row="1"
-             MaxLength="2"/>
+            Grid.Row="2"
+            MaxLength="2"
+            Text="{Binding BeginMins}"/>
 
         <TextBlock
-            Grid.Row="1"
+            Grid.Row="2"
             VerticalAlignment="Center"
             Grid.Column="2"
-            FontSize="26">
+            FontSize="20">
             :
         </TextBlock>
     
         <TextBox
             Style="{StaticResource TextBoxStyle}"
             Grid.Column="2"
-            Grid.Row="1"
-            MaxLength="2" />
+            Grid.Row="2"
+            MaxLength="2"
+            Text="{Binding BeginSeconds}"/>
 
         <TextBlock
-            Grid.Row="1"
+            Grid.Row="2"
             VerticalAlignment="Center"
             Grid.Column="3"
-            FontSize="26">
+            FontSize="20">
             .
         </TextBlock>
 
         <TextBox
-            Margin="10,20,10,20"
+            Style="{StaticResource TextBoxStyle}"
             Grid.Column="3"
-            Grid.Row="1"
-            MaxLength="3"/>
+            Grid.Row="2"
+            MaxLength="3"
+            Text="{Binding BeginMilliseconds}"/>
         
         <!-- End -->
         <TextBlock 
-            Grid.Row="2"
+            Grid.Row="3"
             Text="End"
             VerticalAlignment="Center"
             HorizontalAlignment="Center"/>
 
         <Button
-            Grid.Row="2"
-            Grid.Column="1"
-            Margin="20">
-            {
+            Grid.Row="3"
+            Grid.Column="1">
+            }
         </Button>
 
         <TextBox
-            Grid.Row="3"
+            Grid.Row="4"
             Style="{StaticResource TextBoxStyle}"
-            MaxLength="2"/>
+            MaxLength="2"
+            Text="{Binding EndHours}"/>
 
         <TextBlock
-            Grid.Row="3"
+            Grid.Row="4"
             VerticalAlignment="Center"
             Grid.Column="1"
-            FontSize="26">
+            FontSize="20">
             :
         </TextBlock>       
 
         <TextBox
             Style="{StaticResource TextBoxStyle}"
             Grid.Column="1"
-            Grid.Row="3"
-             MaxLength="2"/>
+            Grid.Row="4"
+            MaxLength="2"
+            Text="{Binding EndMins}"/>
         
         <TextBlock
-            Grid.Row="3"
+            Grid.Row="4"
             VerticalAlignment="Center"
             Grid.Column="2"
-            FontSize="26">
+            FontSize="20">
             :
         </TextBlock>
 
         <TextBox
             Style="{StaticResource TextBoxStyle}"
             Grid.Column="2"
-            Grid.Row="3"
-            MaxLength="2" />
+            Grid.Row="4"
+            MaxLength="2"
+            Text="{Binding EndSeconds}"/>
 
         <TextBlock
-            Grid.Row="3"
+            Grid.Row="4"
             VerticalAlignment="Center"
             Grid.Column="3"
-            FontSize="26">
+            FontSize="20">
             .
         </TextBlock>
 
         <TextBox
-            Margin="10,20,10,20"
+            Style="{StaticResource TextBoxStyle}"
             Grid.Column="3"
-            Grid.Row="3"
-            MaxLength="3"/>
+            Grid.Row="4"
+            MaxLength="3"
+            Text="{Binding EndMilliseconds}"/>
             <!--  -->
-        
-        <Button
-            Grid.Column="1"
-            Grid.ColumnSpan="2"
-            Grid.Row="4">
-            Create Space
-        </Button>
 
     </Grid>
 </UserControl>

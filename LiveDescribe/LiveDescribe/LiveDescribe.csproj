@@ -108,6 +108,7 @@
     <Compile Include="Utilities\ProgressFileCopier.cs" />
     <Compile Include="View Model\DescriptionInfoTabViewModel.cs" />
     <Compile Include="View Model\LoadingViewModel.cs" />
+    <Compile Include="View Model\MarkingSpacesControlViewModel.cs" />
     <Compile Include="View Model\SpacesViewModel.cs" />
     <Compile Include="View\NewProjectView.xaml.cs">
       <DependentUpon>NewProjectView.xaml</DependentUpon>

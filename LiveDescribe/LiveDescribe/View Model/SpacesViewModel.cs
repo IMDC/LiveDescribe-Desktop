@@ -19,16 +19,6 @@ namespace LiveDescribe.View_Model
 
         #region Instance Variables
         private ObservableCollection<Space> _spaces;
-        
-        private String _beginHours;
-        private String _beginMins;
-        private String _beginSeconds;
-        private String _beginMilliseconds;
-
-        private String _endHours;
-        private String _endMins;
-        private String _endSeconds;
-        private String _endMilliseconds;
         #endregion
 
         #region Event Handlers
@@ -62,86 +52,6 @@ namespace LiveDescribe.View_Model
                 RaisePropertyChanged("Spaces");
             }
             get { return _spaces; }
-        }
-
-        public String BeginHours
-        {
-            set
-            {
-                _beginHours = value;
-                RaisePropertyChanged("BeginHours");
-            }
-            get { return _beginHours; }
-        }
-
-        public String BeginMins
-        {
-            set
-            {
-                _beginMins = value;
-                RaisePropertyChanged("BeginMins");
-            }
-            get { return _beginMins; }
-        }
-
-        public String BeginSeconds
-        {
-            set
-            {
-                _beginSeconds = value;
-                RaisePropertyChanged("BeginSeconds");
-            }
-            get { return _beginSeconds; }
-        }
-
-        public String BeginMilliseconds
-        {
-            set
-            {
-                _beginMilliseconds = value;
-                RaisePropertyChanged("BeginMilliseconds");
-            }
-            get { return _beginMilliseconds; }
-        }
-
-        public String EndHours
-        {
-            set
-            {
-                _endHours = value;
-                RaisePropertyChanged("EndHours");
-            }
-            get { return _endHours; }
-        }
-
-        public String EndMins
-        {
-            set
-            {
-                _endMins = value;
-                RaisePropertyChanged("EndMins");
-            }
-            get { return _endMins; }
-        }
-
-        public String EndSeconds
-        {
-            set
-            {
-                _endSeconds = value;
-                RaisePropertyChanged("BeginSeconds");
-            }
-            get { return _endSeconds; }
-        }
-
-        public String EndMilliseconds
-        {
-            set
-            {
-                _endMilliseconds = value;
-                RaisePropertyChanged("BeginMilliseconds");
-            }
-            get { return _endMilliseconds; }
         }
 
         #endregion
