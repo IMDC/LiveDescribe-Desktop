@@ -45,6 +45,8 @@ namespace LiveDescribe.View_Model
         public event EventHandler MediaFailedEvent;
         public event EventHandler MediaEndedEvent;
         public event EventHandler OnStrippingAudioCompleted;
+        public event EventHandler RewindEvent;
+        public event EventHandler FastForwardEvent;
 
         //Event handlers for the Marker on the timeline
         public event EventHandler OnMarkerMouseDownRequested;
@@ -173,6 +175,7 @@ namespace LiveDescribe.View_Model
             {
                 handler(this, EventArgs.Empty);
             }
+
         }
 
         /// <summary>
@@ -195,14 +198,30 @@ namespace LiveDescribe.View_Model
         /// Fastforwards the video
         /// </summary>
         public void FastForward()
-        { 
+        {
+            _mediaVideo.Position += TimeSpan.FromSeconds(5);
+            if (_mediaVideo.Position.TotalMilliseconds >= _mediaVideo.DurationMilliseconds)
+            {
+                _mediaVideo.Position -= TimeSpan.FromMilliseconds(100);
+            }
+            EventHandler handler = FastForwardEvent;
+            if (handler == null) return;
+            handler(this, EventArgs.Empty);
         }
 
         /// <summary>
         /// Rewinds the video
         /// </summary>
         public void Rewind()
-        { 
+        {
+            _mediaVideo.Position -= TimeSpan.FromSeconds(5);
+            if (_mediaVideo.Position.TotalMilliseconds <= 0)
+            {
+                _mediaVideo.Position += TimeSpan.FromMilliseconds(100);
+            }
+            EventHandler handler = RewindEvent;
+            if (handler == null) return;
+            handler(this, EventArgs.Empty);
         }
 
         /// <summary>
