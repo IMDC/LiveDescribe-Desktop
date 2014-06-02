@@ -5,6 +5,7 @@ using System.Threading;
 using System.Web.Script.Serialization;
 using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Input;
 using LiveDescribe.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Threading;
@@ -31,6 +32,10 @@ namespace LiveDescribe.View_Model
 
         #region Constants
         public const string DefaultWindowTitle = "Live Describe";
+        /// <summary>
+        /// The span of time into a regular description that it can still be played.
+        /// </summary>
+        public const double PlayDescriptionThreshold = 0.8;
         #endregion
 
         #region Instance Variables
@@ -68,13 +73,147 @@ namespace LiveDescribe.View_Model
             _descriptionviewmodel = new DescriptionViewModel(mediaVideo, _videocontrol);
             _descriptionInfoTabViewModel = new DescriptionInfoTabViewModel(_descriptionviewmodel, _spacesviewmodel);
 
+            #region Commands
             //Commands
-            CloseProjectCommand = new RelayCommand(CloseProject, CanCloseProject);
-            NewProjectCommand = new RelayCommand(NewProject);
-            OpenProjectCommand = new RelayCommand(OpenProject);
-            SaveProjectCommand = new RelayCommand(SaveProject, CanSaveProject);
-            ClearCacheCommand = new RelayCommand(ClearCache, CanClearCache);
-            ShowPreferencesCommand = new RelayCommand(ShowPreferences);
+            CloseProject = new RelayCommand(
+                canExecute: () => _project != null,
+                execute: () =>
+                {
+                    if (_projectModified)
+                    {
+                        var text = string.Format("The LiveDescribe project \"{0}\" has been modified." +
+                            " Do you want to save changes before closing?", _project.ProjectName);
+                        var result = MessageBox.Show(text, "Warning", MessageBoxButton.YesNoCancel,
+                            MessageBoxImage.Warning);
+
+                        if (result == MessageBoxResult.Yes)
+                            SaveProject.Execute(null);
+                        else if (result == MessageBoxResult.Cancel)
+                            return;
+                    }
+
+                    log.Info("Closed Project");
+
+                    _descriptionviewmodel.CloseDescriptionViewModel();
+                    _videocontrol.CloseVideoControl();
+                    _spacesviewmodel.CloseSpacesViewModel();
+                    _project = null;
+
+                    OnProjectClosed();
+
+                    WindowTitle = DefaultWindowTitle;
+                });
+
+
+            NewProject = new RelayCommand(() =>
+            {
+                var viewModel = NewProjectViewModel.CreateWindow();
+
+                if (viewModel.DialogResult != true)
+                    return;
+
+                if (viewModel.CopyVideo)
+                {
+                    LoadingViewModel.Visible = true;
+
+                    //Copy video file in background while updating the LoadingBorder
+                    var worker = new BackgroundWorker()
+                    {
+                        WorkerReportsProgress = true,
+                    };
+                    var copier = new ProgressFileCopier();
+                    worker.DoWork += (sender, args) =>
+                    {
+                        copier.ProgressChanged += (o, eventArgs) => worker.ReportProgress(eventArgs.ProgressPercentage);
+                        copier.CopyFile(viewModel.VideoPath, viewModel.Project.Files.Video);
+                    };
+                    worker.ProgressChanged += (sender, args) =>
+                    {
+                        LoadingViewModel.SetProgress("Copying Video File", args.ProgressPercentage);
+                    };
+                    worker.RunWorkerCompleted += (sender, args) => SetProject(viewModel.Project);
+
+                    worker.RunWorkerAsync();
+                }
+                else
+                    SetProject(viewModel.Project);
+            });
+
+            OpenProject = new RelayCommand(() =>
+            {
+                var projectChooser = new OpenFileDialog
+                {
+                    Filter = string.Format("LiveDescribe Files (*{0})|*{0}|All Files(*.*)|*.*",
+                        Project.Names.ProjectExtension)
+                };
+
+                bool? dialogSuccess = projectChooser.ShowDialog();
+                if (dialogSuccess != true)
+                    return;
+
+                //Attempt to read project. If object fields are missing, an error window pops up.
+                try
+                {
+                    Project p = FileReader.ReadProjectFile(projectChooser.FileName);
+                    SetProject(p);
+                }
+                catch (JsonSerializationException)
+                {
+                    MessageBox.Show("The selected project is missing file locations.", "Error",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            });
+
+            SaveProject = new RelayCommand(
+                canExecute: () => _project != null && _projectModified,
+                execute: () =>
+                {
+                    FileWriter.WriteProjectFile(_project);
+
+                    if (!Directory.Exists(_project.Folders.Cache))
+                        Directory.CreateDirectory(_project.Folders.Cache);
+
+                    FileWriter.WriteWaveFormHeader(_project, _videocontrol.Waveform.Header);
+                    FileWriter.WriteWaveFormFile(_project, _videocontrol.Waveform.Data);
+                    FileWriter.WriteDescriptionsFile(_project, _descriptionviewmodel.AllDescriptions);
+                    FileWriter.WriteSpacesFile(_project, _spacesviewmodel.Spaces);
+
+                    ResetProjectModifiedFlag();
+                });//(SaveProject, CanSaveProject);
+
+            ClearCache = new RelayCommand(
+                canExecute: () => _project != null,
+                execute: () =>
+                {
+                    var p = _project;
+
+                    CloseProject.Execute(null);
+
+                    Directory.Delete(p.Folders.Cache, true);
+
+                    SetProject(p);
+                });
+
+            ShowPreferences = new RelayCommand(() =>
+            {
+                _preferences.InitializeAudioSourceInfo();
+                var preferencesWindow = new PreferencesWindow(_preferences);
+                preferencesWindow.ShowDialog();
+
+            });
+
+            FindSpaces = new RelayCommand(
+                canExecute: () => _project != null,
+                execute: () =>
+                {
+                    var spaces = AudioAnalyzer.FindSpaces(_videocontrol.Waveform);
+                    foreach (var space in spaces)
+                    {
+                        _spacesviewmodel.AddSpace(space);
+                    }
+                }
+            );
+            #endregion
 
             _mediaVideo = mediaVideo;
 
@@ -86,7 +225,8 @@ namespace LiveDescribe.View_Model
             _preferences.ApplyRequested += (sender, e) =>
                 {
                     _descriptionviewmodel.MicrophoneStream = Properties.Settings.Default.Microphone;
-                    log.Info("Product Name of Apply Requested Microphone: " + NAudio.Wave.WaveIn.GetCapabilities(_descriptionviewmodel.MicrophoneStream.DeviceNumber).ProductName);
+                    log.Info("Product Name of Apply Requested Microphone: " + 
+                        NAudio.Wave.WaveIn.GetCapabilities(_descriptionviewmodel.MicrophoneStream.DeviceNumber).ProductName);
                 };
 
             #region VideoControl Events
@@ -128,7 +268,7 @@ namespace LiveDescribe.View_Model
                     _spacesviewmodel.AddSpace(space);
                 }
 
-                SaveProject();
+                SaveProject.Execute(null);
             };
             #endregion
 
@@ -145,182 +285,37 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Commands
-        public RelayCommand CloseProjectCommand { private set; get; }
+        public ICommand CloseProject { private set; get; }
 
         /// <summary>
         /// Command to open a new Project.
         /// </summary>
-        public RelayCommand NewProjectCommand { private set; get; }
+        public ICommand NewProject { private set; get; }
 
         /// <summary>
         /// Command to open an already existing project.
         /// </summary>
-        public RelayCommand OpenProjectCommand { private set; get; }
+        public ICommand OpenProject { private set; get; }
 
         /// <summary>
         /// Command to save project.
         /// </summary>
-        public RelayCommand SaveProjectCommand { private set; get; }
+        public ICommand SaveProject { private set; get; }
 
         /// <summary>
         /// Command to clear the cache of the current project.
         /// </summary>
-        public RelayCommand ClearCacheCommand { private set; get; }
+        public ICommand ClearCache { private set; get; }
 
         /// <summary>
         /// Command to show preferences
         /// </summary>
-        public RelayCommand ShowPreferencesCommand { private set; get; }
-        #endregion
-
-        #region Command Functions
-
-        public bool CanCloseProject()
-        {
-            //TODO: implement notifiable property?
-            return _project != null;
-        }
+        public ICommand ShowPreferences { private set; get; }
 
         /// <summary>
-        /// This function gets called when the close project menu item gets pressed
+        /// Finds spaces for the current project
         /// </summary>
-        public void CloseProject()
-        {
-            if (_projectModified)
-            {
-                var text = string.Format("The LiveDescribe project \"{0}\" has been modified." +
-                    " Do you want to save changes before closing?", _project.ProjectName);
-                var result = MessageBox.Show(text, "Warning", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
-
-                if (result == MessageBoxResult.Yes)
-                    SaveProject();
-                else if (result == MessageBoxResult.Cancel)
-                    return;
-            }
-
-            log.Info("Closed Project");
-
-            _descriptionviewmodel.CloseDescriptionViewModel();
-            _videocontrol.CloseVideoControl();
-            _spacesviewmodel.CloseSpacesViewModel();
-            _project = null;
-
-            OnProjectClosed();
-
-            WindowTitle = DefaultWindowTitle;
-        }
-
-        /// <summary>
-        /// Opens a new project creation window, and on success sets up the new project.
-        /// </summary>
-        public void NewProject()
-        {
-            var viewModel = NewProjectViewModel.CreateWindow();
-
-            if (viewModel.DialogResult != true)
-                return;
-
-            if (viewModel.CopyVideo)
-            {
-                LoadingViewModel.Visible = true;
-
-                //Copy video file in background while updating the LoadingBorder
-                var worker = new BackgroundWorker()
-                {
-                    WorkerReportsProgress = true,
-                };
-                var copier = new ProgressFileCopier();
-                worker.DoWork += (sender, args) =>
-                {
-                    copier.ProgressChanged += (o, eventArgs) => worker.ReportProgress(eventArgs.ProgressPercentage);
-                    copier.CopyFile(viewModel.VideoPath, viewModel.Project.Files.Video);
-                };
-                worker.ProgressChanged += (sender, args) =>
-                {
-                    LoadingViewModel.SetProgress("Copying Video File", args.ProgressPercentage);
-                };
-                worker.RunWorkerCompleted += (sender, args) => SetProject(viewModel.Project);
-
-                worker.RunWorkerAsync();
-            }
-            else
-                SetProject(viewModel.Project);
-        }
-
-        public void OpenProject()
-        {
-            var projectChooser = new OpenFileDialog
-            {
-                Filter = string.Format("LiveDescribe Files (*{0})|*{0}|All Files(*.*)|*.*",
-                    Project.Names.ProjectExtension)
-            };
-
-            bool? dialogSuccess = projectChooser.ShowDialog();
-            if (dialogSuccess != true)
-                return;
-
-            //Attempt to read project. If object fields are missing, an error window pops up.
-            try
-            {
-                Project p = FileReader.ReadProjectFile(projectChooser.FileName);
-                SetProject(p);
-            }
-            catch (JsonSerializationException)
-            {
-                MessageBox.Show("The selected project is missing file locations.", "Error",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        public bool CanSaveProject()
-        {
-            return _project != null && _projectModified;
-        }
-
-        public void SaveProject()
-        {
-            FileWriter.WriteProjectFile(_project);
-
-            if (!Directory.Exists(_project.Folders.Cache))
-                Directory.CreateDirectory(_project.Folders.Cache);
-
-            FileWriter.WriteWaveFormHeader(_project, _videocontrol.Header);
-            FileWriter.WriteWaveFormFile(_project, _videocontrol.AudioData);
-            FileWriter.WriteDescriptionsFile(_project, _descriptionviewmodel.AllDescriptions);
-            FileWriter.WriteSpacesFile(_project, _spacesviewmodel.Spaces);
-
-            ResetProjectModifiedFlag();
-        }
-
-        public bool CanClearCache()
-        {
-            return _project != null;
-        }
-
-        /// <summary>
-        /// Closes the current project, deletes its cache folder, and then reopens it again. This
-        /// will cause the program to re-import it.
-        /// </summary>
-        public void ClearCache()
-        {
-            var p = _project;
-
-            CloseProject();
-
-            Directory.Delete(p.Folders.Cache, true);
-
-            SetProject(p);
-        }
-
-        /// <summary>
-        /// Gets called when the show preferences option is clicked
-        /// </summary>
-        public void ShowPreferences()
-        {
-            _preferences.InitializeAudioSourceInfo();
-            var preferencesWindow = new PreferencesWindow(_preferences);
-            preferencesWindow.ShowDialog();
-        }
+        public ICommand FindSpaces { private set; get; }
         #endregion
 
         #region Binding Properties
@@ -395,26 +390,41 @@ namespace LiveDescribe.View_Model
         {
             OnGraphicsTick(sender, e);
             //I put this method in it's own timer in the MainControl for now, because I believe it should be separate from the view
-            for (int i = 0; i < _descriptionviewmodel.AllDescriptions.Count; ++i)
+            for (int i = 0; i < _descriptionviewmodel.AllDescriptions.Count; i++)
+            //foreach (var description in _descriptionviewmodel.AllDescriptions)
             {
-                Description currentDescription = _descriptionviewmodel.AllDescriptions[i];
+                var description = _descriptionviewmodel.AllDescriptions[i];
                 TimeSpan currentPositionInVideo = new TimeSpan();
                 //get the current position of the video from the UI thread
-                DispatcherHelper.UIDispatcher.Invoke(delegate { currentPositionInVideo = _mediaVideo.Position; });
-                double offset = currentPositionInVideo.TotalMilliseconds - currentDescription.StartInVideo;
+                DispatcherHelper.UIDispatcher.Invoke(() => { currentPositionInVideo = _mediaVideo.Position; });
+                double offset = currentPositionInVideo.TotalMilliseconds - description.StartInVideo;
 
-                if (!currentDescription.IsExtendedDescription &&
-                    offset >= 0 && offset < (currentDescription.EndWaveFileTime - currentDescription.StartWaveFileTime))
+                if (!description.IsExtendedDescription &&
+                    //
+                    0 <= offset && offset < description.WaveFileDuration * PlayDescriptionThreshold)
                 {
-                    log.Info("Playing Regular Description");
-                    currentDescription.Play(offset);
+                    if (!description.IsPlaying)
+                    {
+                        log.Info("Playing Regular Description");
+                        //Reduce volume on the graphics thread to avoid an invalid operation exception.
+                        DispatcherHelper.UIDispatcher.Invoke(() => _videocontrol.ReduceVolume());
+                    }
+
+                    description.Play(offset);
                     break;
                 }
-                else if (currentDescription.IsExtendedDescription &&
+                else if (description.IsExtendedDescription &&
                     //if it is equal then the video time matches when the description should start dead on
-                    offset < LiveDescribeConstants.EXTENDED_DESCRIPTION_START_INTERVAL_MAX && offset >= 0)
+                    0 <= offset && offset < LiveDescribeConstants.ExtendedDescriptionStartIntervalMax)
                 {
-                    DispatcherHelper.UIDispatcher.Invoke(delegate { _videocontrol.PauseCommand.Execute(this); log.Info("Playing Extended Description"); currentDescription.Play(); });
+                    log.Info("Playing Extended Description");
+
+                    DispatcherHelper.UIDispatcher.Invoke(() =>
+                    {
+                        _videocontrol.PauseCommand.Execute(this);
+                        log.Info("Playing Extended Description");
+                        description.Play();
+                    });
                     break;
                 }
             }
@@ -426,8 +436,8 @@ namespace LiveDescribe.View_Model
         /// <param name="p">The project to initialize</param>
         public void SetProject(Project p)
         {
-            if (_project != null)
-                CloseProject();
+            if (CloseProject.CanExecute(null))
+                CloseProject.Execute(null);
 
             _project = p;
 
@@ -438,8 +448,9 @@ namespace LiveDescribe.View_Model
 
             if (Directory.Exists(_project.Folders.Cache) && File.Exists(_project.Files.WaveForm))
             {
-                _videocontrol.Header = FileReader.ReadWaveFormHeader(_project);
-                _videocontrol.AudioData = FileReader.ReadWaveFormFile(_project);
+                var header = FileReader.ReadWaveFormHeader(_project);
+                var audioData = FileReader.ReadWaveFormFile(_project);
+                _videocontrol.Waveform = new Waveform(header,audioData);
                 _videocontrol.Path = _project.Files.Video;
             }
             else
@@ -507,7 +518,7 @@ namespace LiveDescribe.View_Model
 
                 if (result == MessageBoxResult.Yes)
                 {
-                    SaveProject();
+                    SaveProject.Execute(null);
                     return true;
                 }
                 else if (result == MessageBoxResult.No) //Exit but don't save

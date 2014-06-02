@@ -8,6 +8,6 @@ namespace LiveDescribe
 {
     public static class LiveDescribeConstants
     {
-        public const int EXTENDED_DESCRIPTION_START_INTERVAL_MAX = 100;
+        public const int ExtendedDescriptionStartIntervalMax = 100;
     }
 }

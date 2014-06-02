@@ -38,20 +38,20 @@
                     Header="File">
                     <MenuItem
                         Header="New Project"
-                        Command="{Binding NewProjectCommand}" />
+                        Command="{Binding NewProject}" />
                     <MenuItem
                         Header="Open Project"
-                        Command="{Binding OpenProjectCommand}" />
+                        Command="{Binding OpenProject}" />
                     <MenuItem
                         Header="Save Project"
-                        Command="{Binding SaveProjectCommand}" />
+                        Command="{Binding SaveProject}" />
                     <MenuItem
                         Header="Close Project"
-                        Command="{Binding CloseProjectCommand}" />
+                        Command="{Binding CloseProject}" />
                     <MenuItem
                         Name="Preferences"
                         Header="Preferences"
-                        Command="{Binding ShowPreferencesCommand}" />
+                        Command="{Binding ShowPreferences}" />
                     <MenuItem
                         Header="Exit"
                         Click="MenuItemExit_Click"/>
@@ -59,8 +59,11 @@
                 <MenuItem
                     Header="Project">
                     <MenuItem
+                        Header="Find Spaces in Video"
+                        Command="{Binding FindSpaces}"/>
+                    <MenuItem
                         Header="Refresh Project Cache"
-                        Command="{Binding ClearCacheCommand}" />
+                        Command="{Binding ClearCache}" />
                 </MenuItem>
             </Menu>
 

@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LiveDescribe.Utilities;
-using LiveDescribe.Events;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
-using System.Windows.Input;
+﻿using GalaSoft.MvvmLight.Command;
 using Newtonsoft.Json;
+using System;
+using System.ComponentModel;
+using System.IO;
+using System.Windows.Input;
 
 namespace LiveDescribe.Model
 {
@@ -27,31 +21,26 @@ namespace LiveDescribe.Model
         private bool _isextendeddescription;
         private double _startwavefiletime;
         private double _endwavefiletime;
-        private double _actuallength;
         private double _startinvideo;
         private double _endinvideo;
-        private double _X;
-        private double _Y;
+        private double _x;
+        private double _y;
         private double _width;
         private double _height;
         private bool _isSelected;
         private bool _isPlaying;
         #endregion
 
-        #region Event Handlers
-        [JsonIgnore]
-        public EventHandler DescriptionDeleteEvent;
-        [JsonIgnore]
-        public EventHandler DescriptionMouseDownEvent;
-        [JsonIgnore]
-        public EventHandler DescriptionMouseUpEvent;
-        [JsonIgnore]
-        public EventHandler DescriptionMouseMoveEvent;
-        [JsonIgnore]
-        public EventHandler DescriptionFinishedPlaying;
+        #region Events
+        public event EventHandler DescriptionDeleteEvent;
+        public event EventHandler DescriptionMouseDownEvent;
+        public event EventHandler DescriptionMouseUpEvent;
+        public event EventHandler DescriptionMouseMoveEvent;
+        public event EventHandler DescriptionFinishedPlaying;
         #endregion
 
-        public Description(string filename, double startwavefiletime, double endwavefiletime, double startinvideo, bool extendedDescription)
+        public Description(string filename, double startwavefiletime, double endwavefiletime,
+            double startinvideo, bool extendedDescription)
         {
             FileName = filename;
             DescriptionText = filename;
@@ -151,13 +140,10 @@ namespace LiveDescribe.Model
         {
             set
             {
-                _X = value;
+                _x = value;
                 NotifyPropertyChanged("X");
             }
-            get
-            {
-                return _X;
-            }
+            get { return _x; }
         }
 
         /// <summary>
@@ -168,13 +154,10 @@ namespace LiveDescribe.Model
         {
             set
             {
-                _Y = value;
+                _y = value;
                 NotifyPropertyChanged("Y");
             }
-            get
-            {
-                return _Y;
-            }
+            get { return _y; }
         }
         /// <summary>
         /// Keeps track of the height of the description
@@ -187,10 +170,7 @@ namespace LiveDescribe.Model
                 _height = value;
                 NotifyPropertyChanged("Height");
             }
-            get
-            {
-                return _height;
-            }
+            get { return _height; }
         }
 
         /// <summary>
@@ -204,10 +184,7 @@ namespace LiveDescribe.Model
                 _width = value;
                 NotifyPropertyChanged("Width");
             }
-            get
-            {
-                return _width;
-            }
+            get { return _width; }
         }
 
         /// <summary>
@@ -220,10 +197,7 @@ namespace LiveDescribe.Model
                 _filename = value;
                 NotifyPropertyChanged("FileName");
             }
-            get
-            {
-                return _filename;
-            }
+            get { return _filename; }
         }
 
         /// <summary>
@@ -236,10 +210,7 @@ namespace LiveDescribe.Model
                 _isextendeddescription = value;
                 NotifyPropertyChanged("IsExtendedDescription");
             }
-            get
-            {
-                return _isextendeddescription;
-            }
+            get { return _isextendeddescription; }
         }
 
         /// <summary>
@@ -253,10 +224,7 @@ namespace LiveDescribe.Model
                 _startwavefiletime = value;
                 NotifyPropertyChanged("StartWaveFileTime");
             }
-            get
-            {
-                return _startwavefiletime;
-            }
+            get { return _startwavefiletime; }
         }
         /// <summary>
         /// The time that the description ends within the wav file
@@ -269,26 +237,9 @@ namespace LiveDescribe.Model
                 _endwavefiletime = value;
                 NotifyPropertyChanged("EndWaveFileTime");
             }
-            get
-            {
-                return _endwavefiletime;
-            }
+            get { return _endwavefiletime; }
         }
-        /// <summary>
-        /// Actual Length of the description
-        /// </summary>
-        public double ActualLength
-        {
-            private set
-            {
-                _actuallength = value;
-                NotifyPropertyChanged("ActualLength");
-            }
-            get
-            {
-                return _actuallength;
-            }
-        }
+
         /// <summary>
         /// The time in the video that the description starts
         /// </summary>
@@ -299,10 +250,7 @@ namespace LiveDescribe.Model
                 _startinvideo = value;
                 NotifyPropertyChanged("StartInVideo");
             }
-            get
-            {
-                return _startinvideo;
-            }
+            get { return _startinvideo; }
         }
         /// <summary>
         /// The time in the video that the description ends
@@ -314,10 +262,7 @@ namespace LiveDescribe.Model
                 _endinvideo = value;
                 NotifyPropertyChanged("EndInVideo");
             }
-            get
-            {
-                return _endinvideo;
-            }
+            get { return _endinvideo; }
         }
 
         [JsonIgnore]
@@ -328,10 +273,7 @@ namespace LiveDescribe.Model
                 _isSelected = value;
                 NotifyPropertyChanged("IsSelected");
             }
-            get
-            {
-                return _isSelected;
-            }
+            get { return _isSelected; }
         }
 
         public string DescriptionText
@@ -341,10 +283,7 @@ namespace LiveDescribe.Model
                 _descriptiontext = value;
                 NotifyPropertyChanged("DescriptionText");
             }
-            get
-            {
-                return _descriptiontext;
-            }
+            get { return _descriptiontext; }
         }
 
         [JsonIgnore]
@@ -355,10 +294,25 @@ namespace LiveDescribe.Model
                 _isPlaying = value;
                 NotifyPropertyChanged("IsPlaying");
             }
-            get
-            {
-                return _isPlaying;
-            }
+            get { return _isPlaying; }
+        }
+
+        /// <summary>
+        /// The length of the span the description is set to play in the video.
+        /// </summary>
+        [JsonIgnore]
+        public double Duration
+        {
+            get { return _endinvideo - _startinvideo; }
+        }
+
+        /// <summary>
+        /// The length of time the wave file is set to play for.
+        /// </summary>
+        [JsonIgnore]
+        public double WaveFileDuration
+        {
+            get { return _endwavefiletime - _startwavefiletime; }
         }
         #endregion
 

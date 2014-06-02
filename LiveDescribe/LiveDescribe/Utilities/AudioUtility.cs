@@ -24,7 +24,7 @@ namespace LiveDescribe.Utilities
         private readonly string _videoFile;
         private readonly string _audioFile;
         private Header _header;
- 
+
         public AudioUtility(Project p)
         {
             _videoFile = p.Files.Video;
@@ -143,7 +143,7 @@ namespace LiveDescribe.Utilities
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
-                log.Error("An error occured during ffmpeg audio stripping",ex);
+                log.Error("An error occured during ffmpeg audio stripping", ex);
             }
 
             ffmpeg.WaitForExit();
@@ -206,7 +206,7 @@ namespace LiveDescribe.Utilities
                 int ratio = _header.NumChannels == 2 ? 40 : 80;
 
                 log.Info("Reading sound data from .wav file");
-                for (int i = 0; i < _header.SubChunk2Size; i+=ratio)
+                for (int i = 0; i < _header.SubChunk2Size; i += ratio)
                 {
                     data.Add(br.ReadInt16());
                     //Skip the next n-2 bytes
@@ -255,121 +255,6 @@ namespace LiveDescribe.Utilities
             }
 
             return (float)Math.Sqrt(total / data.Count);
-        }
-
-
-        /// <summary>
-        /// Calculates the energy of the audio data
-        /// </summary>
-        /// <param name="data">data</param>
-        /// <returns>energy</returns>
-        private float Energy(List<short> data)
-        {
-            float total = 0;
-            float mid = 0.5F;
-            for (int i = 0; i < data.Count; i++)
-            {
-                total += (float)Math.Pow(data[i] - mid, 2);
-            }
-
-            return total;
-        }
-
-        /// <summary>
-        /// Finds the Zero-crossing rate for the List "data"
-        /// passed to it
-        /// </summary>
-        /// <param name="data">data</param>
-        /// <returns>crosses</returns>
-        private float ZCR(List<short> data)
-        {
-            float crosses = 0;
-            float prev;
-            float current;
-            float mid = 0.5F;
-
-            for (int i = 1; i < data.Count; i++)
-            {
-                current = data[i] - mid;
-                prev = data[i - 1] - mid;
-                if ( (current * prev) < 0)
-                {
-                    crosses++;
-                }
-            }
-            return crosses;
-        }
-
-
-        /// <summary>
-        /// Finds the non-speech regions in audio data
-        /// based on zero-crossing rate and energy descriptors
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns>spaces</returns>
-        public List<Space> findSpaces(List<short> data)
-        { 
-            List<Space> spaces = new List<Space>();
-            float duration = (float)(_header.ChunkSize * 8 ) / ( _header.SampleRate * _header.BitsPerSample * _header.NumChannels);
-            int ratio = _header.NumChannels == 2 ? 40 : 80;
-            double samples_per_second = _header.SampleRate * (_header.BlockAlign / (double)ratio);
-            
-            Console.WriteLine("Duration: {0} samples_per_second: {1}, sample_rate: {2}, BlockAlign: {3} Data Size; {4}", duration, samples_per_second, _header.SampleRate, _header.BlockAlign, data.Count);
-
-            //keeps track of sounds descriptors for each window
-            List<float> zcr_histogram = new List<float>();
-            List<float> energy_histogram = new List<float>();
-
-            int windowSize = 1; // 1 SECOND 
-            int window = 0; //counter for the total number of windows
-
-            List<short> bin; //section of the audio data
-            
-            List<int> result = new List<int>(); //hold whether or not the window contained non-speech or not (0 for no speech and 1 otherwise)
-
-            //do through each window and calculate the audio descriptors
-            while (window < duration)
-            { 
-                int start = (int)Math.Round(window * (windowSize * samples_per_second));
-                
-                if (start + samples_per_second < data.Count)
-                { 
-                    bin = data.GetRange(start, (int)samples_per_second);
-                    zcr_histogram.Add(ZCR(bin));
-                    energy_histogram.Add(Energy(bin));
-                }
-                window++;
-            }
-
-            double zcr_factor = 0.80;
-            double energy_factor = 0.4;
-
-            double zcr_avg = zcr_factor * zcr_histogram.Average();
-            double energy_avg = energy_factor * energy_histogram.Average();
-
-            //decide if a window should be marked as speech or not
-            for (int i = 0; i < zcr_histogram.Count; i++)
-            {
-                if ((zcr_histogram[i] == 0) || (energy_histogram[i] == 0) || (zcr_histogram[i] > zcr_avg && energy_histogram[i] < energy_avg))
-                {
-                    //no speech
-                    //check consecutive windows to find the end of this space
-                    for (int j = i + 1; j < zcr_histogram.Count; j++) 
-                    {
-                        if (! ((zcr_histogram[j] == 0) || (energy_histogram[j] == 0) || (zcr_histogram[j] > zcr_avg && energy_histogram[j] < energy_avg)))
-                        {
-                            spaces.Add(new Space(i * 1000, j * 1000));
-                            i = j;
-                            break;
-                        }
-                    }
-                }
-                else
-                {
-                    continue; //speech
-                }
-            }
-            return spaces;
         }
 
         /// <summary>

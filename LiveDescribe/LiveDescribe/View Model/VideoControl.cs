@@ -18,14 +18,21 @@ namespace LiveDescribe.View_Model
             (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         #endregion
 
+        #region Constants
+        /// <summary>
+        /// How much the volume gets reduced to when a description plays
+        /// </summary>
+        public const double VolumeReductionFactor = 0.2;
+        #endregion
+
         #region Instance Variables
         private readonly ILiveDescribePlayer _mediaVideo;
         private AudioUtility _audioOperator;
-        private List<short> _waveFormData;
         private LoadingViewModel _loadingViewModel;
-        private Header _audioHeader;
         private List<Space> _spaceData;
         private TimeSpan _positionTimeLabel;
+        private double _originalVolume;
+        private Waveform _waveform;
 
         public Project Project { get; set; }
         #endregion
@@ -355,31 +362,17 @@ namespace LiveDescribe.View_Model
         }
         #endregion
 
-        #region setters / getters
-        /// <summary>
-        /// Get the wavform Data
-        /// </summary>
-        public List<short> AudioData
-        {
-            set
-            {
-                _waveFormData = value; 
-                RaisePropertyChanged("AudioData");
-            }
-            get { return this._waveFormData; }
-        }
+        #region Accessors
 
-        /// <summary>
-        /// Get the audio header
-        /// </summary>
-        public Header Header
+        //Contains data relevant to a waveform.
+        public Waveform Waveform
         {
             set
             {
-                _audioHeader = value;
-                RaisePropertyChanged("Header");
+                _waveform = value;
+                RaisePropertyChanged("Waveform");
             }
-            get { return this._audioHeader; }
+            get { return _waveform; }
         }
 
         /// <summary>
@@ -398,7 +391,7 @@ namespace LiveDescribe.View_Model
         public void CloseVideoControl()
         {
             _audioOperator = null;
-            _waveFormData = null;
+            _waveform = null;
             _mediaVideo.Path = null;
             _mediaVideo.Stop();
             _mediaVideo.Close();
@@ -423,9 +416,10 @@ namespace LiveDescribe.View_Model
             {
                 _audioOperator = new AudioUtility(Project);
                 _audioOperator.StripAudio(worker);
-                _waveFormData = _audioOperator.ReadWavData(worker);
-                _audioHeader = _audioOperator.Header;
-                _spaceData = _audioOperator.findSpaces(_waveFormData);
+                var waveFormData = _audioOperator.ReadWavData(worker);
+                var audioHeader = _audioOperator.Header;
+                _waveform = new Waveform(audioHeader, waveFormData);
+                _spaceData = AudioAnalyzer.FindSpaces(_waveform);
             };
 
             //Notify subscribers of stripping completion
@@ -444,6 +438,23 @@ namespace LiveDescribe.View_Model
             _loadingViewModel.SetProgress("Importing Video", 0);
             _loadingViewModel.Visible = true;
             worker.RunWorkerAsync();
+        }
+
+        /// <summary>
+        /// Reduces the volume to VolumeReductionFactor % of the original volume.
+        /// </summary>
+        public void ReduceVolume()
+        {
+            _originalVolume = _mediaVideo.Volume;
+            _mediaVideo.Volume *= VolumeReductionFactor;
+        }
+
+        /// <summary>
+        /// Restores the volume to its original volume level.
+        /// </summary>
+        public void RestoreVolume()
+        {
+            _mediaVideo.Volume = _originalVolume;
         }
         #endregion
     }
