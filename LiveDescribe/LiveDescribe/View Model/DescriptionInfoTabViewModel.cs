@@ -11,7 +11,7 @@ using LiveDescribe.Interfaces;
 
 namespace LiveDescribe.View_Model
 {
-    class DescriptionInfoTabViewModel : ViewModelBase
+    public class DescriptionInfoTabViewModel : ViewModelBase
     {
         #region Constants
         private const int SPACE_TAB = 0;

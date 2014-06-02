@@ -263,24 +263,10 @@ namespace LiveDescribe.View
                         MouseEventArgs e2 = (MouseEventArgs)e1;
                         if (Mouse.LeftButton == MouseButtonState.Pressed)
                         {
-                            //If the description is already selected, deselect it and set the description selected in the list
-                            //in the tab control to null so it isn't selected in the list either
-                            if (e.Description.IsSelected)
-                            {
-                                e.Description.IsSelected = false;
-                                if (e.Description.IsExtendedDescription)
-                                    _descriptionInfoTabViewModel.ExtendedDescriptionSelectedInList = null;
-                                else if (!e.Description.IsExtendedDescription)
-                                    _descriptionInfoTabViewModel.RegularDescriptionSelectedInList = null;
-                            }
+                            if (e.Description.IsExtendedDescription)
+                                _descriptionInfoTabViewModel.ExtendedDescriptionSelectedInList = e.Description;
                             else
-                            {
-
-                                if (e.Description.IsExtendedDescription)
-                                    _descriptionInfoTabViewModel.ExtendedDescriptionSelectedInList = e.Description;
-                                else
-                                    _descriptionInfoTabViewModel.RegularDescriptionSelectedInList = e.Description;
-                            }
+                                _descriptionInfoTabViewModel.RegularDescriptionSelectedInList = e.Description;
 
                             _originalPositionForDraggingDescription = e2.GetPosition(DescriptionCanvas).X;
                             _descriptionBeingDragged = e.Description;
@@ -326,17 +312,7 @@ namespace LiveDescribe.View
 
                             if (Mouse.LeftButton == MouseButtonState.Pressed)
                             {
-                                //if the space was selected already, set it to null in the list
-                                //and the property to false
-                                if (space.IsSelected)
-                                {
-                                    space.IsSelected = false;
-                                    _descriptionInfoTabViewModel.SpaceSelectedInList = null;
-                                }
-                                else
-                                {
-                                    _descriptionInfoTabViewModel.SpaceSelectedInList = space;
-                                }
+                                _descriptionInfoTabViewModel.SpaceSelectedInList = space;
 
                                 double xPos = args.GetPosition(AudioCanvas).X;
 

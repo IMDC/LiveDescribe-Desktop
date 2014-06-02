@@ -69,12 +69,12 @@ namespace LiveDescribe.View_Model
             WindowTitle = DefaultWindowTitle;
            
             _spacesviewmodel = new SpacesViewModel();
-            _markingSpacesControlViewModel = new MarkingSpacesControlViewModel(_spacesviewmodel);
             _loadingViewModel = new LoadingViewModel(100, null, 0, false);
             _videocontrol = new VideoControl(mediaVideo, _loadingViewModel);
             _preferences = new PreferencesViewModel();
             _descriptionviewmodel = new DescriptionViewModel(mediaVideo, _videocontrol);
             _descriptionInfoTabViewModel = new DescriptionInfoTabViewModel(_descriptionviewmodel, _spacesviewmodel);
+            _markingSpacesControlViewModel = new MarkingSpacesControlViewModel(_descriptionInfoTabViewModel);
 
             #region Commands
             //Commands

@@ -1,33 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using LiveDescribe.Model;
 
 namespace LiveDescribe.View_Model
 {
     public class MarkingSpacesControlViewModel : ViewModelBase
     {
         #region Instance Variables
-        private String _beginHours;
-        private String _beginMins;
-        private String _beginSeconds;
-        private String _beginMilliseconds;
 
-        private String _endHours;
-        private String _endMins;
-        private String _endSeconds;
-        private String _endMilliseconds;
-
-        private SpacesViewModel _spacesViewModel;
+        private Space _selectedSpace;
+        private DescriptionInfoTabViewModel _descriptionInfo;
         #endregion
 
         #region Constructors
-        public MarkingSpacesControlViewModel(SpacesViewModel SpacesViewModel)
+        public MarkingSpacesControlViewModel(DescriptionInfoTabViewModel descriptionInfo)
         {
-            _spacesViewModel = SpacesViewModel;
+            _descriptionInfo = descriptionInfo;
+            _descriptionInfo.PropertyChanged += (sender, args) =>
+            {
+                if (args.PropertyName.Equals("SpaceSelectedInList"))
+                    SelectedSpace = descriptionInfo.SpaceSelectedInList;
+            };
         }
         #endregion
 
@@ -36,85 +35,69 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Binding Properties
-        public String BeginHours
+
+        public Space SelectedSpace
         {
-            set
+            private set
             {
-                _beginHours = value;
-                RaisePropertyChanged("BeginHours");
+                //Clean up old Selected Space
+                if (_selectedSpace != null)
+                {
+                    //Unsubscribe from old Selected Space
+                    _selectedSpace.PropertyChanged -= SelectedSpaceOnPropertyChanged;
+                }
+
+                _selectedSpace = value;
+
+                if (value != null)
+                {
+                    value.PropertyChanged += SelectedSpaceOnPropertyChanged;
+                }
+
+                //Update the binded properties by notifying them
+                RaisePropertyChanged("SelectedSpace_StartInVideo");
+                RaisePropertyChanged("SelectedSpace_EndInVideo");
+
+
+                RaisePropertyChanged("SelectedSpace");
             }
-            get { return _beginHours; }
+            get { return _selectedSpace; }
         }
 
-        public String BeginMins
+        private void SelectedSpaceOnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            set
-            {
-                _beginMins = value;
-                RaisePropertyChanged("BeginMins");
-            }
-            get { return _beginMins; }
+            if (e.PropertyName.Equals("StartInVideo"))
+                RaisePropertyChanged("SelectedSpace_StartInVideo");
+            else if (e.PropertyName.Equals("EndInVideo"))
+                RaisePropertyChanged("SelectedSpace_EndInVideo");
         }
 
-        public String BeginSeconds
+        public double SelectedSpace_StartInVideo
         {
             set
             {
-                _beginSeconds = value;
-                RaisePropertyChanged("BeginSeconds");
+                if (SelectedSpace != null)
+                {
+                    SelectedSpace.StartInVideo = value;
+                    RaisePropertyChanged("SelectedSpace_StartInVideo");
+                }
             }
-            get { return _beginSeconds; }
+            get { return SelectedSpace != null ? SelectedSpace.StartInVideo : 0; }
         }
 
-        public String BeginMilliseconds
+        public double SelectedSpace_EndInVideo
         {
             set
             {
-                _beginMilliseconds = value;
-                RaisePropertyChanged("BeginMilliseconds");
+                if (SelectedSpace != null)
+                {
+                    SelectedSpace.EndInVideo = value;
+                    RaisePropertyChanged("SelectedSpace_EndInVideo");
+                }
             }
-            get { return _beginMilliseconds; }
+            get { return SelectedSpace != null ? SelectedSpace.EndInVideo : 0; }
         }
 
-        public String EndHours
-        {
-            set
-            {
-                _endHours = value;
-                RaisePropertyChanged("EndHours");
-            }
-            get { return _endHours; }
-        }
-
-        public String EndMins
-        {
-            set
-            {
-                _endMins = value;
-                RaisePropertyChanged("EndMins");
-            }
-            get { return _endMins; }
-        }
-
-        public String EndSeconds
-        {
-            set
-            {
-                _endSeconds = value;
-                RaisePropertyChanged("BeginSeconds");
-            }
-            get { return _endSeconds; }
-        }
-
-        public String EndMilliseconds
-        {
-            set
-            {
-                _endMilliseconds = value;
-                RaisePropertyChanged("BeginMilliseconds");
-            }
-            get { return _endMilliseconds; }
-        }
         #endregion
 
         #region Binding Functions
