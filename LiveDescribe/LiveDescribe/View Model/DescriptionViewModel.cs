@@ -38,8 +38,8 @@ namespace LiveDescribe.View_Model
         private bool _recordingExtendedDescription;
 
         //this variable should be used as little as possible in this class
-        //most interactions between the  descriptionviewmodel and the videocontrol should be in the maincontrol
-        private MediaControlViewModel _videoControl;
+        //most interactions between the  descriptionviewmodel and the MediaControlViewModel should be in the MainWindowViewModel
+        private MediaControlViewModel _mediaControlViewModel;
 
         private LiveDescribeVideoStates _previousVideoState; //used to restore the previous video state after it's finished recording
 
@@ -53,13 +53,13 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Constructors
-        public DescriptionViewModel(ILiveDescribePlayer mediaVideo, MediaControlViewModel videoControl)
+        public DescriptionViewModel(ILiveDescribePlayer mediaVideo, MediaControlViewModel mediaControlViewModel)
         {
             _isRecording = false;
             _waveWriter = null;
             RecordCommand = new RelayCommand(Record, RecordStateCheck);
             _mediaVideo = mediaVideo;
-            _videoControl = videoControl;
+            _mediaControlViewModel = mediaControlViewModel;
 
             Project = null;
 
@@ -366,12 +366,12 @@ namespace LiveDescribe.View_Model
                         //+1 so we are out of the interval and it doesn't repeat the description
                         int newStartInVideo = (int)(_mediaVideo.Position.TotalMilliseconds + (LiveDescribeConstants.ExtendedDescriptionStartIntervalMax - offset + 1)); 
                         _mediaVideo.Position = new TimeSpan(0,0,0,0,newStartInVideo);
-                        _videoControl.PlayCommand.Execute(this);
+                        _mediaControlViewModel.PlayCommand.Execute(this);
                         log.Info("Extended description finished");
                     }
                     else
                     {
-                        DispatcherHelper.UIDispatcher.Invoke(() => _videoControl.RestoreVolume());
+                        DispatcherHelper.UIDispatcher.Invoke(() => _mediaControlViewModel.RestoreVolume());
                     }
 
                 };
@@ -390,7 +390,7 @@ namespace LiveDescribe.View_Model
         }
         #endregion
 
-        #region Functions Called by MainControl
+        #region Functions Called by MainWindowViewModel
         /// <summary>
         /// This function closes everything necessary to start fresh
         /// </summary>

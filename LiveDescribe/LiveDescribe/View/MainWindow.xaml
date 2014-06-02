@@ -108,7 +108,7 @@
 
                 <controls:MediaControl
                     x:Name="MediaControl"
-                    DataContext="{Binding VideoControl}"
+                    DataContext="{Binding MediaControlViewModel}"
                     Grid.Row="0"
                     Grid.Column="0"
                     Grid.RowSpan="8"
@@ -274,7 +274,7 @@
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
                                     <Polyline
-                                        DataContext="{Binding VideoControl}"
+                                        DataContext="{Binding MediaControlViewModel}"
                                         IsEnabled="False"
                                         Points="10,20, 0,0,  20,0, 10,20, 10,172"
                                         RenderOptions.EdgeMode="Aliased"

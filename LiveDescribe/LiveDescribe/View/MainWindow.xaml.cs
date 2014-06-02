@@ -49,17 +49,17 @@ namespace LiveDescribe.View
         /// <summary>The width of the entire canvas.</summary>
         private double _canvasWidth = 0;
         private double _videoDuration = -1;
-        private readonly MediaControlViewModel _videoControl;
+        private readonly MediaControlViewModel _mediaControlViewModel;
         private readonly SpacesViewModel _spacesViewModel;
         private readonly PreferencesViewModel _preferences;
         /// <summary>used to format a timespan object which in this case in the videoMedia.Position</summary>
         private readonly DescriptionViewModel _descriptionViewModel;
         private readonly TimeConverterFormatter _formatter;
         private readonly DescriptionInfoTabViewModel _descriptionInfoTabViewModel;
-        private readonly MainWindowViewModel _mainControl;
+        private readonly MainWindowViewModel _mainWindowViewModel;
         private double _originalPositionForDraggingDescription = -1;
         private double _originalPositionForDraggingSpace = -1;
-        private Point RightClickPointOnAudioCanvas;
+        private Point _rightClickPointOnAudioCanvas;
         private SpacesActionState _spacesActionState = SpacesActionState.None;
         private Cursor _grabCursor;
         private Cursor _grabbingCursor;
@@ -76,16 +76,16 @@ namespace LiveDescribe.View
 
             VideoMedia = MediaControl.VideoMedia;
             
-            var maincontrol = new MainWindowViewModel(VideoMedia);
+            var mainWindowViewModel = new MainWindowViewModel(VideoMedia);
 
-            DataContext = maincontrol;
-            _mainControl = maincontrol;
+            DataContext = mainWindowViewModel;
+            _mainWindowViewModel = mainWindowViewModel;
 
-            _videoControl = maincontrol.VideoControl;
-            _preferences = maincontrol.PreferencesViewModel;
-            _descriptionViewModel = maincontrol.DescriptionViewModel;
-            _spacesViewModel = maincontrol.SpacesViewModel;
-            _descriptionInfoTabViewModel = maincontrol.DescriptionInfoTabViewModel;
+            _mediaControlViewModel = mainWindowViewModel.MediaControlViewModel;
+            _preferences = mainWindowViewModel.PreferencesViewModel;
+            _descriptionViewModel = mainWindowViewModel.DescriptionViewModel;
+            _spacesViewModel = mainWindowViewModel.SpacesViewModel;
+            _descriptionInfoTabViewModel = mainWindowViewModel.DescriptionInfoTabViewModel;
 
             _formatter = new TimeConverterFormatter();
 
@@ -118,7 +118,7 @@ namespace LiveDescribe.View
             //and the main control will take care of synchronizing the video, and the descriptions
 
             //listens for PlayRequested Event
-            maincontrol.PlayRequested += (sender, e) =>
+            mainWindowViewModel.PlayRequested += (sender, e) =>
                 {
                     //this is to recheck all the graphics states
                     System.Windows.Input.CommandManager.InvalidateRequerySuggested();
@@ -128,21 +128,21 @@ namespace LiveDescribe.View
                 };
 
             //listens for PauseRequested Event
-            maincontrol.PauseRequested += (sender, e) =>
+            mainWindowViewModel.PauseRequested += (sender, e) =>
                 {
                     //this is to recheck all the graphics states
                     System.Windows.Input.CommandManager.InvalidateRequerySuggested();
                 };
 
             //listens for when the media has gone all the way to the end
-            maincontrol.MediaEnded += (sender, e) =>
+            mainWindowViewModel.MediaEnded += (sender, e) =>
                 {
                     UpdateMarkerPosition(-MarkerOffset);
                     //this is to recheck all the graphics states
                     System.Windows.Input.CommandManager.InvalidateRequerySuggested();
                 };
 
-            maincontrol.ProjectClosed += (sender, e) =>
+            mainWindowViewModel.ProjectClosed += (sender, e) =>
             {
                 AudioCanvas.Children.Clear();
                 AudioCanvas.Background = null;
@@ -154,15 +154,15 @@ namespace LiveDescribe.View
                 Marker.IsEnabled = false;
             };
 
-            maincontrol.GraphicsTick += Play_Tick;
+            mainWindowViewModel.GraphicsTick += Play_Tick;
             #endregion
 
-            #region Event Listeners For VideoControl
+            #region Event Listeners For MediaControlViewModel
 
             //listens for VideoOpenedRequested event
             //this event only gets thrown when if the MediaFailed event doesn't occur
             //and as soon as the video is loaded when play is pressed
-            maincontrol.VideoControl.VideoOpenedRequested += (sender, e) =>
+            mainWindowViewModel.MediaControlViewModel.VideoOpenedRequested += (sender, e) =>
                 {
                     _videoDuration = VideoMedia.NaturalDuration.TimeSpan.TotalMilliseconds;
                     _canvasWidth = calculateWidth();
@@ -182,22 +182,22 @@ namespace LiveDescribe.View
 
             //listens for when the audio stripping is complete then draws the timeline and the wave form
             //and sets the busy stripping audio to false so that the loading screen goes away
-            maincontrol.VideoControl.OnStrippingAudioCompleted += (sender, e) =>
+            mainWindowViewModel.MediaControlViewModel.OnStrippingAudioCompleted += (sender, e) =>
                 {
                    SetTimeline();
 
                     //make this false so that the loading screen goes away after the timeline and the wave form are drawn
-                    maincontrol.LoadingViewModel.Visible = false;
+                    mainWindowViewModel.LoadingViewModel.Visible = false;
                 };
 
             //captures the mouse when a mousedown request is sent to the Marker
-            maincontrol.VideoControl.OnMarkerMouseDownRequested += (sender, e) =>
+            mainWindowViewModel.MediaControlViewModel.OnMarkerMouseDownRequested += (sender, e) =>
             {
                 Marker.CaptureMouse();
             };
 
             //updates the video position when the mouse is released on the Marker
-            maincontrol.VideoControl.OnMarkerMouseUpRequested += (sender, e) =>
+            mainWindowViewModel.MediaControlViewModel.OnMarkerMouseUpRequested += (sender, e) =>
                 {
                     var newValue = ((Canvas.GetLeft(Marker) + MarkerOffset) / AudioCanvas.Width) * _videoDuration;
 
@@ -206,7 +206,7 @@ namespace LiveDescribe.View
                 };
 
             //updates the canvas and video position when the Marker is moved
-            maincontrol.VideoControl.OnMarkerMouseMoveRequested += (sender, e) =>
+            mainWindowViewModel.MediaControlViewModel.OnMarkerMouseMoveRequested += (sender, e) =>
                 {
                     if (!Marker.IsMouseCaptured) return;
 
@@ -237,10 +237,10 @@ namespace LiveDescribe.View
                     UpdateVideoPosition((int)newValue);
                 };
 
-            maincontrol.VideoControl.FastForwardEvent += (sender, e) =>
+            mainWindowViewModel.MediaControlViewModel.FastForwardEvent += (sender, e) =>
                     UpdateMarkerPosition(((_canvasWidth /_videoDuration) * VideoMedia.Position.TotalMilliseconds) - MarkerOffset);
 
-            maincontrol.VideoControl.RewindEvent += (sender, e) =>
+            mainWindowViewModel.MediaControlViewModel.RewindEvent += (sender, e) =>
                     UpdateMarkerPosition(((_canvasWidth / _videoDuration) * VideoMedia.Position.TotalMilliseconds) - MarkerOffset);
 
             #endregion
@@ -376,14 +376,14 @@ namespace LiveDescribe.View
             #endregion
 
             #region Event Listeners for LoadingViewModel
-            maincontrol.LoadingViewModel.PropertyChanged += (sender, e) =>
+            mainWindowViewModel.LoadingViewModel.PropertyChanged += (sender, e) =>
             {
                 /* Set LoadingBorder to appear in front of everything when visible, otherwise put
                  * it behind everything. This allows it to sit behind in the XAML viewer.
                  */
                 if (e.PropertyName.Equals("Visible"))
                 {
-                    if (maincontrol.LoadingViewModel.Visible)
+                    if (mainWindowViewModel.LoadingViewModel.Visible)
                         Grid.SetZIndex(LoadingControl, 2);
                     else
                         Grid.SetZIndex(LoadingControl, -1);
@@ -592,7 +592,7 @@ namespace LiveDescribe.View
         {
             //record the position in which you right clicked on the canvas
             //this position is used to calculate where on the audio canvas to draw a space
-            RightClickPointOnAudioCanvas = e.GetPosition(AudioCanvas);
+            _rightClickPointOnAudioCanvas = e.GetPosition(AudioCanvas);
         }
 
         /// <summary>
@@ -606,7 +606,7 @@ namespace LiveDescribe.View
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 //execute the pause command because we want to pause the video when someone is clicking through the video
-                _videoControl.PauseCommand.Execute(this);
+                _mediaControlViewModel.PauseCommand.Execute(this);
 
                 var xPosition = e.GetPosition(NumberTimelineBorder).X;
                 var newValue = (xPosition / AudioCanvas.Width) * _videoDuration;
@@ -627,7 +627,7 @@ namespace LiveDescribe.View
         private void UpdateMarkerPosition(double xPos)
         {
             Canvas.SetLeft(Marker, xPos);
-            _videoControl.PositionTimeLabel = VideoMedia.Position;
+            _mediaControlViewModel.PositionTimeLabel = VideoMedia.Position;
         }
 
         /// <summary>
@@ -637,7 +637,7 @@ namespace LiveDescribe.View
         private void UpdateVideoPosition(int vidPos)
         {
             VideoMedia.Position = new TimeSpan(0, 0, 0, 0, vidPos);
-            _videoControl.PositionTimeLabel = VideoMedia.Position;
+            _mediaControlViewModel.PositionTimeLabel = VideoMedia.Position;
         }
 
         /// <summary>
@@ -692,9 +692,9 @@ namespace LiveDescribe.View
 
             double width = TimeLine.ActualWidth;
 
-            if (_videoControl.Waveform == null || _canvasWidth == 0 || width == 0)
+            if (_mediaControlViewModel.Waveform == null || _canvasWidth == 0 || width == 0)
                 return;
-            List<short> data = _videoControl.Waveform.Data;
+            List<short> data = _mediaControlViewModel.Waveform.Data;
 
             double samplesPerPixel = data.Count / _canvasWidth;
 
@@ -708,9 +708,9 @@ namespace LiveDescribe.View
             AudioCanvas.Children.Add(NumberTimelineBorder);
             
             int begin = (int)TimeLine.HorizontalOffset;
-            int ratio = _videoControl.Waveform.Header.NumChannels == 2 ? 40 : 80;
+            int ratio = _mediaControlViewModel.Waveform.Header.NumChannels == 2 ? 40 : 80;
             double samples_per_second =
-                (_videoControl.Waveform.Header.SampleRate * (_videoControl.Waveform.Header.BlockAlign / (double)ratio));
+                (_mediaControlViewModel.Waveform.Header.SampleRate * (_mediaControlViewModel.Waveform.Header.BlockAlign / (double)ratio));
             
             double offset_time;
             double sample_start;
@@ -843,7 +843,7 @@ namespace LiveDescribe.View
         {
             var space = new Space();
 
-            double middle = RightClickPointOnAudioCanvas.X;  // going to be the middle of the space
+            double middle = _rightClickPointOnAudioCanvas.X;  // going to be the middle of the space
             double middleTime = (_videoDuration / AudioCanvas.Width) * middle;  // middle of the space in milliseconds
             double starttime = middleTime - (DefaultSpaceLengthInMilliSeconds / 2);
             double endtime = middleTime + (DefaultSpaceLengthInMilliSeconds / 2);
@@ -876,7 +876,7 @@ namespace LiveDescribe.View
 
         private void MainWindow_OnClosing(object sender, CancelEventArgs e)
         {
-            bool success = _mainControl.TryExit();
+            bool success = _mainWindowViewModel.TryExit();
 
             if (!success)
                 e.Cancel = true;

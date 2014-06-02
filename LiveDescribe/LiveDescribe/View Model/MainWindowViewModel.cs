@@ -40,7 +40,7 @@ namespace LiveDescribe.View_Model
 
         #region Instance Variables
         private Timer _descriptiontimer;
-        private MediaControlViewModel _videocontrol;
+        private MediaControlViewModel _mediaControlViewModel;
         private PreferencesViewModel _preferences;
         private DescriptionViewModel _descriptionviewmodel;
         private SpacesViewModel _spacesviewmodel;
@@ -70,9 +70,9 @@ namespace LiveDescribe.View_Model
            
             _spacesviewmodel = new SpacesViewModel();
             _loadingViewModel = new LoadingViewModel(100, null, 0, false);
-            _videocontrol = new MediaControlViewModel(mediaVideo, _loadingViewModel);
+            _mediaControlViewModel = new MediaControlViewModel(mediaVideo, _loadingViewModel);
             _preferences = new PreferencesViewModel();
-            _descriptionviewmodel = new DescriptionViewModel(mediaVideo, _videocontrol);
+            _descriptionviewmodel = new DescriptionViewModel(mediaVideo, _mediaControlViewModel);
             _descriptionInfoTabViewModel = new DescriptionInfoTabViewModel(_descriptionviewmodel, _spacesviewmodel);
             _markingSpacesControlViewModel = new MarkingSpacesControlViewModel(_descriptionInfoTabViewModel);
 
@@ -98,7 +98,7 @@ namespace LiveDescribe.View_Model
                     log.Info("Closed Project");
 
                     _descriptionviewmodel.CloseDescriptionViewModel();
-                    _videocontrol.CloseVideoControl();
+                    _mediaControlViewModel.CloseMediaControlViewModel();
                     _spacesviewmodel.CloseSpacesViewModel();
                     _project = null;
 
@@ -176,8 +176,8 @@ namespace LiveDescribe.View_Model
                     if (!Directory.Exists(_project.Folders.Cache))
                         Directory.CreateDirectory(_project.Folders.Cache);
 
-                    FileWriter.WriteWaveFormHeader(_project, _videocontrol.Waveform.Header);
-                    FileWriter.WriteWaveFormFile(_project, _videocontrol.Waveform.Data);
+                    FileWriter.WriteWaveFormHeader(_project, _mediaControlViewModel.Waveform.Header);
+                    FileWriter.WriteWaveFormFile(_project, _mediaControlViewModel.Waveform.Data);
                     FileWriter.WriteDescriptionsFile(_project, _descriptionviewmodel.AllDescriptions);
                     FileWriter.WriteSpacesFile(_project, _spacesviewmodel.Spaces);
 
@@ -209,7 +209,7 @@ namespace LiveDescribe.View_Model
                 canExecute: () => _project != null,
                 execute: () =>
                 {
-                    var spaces = AudioAnalyzer.FindSpaces(_videocontrol.Waveform);
+                    var spaces = AudioAnalyzer.FindSpaces(_mediaControlViewModel.Waveform);
                     foreach (var space in spaces)
                     {
                         _spacesviewmodel.AddSpace(space);
@@ -232,8 +232,8 @@ namespace LiveDescribe.View_Model
                         NAudio.Wave.WaveIn.GetCapabilities(_descriptionviewmodel.MicrophoneStream.DeviceNumber).ProductName);
                 };
 
-            #region VideoControl Events
-            _videocontrol.PlayRequested += (sender, e) =>
+            #region MediaControlViewModel Events
+            _mediaControlViewModel.PlayRequested += (sender, e) =>
                 {
                     _mediaVideo.Play();
                     _descriptiontimer.Start();
@@ -241,7 +241,7 @@ namespace LiveDescribe.View_Model
                     OnPlayRequested(sender, e);
                 };
 
-            _videocontrol.PauseRequested += (sender, e) =>
+            _mediaControlViewModel.PauseRequested += (sender, e) =>
                 {
                     _mediaVideo.Pause();
                     _descriptiontimer.Stop();
@@ -249,7 +249,7 @@ namespace LiveDescribe.View_Model
                     OnPauseRequested(sender, e);
                 };
 
-            _videocontrol.MuteRequested += (sender, e) =>
+            _mediaControlViewModel.MuteRequested += (sender, e) =>
                 {
 
                     //this Handler should be attached to the view to update the graphics
@@ -257,16 +257,16 @@ namespace LiveDescribe.View_Model
                     OnMuteRequested(sender, e);
                 };
 
-            _videocontrol.MediaEndedEvent += (sender, e) =>
+            _mediaControlViewModel.MediaEndedEvent += (sender, e) =>
                 {
                     _descriptiontimer.Stop();
                     _mediaVideo.Stop();
                     OnMediaEnded(sender, e);
                 };
 
-            _videocontrol.OnStrippingAudioCompleted += (sender, args) =>
+            _mediaControlViewModel.OnStrippingAudioCompleted += (sender, args) =>
             {
-                foreach (var space in _videocontrol.Spaces)
+                foreach (var space in _mediaControlViewModel.Spaces)
                 {
                     _spacesviewmodel.AddSpace(space);
                 }
@@ -280,7 +280,7 @@ namespace LiveDescribe.View_Model
             _spacesviewmodel.Spaces.CollectionChanged += ObservableCollection_CollectionChanged;
             _descriptionviewmodel.ExtendedDescriptions.CollectionChanged += ObservableCollection_CollectionChanged;
             _descriptionviewmodel.RegularDescriptions.CollectionChanged += ObservableCollection_CollectionChanged;
-            _videocontrol.PropertyChanged += PropertyChangedHandler;
+            _mediaControlViewModel.PropertyChanged += PropertyChangedHandler;
 
             #endregion
 
@@ -348,9 +348,9 @@ namespace LiveDescribe.View_Model
         /// <summary>
         /// returns the video control so it can be binded to a control in the mainwindow
         /// </summary>
-        public MediaControlViewModel VideoControl
+        public MediaControlViewModel MediaControlViewModel
         {
-            get { return _videocontrol; }
+            get { return _mediaControlViewModel; }
         }
 
         /// <summary>
@@ -397,9 +397,8 @@ namespace LiveDescribe.View_Model
         private void Play_Tick(object sender, ElapsedEventArgs e)
         {
             OnGraphicsTick(sender, e);
-            //I put this method in it's own timer in the MainControl for now, because I believe it should be separate from the view
+            //I put this method in it's own timer in the MainWindowViewModel for now, because I believe it should be separate from the view
             for (int i = 0; i < _descriptionviewmodel.AllDescriptions.Count; i++)
-            //foreach (var description in _descriptionviewmodel.AllDescriptions)
             {
                 var description = _descriptionviewmodel.AllDescriptions[i];
                 TimeSpan currentPositionInVideo = new TimeSpan();
@@ -415,7 +414,7 @@ namespace LiveDescribe.View_Model
                     {
                         log.Info("Playing Regular Description");
                         //Reduce volume on the graphics thread to avoid an invalid operation exception.
-                        DispatcherHelper.UIDispatcher.Invoke(() => _videocontrol.ReduceVolume());
+                        DispatcherHelper.UIDispatcher.Invoke(() => _mediaControlViewModel.ReduceVolume());
                     }
 
                     description.Play(offset);
@@ -429,7 +428,7 @@ namespace LiveDescribe.View_Model
 
                     DispatcherHelper.UIDispatcher.Invoke(() =>
                     {
-                        _videocontrol.PauseCommand.Execute(this);
+                        _mediaControlViewModel.PauseCommand.Execute(this);
                         log.Info("Playing Extended Description");
                         description.Play();
                     });
@@ -458,14 +457,14 @@ namespace LiveDescribe.View_Model
             {
                 var header = FileReader.ReadWaveFormHeader(_project);
                 var audioData = FileReader.ReadWaveFormFile(_project);
-                _videocontrol.Waveform = new Waveform(header,audioData);
-                _videocontrol.Path = _project.Files.Video;
+                _mediaControlViewModel.Waveform = new Waveform(header,audioData);
+                _mediaControlViewModel.Path = _project.Files.Video;
             }
             else
             {
                 Directory.CreateDirectory(_project.Folders.Cache);
 
-                _videocontrol.SetupAndStripAudio(_project);
+                _mediaControlViewModel.SetupAndStripAudio(_project);
             }
 
             if (Directory.Exists(_project.Folders.Descriptions))

@@ -407,7 +407,7 @@ namespace LiveDescribe.View_Model
         /// <summary>
         /// This function is to close the video control, it is called by the main control
         /// </summary>
-        public void CloseVideoControl()
+        public void CloseMediaControlViewModel()
         {
             _audioOperator = null;
             _waveform = null;
