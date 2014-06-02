@@ -74,7 +74,7 @@
                 Width="100"
                 Margin="10,15,10,10"/>
 
-            <Button
+            <RepeatButton
                 Command="{Binding RewindCommand}"
                 Style="{StaticResource ControlPanelStyle}"
                 Content="Rewind" 
@@ -94,7 +94,7 @@
                 Content="Pause" 
                 HorizontalAlignment="Center"/>
                 
-            <Button
+            <RepeatButton
                 Command="{Binding FastForwardCommand}"
                 Style="{StaticResource ControlPanelStyle}"
                 Content="Fast Forward"

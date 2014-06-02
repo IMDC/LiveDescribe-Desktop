@@ -112,7 +112,7 @@ namespace LiveDescribe.View
                 };
             #endregion
 
-            #region Event Listeners For Main Control (Pause, Play, Mute, FastForward, Rewind)
+            #region Event Listeners For Main Control (Pause, Play, Mute)
             //These events are put inside the main control because they will also effect the list
             //of audio descriptions an instance of DescriptionViewModel is inside the main control
             //and the main control will take care of synchronizing the video, and the descriptions
@@ -236,6 +236,13 @@ namespace LiveDescribe.View
                     var newValue = (xPosition / AudioCanvas.Width) * _videoDuration;
                     UpdateVideoPosition((int)newValue);
                 };
+
+            maincontrol.VideoControl.FastForwardEvent += (sender, e) =>
+                    UpdateMarkerPosition(((_canvasWidth /_videoDuration) * VideoMedia.Position.TotalMilliseconds) - MarkerOffset);
+
+            maincontrol.VideoControl.RewindEvent += (sender, e) =>
+                    UpdateMarkerPosition(((_canvasWidth / _videoDuration) * VideoMedia.Position.TotalMilliseconds) - MarkerOffset);
+
             #endregion
 
             #region Event Listeners for DescriptionViewModel
