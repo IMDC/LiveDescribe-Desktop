@@ -359,6 +359,12 @@ namespace LiveDescribe.View
                                 Mouse.SetCursor(_grabCursor);
                             }
                         };
+
+                    space.PropertyChanged += (o, args) =>
+                    {
+                        if(args.PropertyName.Equals("StartInVideo") || args.PropertyName.Equals("EndInVideo"))
+                            SetSpaceLocation(space);
+                    };
                 };
             #endregion
 

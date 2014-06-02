@@ -76,11 +76,11 @@ namespace LiveDescribe.View_Model
         {
             set
             {
-                if (SelectedSpace != null)
-                {
+                //Set value only if it is valid, otherwise update view with old value.
+                if (SelectedSpace != null && !double.IsNaN(value))
                     SelectedSpace.StartInVideo = value;
-                    RaisePropertyChanged("SelectedSpace_StartInVideo");
-                }
+
+                RaisePropertyChanged("SelectedSpace_StartInVideo");
             }
             get { return SelectedSpace != null ? SelectedSpace.StartInVideo : 0; }
         }
@@ -89,11 +89,10 @@ namespace LiveDescribe.View_Model
         {
             set
             {
-                if (SelectedSpace != null)
-                {
+                if (SelectedSpace != null && !double.IsNaN(value))
                     SelectedSpace.EndInVideo = value;
-                    RaisePropertyChanged("SelectedSpace_EndInVideo");
-                }
+
+                RaisePropertyChanged("SelectedSpace_EndInVideo");
             }
             get { return SelectedSpace != null ? SelectedSpace.EndInVideo : 0; }
         }
