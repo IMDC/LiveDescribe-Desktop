@@ -41,6 +41,9 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Binding Properties
+        /// <summary>
+        /// List that represents all the Spaces
+        /// </summary>
         public ObservableCollection<Space> Spaces
         {
             set
@@ -48,11 +51,9 @@ namespace LiveDescribe.View_Model
                 _spaces = value;
                 RaisePropertyChanged("Spaces");
             }
-            get
-            {
-                return _spaces;
-            }
+            get { return _spaces; }
         }
+
         #endregion
 
         #region Binding Functions

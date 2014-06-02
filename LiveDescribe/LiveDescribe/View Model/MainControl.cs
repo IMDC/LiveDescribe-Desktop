@@ -45,6 +45,7 @@ namespace LiveDescribe.View_Model
         private DescriptionViewModel _descriptionviewmodel;
         private SpacesViewModel _spacesviewmodel;
         private LoadingViewModel _loadingViewModel;
+        private MarkingSpacesControlViewModel _markingSpacesControlViewModel;
         private ILiveDescribePlayer _mediaVideo;
         private DescriptionInfoTabViewModel _descriptionInfoTabViewModel;
         private Project _project;
@@ -66,7 +67,9 @@ namespace LiveDescribe.View_Model
         {
             DispatcherHelper.Initialize();
             WindowTitle = DefaultWindowTitle;
+           
             _spacesviewmodel = new SpacesViewModel();
+            _markingSpacesControlViewModel = new MarkingSpacesControlViewModel(_spacesviewmodel);
             _loadingViewModel = new LoadingViewModel(100, null, 0, false);
             _videocontrol = new VideoControl(mediaVideo, _loadingViewModel);
             _preferences = new PreferencesViewModel();
@@ -377,6 +380,11 @@ namespace LiveDescribe.View_Model
         public DescriptionInfoTabViewModel DescriptionInfoTabViewModel
         {
             get { return _descriptionInfoTabViewModel; }
+        }
+
+        public MarkingSpacesControlViewModel MarkingSpacesControlViewModel
+        {
+            get { return _markingSpacesControlViewModel; }
         }
         #endregion
 

@@ -91,20 +91,13 @@
 
                 <!--Main Grid Column Definitions-->
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition
-                        Width="110" />
-                    <ColumnDefinition
-                        Width="141*" />
-                    <ColumnDefinition
-                        Width="141*" />
-                    <ColumnDefinition
-                        Width="176*" />
-                    <ColumnDefinition
-                        Width="107*" />
-                    <ColumnDefinition
-                        Width="142*" />
-                    <ColumnDefinition
-                        Width="140*" />
+                    <ColumnDefinition Width="130"/>
+                    <ColumnDefinition Width="141*" />
+                    <ColumnDefinition Width="141*" />
+                    <ColumnDefinition Width="176*" />
+                    <ColumnDefinition Width="107*" />
+                    <ColumnDefinition Width="142*" />
+                    <ColumnDefinition Width="140*" />
                 </Grid.ColumnDefinitions>
 
                 <controls:DescriptionRecordingControl
@@ -129,6 +122,11 @@
                     Grid.Column="4"
                     Grid.ColumnSpan="3"
                     Grid.RowSpan="8" />
+                
+                <controls:MarkingSpacesControl 
+                    DataContext="{Binding MarkingSpacesControlViewModel}"
+                    Grid.Row="9"
+                    Grid.RowSpan="3"/>
 
                 <!--Timeline-->
                 <Border
