@@ -23,7 +23,7 @@ using Timer = System.Timers.Timer;
 
 namespace LiveDescribe.View_Model
 {
-    class MainControl : ViewModelBase
+    class MainWindowViewModel : ViewModelBase
     {
         #region Logger
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger
@@ -40,7 +40,7 @@ namespace LiveDescribe.View_Model
 
         #region Instance Variables
         private Timer _descriptiontimer;
-        private VideoControl _videocontrol;
+        private MediaControlViewModel _videocontrol;
         private PreferencesViewModel _preferences;
         private DescriptionViewModel _descriptionviewmodel;
         private SpacesViewModel _spacesviewmodel;
@@ -63,14 +63,14 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Constructors
-        public MainControl(ILiveDescribePlayer mediaVideo)
+        public MainWindowViewModel(ILiveDescribePlayer mediaVideo)
         {
             DispatcherHelper.Initialize();
             WindowTitle = DefaultWindowTitle;
            
             _spacesviewmodel = new SpacesViewModel();
             _loadingViewModel = new LoadingViewModel(100, null, 0, false);
-            _videocontrol = new VideoControl(mediaVideo, _loadingViewModel);
+            _videocontrol = new MediaControlViewModel(mediaVideo, _loadingViewModel);
             _preferences = new PreferencesViewModel();
             _descriptionviewmodel = new DescriptionViewModel(mediaVideo, _videocontrol);
             _descriptionInfoTabViewModel = new DescriptionInfoTabViewModel(_descriptionviewmodel, _spacesviewmodel);
@@ -348,7 +348,7 @@ namespace LiveDescribe.View_Model
         /// <summary>
         /// returns the video control so it can be binded to a control in the mainwindow
         /// </summary>
-        public VideoControl VideoControl
+        public MediaControlViewModel VideoControl
         {
             get { return _videocontrol; }
         }

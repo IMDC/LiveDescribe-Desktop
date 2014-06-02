@@ -165,9 +165,9 @@
     <Compile Include="Converters\TimeConverterFormatter.cs" />
     <Compile Include="Utilities\AudioUtility.cs" />
     <Compile Include="View Model\DescriptionViewModel.cs" />
-    <Compile Include="View Model\MainControl.cs" />
+    <Compile Include="View Model\MainWindowViewModel.cs" />
     <Compile Include="View Model\PreferencesViewModel.cs" />
-    <Compile Include="View Model\VideoControl.cs" />
+    <Compile Include="View Model\MediaControlViewModel.cs" />
     <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

@@ -49,14 +49,14 @@ namespace LiveDescribe.View
         /// <summary>The width of the entire canvas.</summary>
         private double _canvasWidth = 0;
         private double _videoDuration = -1;
-        private readonly VideoControl _videoControl;
+        private readonly MediaControlViewModel _videoControl;
         private readonly SpacesViewModel _spacesViewModel;
         private readonly PreferencesViewModel _preferences;
         /// <summary>used to format a timespan object which in this case in the videoMedia.Position</summary>
         private readonly DescriptionViewModel _descriptionViewModel;
         private readonly TimeConverterFormatter _formatter;
         private readonly DescriptionInfoTabViewModel _descriptionInfoTabViewModel;
-        private readonly MainControl _mainControl;
+        private readonly MainWindowViewModel _mainControl;
         private double _originalPositionForDraggingDescription = -1;
         private double _originalPositionForDraggingSpace = -1;
         private Point RightClickPointOnAudioCanvas;
@@ -76,7 +76,7 @@ namespace LiveDescribe.View
 
             VideoMedia = MediaControl.VideoMedia;
             
-            var maincontrol = new MainControl(VideoMedia);
+            var maincontrol = new MainWindowViewModel(VideoMedia);
 
             DataContext = maincontrol;
             _mainControl = maincontrol;

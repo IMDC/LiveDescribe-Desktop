@@ -39,7 +39,7 @@ namespace LiveDescribe.View_Model
 
         //this variable should be used as little as possible in this class
         //most interactions between the  descriptionviewmodel and the videocontrol should be in the maincontrol
-        private VideoControl _videoControl;
+        private MediaControlViewModel _videoControl;
 
         private LiveDescribeVideoStates _previousVideoState; //used to restore the previous video state after it's finished recording
 
@@ -53,7 +53,7 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Constructors
-        public DescriptionViewModel(ILiveDescribePlayer mediaVideo, VideoControl videoControl)
+        public DescriptionViewModel(ILiveDescribePlayer mediaVideo, MediaControlViewModel videoControl)
         {
             _isRecording = false;
             _waveWriter = null;

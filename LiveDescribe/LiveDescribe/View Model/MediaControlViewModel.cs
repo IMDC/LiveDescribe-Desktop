@@ -11,7 +11,7 @@ using System.Collections.Generic;
 
 namespace LiveDescribe.View_Model
 {
-    public class VideoControl : ViewModelBase
+    public class MediaControlViewModel : ViewModelBase
     {
         #region Logger
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger
@@ -55,7 +55,7 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Constructors
-        public VideoControl(ILiveDescribePlayer mediaVideo, LoadingViewModel loadingViewModel)
+        public MediaControlViewModel(ILiveDescribePlayer mediaVideo, LoadingViewModel loadingViewModel)
         {
             _mediaVideo = mediaVideo;
             _loadingViewModel = loadingViewModel;
