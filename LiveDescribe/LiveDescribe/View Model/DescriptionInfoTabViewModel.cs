@@ -59,6 +59,10 @@ namespace LiveDescribe.View_Model
         {
             set
             {
+                if (_regularDescriptionSelectedInList != null && value == null)
+                    _regularDescriptionSelectedInList.IsSelected = false;
+
+
                 if (_regularDescriptionSelectedInList != null)
                 {
                     _regularDescriptionSelectedInList.IsSelected = false;
@@ -98,6 +102,10 @@ namespace LiveDescribe.View_Model
             set
             {
 
+                if (_extendedDescriptionSelectedInList != null && value == null)
+                    _extendedDescriptionSelectedInList.IsSelected = false;
+
+
                 if (RegularDescriptionSelectedInList != null)
                 {
                     RegularDescriptionSelectedInList.IsSelected = false;
@@ -136,6 +144,8 @@ namespace LiveDescribe.View_Model
         {
             set
             {
+                if (_spaceSelectedInList != null && value == null)
+                    _spaceSelectedInList.IsSelected = false;
 
                 if (RegularDescriptionSelectedInList != null)
                 {
