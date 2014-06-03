@@ -8,6 +8,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
+using System.Windows.Input;
 
 namespace LiveDescribe.View_Model
 {
@@ -34,11 +35,29 @@ namespace LiveDescribe.View_Model
             _player = player;
 
             EditingEnabled = false;
+
+            //Commands
+            SetBeginToMarker = new RelayCommand(
+                canExecute: () => EditingEnabled,
+                execute: () => SelectedSpace_StartInVideo = _player.Position.TotalMilliseconds
+                );
+
+            SetEndToMarker = new RelayCommand(
+                canExecute: () => EditingEnabled,
+                execute: () => SelectedSpace_EndInVideo = _player.Position.TotalMilliseconds
+                );
         }
         #endregion
 
         #region Commands
-        public RelayCommand CreateSpaceCommand { get; private set; }
+        /// <summary>
+        /// Command that Sets the StartInVideoTime to the marker time when executed.
+        /// </summary>
+        public ICommand SetBeginToMarker { private set; get; }
+        /// <summary>
+        /// Command that sets the EndInVideoTime to the marker time when executed.
+        /// </summary>
+        public ICommand SetEndToMarker { private set; get; }
         #endregion
 
         #region Binding Properties
