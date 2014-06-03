@@ -15,6 +15,7 @@ namespace LiveDescribe.View_Model
     {
         #region Instance Variables
 
+        private bool _editingEnabled;
         private Space _selectedSpace;
         private DescriptionInfoTabViewModel _descriptionInfo;
         private ILiveDescribePlayer _player;
@@ -31,6 +32,8 @@ namespace LiveDescribe.View_Model
             };
 
             _player = player;
+
+            EditingEnabled = false;
         }
         #endregion
 
@@ -39,6 +42,19 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Binding Properties
+
+        /// <summary>
+        /// Determines whether or not the space times can be edited or not.
+        /// </summary>
+        public bool EditingEnabled
+        {
+            set
+            {
+                _editingEnabled = value;
+                RaisePropertyChanged("EditingEnabled");
+            }
+            get { return _editingEnabled; }
+        }
 
         public Space SelectedSpace
         {
@@ -56,12 +72,14 @@ namespace LiveDescribe.View_Model
                 if (value != null)
                 {
                     value.PropertyChanged += SelectedSpaceOnPropertyChanged;
+                    EditingEnabled = true;
                 }
+                else
+                    EditingEnabled = false;
 
                 //Update the binded properties by notifying them
                 RaisePropertyChanged("SelectedSpace_StartInVideo");
                 RaisePropertyChanged("SelectedSpace_EndInVideo");
-
 
                 RaisePropertyChanged("SelectedSpace");
             }

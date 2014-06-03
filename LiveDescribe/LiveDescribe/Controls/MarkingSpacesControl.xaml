@@ -58,6 +58,7 @@
             Style="{StaticResource TextBoxStyle}"
             Grid.Row="1"
             Grid.ColumnSpan="5"
+            IsEnabled="{Binding EditingEnabled}"
             Text="{Binding Path=SelectedSpace_StartInVideo, Converter={StaticResource MillisecondsTimeConverter}}" />
 
         <!-- End -->
@@ -77,6 +78,7 @@
             Style="{StaticResource TextBoxStyle}"
             Grid.Row="3"
             Grid.ColumnSpan="5"
+            IsEnabled="{Binding EditingEnabled}"
             Text="{Binding Path=SelectedSpace_EndInVideo, Converter={StaticResource MillisecondsTimeConverter}}" />
 
     </Grid>
