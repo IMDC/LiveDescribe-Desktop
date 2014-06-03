@@ -27,6 +27,12 @@ namespace LiveDescribe.View
 
         private enum SpacesActionState { None, Dragging, ResizingEndOfSpace, ResizingBeginningOfSpace };
 
+        private enum DescriptionsActionState
+        {
+            None,
+            Dragging
+        };
+
         #region Constants
         private const double DefaultSpaceLengthInMilliSeconds = 3000;
         private const double MarkerOffset = 10.0;
@@ -61,6 +67,7 @@ namespace LiveDescribe.View
         private double _originalPositionForDraggingSpace = -1;
         private Point _rightClickPointOnAudioCanvas;
         private SpacesActionState _spacesActionState = SpacesActionState.None;
+        private DescriptionsActionState _descriptionActionState = DescriptionsActionState.None;
         private Cursor _grabCursor;
         private Cursor _grabbingCursor;
         private LiveDescribeMediaPlayer VideoMedia;
@@ -250,6 +257,7 @@ namespace LiveDescribe.View
             _descriptionViewModel.RecordRequestedMicrophoneNotPluggedIn += (sender, e) =>
                 {
                     //perhaps show a popup when the Record button is pressed and there is no microphone plugged in
+                    MessageBox.Show("No Microphone Connected");
                     log.Warn("No microphone connected");
                 };
 
@@ -279,6 +287,7 @@ namespace LiveDescribe.View
                             _descriptionBeingDragged = e.Description;
                             DescriptionCanvas.CaptureMouse();
                             Mouse.SetCursor(_grabbingCursor);
+                            _descriptionActionState = DescriptionsActionState.Dragging;
                         }
                     };
 
@@ -526,6 +535,24 @@ namespace LiveDescribe.View
         }
 
         /// <summary>
+        /// Gets called when the mouse is down on the audio canvas
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AudioCanvas_OnMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            //if we aren't dragging a description or space, we want to unselect them out of the list
+            if (_spacesActionState == SpacesActionState.None && _descriptionActionState == DescriptionsActionState.None)
+            {
+                _descriptionInfoTabViewModel.SpaceSelectedInList = null;
+                _descriptionInfoTabViewModel.ExtendedDescriptionSelectedInList = null;
+                _descriptionInfoTabViewModel.RegularDescriptionSelectedInList = null;
+            }
+        }
+
+
+
+        /// <summary>
         /// Updates the canvasWidth and canvasHeight variables everytime the canvas size is changed
         /// </summary>
         /// <param name="sender"></param>
@@ -559,6 +586,7 @@ namespace LiveDescribe.View
                 //and stop dragging the description
                 //the mouse gets captured when a description is left clicked
                 DescriptionCanvas.ReleaseMouseCapture();
+                _descriptionActionState = DescriptionsActionState.None;
             }
         }
 
@@ -889,5 +917,6 @@ namespace LiveDescribe.View
             this.Close();
         }
         #endregion
+
     }
 }

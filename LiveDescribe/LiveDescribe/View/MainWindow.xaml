@@ -163,7 +163,8 @@
                                     HorizontalAlignment="Left"
                                     MouseRightButtonDown="AudioCanvas_RecordRightClickPosition"
                                     MouseUp="AudioCanvas_MouseUp"
-                                    MouseMove="AudioCanvas_MouseMove">
+                                    MouseMove="AudioCanvas_MouseMove"
+                                    MouseDown="AudioCanvas_OnMouseDown">
 
                                     <Canvas.ContextMenu>
                                         <ContextMenu>
