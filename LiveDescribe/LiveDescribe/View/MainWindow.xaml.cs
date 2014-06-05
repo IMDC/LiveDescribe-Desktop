@@ -154,7 +154,6 @@ namespace LiveDescribe.View
                 AudioCanvas.Children.Clear();
                 AudioCanvas.Background = null;
                 NumberTimeline.Children.Clear();
-                AudioCanvas.Children.Add(Marker);
 
                 UpdateMarkerPosition(-MarkerOffset);
                 Marker.IsEnabled = false;
@@ -721,9 +720,7 @@ namespace LiveDescribe.View
 
             double samplesPerPixel = data.Count / _canvasWidth;
 
-            double soundWaveOffset = NumberTimeline.ActualHeight;
-            double soundWaveHeight = AudioCanvas.ActualHeight - soundWaveOffset;
-            double middle = soundWaveHeight / 2;
+            double middle =  AudioCanvas.ActualHeight / 2;
             double yscale = middle;
 
             AudioCanvas.Children.Clear();
@@ -751,8 +748,8 @@ namespace LiveDescribe.View
                     {
                         Stroke = System.Windows.Media.Brushes.Black,
                         SnapsToDevicePixels = true, //Turn off anti-aliasing effect
-                        Y1 = middle + max * yscale + soundWaveOffset,
-                        Y2 = middle + min * yscale + soundWaveOffset,
+                        Y1 = middle + max * yscale,
+                        Y2 = middle + min * yscale,
                         X1 = pixel,
                         X2 = pixel,
                     });
@@ -825,7 +822,7 @@ namespace LiveDescribe.View
         private void ResizeSpaces()
         {
             foreach (Space space in _spacesViewModel.Spaces)
-                space.Height = AudioCanvas.ActualHeight - NumberTimeline.ActualHeight;
+                space.Height = AudioCanvas.ActualHeight;
         }
 
         /// <summary>
@@ -853,8 +850,8 @@ namespace LiveDescribe.View
         private void SetSpaceLocation(Space space)
         {
             space.X = (AudioCanvas.Width / _videoDuration) * space.StartInVideo;
-            space.Y = NumberTimeline.ActualHeight;
-            space.Height = AudioCanvas.ActualHeight - NumberTimeline.ActualHeight;
+            space.Y = 0;
+            space.Height = AudioCanvas.ActualHeight;
             space.Width = (AudioCanvas.Width / _videoDuration) * (space.EndInVideo - space.StartInVideo);
         }
         #endregion
