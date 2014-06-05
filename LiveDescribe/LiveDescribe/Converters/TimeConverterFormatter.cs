@@ -7,11 +7,9 @@ using System.Windows.Data;
 
 namespace LiveDescribe.Converters
 {
+    [ValueConversion(typeof(TimeSpan), typeof(string))]
     class TimeConverterFormatter : IValueConverter
     {
-
-        public TimeConverterFormatter() {}
-
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             TimeSpan timespan = (TimeSpan)value;

@@ -11,9 +11,6 @@ namespace LiveDescribe.Converters
     [ValueConversion(typeof(double), typeof(string))]
     public class MillisecondsTimeConverterFormatter : IValueConverter
     {
-        public MillisecondsTimeConverterFormatter()
-        { }
-
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             return TimeSpan.FromMilliseconds((double)value).ToString("h\\:mm\\:ss\\.fff");
