@@ -102,8 +102,8 @@ namespace LiveDescribe.View
             cursfile = Application.GetResourceStream(new Uri("pack://application:,,,/Resources/Cursors/grabbing.cur"));
             _grabbingCursor = new Cursor(cursfile.Stream);
 
-            #region TimeLine Event Listeners
-            TimeLine.ScrollChanged += (sender, e) => { DrawWaveForm(); };
+            #region TimeLineScrollViewer Event Listeners
+            TimeLineScrollViewer.ScrollChanged += (sender, e) => { DrawWaveForm(); };
             #endregion
 
             #region Event Listeners for VideoMedia
@@ -154,7 +154,6 @@ namespace LiveDescribe.View
                 AudioCanvas.Children.Clear();
                 AudioCanvas.Background = null;
                 NumberTimeline.Children.Clear();
-                AudioCanvas.Children.Add(NumberTimelineBorder);
                 AudioCanvas.Children.Add(Marker);
 
                 UpdateMarkerPosition(-MarkerOffset);
@@ -430,6 +429,25 @@ namespace LiveDescribe.View
         }
 
         #region View Listeners
+
+        /// <summary>
+        /// Updates TimlineScrollViewer's childrens' size.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TimeLineScrollViewer_OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            log.Info("TimeLineScrollViewer Sized Changed");
+
+            //Video is loaded
+            if (_videoDuration != -1)
+            {
+                SetTimeline();
+            }
+            //update marker to fit the entire AudioCanvas even when there's no video loaded
+            Marker.Points[4] = new Point(Marker.Points[4].X, TimeLineScrollViewer.ActualHeight);
+        }
+
         /// <summary>
         /// Called when mouse is up on the audio canvas
         /// </summary>
@@ -550,29 +568,6 @@ namespace LiveDescribe.View
             }
         }
 
-
-
-        /// <summary>
-        /// Updates the canvasWidth and canvasHeight variables everytime the canvas size is changed
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void AudioCanvasBorder_SizeChanged_1(object sender, SizeChangedEventArgs e)
-        {
-            log.Info("Audio Canvas Border Sized Changed");
-
-            //Video is loaded
-            if (_videoDuration != -1)
-            {
-                SetTimeline();
-            }
-            //update marker to fit the entire AudioCanvas even when there's no video loaded
-            else
-            {
-                Marker.Points[4] = new Point(Marker.Points[4].X, AudioCanvasBorder.ActualHeight);
-            }
-
-        }
         /// <summary>
         /// Gets called on the mouse up event of the description canvas
         /// </summary>
@@ -636,7 +631,7 @@ namespace LiveDescribe.View
                 //execute the pause command because we want to pause the video when someone is clicking through the video
                 _mediaControlViewModel.PauseCommand.Execute(this);
 
-                var xPosition = e.GetPosition(NumberTimelineBorder).X;
+                var xPosition = e.GetPosition(NumberTimeline).X;
                 var newValue = (xPosition / AudioCanvas.Width) * _videoDuration;
 
                 UpdateMarkerPosition(xPosition - MarkerOffset);
@@ -686,13 +681,13 @@ namespace LiveDescribe.View
 
             Dispatcher.Invoke(delegate
             {
-                singlePageWidth = TimeLine.ActualWidth;
-                scrolledAmount = TimeLine.HorizontalOffset;
+                singlePageWidth = TimeLineScrollViewer.ActualWidth;
+                scrolledAmount = TimeLineScrollViewer.HorizontalOffset;
             });
             double scrollOffsetRight = PageScrollPercent * singlePageWidth;
             if (!(xPos - scrolledAmount >= (scrollOffsetRight))) return false;
 
-            Dispatcher.Invoke(delegate { TimeLine.ScrollToHorizontalOffset(scrollOffsetRight + scrolledAmount); });
+            Dispatcher.Invoke(delegate { TimeLineScrollViewer.ScrollToHorizontalOffset(scrollOffsetRight + scrolledAmount); });
             return true;
         }
 
@@ -718,7 +713,7 @@ namespace LiveDescribe.View
         {
             log.Info("Drawing wave form");
 
-            double width = TimeLine.ActualWidth;
+            double width = TimeLineScrollViewer.ActualWidth;
 
             if (_mediaControlViewModel.Waveform == null || _canvasWidth == 0 || width == 0)
                 return;
@@ -733,9 +728,8 @@ namespace LiveDescribe.View
 
             AudioCanvas.Children.Clear();
             //Re-add Children components
-            AudioCanvas.Children.Add(NumberTimelineBorder);
             
-            int begin = (int)TimeLine.HorizontalOffset;
+            int begin = (int)TimeLineScrollViewer.HorizontalOffset;
             int ratio = _mediaControlViewModel.Waveform.Header.NumChannels == 2 ? 40 : 80;
             double samples_per_second =
                 (_mediaControlViewModel.Waveform.Header.SampleRate * (_mediaControlViewModel.Waveform.Header.BlockAlign / (double)ratio));
@@ -767,13 +761,13 @@ namespace LiveDescribe.View
                 pixel++;
             }
             AudioCanvas.Children.Add(SpacesItemControl);
-            AudioCanvas.Children.Add(Marker);
+            //AudioCanvas.Children.Add(Marker);
             double canvasWidth = _canvasWidth;
 
             //Number of lines needed for the entire video
             int numlines = (int)(_videoDuration / (LineTime * 1000));
-            int beginLine = (int)((numlines / _canvasWidth) * TimeLine.HorizontalOffset);
-            int endLine = beginLine + (int)((numlines / _canvasWidth) * TimeLine.ActualWidth) + 1;
+            int beginLine = (int)((numlines / _canvasWidth) * TimeLineScrollViewer.HorizontalOffset);
+            int endLine = beginLine + (int)((numlines / _canvasWidth) * TimeLineScrollViewer.ActualWidth) + 1;
             //Clear the canvas because we don't want the remaining lines due to importing a new video
             //or resizing the window
             NumberTimeline.Children.Clear();
@@ -846,7 +840,6 @@ namespace LiveDescribe.View
             NumberTimeline.Width = _canvasWidth;
             AudioCanvas.Width = _canvasWidth;
             DescriptionCanvas.Width = _canvasWidth;
-            Marker.Points[4] = new Point(Marker.Points[4].X, AudioCanvasBorder.ActualHeight);
 
             DrawWaveForm();
             ResizeDescriptions();
@@ -917,6 +910,5 @@ namespace LiveDescribe.View
             this.Close();
         }
         #endregion
-
     }
 }

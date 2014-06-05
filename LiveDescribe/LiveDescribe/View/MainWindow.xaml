@@ -54,13 +54,13 @@
                         Command="{Binding ShowPreferences}" />
                     <MenuItem
                         Header="Exit"
-                        Click="MenuItemExit_Click"/>
+                        Click="MenuItemExit_Click" />
                 </MenuItem>
                 <MenuItem
                     Header="Project">
                     <MenuItem
                         Header="Find Spaces in Video"
-                        Command="{Binding FindSpaces}"/>
+                        Command="{Binding FindSpaces}" />
                     <MenuItem
                         Header="Refresh Project Cache"
                         Command="{Binding ClearCache}" />
@@ -91,13 +91,20 @@
 
                 <!--Main Grid Column Definitions-->
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="130"/>
-                    <ColumnDefinition Width="141*" />
-                    <ColumnDefinition Width="141*" />
-                    <ColumnDefinition Width="176*" />
-                    <ColumnDefinition Width="107*" />
-                    <ColumnDefinition Width="142*" />
-                    <ColumnDefinition Width="140*" />
+                    <ColumnDefinition
+                        Width="130" />
+                    <ColumnDefinition
+                        Width="141*" />
+                    <ColumnDefinition
+                        Width="141*" />
+                    <ColumnDefinition
+                        Width="176*" />
+                    <ColumnDefinition
+                        Width="107*" />
+                    <ColumnDefinition
+                        Width="142*" />
+                    <ColumnDefinition
+                        Width="140*" />
                 </Grid.ColumnDefinitions>
 
                 <controls:DescriptionRecordingControl
@@ -122,11 +129,11 @@
                     Grid.Column="4"
                     Grid.ColumnSpan="3"
                     Grid.RowSpan="8" />
-                
-                <controls:MarkingSpacesControl 
+
+                <controls:MarkingSpacesControl
                     DataContext="{Binding MarkingSpacesControlViewModel}"
                     Grid.Row="9"
-                    Grid.RowSpan="3"/>
+                    Grid.RowSpan="3" />
 
                 <!--Timeline-->
                 <Border
@@ -138,21 +145,34 @@
                     BorderThickness="1"
                     VerticalAlignment="Stretch">
                     <ScrollViewer
-                        Name="TimeLine"
+                        Name="TimeLineScrollViewer"
                         HorizontalScrollBarVisibility="Auto"
-                        VerticalScrollBarVisibility="Auto">
+                        VerticalScrollBarVisibility="Auto"
+                        SizeChanged="TimeLineScrollViewer_OnSizeChanged">
                         <Grid>
                             <Grid.RowDefinitions>
+                                <RowDefinition
+                                    Height="20" />
                                 <RowDefinition />
                                 <RowDefinition />
                                 <RowDefinition />
                             </Grid.RowDefinitions>
 
+                            <Border
+                                Background="White"
+                                Height="20"
+                                BorderBrush="Black"
+                                BorderThickness="1">
+                                <Canvas
+                                    Background="White"
+                                    MouseDown="NumberTimeline_OnMouseDown"
+                                    Name="NumberTimeline" />
+                            </Border>
+
                             <!--Audio Canvas which includes the marker and the number line-->
                             <Border
-                                Grid.Row="0"
+                                Grid.Row="1"
                                 Grid.RowSpan="2"
-                                SizeChanged="AudioCanvasBorder_SizeChanged_1"
                                 Name="AudioCanvasBorder"
                                 BorderBrush="Black"
                                 BorderThickness="1">
@@ -175,17 +195,6 @@
                                         </ContextMenu>
                                     </Canvas.ContextMenu>
 
-                                    <Border
-                                        Name="NumberTimelineBorder"
-                                        Background="White"
-                                        Height="20"
-                                        BorderBrush="Black"
-                                        BorderThickness="0,0,0,2">
-                                        <Canvas
-                                            Background="White"
-                                            MouseDown="NumberTimeline_OnMouseDown"
-                                            Name="NumberTimeline" />
-                                    </Border>
 
                                     <ItemsControl
                                         Name="SpacesItemControl"
@@ -274,36 +283,7 @@
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
-                                    <Polyline
-                                        DataContext="{Binding MediaControlViewModel}"
-                                        IsEnabled="False"
-                                        Points="10,20, 0,0,  20,0, 10,20, 10,172"
-                                        RenderOptions.EdgeMode="Aliased"
-                                        Stroke="Black"
-                                        Fill="Black"
-                                        StrokeThickness="2"
-                                        Width="20"
-                                        Canvas.Left="-10"
-                                        Canvas.Top="0"
-                                        Name="Marker">
-                                        <i:Interaction.Triggers>
-                                            <i:EventTrigger
-                                                EventName="MouseDown">
-                                                <i:InvokeCommandAction
-                                                    Command="{Binding MarkerMouseDownCommand}" />
-                                            </i:EventTrigger>
-                                            <i:EventTrigger
-                                                EventName="MouseUp">
-                                                <i:InvokeCommandAction
-                                                    Command="{Binding MarkerMouseUpCommand}" />
-                                            </i:EventTrigger>
-                                            <i:EventTrigger
-                                                EventName="MouseMove">
-                                                <i:InvokeCommandAction
-                                                    Command="{Binding MarkerMouseMoveCommand}" />
-                                            </i:EventTrigger>
-                                        </i:Interaction.Triggers>
-                                    </Polyline>
+
                                 </Canvas>
                             </Border>
 
@@ -311,7 +291,7 @@
                             <Border
                                 Name="DescriptionCanvasBorder"
                                 DataContext="{Binding DescriptionViewModel}"
-                                Grid.Row="2"
+                                Grid.Row="3"
                                 BorderBrush="Black"
                                 BorderThickness="0.75">
                                 <Canvas
@@ -453,6 +433,40 @@
                                     </ItemsControl>
                                 </Canvas>
                             </Border>
+
+                            <Canvas
+                                Grid.Row="0"
+                                Grid.RowSpan="4">
+                                <Polyline
+                                    DataContext="{Binding MediaControlViewModel}"
+                                    IsEnabled="False"
+                                    Points="10,20, 0,0,  20,0, 10,20, 10,220"
+                                    RenderOptions.EdgeMode="Aliased"
+                                    Stroke="Black"
+                                    Fill="Black"
+                                    StrokeThickness="2"
+                                    Width="20"
+                                    Name="Marker"
+                                    Canvas.Left="-10">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger
+                                            EventName="MouseDown">
+                                            <i:InvokeCommandAction
+                                                Command="{Binding MarkerMouseDownCommand}" />
+                                        </i:EventTrigger>
+                                        <i:EventTrigger
+                                            EventName="MouseUp">
+                                            <i:InvokeCommandAction
+                                                Command="{Binding MarkerMouseUpCommand}" />
+                                        </i:EventTrigger>
+                                        <i:EventTrigger
+                                            EventName="MouseMove">
+                                            <i:InvokeCommandAction
+                                                Command="{Binding MarkerMouseMoveCommand}" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </Polyline>
+                            </Canvas>
                         </Grid>
                     </ScrollViewer>
                 </Border>
