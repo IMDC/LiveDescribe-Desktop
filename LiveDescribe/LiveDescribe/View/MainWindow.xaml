@@ -146,7 +146,7 @@
                     VerticalAlignment="Stretch">
                     <ScrollViewer
                         Name="TimeLineScrollViewer"
-                        HorizontalScrollBarVisibility="Auto"
+                        HorizontalScrollBarVisibility="Visible"
                         VerticalScrollBarVisibility="Auto"
                         SizeChanged="TimeLineScrollViewer_OnSizeChanged">
                         <Grid>
