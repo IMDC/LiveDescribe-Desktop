@@ -191,7 +191,7 @@
                                             <MenuItem
                                                 DataContext="{Binding SpacesViewModel}"
                                                 Header="Add Space"
-                                                Click="ContextMenu_AddSpace" />
+                                                Command="{Binding GetNewSpaceTime}" />
                                         </ContextMenu>
                                     </Canvas.ContextMenu>
 

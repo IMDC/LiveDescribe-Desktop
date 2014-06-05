@@ -68,7 +68,7 @@ namespace LiveDescribe.View_Model
             DispatcherHelper.Initialize();
             WindowTitle = DefaultWindowTitle;
            
-            _spacesviewmodel = new SpacesViewModel();
+            _spacesviewmodel = new SpacesViewModel(mediaVideo);
             _loadingViewModel = new LoadingViewModel(100, null, 0, false);
             _mediaControlViewModel = new MediaControlViewModel(mediaVideo, _loadingViewModel);
             _preferences = new PreferencesViewModel();

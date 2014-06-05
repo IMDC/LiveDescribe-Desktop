@@ -152,7 +152,6 @@ namespace LiveDescribe.View
             mainWindowViewModel.ProjectClosed += (sender, e) =>
             {
                 AudioCanvas.Children.Clear();
-                AudioCanvas.Background = null;
                 NumberTimeline.Children.Clear();
 
                 UpdateMarkerPosition(-MarkerOffset);
@@ -316,7 +315,7 @@ namespace LiveDescribe.View
                     //Adding a space depends on where you right clicked so we create and add it in the view
                     Space space = e.Space;
 
-                    //Set
+                    //Set space only if the video is loaded/playing/recording/etc
                     if (VideoMedia.CurrentState != LiveDescribeVideoStates.VideoNotLoaded)
                         SetSpaceLocation(space);
 
@@ -380,6 +379,39 @@ namespace LiveDescribe.View
                             SetSpaceLocation(space);
                     };
                 };
+
+            _spacesViewModel.RequestSpaceTime += (sender, args) =>
+            {
+                var space = args.Space;
+
+                double middle = _rightClickPointOnAudioCanvas.X;  // going to be the middle of the space
+                double middleTime = (_videoDuration / AudioCanvas.Width) * middle;  // middle of the space in milliseconds
+                double starttime = middleTime - (DefaultSpaceLengthInMilliSeconds / 2);
+                double endtime = middleTime + (DefaultSpaceLengthInMilliSeconds / 2);
+
+                //Bounds checking when creating a space
+                if (starttime >= 0 && endtime <= _videoDuration)
+                {
+                    space.StartInVideo = starttime;
+                    space.EndInVideo = endtime;
+                }
+                else if (starttime < 0 && endtime > _videoDuration)
+                {
+                    space.StartInVideo = 0;
+                    space.EndInVideo = _videoDuration;
+                }
+                else if (starttime < 0)
+                {
+                    space.StartInVideo = 0;
+                    space.EndInVideo = endtime;
+
+                }
+                else if (endtime > _videoDuration)
+                {
+                    space.StartInVideo = starttime;
+                    space.EndInVideo = _videoDuration;
+                }
+            };
             #endregion
 
             #region Event Listeners for LoadingViewModel
@@ -857,41 +889,6 @@ namespace LiveDescribe.View
         #endregion
 
         #region Control Event Handlers
-        private void ContextMenu_AddSpace(object sender, RoutedEventArgs e)
-        {
-            var space = new Space();
-
-            double middle = _rightClickPointOnAudioCanvas.X;  // going to be the middle of the space
-            double middleTime = (_videoDuration / AudioCanvas.Width) * middle;  // middle of the space in milliseconds
-            double starttime = middleTime - (DefaultSpaceLengthInMilliSeconds / 2);
-            double endtime = middleTime + (DefaultSpaceLengthInMilliSeconds / 2);
-
-            //Bounds checking when creating a space
-            if (starttime >= 0 && endtime <= _videoDuration)
-            {
-                space.StartInVideo = starttime;
-                space.EndInVideo = endtime;
-            }
-            else if (starttime < 0 && endtime > _videoDuration)
-            {
-                space.StartInVideo = 0;
-                space.EndInVideo = _videoDuration;
-            }
-            else if (starttime < 0)
-            {
-                space.StartInVideo = 0;
-                space.EndInVideo = endtime;
-
-            }
-            else if (endtime > _videoDuration)
-            {
-                space.StartInVideo = starttime;
-                space.EndInVideo = _videoDuration;
-            }
-
-            _spacesViewModel.AddSpace(space);
-        }
-
         private void MainWindow_OnClosing(object sender, CancelEventArgs e)
         {
             bool success = _mainWindowViewModel.TryExit();

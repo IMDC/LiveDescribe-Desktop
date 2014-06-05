@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using System.Collections.ObjectModel;
+using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
 using LiveDescribe.Events;
 using System.Windows.Input;
@@ -19,17 +20,34 @@ namespace LiveDescribe.View_Model
 
         #region Instance Variables
         private ObservableCollection<Space> _spaces;
+        private ILiveDescribePlayer _videoPlayer;
         #endregion
 
         #region Event Handlers
         public EventHandler<SpaceEventArgs> SpaceAddedEvent;
+
+        /// <summary>
+        /// Requests to a handler what to set the StartInVideo and EndInVideo time values for the
+        /// given space.
+        /// </summary>
+        public event EventHandler<SpaceEventArgs> RequestSpaceTime;
         #endregion
 
         #region Constructors
-        public SpacesViewModel()
+        public SpacesViewModel(ILiveDescribePlayer videoPlayer)
         {
             Spaces = new ObservableCollection<Space>();
+            _videoPlayer = videoPlayer;
+
             AddSpaceCommand = new RelayCommand(AddSpace, () => true);
+            GetNewSpaceTime = new RelayCommand(
+                canExecute: () => _videoPlayer.CurrentState != LiveDescribeVideoStates.VideoNotLoaded,
+                execute: () =>
+                {
+                    var s = new Space();
+                    OnRequestSpaceTime(s);
+                    AddSpace(s);
+                });
         }
         #endregion
 
@@ -38,6 +56,8 @@ namespace LiveDescribe.View_Model
         /// Command used for when a space is added
         /// </summary>
         public RelayCommand AddSpaceCommand { get; private set; }
+
+        public ICommand GetNewSpaceTime { get; private set; }
         #endregion
 
         #region Binding Properties
@@ -91,6 +111,15 @@ namespace LiveDescribe.View_Model
         public void CloseSpacesViewModel()
         {
             Spaces.Clear();
+        }
+        #endregion
+
+        #region Event Invocation
+
+        private void OnRequestSpaceTime(Space s)
+        {
+            var handler = RequestSpaceTime;
+            if (handler != null) handler(this, new SpaceEventArgs(s));
         }
         #endregion
     }
