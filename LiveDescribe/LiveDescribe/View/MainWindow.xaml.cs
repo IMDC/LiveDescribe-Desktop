@@ -904,5 +904,10 @@ namespace LiveDescribe.View
             this.Close();
         }
         #endregion
+
+        private void DescriptionRecordingControl_Loaded(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
