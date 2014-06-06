@@ -35,7 +35,7 @@ namespace LiveDescribe.View_Model
             set
             {
                 _text = value;
-                RaisePropertyChanged("Text");
+                RaisePropertyChanged();
             }
             get { return _text; }
         }
@@ -48,7 +48,7 @@ namespace LiveDescribe.View_Model
             set
             {
                 _value = value;
-                RaisePropertyChanged("Value");
+                RaisePropertyChanged();
             }
             get { return _value; }
         }
@@ -60,7 +60,7 @@ namespace LiveDescribe.View_Model
             set
             {
                 _max = value;
-                RaisePropertyChanged("Max");
+                RaisePropertyChanged();
             }
             get { return _max; }
         }
@@ -73,7 +73,7 @@ namespace LiveDescribe.View_Model
             set
             {
                 _visible = value;
-                RaisePropertyChanged("Visible");
+                RaisePropertyChanged();
             }
             get { return _visible; }
         }

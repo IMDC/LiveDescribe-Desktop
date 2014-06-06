@@ -164,7 +164,7 @@ namespace LiveDescribe.View_Model
             set
             {
                 _microphonestream = value;
-                RaisePropertyChanged("MicrophoneStream");
+                RaisePropertyChanged();
             }
             get
             {
@@ -180,7 +180,7 @@ namespace LiveDescribe.View_Model
             set
             {
                 _alldescriptions = value;
-                RaisePropertyChanged("AllDescriptions");
+                RaisePropertyChanged();
             }
             get
             {
@@ -197,7 +197,7 @@ namespace LiveDescribe.View_Model
             set
             {
                 _extendedDescriptions = value;
-                RaisePropertyChanged("ExtendedDescriptions");
+                RaisePropertyChanged();
             }
             get
             {
@@ -214,7 +214,7 @@ namespace LiveDescribe.View_Model
             set
             {
                 _regularDescriptions = value;
-                RaisePropertyChanged("RegularDescriptions");
+                RaisePropertyChanged();
             }
             get
             {
@@ -244,7 +244,7 @@ namespace LiveDescribe.View_Model
             {
                 _mediaVideo.CurrentState = value ? LiveDescribeVideoStates.RecordingDescription : _previousVideoState;
                 _isRecording = value;
-                RaisePropertyChanged("IsRecording");
+                RaisePropertyChanged();
             }
             get
             {

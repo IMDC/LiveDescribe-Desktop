@@ -86,7 +86,7 @@ namespace LiveDescribe.View_Model
                 if (_regularDescriptionSelectedInList != null && _regularDescriptionSelectedInList.IsSelected == false)
                     _regularDescriptionSelectedInList.IsSelected = true;
                 
-                RaisePropertyChanged("RegularDescriptionSelectedInList");
+                RaisePropertyChanged();
             }
             get
             {
@@ -129,7 +129,7 @@ namespace LiveDescribe.View_Model
                 if (_extendedDescriptionSelectedInList != null)
                     _extendedDescriptionSelectedInList.IsSelected = true;
 
-                RaisePropertyChanged("ExtendedDescriptionSelectedInList");
+                RaisePropertyChanged();
             }
             get
             {
@@ -169,7 +169,7 @@ namespace LiveDescribe.View_Model
 
                 if (_spaceSelectedInList != null)
                     _spaceSelectedInList.IsSelected = true;
-                RaisePropertyChanged("SpaceSelectedInList");
+                RaisePropertyChanged();
             }
             get
             {
@@ -185,7 +185,7 @@ namespace LiveDescribe.View_Model
             set
             {
                 _tabSelectedIndex = value;
-                RaisePropertyChanged("TabSelectedIndex");
+                RaisePropertyChanged();
             }
             get
             {
@@ -201,7 +201,7 @@ namespace LiveDescribe.View_Model
             set
             {
                 _descriptionAndSpaceText = value;
-                RaisePropertyChanged("DescriptionAndSpaceText");
+                RaisePropertyChanged();
             }
             get
             {

@@ -331,7 +331,7 @@ namespace LiveDescribe.View_Model
             set
             {
                 _windowTitle = value;
-                RaisePropertyChanged("WindowTitle");
+                RaisePropertyChanged();
             }
             get { return _windowTitle; }
         }

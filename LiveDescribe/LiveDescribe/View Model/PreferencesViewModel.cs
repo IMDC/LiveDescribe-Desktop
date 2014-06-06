@@ -96,7 +96,7 @@ namespace LiveDescribe.View_Model
             private set
             {
                 _sources = value;
-                RaisePropertyChanged("Sources");
+                RaisePropertyChanged();
             }
             get
             {
@@ -112,7 +112,7 @@ namespace LiveDescribe.View_Model
             set
             {
                 _selectedsource = value;
-                RaisePropertyChanged("SelectedAudioSource");
+                RaisePropertyChanged();
             }
             get
             {

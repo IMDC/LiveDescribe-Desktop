@@ -355,7 +355,7 @@ namespace LiveDescribe.View_Model
             set
             {
                 _mediaVideo.Path = value;
-                RaisePropertyChanged("Path");
+                RaisePropertyChanged();
             }
             get
             {
@@ -372,7 +372,7 @@ namespace LiveDescribe.View_Model
             set
             {
                 _positionTimeLabel = value;
-                RaisePropertyChanged("PositionTimeLabel");
+                RaisePropertyChanged();
             }
             get
             {
@@ -389,7 +389,7 @@ namespace LiveDescribe.View_Model
             set
             {
                 _waveform = value;
-                RaisePropertyChanged("Waveform");
+                RaisePropertyChanged();
             }
             get { return _waveform; }
         }

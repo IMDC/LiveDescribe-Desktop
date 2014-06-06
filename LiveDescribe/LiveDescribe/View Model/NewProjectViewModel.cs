@@ -76,7 +76,7 @@ namespace LiveDescribe.View_Model
             set
             {
                 _videoPath = value;
-                RaisePropertyChanged("VideoPath");
+                RaisePropertyChanged();
             }
             get { return _videoPath; }
         }
@@ -86,7 +86,7 @@ namespace LiveDescribe.View_Model
             set
             {
                 _projectName = value;
-                RaisePropertyChanged("ProjectName");
+                RaisePropertyChanged();
             }
             get { return _projectName; }
         }
@@ -96,7 +96,7 @@ namespace LiveDescribe.View_Model
             set
             {
                 _projectPath = value;
-                RaisePropertyChanged("ProjectPath");
+                RaisePropertyChanged();
             }
             get { return _projectPath; }
         }
@@ -106,7 +106,7 @@ namespace LiveDescribe.View_Model
             set
             {
                 _copyVideo = value;
-                RaisePropertyChanged("CopyVideo");
+                RaisePropertyChanged();
             }
             get { return _copyVideo; }
         }

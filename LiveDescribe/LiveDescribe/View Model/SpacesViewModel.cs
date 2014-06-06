@@ -69,7 +69,7 @@ namespace LiveDescribe.View_Model
             set
             {
                 _spaces = value;
-                RaisePropertyChanged("Spaces");
+                RaisePropertyChanged();
             }
             get { return _spaces; }
         }

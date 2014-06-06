@@ -70,7 +70,7 @@ namespace LiveDescribe.View_Model
             set
             {
                 _editingEnabled = value;
-                RaisePropertyChanged("EditingEnabled");
+                RaisePropertyChanged();
             }
             get { return _editingEnabled; }
         }
@@ -100,7 +100,7 @@ namespace LiveDescribe.View_Model
                 RaisePropertyChanged("SelectedSpace_StartInVideo");
                 RaisePropertyChanged("SelectedSpace_EndInVideo");
 
-                RaisePropertyChanged("SelectedSpace");
+                RaisePropertyChanged();
             }
             get { return _selectedSpace; }
         }
@@ -124,7 +124,7 @@ namespace LiveDescribe.View_Model
                     && value <= SelectedSpace.EndInVideo - SpacesViewModel.MinSpaceLengthInMSecs)
                     SelectedSpace.StartInVideo = value;
 
-                RaisePropertyChanged("SelectedSpace_StartInVideo");
+                RaisePropertyChanged();
             }
             get { return SelectedSpace != null ? SelectedSpace.StartInVideo : 0; }
         }
@@ -139,7 +139,7 @@ namespace LiveDescribe.View_Model
                     && value <= _player.DurationMilliseconds)
                     SelectedSpace.EndInVideo = value;
 
-                RaisePropertyChanged("SelectedSpace_EndInVideo");
+                RaisePropertyChanged();
             }
             get { return SelectedSpace != null ? SelectedSpace.EndInVideo : 0; }
         }
