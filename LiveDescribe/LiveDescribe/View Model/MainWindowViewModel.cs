@@ -101,6 +101,7 @@ namespace LiveDescribe.View_Model
                     _mediaControlViewModel.CloseMediaControlViewModel();
                     _spacesviewmodel.CloseSpacesViewModel();
                     _project = null;
+                    ResetProjectModifiedFlag();
 
                     OnProjectClosed();
 
@@ -182,7 +183,7 @@ namespace LiveDescribe.View_Model
                     FileWriter.WriteSpacesFile(_project, _spacesviewmodel.Spaces);
 
                     ResetProjectModifiedFlag();
-                });//(SaveProject, CanSaveProject);
+                });
 
             ClearCache = new RelayCommand(
                 canExecute: () => _project != null,
@@ -511,7 +512,10 @@ namespace LiveDescribe.View_Model
         private void ResetProjectModifiedFlag()
         {
             _projectModified = false;
-            WindowTitle = string.Format("{0} - LiveDescribe", _project.ProjectName);
+            if (_project == null)
+                WindowTitle = DefaultWindowTitle;
+            else
+                WindowTitle = string.Format("{0} - LiveDescribe", _project.ProjectName);
         }
 
         public bool TryExit()
