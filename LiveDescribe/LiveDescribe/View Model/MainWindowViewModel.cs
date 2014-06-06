@@ -573,6 +573,10 @@ namespace LiveDescribe.View_Model
                         notifier.PropertyChanged -= ObservableCollectionElement_PropertyChanged;
                 }
             }
+
+            log.Debug("Collection Modified: " + e.Action);
+
+            FlagProjectAsModified();
         }
 
         /// <summary>
@@ -598,6 +602,7 @@ namespace LiveDescribe.View_Model
                 case "SpaceText":
                 case "AudioData":
                 case "Header":
+                    log.Debug("Property modified: " + e.PropertyName);
                     FlagProjectAsModified();
                     break;
             }
