@@ -578,8 +578,6 @@ namespace LiveDescribe.View_Model
                 }
             }
 
-            log.Debug("Collection Modified: " + e.Action);
-
             FlagProjectAsModified();
         }
 
@@ -606,7 +604,6 @@ namespace LiveDescribe.View_Model
                 case "SpaceText":
                 case "AudioData":
                 case "Header":
-                    log.Debug("Property modified: " + e.PropertyName);
                     FlagProjectAsModified();
                     break;
             }
