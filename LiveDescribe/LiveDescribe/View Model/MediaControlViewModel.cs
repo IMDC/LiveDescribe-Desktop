@@ -1,13 +1,11 @@
-﻿using System;
-using System.ComponentModel;
-using LiveDescribe.Graphics;
-using LiveDescribe.Interfaces;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
-using Microsoft.Win32;
 using LiveDescribe.Utilities;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace LiveDescribe.View_Model
 {
@@ -27,7 +25,6 @@ namespace LiveDescribe.View_Model
 
         #region Instance Variables
         private readonly ILiveDescribePlayer _mediaVideo;
-        private AudioUtility _audioOperator;
         private LoadingViewModel _loadingViewModel;
         private List<Space> _spaceData;
         private TimeSpan _positionTimeLabel;
@@ -175,7 +172,6 @@ namespace LiveDescribe.View_Model
             {
                 handler(this, EventArgs.Empty);
             }
-
         }
 
         /// <summary>
@@ -357,11 +353,7 @@ namespace LiveDescribe.View_Model
                 _mediaVideo.Path = value;
                 RaisePropertyChanged();
             }
-            get
-            {
-                return _mediaVideo.Path;
-            }
-
+            get { return _mediaVideo.Path; }
         }
 
         /// <summary>
@@ -374,10 +366,7 @@ namespace LiveDescribe.View_Model
                 _positionTimeLabel = value;
                 RaisePropertyChanged();
             }
-            get
-            {
-                return _positionTimeLabel;
-            }
+            get { return _positionTimeLabel; }
         }
         #endregion
 
@@ -409,7 +398,6 @@ namespace LiveDescribe.View_Model
         /// </summary>
         public void CloseMediaControlViewModel()
         {
-            _audioOperator = null;
             _waveform = null;
             _mediaVideo.Path = null;
             _mediaVideo.Stop();
@@ -433,10 +421,10 @@ namespace LiveDescribe.View_Model
             //Strip the audio from the given project video
             worker.DoWork += (sender, args) =>
             {
-                _audioOperator = new AudioUtility(Project);
-                _audioOperator.StripAudio(worker);
-                var waveFormData = _audioOperator.ReadWavData(worker);
-                var audioHeader = _audioOperator.Header;
+                var audioOperator = new AudioUtility(Project);
+                audioOperator.StripAudio(worker);
+                var waveFormData = audioOperator.ReadWavData(worker);
+                var audioHeader = audioOperator.Header;
                 _waveform = new Waveform(audioHeader, waveFormData);
                 _spaceData = AudioAnalyzer.FindSpaces(_waveform);
             };
