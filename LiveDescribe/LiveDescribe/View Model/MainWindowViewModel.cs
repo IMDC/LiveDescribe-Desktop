@@ -79,10 +79,10 @@ namespace LiveDescribe.View_Model
             #region Commands
             //Commands
             CloseProject = new RelayCommand(
-                canExecute: () => _project != null,
+                canExecute: () => ProjectLoaded,
                 execute: () =>
                 {
-                    if (_projectModified)
+                    if (ProjectModified)
                     {
                         var text = string.Format("The LiveDescribe project \"{0}\" has been modified." +
                             " Do you want to save changes before closing?", _project.ProjectName);
@@ -101,7 +101,7 @@ namespace LiveDescribe.View_Model
                     _mediaControlViewModel.CloseMediaControlViewModel();
                     _spacesviewmodel.CloseSpacesViewModel();
                     _project = null;
-                    ResetProjectModifiedFlag();
+                    ProjectModified = false;
 
                     OnProjectClosed();
 
@@ -169,7 +169,7 @@ namespace LiveDescribe.View_Model
             });
 
             SaveProject = new RelayCommand(
-                canExecute: () => _project != null && _projectModified,
+                canExecute: () => ProjectModified,
                 execute: () =>
                 {
                     FileWriter.WriteProjectFile(_project);
@@ -182,11 +182,11 @@ namespace LiveDescribe.View_Model
                     FileWriter.WriteDescriptionsFile(_project, _descriptionviewmodel.AllDescriptions);
                     FileWriter.WriteSpacesFile(_project, _spacesviewmodel.Spaces);
 
-                    ResetProjectModifiedFlag();
+                    ProjectModified = false;
                 });
 
             ClearCache = new RelayCommand(
-                canExecute: () => _project != null,
+                canExecute: () => ProjectLoaded,
                 execute: () =>
                 {
                     var p = _project;
@@ -207,7 +207,7 @@ namespace LiveDescribe.View_Model
             });
 
             FindSpaces = new RelayCommand(
-                canExecute: () => _project != null,
+                canExecute: () => ProjectLoaded,
                 execute: () =>
                 {
                     var spaces = AudioAnalyzer.FindSpaces(_mediaControlViewModel.Waveform);
@@ -283,6 +283,20 @@ namespace LiveDescribe.View_Model
             _descriptionviewmodel.RegularDescriptions.CollectionChanged += ObservableCollection_CollectionChanged;
             _mediaControlViewModel.PropertyChanged += PropertyChangedHandler;
 
+            //Update window title based on project name
+            this.PropertyChanged += (sender, args) =>
+            {
+                if (args.PropertyName == "ProjectModified")
+                {
+                    if (ProjectModified)
+                        WindowTitle = string.Format("{0}* - LiveDescribe", _project.ProjectName);
+                    else if (ProjectLoaded)
+                        WindowTitle = string.Format("{0} - LiveDescribe", _project.ProjectName);
+                    else
+                        WindowTitle = DefaultWindowTitle;
+                }
+            };
+
             #endregion
 
         }
@@ -337,6 +351,27 @@ namespace LiveDescribe.View_Model
             get { return _windowTitle; }
         }
 
+        public bool ProjectLoaded
+        {
+            get { return _project != null; }
+        }
+
+        /// <summary>
+        /// Keeps track of whether the project has been modified or not by the program. This will
+        /// be true iff there is a project loaded already.
+        /// </summary>
+        public bool ProjectModified
+        {
+            set
+            {
+                if (_projectModified != value)
+                {
+                    _projectModified = ProjectLoaded && value;
+                    RaisePropertyChanged();
+                }
+            }
+            get { return ProjectLoaded && _projectModified; }
+        }
 
         /// <summary>
         /// returns the spaces view model so a control in the main window can use it as a data context
@@ -500,27 +535,12 @@ namespace LiveDescribe.View_Model
             _descriptionviewmodel.Project = _project;
 
             //Ensure that project is not modified.
-            ResetProjectModifiedFlag();
-        }
-
-        private void FlagProjectAsModified()
-        {
-            _projectModified = true;
-            WindowTitle = string.Format("{0}* - LiveDescribe", _project.ProjectName);
-        }
-
-        private void ResetProjectModifiedFlag()
-        {
-            _projectModified = false;
-            if (_project == null)
-                WindowTitle = DefaultWindowTitle;
-            else
-                WindowTitle = string.Format("{0} - LiveDescribe", _project.ProjectName);
+            ProjectModified = false;
         }
 
         public bool TryExit()
         {
-            if (_projectModified)
+            if (ProjectModified)
             {
                 log.Info("Program is attempting to exit with an unsaved project");
                 var text = string.Format("The LiveDescribe project \"{0}\" has been modified." +
@@ -578,9 +598,7 @@ namespace LiveDescribe.View_Model
                 }
             }
 
-            log.Debug("Collection Modified: " + e.Action);
-
-            FlagProjectAsModified();
+            ProjectModified = true;
         }
 
         /// <summary>
@@ -606,8 +624,7 @@ namespace LiveDescribe.View_Model
                 case "SpaceText":
                 case "AudioData":
                 case "Header":
-                    log.Debug("Property modified: " + e.PropertyName);
-                    FlagProjectAsModified();
+                    ProjectModified = true;
                     break;
             }
         }

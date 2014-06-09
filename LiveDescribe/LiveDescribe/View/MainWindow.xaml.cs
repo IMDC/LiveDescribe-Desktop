@@ -748,12 +748,13 @@ namespace LiveDescribe.View
         /// </summary>
         private void DrawWaveForm()
         {
-            log.Info("Drawing wave form");
-
             double width = TimeLineScrollViewer.ActualWidth;
 
             if (_mediaControlViewModel.Waveform == null || _canvasWidth == 0 || width == 0)
                 return;
+
+            log.Info("Drawing wave form");
+
             List<short> data = _mediaControlViewModel.Waveform.Data;
 
             double samplesPerPixel = data.Count / _canvasWidth;

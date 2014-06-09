@@ -304,10 +304,13 @@ namespace LiveDescribe.View_Model
         {
             log.Info("Finished Recording");
             MicrophoneStream.StopRecording();
-            string filename = _waveWriter.Filename;
+            string filepath = _waveWriter.Filename;
             _waveWriter.Dispose();
             _waveWriter = null;
-            NAudio.Wave.WaveFileReader read = new NAudio.Wave.WaveFileReader(filename);
+            var read = new WaveFileReader(filepath);
+
+            string filename = Path.GetFileNameWithoutExtension(filepath);
+
             AddDescription(filename, 0, read.TotalTime.TotalMilliseconds, _descriptionStartTime, ExtendedIsChecked);
             read.Dispose();
             //have to change the state of recording

@@ -23,6 +23,9 @@ namespace LiveDescribe.Controls
         public MediaControl()
         {
             InitializeComponent();
+
+            //Make the command manager requery to update the video controls (Play, Pause, etc)
+            VideoMedia.MediaOpened += (sender, args) => CommandManager.InvalidateRequerySuggested();
         }
     }
 }
