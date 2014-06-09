@@ -101,7 +101,7 @@ namespace LiveDescribe.View_Model
                     _mediaControlViewModel.CloseMediaControlViewModel();
                     _spacesviewmodel.CloseSpacesViewModel();
                     _project = null;
-                    ResetProjectModifiedFlag();
+                    ProjectModified = false;
 
                     OnProjectClosed();
 
@@ -182,7 +182,7 @@ namespace LiveDescribe.View_Model
                     FileWriter.WriteDescriptionsFile(_project, _descriptionviewmodel.AllDescriptions);
                     FileWriter.WriteSpacesFile(_project, _spacesviewmodel.Spaces);
 
-                    ResetProjectModifiedFlag();
+                    ProjectModified = false;
                 });
 
             ClearCache = new RelayCommand(
@@ -283,6 +283,20 @@ namespace LiveDescribe.View_Model
             _descriptionviewmodel.RegularDescriptions.CollectionChanged += ObservableCollection_CollectionChanged;
             _mediaControlViewModel.PropertyChanged += PropertyChangedHandler;
 
+            //Update window title based on project name
+            this.PropertyChanged += (sender, args) =>
+            {
+                if (args.PropertyName == "ProjectModified")
+                {
+                    if (ProjectModified)
+                        WindowTitle = string.Format("{0}* - LiveDescribe", _project.ProjectName);
+                    else if (ProjectLoaded)
+                        WindowTitle = string.Format("{0} - LiveDescribe", _project.ProjectName);
+                    else
+                        WindowTitle = DefaultWindowTitle;
+                }
+            };
+
             #endregion
 
         }
@@ -342,8 +356,20 @@ namespace LiveDescribe.View_Model
             get { return _project != null; }
         }
 
+        /// <summary>
+        /// Keeps track of whether the project has been modified or not by the program. This will
+        /// be true iff there is a project loaded already.
+        /// </summary>
         public bool ProjectModified
         {
+            set
+            {
+                if (_projectModified != value)
+                {
+                    _projectModified = ProjectLoaded && value;
+                    RaisePropertyChanged();
+                }
+            }
             get { return ProjectLoaded && _projectModified; }
         }
 
@@ -509,22 +535,7 @@ namespace LiveDescribe.View_Model
             _descriptionviewmodel.Project = _project;
 
             //Ensure that project is not modified.
-            ResetProjectModifiedFlag();
-        }
-
-        private void FlagProjectAsModified()
-        {
-            _projectModified = true;
-            WindowTitle = string.Format("{0}* - LiveDescribe", _project.ProjectName);
-        }
-
-        private void ResetProjectModifiedFlag()
-        {
-            _projectModified = false;
-            if (_project == null)
-                WindowTitle = DefaultWindowTitle;
-            else
-                WindowTitle = string.Format("{0} - LiveDescribe", _project.ProjectName);
+            ProjectModified = false;
         }
 
         public bool TryExit()
@@ -587,7 +598,7 @@ namespace LiveDescribe.View_Model
                 }
             }
 
-            FlagProjectAsModified();
+            ProjectModified = true;
         }
 
         /// <summary>
@@ -613,7 +624,7 @@ namespace LiveDescribe.View_Model
                 case "SpaceText":
                 case "AudioData":
                 case "Header":
-                    FlagProjectAsModified();
+                    ProjectModified = true;
                     break;
             }
         }
