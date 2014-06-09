@@ -790,7 +790,39 @@ namespace LiveDescribe.View
                 pixel++;
             }
             AudioCanvas.Children.Add(SpacesItemControl);
-            //AudioCanvas.Children.Add(Marker);
+            
+        }
+
+        private void DrawDescription(Description description)
+        {
+            //set the Description values that are bound to the graphics in MainWindow.xaml
+            description.X = (description.StartInVideo / _videoDuration) * AudioCanvas.Width;
+            description.Y = 0;
+            description.Width = (AudioCanvas.Width / _videoDuration) * (description.EndWaveFileTime - 
+                description.StartWaveFileTime);
+            description.Height = DescriptionCanvas.ActualHeight;
+        }
+
+        /// <summary>
+        /// Resizes all the descriptions height to fit the description canvas
+        /// </summary>
+        private void ResizeDescriptions()
+        {
+            foreach (Description description in _descriptionViewModel.AllDescriptions)
+                description.Height = DescriptionCanvas.ActualHeight;
+        }
+
+        /// <summary>
+        /// Resizes all the Spaces to fit the AudioCanvas and not overlap the NumberTimeline
+        /// </summary>
+        private void ResizeSpaces()
+        {
+            foreach (Space space in _spacesViewModel.Spaces)
+                space.Height = AudioCanvas.ActualHeight;
+        }
+
+        private void AddLinesToNumberTimeLine()
+        {
             double canvasWidth = _canvasWidth;
 
             //Number of lines needed for the entire video
@@ -829,34 +861,6 @@ namespace LiveDescribe.View
             }
         }
 
-        private void DrawDescription(Description description)
-        {
-            //set the Description values that are bound to the graphics in MainWindow.xaml
-            description.X = (description.StartInVideo / _videoDuration) * AudioCanvas.Width;
-            description.Y = 0;
-            description.Width = (AudioCanvas.Width / _videoDuration) * (description.EndWaveFileTime - 
-                description.StartWaveFileTime);
-            description.Height = DescriptionCanvas.ActualHeight;
-        }
-
-        /// <summary>
-        /// Resizes all the descriptions height to fit the description canvas
-        /// </summary>
-        private void ResizeDescriptions()
-        {
-            foreach (Description description in _descriptionViewModel.AllDescriptions)
-                description.Height = DescriptionCanvas.ActualHeight;
-        }
-
-        /// <summary>
-        /// Resizes all the Spaces to fit the AudioCanvas and not overlap the NumberTimeline
-        /// </summary>
-        private void ResizeSpaces()
-        {
-            foreach (Space space in _spacesViewModel.Spaces)
-                space.Height = AudioCanvas.ActualHeight;
-        }
-
         /// <summary>
         /// Update's the instance variables that keep track of the timeline height and width, and
         /// calculates the size of the timeline if the width of the audio canvas is greater then the
@@ -871,6 +875,7 @@ namespace LiveDescribe.View
             DescriptionCanvas.Width = _canvasWidth;
 
             DrawWaveForm();
+            AddLinesToNumberTimeLine();
             ResizeDescriptions();
             ResizeSpaces();
         }
