@@ -159,11 +159,13 @@
                             </Grid.RowDefinitions>
 
                             <Border
+                                Grid.Row="0"
                                 Background="White"
                                 Height="20"
                                 BorderBrush="Black"
                                 BorderThickness="1">
                                 <Canvas
+                                    HorizontalAlignment="Left"
                                     Background="White"
                                     MouseDown="NumberTimeline_OnMouseDown"
                                     Name="NumberTimeline" />
@@ -297,7 +299,8 @@
                                 <Canvas
                                     Name="DescriptionCanvas"
                                     MouseUp="DescriptionCanvas_MouseUp"
-                                    MouseMove="DescriptionCanvas_MouseMove">
+                                    MouseMove="DescriptionCanvas_MouseMove"
+                                    HorizontalAlignment="Left">
                                     <ItemsControl
                                         ItemsSource="{Binding AllDescriptions}">
                                         <ItemsControl.ItemsPanel>
