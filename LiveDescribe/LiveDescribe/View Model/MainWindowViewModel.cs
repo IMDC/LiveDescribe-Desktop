@@ -79,10 +79,10 @@ namespace LiveDescribe.View_Model
             #region Commands
             //Commands
             CloseProject = new RelayCommand(
-                canExecute: () => _project != null,
+                canExecute: () => ProjectLoaded,
                 execute: () =>
                 {
-                    if (_projectModified)
+                    if (ProjectModified)
                     {
                         var text = string.Format("The LiveDescribe project \"{0}\" has been modified." +
                             " Do you want to save changes before closing?", _project.ProjectName);
@@ -169,7 +169,7 @@ namespace LiveDescribe.View_Model
             });
 
             SaveProject = new RelayCommand(
-                canExecute: () => _project != null && _projectModified,
+                canExecute: () => ProjectModified,
                 execute: () =>
                 {
                     FileWriter.WriteProjectFile(_project);
@@ -186,7 +186,7 @@ namespace LiveDescribe.View_Model
                 });
 
             ClearCache = new RelayCommand(
-                canExecute: () => _project != null,
+                canExecute: () => ProjectLoaded,
                 execute: () =>
                 {
                     var p = _project;
@@ -207,7 +207,7 @@ namespace LiveDescribe.View_Model
             });
 
             FindSpaces = new RelayCommand(
-                canExecute: () => _project != null,
+                canExecute: () => ProjectLoaded,
                 execute: () =>
                 {
                     var spaces = AudioAnalyzer.FindSpaces(_mediaControlViewModel.Waveform);
@@ -337,6 +337,15 @@ namespace LiveDescribe.View_Model
             get { return _windowTitle; }
         }
 
+        public bool ProjectLoaded
+        {
+            get { return _project != null; }
+        }
+
+        public bool ProjectModified
+        {
+            get { return ProjectLoaded && _projectModified; }
+        }
 
         /// <summary>
         /// returns the spaces view model so a control in the main window can use it as a data context
@@ -520,7 +529,7 @@ namespace LiveDescribe.View_Model
 
         public bool TryExit()
         {
-            if (_projectModified)
+            if (ProjectModified)
             {
                 log.Info("Program is attempting to exit with an unsaved project");
                 var text = string.Format("The LiveDescribe project \"{0}\" has been modified." +
