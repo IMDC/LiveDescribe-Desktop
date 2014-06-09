@@ -309,9 +309,7 @@ namespace LiveDescribe.View_Model
             _waveWriter = null;
             var read = new WaveFileReader(filepath);
 
-            string filename = Path.GetFileNameWithoutExtension(filepath);
-
-            AddDescription(filename, 0, read.TotalTime.TotalMilliseconds, _descriptionStartTime, ExtendedIsChecked);
+            AddDescription(filepath, 0, read.TotalTime.TotalMilliseconds, _descriptionStartTime, ExtendedIsChecked);
             read.Dispose();
             //have to change the state of recording
             IsRecording = false;

@@ -755,7 +755,7 @@ namespace LiveDescribe.View
 
             List<short> data = _mediaControlViewModel.Waveform.Data;
 
-            double samplesPerPixel = data.Count / _canvasWidth;
+            double samplesPerPixel = Math.Max(data.Count / _canvasWidth, 1);
 
             double middle =  AudioCanvas.ActualHeight / 2;
             double yscale = middle;

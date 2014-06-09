@@ -39,11 +39,12 @@ namespace LiveDescribe.Model
         public event EventHandler DescriptionFinishedPlaying;
         #endregion
 
-        public Description(string filename, double startwavefiletime, double endwavefiletime,
+        public Description(string filepath, double startwavefiletime, double endwavefiletime,
             double startinvideo, bool extendedDescription)
         {
-            FileName = filename;
-            DescriptionText = filename;
+            FileName = filepath;
+
+            DescriptionText = Path.GetFileNameWithoutExtension(filepath);
             IsExtendedDescription = extendedDescription;
 
             //I specifically use the instance variables rather than the properties
@@ -70,7 +71,7 @@ namespace LiveDescribe.Model
         /// This method plays the description from a specified offset in milliseconds
         /// </summary>
         ///<param name="offset">The offset in the file in which to play offset is in Milliseconds</param>
-        /// <exception cref="FileNotFoundException">It is thrown if the path (filename) of the description does not exist</exception>
+        /// <exception cref="FileNotFoundException">It is thrown if the path (filepath) of the description does not exist</exception>
         public void Play(double offset)
         {
             if (IsPlaying == false)
