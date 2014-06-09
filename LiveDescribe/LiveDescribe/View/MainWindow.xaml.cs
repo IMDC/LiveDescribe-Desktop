@@ -103,7 +103,11 @@ namespace LiveDescribe.View
             _grabbingCursor = new Cursor(cursfile.Stream);
 
             #region TimeLineScrollViewer Event Listeners
-            TimeLineScrollViewer.ScrollChanged += (sender, e) => { DrawWaveForm(); };
+            TimeLineScrollViewer.ScrollChanged += (sender, e) =>
+            {
+                DrawWaveForm();
+                AddLinesToNumberTimeLine();
+            };
             #endregion
 
             #region Event Listeners for VideoMedia
@@ -823,10 +827,12 @@ namespace LiveDescribe.View
 
         private void AddLinesToNumberTimeLine()
         {
-            double canvasWidth = _canvasWidth;
+            if (VideoMedia.CurrentState == LiveDescribeVideoStates.VideoNotLoaded || _canvasWidth == 0)
+                return;
 
-            //Number of lines needed for the entire video
+            //Number of lines in the amount of time that the video plays for
             int numlines = (int)(_videoDuration / (LineTime * 1000));
+
             int beginLine = (int)((numlines / _canvasWidth) * TimeLineScrollViewer.HorizontalOffset);
             int endLine = beginLine + (int)((numlines / _canvasWidth) * TimeLineScrollViewer.ActualWidth) + 1;
             //Clear the canvas because we don't want the remaining lines due to importing a new video
@@ -843,8 +849,8 @@ namespace LiveDescribe.View
                         StrokeThickness = 1.5,
                         Y1 = 0,
                         Y2 = NumberTimeline.ActualHeight / 1.2,
-                        X1 = canvasWidth / numlines * i,
-                        X2 = canvasWidth / numlines * i,
+                        X1 = _canvasWidth / numlines * i,
+                        X2 = _canvasWidth / numlines * i,
                     });
                 }
                 else
@@ -854,8 +860,8 @@ namespace LiveDescribe.View
                         Stroke = System.Windows.Media.Brushes.Black,
                         Y1 = 0,
                         Y2 = NumberTimeline.ActualHeight / 2,
-                        X1 = canvasWidth / numlines * i,
-                        X2 = canvasWidth / numlines * i
+                        X1 = _canvasWidth / numlines * i,
+                        X2 = _canvasWidth / numlines * i
                     });
                 }
             }
