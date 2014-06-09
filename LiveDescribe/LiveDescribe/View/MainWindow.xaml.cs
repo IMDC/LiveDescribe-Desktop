@@ -149,7 +149,6 @@ namespace LiveDescribe.View
             mainWindowViewModel.MediaEnded += (sender, e) =>
                 {
                     UpdateMarkerPosition(-MarkerOffset);
-                    Console.WriteLine("TEST");
                     //this is to recheck all the graphics states
                     System.Windows.Input.CommandManager.InvalidateRequerySuggested();
                 };
@@ -238,7 +237,6 @@ namespace LiveDescribe.View
                     if (newPositionInVideo >= _videoDuration)
                     {
                         var newPositionOfMarker = (_canvasWidth / _videoDuration) * (_videoDuration);
-                        Console.WriteLine(newPositionOfMarker);
                         Canvas.SetLeft(Marker, newPositionOfMarker - MarkerOffset);
                         UpdateVideoPosition((int)(_videoDuration));
                         return;
@@ -454,7 +452,6 @@ namespace LiveDescribe.View
                 Dispatcher.Invoke(delegate
                 {
                     double position = (VideoMedia.Position.TotalMilliseconds / _videoDuration) * (AudioCanvas.Width);
-                    Console.WriteLine("Position: " + VideoMedia.Position.TotalMilliseconds);
                     UpdateMarkerPosition(position - MarkerOffset);
                 });
 
