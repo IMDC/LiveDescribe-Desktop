@@ -207,9 +207,6 @@ namespace LiveDescribe.View
             //updates the video position when the mouse is released on the Marker
             mainWindowViewModel.MediaControlViewModel.OnMarkerMouseUpRequested += (sender, e) =>
                 {
-                    var newValue = ((Canvas.GetLeft(Marker) + MarkerOffset) / AudioCanvas.Width) * _videoDuration;
-
-                    UpdateVideoPosition((int)newValue);
                     Marker.ReleaseMouseCapture();
                 };
 
@@ -224,7 +221,9 @@ namespace LiveDescribe.View
                         return;
                     }
 
-                    var xPosition = Mouse.GetPosition(AudioCanvasBorder).X;
+                   
+                    var xPosition = Mouse.GetPosition(AudioCanvas).X;
+                    var middleOfMarker = xPosition - MarkerOffset;
 
                     //make sure the middle of the marker doesn't go below the beginning of the canvas
                     if (xPosition < -MarkerOffset)
@@ -233,16 +232,17 @@ namespace LiveDescribe.View
                         UpdateVideoPosition(0);
                         return;
                     }
-                    //make sure the middle of the marker doesn't go above the end of the canvas
-                    else if (xPosition > AudioCanvas.Width - 1)
-                    {
-                        Canvas.SetLeft(Marker, AudioCanvas.Width - 1);
-                    }
-                    else
-                        Canvas.SetLeft(Marker, xPosition - MarkerOffset);
 
-                    var newValue = (xPosition / AudioCanvas.Width) * _videoDuration;
-                    UpdateVideoPosition((int)newValue);
+                    var newPositionInVideo = (xPosition /_canvasWidth)*_videoDuration;
+                    if (newPositionInVideo >= _videoDuration)
+                    {
+                        var newPositionOfMarker = (_canvasWidth / _videoDuration) * (_videoDuration);
+                        Canvas.SetLeft(Marker, newPositionOfMarker - MarkerOffset);
+                        UpdateVideoPosition((int)(_videoDuration));
+                        return;
+                    }
+                    Canvas.SetLeft(Marker, middleOfMarker);
+                    UpdateVideoPosition((int)newPositionInVideo);
                 };
 
             mainWindowViewModel.MediaControlViewModel.FastForwardEvent += (sender, e) =>
@@ -665,9 +665,8 @@ namespace LiveDescribe.View
             {
                 //execute the pause command because we want to pause the video when someone is clicking through the video
                 _mediaControlViewModel.PauseCommand.Execute(this);
-
                 var xPosition = e.GetPosition(NumberTimeline).X;
-                var newValue = (xPosition / AudioCanvas.Width) * _videoDuration;
+                var newValue = (xPosition / _canvasWidth) * _videoDuration;
 
                 UpdateMarkerPosition(xPosition - MarkerOffset);
                 UpdateVideoPosition((int)newValue);
