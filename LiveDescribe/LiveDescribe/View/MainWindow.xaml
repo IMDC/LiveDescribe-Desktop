@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
     xmlns:controls="clr-namespace:LiveDescribe.Controls"
-    xmlns:converters="clr-namespace:LiveDescribe.Converters"
     xmlns:command="http://www.galasoft.ch/mvvmlight"
     Title="{Binding WindowTitle}"
     Height="600"
@@ -12,17 +11,7 @@
     MinHeight="600"
     MinWidth="960"
     Closing="MainWindow_OnClosing">
-    <Window.Resources>
-        <converters:MillisecondsTimeConverterFormatter
-            x:Key="MillisecondsTimeConverter" />
-        <Style
-            x:Key="ControlPanelStyle"
-            TargetType="Control">
-            <Setter
-                Property="Margin"
-                Value="5" />
-        </Style>
-    </Window.Resources>
+
     <Grid>
         <controls:LoadingControl
             x:Name="LoadingControl"
