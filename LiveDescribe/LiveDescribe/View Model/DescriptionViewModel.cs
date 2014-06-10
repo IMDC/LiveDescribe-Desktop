@@ -128,9 +128,8 @@ namespace LiveDescribe.View_Model
             }
             log.Info("Recording...");
          
-            // get a random guid to name the wave file
-            // there is an EXTREMELY small chance that the guid used has been used before
-            string path = Path.Combine(Project.Folders.Descriptions, Guid.NewGuid().ToString() + ".wav");
+            //string path = Path.Combine(Project.Folders.Descriptions, Guid.NewGuid().ToString() + ".wav");
+            string path = Project.GenerateDescriptionFilePath();
             _waveWriter = new WaveFileWriter(path, MicrophoneStream.WaveFormat);
             MicrophoneStream.DataAvailable += new EventHandler<NAudio.Wave.WaveInEventArgs>(MicrophoneSteam_DataAvailable);
   
