@@ -9,7 +9,7 @@ namespace LiveDescribe.Events
 {
     public class DescriptionEventArgs : EventArgs
     {
-        private Description _description;
+        private readonly Description _description;
 
         public DescriptionEventArgs(Description description)
         {

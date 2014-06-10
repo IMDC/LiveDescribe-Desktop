@@ -9,7 +9,7 @@ namespace LiveDescribe.Events
 {
     public class SpaceEventArgs : EventArgs
     {
-        private Space _space;
+        private readonly Space _space;
 
         public SpaceEventArgs(Space space)
         {
