@@ -20,15 +20,11 @@ namespace LiveDescribe.View
     /// </summary>
     public partial class PreferencesWindow : Window
     {
-
-        PreferencesViewModel _preferencesViewModel;
-
         public PreferencesWindow(PreferencesViewModel datacontext)
         {
             InitializeComponent();
-            
-            _preferencesViewModel = datacontext;
-            DataContext = _preferencesViewModel;
+
+            DataContext = datacontext;
         }
 
         private void Close_OnClick(object sender, RoutedEventArgs e)

@@ -20,8 +20,8 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Instance Variables
-        private DescriptionViewModel _descriptionViewModel;
-        private SpacesViewModel _spacesViewModel;
+        private readonly DescriptionViewModel _descriptionViewModel;
+        private readonly SpacesViewModel _spacesViewModel;
         private Description _regularDescriptionSelectedInList;
         private Description _extendedDescriptionSelectedInList;
         private Space _spaceSelectedInList;
