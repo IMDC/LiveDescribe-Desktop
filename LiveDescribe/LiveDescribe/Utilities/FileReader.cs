@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading.Tasks;
-using LiveDescribe.Model;
+﻿using LiveDescribe.Model;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace LiveDescribe.Utilities
 {
@@ -28,6 +22,9 @@ namespace LiveDescribe.Utilities
                 //TODO: Error handling when missing a property
                 p = JsonConvert.DeserializeObject<Project>(r.ReadToEnd());
             }
+
+            p.SetAbsolutePaths(path);
+
             log.Info("Project file successfully read from " + path);
             return p;
         }
