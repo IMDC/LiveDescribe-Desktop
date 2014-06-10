@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using LiveDescribe.Model;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
-using LiveDescribe.Model;
-using Newtonsoft.Json;
 
 namespace LiveDescribe.Utilities
 {
@@ -16,8 +16,7 @@ namespace LiveDescribe.Utilities
         #endregion
 
         /// <summary>
-        /// Writes a Project object to a file. The path is determined by the project's 
-        /// ProjectFile.AbsolutePath.
+        /// Writes a Project object to a file. The path is determined by the project's ProjectFile.AbsolutePath.
         /// </summary>
         /// <param name="project"></param>
         public static void WriteProjectFile(Project project)

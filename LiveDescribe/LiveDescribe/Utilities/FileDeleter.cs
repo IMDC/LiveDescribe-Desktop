@@ -1,6 +1,6 @@
-﻿using System.IO;
+﻿using LiveDescribe.Model;
+using System.IO;
 using System.Reflection;
-using LiveDescribe.Model;
 
 namespace LiveDescribe.Utilities
 {

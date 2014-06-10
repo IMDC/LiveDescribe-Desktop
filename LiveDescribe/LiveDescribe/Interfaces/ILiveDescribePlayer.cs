@@ -11,7 +11,7 @@ namespace LiveDescribe.Interfaces
         double DurationMilliseconds { get; }
 
         LiveDescribeVideoStates CurrentState { set; get; }
-        
+
         string Path { set; get; }
 
         bool IsMuted { set; get; }

@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using LiveDescribe.Utilities;
+﻿using LiveDescribe.Utilities;
+using System.Collections.Generic;
 
 namespace LiveDescribe.Model
 {

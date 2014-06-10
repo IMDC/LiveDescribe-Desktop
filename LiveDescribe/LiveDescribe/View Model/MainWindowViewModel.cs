@@ -1,22 +1,18 @@
-﻿using System.Collections.Specialized;
-using System.IO;
-using System.Text;
-using System.Threading;
-using System.Web.Script.Serialization;
-using System.Windows;
-using System.Windows.Forms;
-using System.Windows.Input;
-using LiveDescribe.Interfaces;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Threading;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using System.ComponentModel;
-using System;
+using GalaSoft.MvvmLight.Threading;
+using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
-using System.Timers;
 using LiveDescribe.Utilities;
 using LiveDescribe.View;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.IO;
+using System.Timers;
+using System.Windows;
+using System.Windows.Input;
 using MessageBox = System.Windows.MessageBox;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 using Timer = System.Timers.Timer;
@@ -67,7 +63,7 @@ namespace LiveDescribe.View_Model
         {
             DispatcherHelper.Initialize();
             WindowTitle = DefaultWindowTitle;
-           
+
             _spacesviewmodel = new SpacesViewModel(mediaVideo);
             _loadingViewModel = new LoadingViewModel(100, null, 0, false);
             _mediaControlViewModel = new MediaControlViewModel(mediaVideo, _loadingViewModel);
@@ -354,8 +350,8 @@ namespace LiveDescribe.View_Model
         }
 
         /// <summary>
-        /// Keeps track of whether the project has been modified or not by the program. This will
-        /// be true iff there is a project loaded already.
+        /// Keeps track of whether the project has been modified or not by the program. This will be
+        /// true iff there is a project loaded already.
         /// </summary>
         public bool ProjectModified
         {
@@ -490,7 +486,7 @@ namespace LiveDescribe.View_Model
             {
                 var header = FileReader.ReadWaveFormHeader(_project);
                 var audioData = FileReader.ReadWaveFormFile(_project);
-                _mediaControlViewModel.Waveform = new Waveform(header,audioData);
+                _mediaControlViewModel.Waveform = new Waveform(header, audioData);
                 _mediaControlViewModel.Path = _project.Files.Video;
             }
             else

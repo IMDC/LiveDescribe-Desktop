@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web.UI;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
+﻿using GalaSoft.MvvmLight;
 
 namespace LiveDescribe.View_Model
 {
@@ -80,8 +73,8 @@ namespace LiveDescribe.View_Model
         #endregion
 
         /// <summary>
-        /// Sets the progress of the LoadingViewModel along with a message, in the form of
-        /// "message: progress%". An example with params "Loading" and "5" would be "Loading: 5%"
+        /// Sets the progress of the LoadingViewModel along with a message, in the form of "message:
+        /// progress%". An example with params "Loading" and "5" would be "Loading: 5%"
         /// </summary>
         /// <param name="message">Message to display.</param>
         /// <param name="progress">LoadingProgress.</param>

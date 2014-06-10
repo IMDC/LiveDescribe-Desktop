@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
+using LiveDescribe.Properties;
+using NAudio.Wave;
+using System;
 using System.Collections.ObjectModel;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-using LiveDescribe.Properties;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
-using LiveDescribe.View;
-using NAudio.Wave;
 
 namespace LiveDescribe.View_Model
 {
@@ -42,7 +36,7 @@ namespace LiveDescribe.View_Model
             public AudioSourceInfo(SerializationInfo info, StreamingContext context)
             {
                 Source =
-                    (WaveInCapabilities) info.GetValue("source", typeof (WaveInCapabilities));
+                    (WaveInCapabilities)info.GetValue("source", typeof(WaveInCapabilities));
             }
         }
         #endregion
@@ -55,7 +49,7 @@ namespace LiveDescribe.View_Model
         #region EventHandlers
         public EventHandler ShowPreferencesRequested;
         public EventHandler ApplyRequested;
-         #endregion
+        #endregion
 
         #region Constructors
         public PreferencesViewModel()
@@ -131,7 +125,7 @@ namespace LiveDescribe.View_Model
             for (int i = 0; i < WaveIn.DeviceCount; ++i)
             {
                 var capability = WaveIn.GetCapabilities(i);
-                Sources.Add(new AudioSourceInfo(capability.ProductName, capability.Channels.ToString(CultureInfo.InvariantCulture), capability,i));
+                Sources.Add(new AudioSourceInfo(capability.ProductName, capability.Channels.ToString(CultureInfo.InvariantCulture), capability, i));
             }
         }
 

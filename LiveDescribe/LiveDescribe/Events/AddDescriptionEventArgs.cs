@@ -1,6 +1,5 @@
-﻿using System;
-
-using LiveDescribe.Model;
+﻿using LiveDescribe.Model;
+using System;
 namespace LiveDescribe.Events
 {
     public class DescriptionEventArgs : EventArgs

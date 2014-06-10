@@ -1,6 +1,6 @@
-﻿using System;
+﻿using LiveDescribe.Interfaces;
+using System;
 using System.Windows.Controls;
-using LiveDescribe.Interfaces;
 
 namespace LiveDescribe.Controls
 {
@@ -11,7 +11,8 @@ namespace LiveDescribe.Controls
         public EventHandler PathChangedEvent;
 
         /// <summary>
-        /// Property for obtaining the CurrentState used to make the VideoPlayer Stateful, if it isn't already
+        /// Property for obtaining the CurrentState used to make the VideoPlayer Stateful, if it
+        /// isn't already
         /// </summary>
         public LiveDescribeVideoStates CurrentState
         {
@@ -30,8 +31,8 @@ namespace LiveDescribe.Controls
         /// </summary>
         public double DurationSeconds
         {
-            get { return NaturalDuration.TimeSpan.TotalSeconds;}
-            
+            get { return NaturalDuration.TimeSpan.TotalSeconds; }
+
         }
 
         public double DurationMilliseconds

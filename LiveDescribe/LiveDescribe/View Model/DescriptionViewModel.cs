@@ -25,7 +25,9 @@ namespace LiveDescribe.View_Model
         private WaveFileWriter _waveWriter;
         private readonly ILiveDescribePlayer _mediaVideo;
         private readonly bool _usingExistingMicrophone;
-        /// <summary>Keeps track of the starting time of a description on recording.</summary>
+        /// <summary>
+        /// Keeps track of the starting time of a description on recording.
+        /// </summary>
         private double _descriptionStartTime;
         private bool _isRecording;
 
@@ -76,8 +78,7 @@ namespace LiveDescribe.View_Model
 
         #region Commands
         /// <summary>
-        /// Setter and getter for RecordCommand
-        /// gets bound to the record button
+        /// Setter and getter for RecordCommand gets bound to the record button
         /// </summary>
         public RelayCommand RecordCommand { private set; get; }
         #endregion
@@ -98,9 +99,10 @@ namespace LiveDescribe.View_Model
                 FinishRecordingDescription();
                 return;
             }
-                                 
-            // if we don't have an existing microphone we try to create a new one with the first available microphone
-            // if no microphone exists an exception is thrown and we throw the event "RecordRequestedMicrophoneNotPluggedIn
+
+            // if we don't have an existing microphone we try to create a new one with the first
+            // available microphone if no microphone exists an exception is thrown and we throw the
+            // event "RecordRequestedMicrophoneNotPluggedIn
             if (!_usingExistingMicrophone)
             {
                 try
@@ -122,11 +124,11 @@ namespace LiveDescribe.View_Model
                 }
             }
             Log.Info("Recording...");
-         
+
             string path = Project.GenerateDescriptionFilePath();
             _waveWriter = new WaveFileWriter(path, MicrophoneStream.WaveFormat);
             MicrophoneStream.DataAvailable += MicrophoneSteam_DataAvailable;
-  
+
             try
             {
                 _descriptionStartTime = _mediaVideo.Position.TotalMilliseconds;
@@ -182,8 +184,8 @@ namespace LiveDescribe.View_Model
         }
 
         /// <summary>
-        /// Property to set and get the collection with all the extended descriptions
-        /// should be bound to the extended description list
+        /// Property to set and get the collection with all the extended descriptions should be
+        /// bound to the extended description list
         /// </summary>
         public ObservableCollection<Description> ExtendedDescriptions
         {
@@ -199,8 +201,8 @@ namespace LiveDescribe.View_Model
         }
 
         /// <summary>
-        /// Property to set and get the collection with all the regular descriptions
-        /// should be bound to the regular description list
+        /// Property to set and get the collection with all the regular descriptions should be bound
+        /// to the regular description list
         /// </summary>
         public ObservableCollection<Description> RegularDescriptions
         {
@@ -290,8 +292,8 @@ namespace LiveDescribe.View_Model
 
         #region Helper Methods
         /// <summary>
-        /// Stops recording a description, and sets the correct state of the media video
-        /// it also adds the description that was recorded to the list of descriptions
+        /// Stops recording a description, and sets the correct state of the media video it also
+        /// adds the description that was recorded to the list of descriptions
         /// </summary>
         private void FinishRecordingDescription()
         {
@@ -315,7 +317,8 @@ namespace LiveDescribe.View_Model
         }
 
         /// <summary>
-        /// Method to add a description to the list and throw an event, whenever you are adding a description to the list you should use this method
+        /// Method to add a description to the list and throw an event, whenever you are adding a
+        /// description to the list you should use this method
         /// </summary>
         /// <param name="filename">Filename of the description</param>
         /// <param name="startwavefiletime">The start time in the wav file of the description</param>
@@ -343,7 +346,8 @@ namespace LiveDescribe.View_Model
         }
 
         /// <summary>
-        /// Method to setup events on a descriptions no graphics setup should be included in here, that should be in the view
+        /// Method to setup events on a descriptions no graphics setup should be included in here,
+        /// that should be in the view
         /// </summary>
         /// <param name="desc">The description to setup the events on</param>
         private void SetupEventsOnDescription(Description desc)
@@ -351,16 +355,16 @@ namespace LiveDescribe.View_Model
             //this method is called when a description is finished playing
             desc.DescriptionFinishedPlaying += (sender1, e1) =>
                 {
-                //if the description is an extended description, we want to move the video forward to get out of the interval of
-                //where the extended description will play
-                //then we want to replay the video
+                    //if the description is an extended description, we want to move the video forward to get out of the interval of
+                    //where the extended description will play
+                    //then we want to replay the video
                     if (desc.IsExtendedDescription)
                     {
                         double offset = _mediaVideo.Position.TotalMilliseconds - desc.StartInVideo;
                         //+1 so we are out of the interval and it doesn't repeat the description
                         int newStartInVideo = (int)(_mediaVideo.Position.TotalMilliseconds
-                            + (LiveDescribeConstants.ExtendedDescriptionStartIntervalMax - offset + 1)); 
-                        _mediaVideo.Position = new TimeSpan(0,0,0,0,newStartInVideo);
+                            + (LiveDescribeConstants.ExtendedDescriptionStartIntervalMax - offset + 1));
+                        _mediaVideo.Position = new TimeSpan(0, 0, 0, 0, newStartInVideo);
                         _mediaControlViewModel.PlayCommand.Execute(this);
                         Log.Info("Extended description finished");
                     }

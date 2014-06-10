@@ -100,25 +100,25 @@ namespace LiveDescribe.View_Model
         /// <summary>
         /// Setter and Getter for PlayCommand
         /// </summary>
-        public RelayCommand PlayCommand  { get; private set; }
+        public RelayCommand PlayCommand { get; private set; }
 
         /// <summary>
         /// Setter and Getter for PauseCommand
         /// </summary>
-        public RelayCommand PauseCommand  { get; private set; }
+        public RelayCommand PauseCommand { get; private set; }
 
         /// <summary>
         /// Setter and Getter for MuteCommand
         /// </summary>
         public RelayCommand MuteCommand { get; private set; }
 
-        public RelayCommand FastForwardCommand  { get; private set; }
+        public RelayCommand FastForwardCommand { get; private set; }
 
-        public RelayCommand RewindCommand  { get; private set; }
+        public RelayCommand RewindCommand { get; private set; }
 
-        public RelayCommand VideoOpenedCommand  { get; private set; }
+        public RelayCommand VideoOpenedCommand { get; private set; }
 
-        public RelayCommand MediaFailedCommand  { get; private set; }
+        public RelayCommand MediaFailedCommand { get; private set; }
         #endregion
 
         #region Binding Functions
@@ -248,8 +248,8 @@ namespace LiveDescribe.View_Model
         }
 
         /// <summary>
-        /// throws an event when the media fails to load an example of this happening would be if the
-        /// video format is not supported
+        /// throws an event when the media fails to load an example of this happening would be if
+        /// the video format is not supported
         /// </summary>
         /// <param name="param"></param>
         public void MediaFailed()
@@ -278,7 +278,8 @@ namespace LiveDescribe.View_Model
 
         #region State Checks
         /// <summary>
-        /// Used for the RelayCommand "PlayCommand" to check whether the play button can be pressed or not
+        /// Used for the RelayCommand "PlayCommand" to check whether the play button can be pressed
+        /// or not
         /// </summary>
         /// <param name="param">param</param>
         /// <returns>true if button can be enabled</returns>
@@ -291,7 +292,8 @@ namespace LiveDescribe.View_Model
         }
 
         /// <summary>
-        /// Used for the RelayCommand "PauseCommand" to check whether the pause button can be presse or not
+        /// Used for the RelayCommand "PauseCommand" to check whether the pause button can be presse
+        /// or not
         /// </summary>
         /// <param name="param">param</param>
         /// <returns>true if button can be enabled</returns>
@@ -304,7 +306,8 @@ namespace LiveDescribe.View_Model
         }
 
         /// <summary>
-        /// Used for the RelayCommand "RewindCommand" to check whether the rewind button can be pressed or not
+        /// Used for the RelayCommand "RewindCommand" to check whether the rewind button can be
+        /// pressed or not
         /// </summary>
         /// <param name="param">param</param>
         /// <returns>true if the button can be enabled</returns>
@@ -316,7 +319,8 @@ namespace LiveDescribe.View_Model
         }
 
         /// <summary>
-        /// Used for the RelayCommand "FastForwardCommand" to check whether the fastforward button can be pressed or not
+        /// Used for the RelayCommand "FastForwardCommand" to check whether the fastforward button
+        /// can be pressed or not
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
@@ -328,7 +332,8 @@ namespace LiveDescribe.View_Model
         }
 
         /// <summary>
-        /// Used for the RelayCommand "RecordCommand" to check whether the record button can be pressed or not
+        /// Used for the RelayCommand "RecordCommand" to check whether the record button can be
+        /// pressed or not
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
@@ -382,7 +387,7 @@ namespace LiveDescribe.View_Model
         }
 
         /// <summary>
-        /// Get the space data 
+        /// Get the space data
         /// </summary>
         public List<Space> Spaces
         {
@@ -404,8 +409,8 @@ namespace LiveDescribe.View_Model
         }
 
         /// <summary>
-        /// This function is used to setup all the events for the background worker and to run it
-        /// to strip the audio from the video
+        /// This function is used to setup all the events for the background worker and to run it to
+        /// strip the audio from the video
         /// </summary>
         /// <param name="path"></param>
         public void SetupAndStripAudio(Project p)

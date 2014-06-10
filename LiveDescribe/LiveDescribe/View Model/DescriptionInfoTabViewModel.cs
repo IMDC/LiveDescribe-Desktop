@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Model;
-using LiveDescribe.Interfaces;
+using System;
+using System.Collections.ObjectModel;
 
 namespace LiveDescribe.View_Model
 {
@@ -85,7 +80,7 @@ namespace LiveDescribe.View_Model
 
                 if (_regularDescriptionSelectedInList != null && _regularDescriptionSelectedInList.IsSelected == false)
                     _regularDescriptionSelectedInList.IsSelected = true;
-                
+
                 RaisePropertyChanged();
             }
             get
@@ -210,8 +205,8 @@ namespace LiveDescribe.View_Model
         }
 
         /// <summary>
-        /// Returns a list of all the extended descriptions to be viewed in the list view inside the tab control
-        /// for extended descriptions
+        /// Returns a list of all the extended descriptions to be viewed in the list view inside the
+        /// tab control for extended descriptions
         /// </summary>
         public ObservableCollection<Description> ExtendedDescriptions
         {
@@ -222,8 +217,8 @@ namespace LiveDescribe.View_Model
         }
 
         /// <summary>
-        /// Returns a list of all the regular descriptions to be viewed in the list view inside the tab control
-        /// for regular descriptions
+        /// Returns a list of all the regular descriptions to be viewed in the list view inside the
+        /// tab control for regular descriptions
         /// </summary>
         public ObservableCollection<Description> RegularDescriptions
         {

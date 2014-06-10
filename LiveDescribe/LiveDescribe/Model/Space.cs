@@ -1,8 +1,8 @@
-﻿using System;
-using System.ComponentModel;
-using GalaSoft.MvvmLight.Command;
-using System.Windows.Input;
+﻿using GalaSoft.MvvmLight.Command;
 using Newtonsoft.Json;
+using System;
+using System.ComponentModel;
+using System.Windows.Input;
 
 namespace LiveDescribe.Model
 {
@@ -49,7 +49,7 @@ namespace LiveDescribe.Model
             SpaceMouseMoveCommand = new RelayCommand<MouseEventArgs>(SpaceMouseMove, param => true);
         }
 
-        public Space() 
+        public Space()
         {
             IsSelected = false;
 

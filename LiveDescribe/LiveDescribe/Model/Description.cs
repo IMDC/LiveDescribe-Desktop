@@ -7,7 +7,7 @@ using System.Windows.Input;
 
 namespace LiveDescribe.Model
 {
-    public class Description: INotifyPropertyChanged
+    public class Description : INotifyPropertyChanged
     {
         #region Logger
         private static readonly log4net.ILog Log = log4net.LogManager.GetLogger
@@ -118,8 +118,8 @@ namespace LiveDescribe.Model
 
         #region Private Methods
         /// <summary>
-        /// When the playback of the wave file stops naturally, this method gets called and sets
-        /// the description IsPlaying value to false
+        /// When the playback of the wave file stops naturally, this method gets called and sets the
+        /// description IsPlaying value to false
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -215,8 +215,8 @@ namespace LiveDescribe.Model
         }
 
         /// <summary>
-        /// The time that the description starts within the wav file
-        /// for example it might start at 5 seconds instead of 0 (at the beginning)
+        /// The time that the description starts within the wav file for example it might start at 5
+        /// seconds instead of 0 (at the beginning)
         /// </summary>
         public double StartWaveFileTime
         {
@@ -228,8 +228,8 @@ namespace LiveDescribe.Model
             get { return _startwavefiletime; }
         }
         /// <summary>
-        /// The time that the description ends within the wav file
-        /// for example the description might end before the wav file actually finishes
+        /// The time that the description ends within the wav file for example the description might
+        /// end before the wav file actually finishes
         /// </summary>
         public double EndWaveFileTime
         {
@@ -337,7 +337,7 @@ namespace LiveDescribe.Model
         public RelayCommand<MouseEventArgs> DescriptionMouseMoveCommand { get; private set; }
 
         /// <summary>
-        /// Setter and getter for DescriptionDeletecommand 
+        /// Setter and getter for DescriptionDeletecommand
         /// </summary>
         [JsonIgnore]
         public RelayCommand DescriptionDeleteCommand { get; private set; }

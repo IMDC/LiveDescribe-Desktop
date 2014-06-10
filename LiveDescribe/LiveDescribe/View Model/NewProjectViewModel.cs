@@ -5,10 +5,8 @@ using LiveDescribe.Utilities;
 using LiveDescribe.View;
 using System;
 using System.IO;
-using System.Web.Script.Serialization;
 using System.Windows;
 using System.Windows.Forms;
-using Newtonsoft.Json;
 using MessageBox = System.Windows.MessageBox;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 
@@ -153,8 +151,7 @@ namespace LiveDescribe.View_Model
         /// <summary>
         /// Attempts to create a project using forminfo. If the given folder structure exists, the
         /// user will be asked for confirmation to overwrite it. On an error, the project creation
-        /// will be cancelled and the method will return. On success, the ProjectCreated event is
-        /// invoked.
+        /// will be cancelled and the method will return. On success, the ProjectCreated event is invoked.
         /// </summary>
         private void CreateProject()
         {

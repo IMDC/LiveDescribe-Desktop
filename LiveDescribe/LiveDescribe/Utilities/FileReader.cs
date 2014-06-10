@@ -49,7 +49,7 @@ namespace LiveDescribe.Utilities
             using (var file = File.Open(project.Files.WaveForm, FileMode.Open, FileAccess.Read))
             {
                 var bin = new BinaryFormatter();
-                waveFormData = (List<short>) bin.Deserialize(file);
+                waveFormData = (List<short>)bin.Deserialize(file);
             }
             Log.Info("Waveform data successfully read from " + project.Files.WaveForm);
             return waveFormData;

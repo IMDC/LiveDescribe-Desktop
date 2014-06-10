@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using System.Collections.ObjectModel;
+using LiveDescribe.Events;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
-using LiveDescribe.Events;
+using System;
+using System.Collections.ObjectModel;
 using System.Windows.Input;
 
 namespace LiveDescribe.View_Model

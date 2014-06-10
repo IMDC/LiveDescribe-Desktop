@@ -5,7 +5,7 @@
     /// <summary>
     /// Video Class Represents a video
     /// </summary>
-    class Video: INotifyPropertyChanged
+    class Video : INotifyPropertyChanged
     {
         public enum States { Playing, Paused, Recording, NotLoaded, Loaded };
 
@@ -15,7 +15,7 @@
         private double _currentTime;
 
 
-        public Video() 
+        public Video()
         {
             _currentState = States.NotLoaded;
             _path = "";
@@ -29,7 +29,7 @@
 
         #region Properties
 
-        public States CurrentState 
+        public States CurrentState
         {
             get
             {
@@ -45,23 +45,23 @@
 
         public string Path
         {
-            set 
+            set
             {
                 _path = value;
                 NotifyPropertyChanged("Path");
             }
             get
-            { 
-                return _path; 
+            {
+                return _path;
             }
         }
 
         public double CurrentTime
         {
-            set 
+            set
             {
-                _currentTime = value; 
-                NotifyPropertyChanged("CurrentTime"); 
+                _currentTime = value;
+                NotifyPropertyChanged("CurrentTime");
             }
             get { return _currentTime; }
         }

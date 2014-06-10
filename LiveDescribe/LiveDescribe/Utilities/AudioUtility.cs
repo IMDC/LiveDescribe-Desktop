@@ -1,11 +1,11 @@
-﻿using System;
+﻿using LiveDescribe.Model;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Windows;
-using LiveDescribe.Model;
 
 namespace LiveDescribe.Utilities
 {
@@ -37,10 +37,10 @@ namespace LiveDescribe.Utilities
         /// <summary>
         /// Strips the audio from the given video file and outputs a wave file using FFMPEG.
         /// </summary>
-        /// <remarks>
-        /// This function uses the executable FFMPEG file to handle the audio stripping
-        /// </remarks>
-        /// <param name="reportProgressWorker">Used to determine what the current progress of stripping the audio is</param>
+        /// <remarks>This function uses the executable FFMPEG file to handle the audio stripping</remarks>
+        /// <param name="reportProgressWorker">
+        /// Used to determine what the current progress of stripping the audio is
+        /// </param>
         public void StripAudio(BackgroundWorker reportProgressWorker)
         {
             Log.Info("Preparing to strip audio from video");
@@ -79,7 +79,7 @@ namespace LiveDescribe.Utilities
             StreamReader input = ffmpeg.StandardError;
 
             Log.Info("Attempting to parse ffmpeg output");
-            /* Parsing the output of ffmpeg to obtain the total time and the current time 
+            /* Parsing the output of ffmpeg to obtain the total time and the current time
              to  calculate a percentage whose value is used to update the progress bar*/
             try
             {
@@ -148,7 +148,7 @@ namespace LiveDescribe.Utilities
         }
 
         /// <summary>
-        /// Convert from ffmpeg time to seconds 
+        /// Convert from ffmpeg time to seconds
         /// </summary>
         /// <param name="time">the time in ffmpeg format HH:MM:SS</param>
         /// <returns></returns>
@@ -165,7 +165,9 @@ namespace LiveDescribe.Utilities
         /// <summary>
         /// Read the wav data from the stripped audio and return the sample data
         /// </summary>
-        /// <param name="reportProgressWorker">Used to determine what the current progress of stripping the audio is</param>
+        /// <param name="reportProgressWorker">
+        /// Used to determine what the current progress of stripping the audio is
+        /// </param>
         /// <returns>data</returns>
         public List<short> ReadWavData(BackgroundWorker reportProgressWorker)
         {
@@ -214,9 +216,8 @@ namespace LiveDescribe.Utilities
 
 
         /// <summary>
-        /// Will normalized the data using a linear transformation
-        /// using the following formula:
-        ///     I(n) = [(I(n) - min) newMax - newMin / max - min] + newMin
+        /// Will normalized the data using a linear transformation using the following formula: I(n)
+        /// = [(I(n) - min) newMax - newMin / max - min] + newMin
         /// </summary>
         /// <param name="data">data</param>
         /// <param name="newMin">newMin</param>

@@ -53,7 +53,7 @@
             Grid.Row="0"
             Grid.Column="3"
             Content="{}{"
-            Command="{Binding SetBeginToMarker}"/>
+            Command="{Binding SetBeginToMarker}" />
 
         <TextBox
             Style="{StaticResource TextBoxStyle}"
@@ -76,7 +76,7 @@
             Grid.Row="2"
             Grid.Column="3"
             Content="{}}"
-            Command="{Binding SetEndToMarker}"/>
+            Command="{Binding SetEndToMarker}" />
 
         <TextBox
             Style="{StaticResource TextBoxStyle}"

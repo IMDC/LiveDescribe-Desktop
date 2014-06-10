@@ -1,5 +1,5 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using System;
 using System.IO;
 using System.Reflection;
 
@@ -208,14 +208,14 @@ namespace LiveDescribe.Model
 
         /// <summary>
         /// Generates a file name and absolue path for a description. The file name will be in the
-        /// form of projectname_desc_yyMMddHHmmssfff.wav, where yyMMddHHmmssfff a timestamp from
-        /// the current time.
+        /// form of projectname_desc_yyMMddHHmmssfff.wav, where yyMMddHHmmssfff a timestamp from the
+        /// current time.
         /// </summary>
         /// <returns></returns>
         public string GenerateDescriptionFilePath()
         {
             //TODO: Move this functionality elsewhere
-            string fileName = string.Format("{0}_desc_{1}.wav", 
+            string fileName = string.Format("{0}_desc_{1}.wav",
                 ProjectName, DateTime.Now.ToString("yyMMddHHmmssfff"));
 
             string path = Path.Combine(Folders.Descriptions, fileName);

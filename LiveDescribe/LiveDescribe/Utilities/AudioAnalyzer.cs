@@ -1,7 +1,7 @@
-﻿using System;
+﻿using LiveDescribe.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using LiveDescribe.Model;
 
 namespace LiveDescribe.Utilities
 {
@@ -28,8 +28,7 @@ namespace LiveDescribe.Utilities
         }
 
         /// <summary>
-        /// Finds the Zero-crossing rate for the List "data"
-        /// passed to it
+        /// Finds the Zero-crossing rate for the List "data" passed to it
         /// </summary>
         /// <param name="data">data</param>
         /// <returns>crosses</returns>
@@ -51,8 +50,7 @@ namespace LiveDescribe.Utilities
         }
 
         /// <summary>
-        /// Finds the non-speech regions in audio data
-        /// based on zero-crossing rate and energy descriptors
+        /// Finds the non-speech regions in audio data based on zero-crossing rate and energy descriptors
         /// </summary>
         /// <param name="waveform">Wavefrom to get spaces from.</param>
         /// <returns>spaces</returns>
