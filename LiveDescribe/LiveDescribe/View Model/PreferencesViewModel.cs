@@ -22,11 +22,11 @@ namespace LiveDescribe.View_Model
 
         public class AudioSourceInfo : ISerializable
         {
-            public NAudio.Wave.WaveInCapabilities Source { set; get; }
+            public WaveInCapabilities Source { set; get; }
             public string Name { set; get; }
             public string Channels { set; get; }
             public int DeviceNumber { set; get; }
-            public AudioSourceInfo(string name, string channels, NAudio.Wave.WaveInCapabilities source, int deviceNumber)
+            public AudioSourceInfo(string name, string channels, WaveInCapabilities source, int deviceNumber)
             {
                 Name = name;
                 Channels = channels;
@@ -36,13 +36,13 @@ namespace LiveDescribe.View_Model
 
             public void GetObjectData(SerializationInfo info, StreamingContext context)
             {
-                info.AddValue("source", Source, typeof(NAudio.Wave.WaveInCapabilities));
+                info.AddValue("source", Source, typeof(WaveInCapabilities));
             }
 
             public AudioSourceInfo(SerializationInfo info, StreamingContext context)
             {
                 Source =
-                    (NAudio.Wave.WaveInCapabilities) info.GetValue("source", typeof (NAudio.Wave.WaveInCapabilities));
+                    (WaveInCapabilities) info.GetValue("source", typeof (WaveInCapabilities));
             }
         }
         #endregion
@@ -128,9 +128,9 @@ namespace LiveDescribe.View_Model
         /// </summary>
         public void InitializeAudioSourceInfo()
         {
-            for (int i = 0; i < NAudio.Wave.WaveIn.DeviceCount; ++i)
+            for (int i = 0; i < WaveIn.DeviceCount; ++i)
             {
-                var capability = NAudio.Wave.WaveIn.GetCapabilities(i);
+                var capability = WaveIn.GetCapabilities(i);
                 Sources.Add(new AudioSourceInfo(capability.ProductName, capability.Channels.ToString(CultureInfo.InvariantCulture), capability,i));
             }
         }
@@ -140,12 +140,14 @@ namespace LiveDescribe.View_Model
         /// </summary>
         private void SaveAudioSourceInfo()
         {
-            var sourceStream = new NAudio.Wave.WaveIn();
-            sourceStream.DeviceNumber = SelectedAudioSource.DeviceNumber;
-            sourceStream.WaveFormat = new NAudio.Wave.WaveFormat(44100, SelectedAudioSource.Source.Channels);
+            var sourceStream = new WaveIn
+            {
+                DeviceNumber = SelectedAudioSource.DeviceNumber,
+                WaveFormat = new WaveFormat(44100, SelectedAudioSource.Source.Channels)
+            };
 
-            Properties.Settings.Default.Microphone = sourceStream;
-            Properties.Settings.Default.Save();
+            Settings.Default.Microphone = sourceStream;
+            Settings.Default.Save();
         }
         #endregion
     }

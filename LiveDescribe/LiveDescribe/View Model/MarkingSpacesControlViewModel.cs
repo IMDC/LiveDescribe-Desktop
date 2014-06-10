@@ -18,8 +18,8 @@ namespace LiveDescribe.View_Model
 
         private bool _editingEnabled;
         private Space _selectedSpace;
-        private DescriptionInfoTabViewModel _descriptionInfo;
-        private ILiveDescribePlayer _player;
+        private readonly DescriptionInfoTabViewModel _descriptionInfo;
+        private readonly ILiveDescribePlayer _player;
         #endregion
 
         #region Constructors

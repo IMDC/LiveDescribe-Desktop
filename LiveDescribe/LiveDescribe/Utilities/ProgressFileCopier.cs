@@ -158,7 +158,7 @@ namespace LiveDescribe.Utilities
         public void CopyFile(string source, string destination)
         {
             int pbCancel = 0;
-            CopyFileEx(source, destination, this.CopyProgressCallback, IntPtr.Zero, ref pbCancel, 0);
+            CopyFileEx(source, destination, CopyProgressCallback, IntPtr.Zero, ref pbCancel, 0);
         }
 
         private void OnProgressChanged(long fileSize, long totalBytesTransferred)

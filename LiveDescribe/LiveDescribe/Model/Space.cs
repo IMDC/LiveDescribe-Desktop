@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using System.Windows.Input;
 using Newtonsoft.Json;
@@ -14,7 +9,7 @@ namespace LiveDescribe.Model
     public class Space : INotifyPropertyChanged
     {
         #region Logger
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger
+        private static readonly log4net.ILog Log = log4net.LogManager.GetLogger
             (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         #endregion
 
@@ -200,7 +195,7 @@ namespace LiveDescribe.Model
         /// </summary>
         public void DeleteSpace()
         {
-            log.Info("Space deleted");
+            Log.Info("Space deleted");
             EventHandler handler = SpaceDeleteEvent;
             if (handler != null) handler(this, EventArgs.Empty);
         }

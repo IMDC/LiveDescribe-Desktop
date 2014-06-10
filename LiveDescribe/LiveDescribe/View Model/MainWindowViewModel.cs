@@ -26,7 +26,7 @@ namespace LiveDescribe.View_Model
     class MainWindowViewModel : ViewModelBase
     {
         #region Logger
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger
+        private static readonly log4net.ILog Log = log4net.LogManager.GetLogger
             (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         #endregion
 
@@ -95,7 +95,7 @@ namespace LiveDescribe.View_Model
                             return;
                     }
 
-                    log.Info("Closed Project");
+                    Log.Info("Closed Project");
 
                     _descriptionviewmodel.CloseDescriptionViewModel();
                     _mediaControlViewModel.CloseMediaControlViewModel();
@@ -121,7 +121,7 @@ namespace LiveDescribe.View_Model
                     LoadingViewModel.Visible = true;
 
                     //Copy video file in background while updating the LoadingBorder
-                    var worker = new BackgroundWorker()
+                    var worker = new BackgroundWorker
                     {
                         WorkerReportsProgress = true,
                     };
@@ -131,10 +131,7 @@ namespace LiveDescribe.View_Model
                         copier.ProgressChanged += (o, eventArgs) => worker.ReportProgress(eventArgs.ProgressPercentage);
                         copier.CopyFile(viewModel.VideoPath, viewModel.Project.Files.Video);
                     };
-                    worker.ProgressChanged += (sender, args) =>
-                    {
-                        LoadingViewModel.SetProgress("Copying Video File", args.ProgressPercentage);
-                    };
+                    worker.ProgressChanged += (sender, args) => LoadingViewModel.SetProgress("Copying Video File", args.ProgressPercentage);
                     worker.RunWorkerCompleted += (sender, args) => SetProject(viewModel.Project);
 
                     worker.RunWorkerAsync();
@@ -223,13 +220,13 @@ namespace LiveDescribe.View_Model
 
             //If apply requested happens  in the preferences use the new saved microphone in the settings
             _descriptiontimer = new Timer(10);
-            _descriptiontimer.Elapsed += (sender, e) => Play_Tick(sender, e);
+            _descriptiontimer.Elapsed += Play_Tick;
             _descriptiontimer.AutoReset = true;
 
             _preferences.ApplyRequested += (sender, e) =>
                 {
                     _descriptionviewmodel.MicrophoneStream = Properties.Settings.Default.Microphone;
-                    log.Info("Product Name of Apply Requested Microphone: " +
+                    Log.Info("Product Name of Apply Requested Microphone: " +
                         NAudio.Wave.WaveIn.GetCapabilities(_descriptionviewmodel.MicrophoneStream.DeviceNumber).ProductName);
                 };
 
@@ -284,7 +281,7 @@ namespace LiveDescribe.View_Model
             _mediaControlViewModel.PropertyChanged += PropertyChangedHandler;
 
             //Update window title based on project name
-            this.PropertyChanged += (sender, args) =>
+            PropertyChanged += (sender, args) =>
             {
                 if (args.PropertyName == "ProjectModified")
                 {
@@ -437,7 +434,7 @@ namespace LiveDescribe.View_Model
             for (int i = 0; i < _descriptionviewmodel.AllDescriptions.Count; i++)
             {
                 var description = _descriptionviewmodel.AllDescriptions[i];
-                TimeSpan currentPositionInVideo = new TimeSpan();
+                var currentPositionInVideo = new TimeSpan();
                 //get the current position of the video from the UI thread
                 DispatcherHelper.UIDispatcher.Invoke(() => { currentPositionInVideo = _mediaVideo.Position; });
                 double offset = currentPositionInVideo.TotalMilliseconds - description.StartInVideo;
@@ -448,7 +445,7 @@ namespace LiveDescribe.View_Model
                 {
                     if (!description.IsPlaying)
                     {
-                        log.Info("Playing Regular Description");
+                        Log.Info("Playing Regular Description");
                         //Reduce volume on the graphics thread to avoid an invalid operation exception.
                         DispatcherHelper.UIDispatcher.Invoke(() => _mediaControlViewModel.ReduceVolume());
                     }
@@ -456,16 +453,16 @@ namespace LiveDescribe.View_Model
                     description.Play(offset);
                     break;
                 }
-                else if (description.IsExtendedDescription &&
+                if (description.IsExtendedDescription &&
                     //if it is equal then the video time matches when the description should start dead on
                     0 <= offset && offset < LiveDescribeConstants.ExtendedDescriptionStartIntervalMax)
                 {
-                    log.Info("Playing Extended Description");
+                    Log.Info("Playing Extended Description");
 
                     DispatcherHelper.UIDispatcher.Invoke(() =>
                     {
                         _mediaControlViewModel.PauseCommand.Execute(this);
-                        log.Info("Playing Extended Description");
+                        Log.Info("Playing Extended Description");
                         description.Play();
                     });
                     break;
@@ -542,7 +539,7 @@ namespace LiveDescribe.View_Model
         {
             if (ProjectModified)
             {
-                log.Info("Program is attempting to exit with an unsaved project");
+                Log.Info("Program is attempting to exit with an unsaved project");
                 var text = string.Format("The LiveDescribe project \"{0}\" has been modified." +
                     " Do you want to save changes before closing?", _project.ProjectName);
                 var result = MessageBox.Show(text, "Warning", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
@@ -552,20 +549,17 @@ namespace LiveDescribe.View_Model
                     SaveProject.Execute(null);
                     return true;
                 }
-                else if (result == MessageBoxResult.No) //Exit but don't save
+                if (result == MessageBoxResult.No) //Exit but don't save
                 {
-                    log.Info("User has chosen exit program and not save project");
+                    Log.Info("User has chosen exit program and not save project");
                     return true;
                 }
-                else
-                {
-                    log.Info("User has chosen not to exit program");
-                    return false;
-                }
+                Log.Info("User has chosen not to exit program");
+                return false;
             }
-            else
-                return true;
+            return true;
         }
+
         #endregion
 
         #region Event Handler Methods
@@ -646,25 +640,25 @@ namespace LiveDescribe.View_Model
 
         private void OnPlayRequested(object sender, EventArgs e)
         {
-            EventHandler handler = this.PlayRequested;
+            EventHandler handler = PlayRequested;
             if (handler != null) handler(sender, e);
         }
 
         private void OnPauseRequested(object sender, EventArgs e)
         {
-            EventHandler handler = this.PauseRequested;
+            EventHandler handler = PauseRequested;
             if (handler != null) handler(sender, e);
         }
 
         private void OnMuteRequested(object sender, EventArgs e)
         {
-            EventHandler handler = this.MuteRequested;
+            EventHandler handler = MuteRequested;
             if (handler != null) handler(sender, e);
         }
 
         private void OnMediaEnded(object sender, EventArgs e)
         {
-            EventHandler handler = this.MediaEnded;
+            EventHandler handler = MediaEnded;
             if (handler != null) handler(sender, e);
         }
         #endregion

@@ -155,7 +155,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
-    <Compile Include="Graphics\Marker.cs" />
     <Compile Include="Interfaces\ILiveDescribePlayer.cs" />
     <Compile Include="Controls\LiveDescribeMediaPlayer.cs" />
     <Compile Include="LiveDescribeStates.cs" />

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using LiveDescribe.Model;
 
 namespace LiveDescribe.Utilities
@@ -20,7 +18,7 @@ namespace LiveDescribe.Utilities
         private static float Energy(List<short> data)
         {
             float total = 0;
-            float mid = 0.5F;
+            const float mid = 0.5F;
             for (int i = 0; i < data.Count; i++)
             {
                 total += (float)Math.Pow(data[i] - mid, 2);
@@ -35,17 +33,15 @@ namespace LiveDescribe.Utilities
         /// </summary>
         /// <param name="data">data</param>
         /// <returns>crosses</returns>
-        private static float ZCR(List<short> data)
+        private static float Zcr(List<short> data)
         {
             float crosses = 0;
-            float prev;
-            float current;
-            float mid = 0.5F;
+            const float mid = 0.5F;
 
             for (int i = 1; i < data.Count; i++)
             {
-                current = data[i] - mid;
-                prev = data[i - 1] - mid;
+                float current = data[i] - mid;
+                float prev = data[i - 1] - mid;
                 if ((current * prev) < 0)
                 {
                     crosses++;
@@ -78,17 +74,15 @@ namespace LiveDescribe.Utilities
             const int windowSize = 1; // 1 SECOND
             int window = 0; //counter for the total number of windows
 
-            var result = new List<int>(); //hold whether or not the window contained non-speech or not (0 for no speech and 1 otherwise)
-
             //do through each window and calculate the audio descriptors
             while (window < duration)
             {
-                int start = (int)Math.Round(window * (windowSize * samplesPerSecond));
+                var start = (int)Math.Round(window * (windowSize * samplesPerSecond));
 
                 if (start + samplesPerSecond < waveform.Data.Count)
                 {
                     List<short> bin = waveform.Data.GetRange(start, (int)samplesPerSecond); //section of the audio waveform.Data
-                    zcrHistogram.Add(ZCR(bin));
+                    zcrHistogram.Add(Zcr(bin));
                     energyHistogram.Add(Energy(bin));
                 }
                 window++;
@@ -116,10 +110,6 @@ namespace LiveDescribe.Utilities
                             break;
                         }
                     }
-                }
-                else
-                {
-                    continue; //speech
                 }
             }
             return spaces;

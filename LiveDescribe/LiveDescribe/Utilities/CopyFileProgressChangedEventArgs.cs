@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace LiveDescribe.Utilities
 {
     public class CopyFileProgressChangedEventArgs
@@ -14,9 +9,9 @@ namespace LiveDescribe.Utilities
 
         public CopyFileProgressChangedEventArgs(long fileSize, long totalBytesTransferred)
         {
-            this.FileSize = fileSize;
-            this.TotalBytesTransferred = totalBytesTransferred;
-            this.ProgressPercentage = (int)(((double)TotalBytesTransferred / FileSize) * 100);
+            FileSize = fileSize;
+            TotalBytesTransferred = totalBytesTransferred;
+            ProgressPercentage = (int)(((double)TotalBytesTransferred / FileSize) * 100);
         }
     }
 }

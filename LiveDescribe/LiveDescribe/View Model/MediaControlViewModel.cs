@@ -12,7 +12,7 @@ namespace LiveDescribe.View_Model
     public class MediaControlViewModel : ViewModelBase
     {
         #region Logger
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger
+        private static readonly log4net.ILog Log = log4net.LogManager.GetLogger
             (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         #endregion
 
@@ -25,7 +25,7 @@ namespace LiveDescribe.View_Model
 
         #region Instance Variables
         private readonly ILiveDescribePlayer _mediaVideo;
-        private LoadingViewModel _loadingViewModel;
+        private readonly LoadingViewModel _loadingViewModel;
         private List<Space> _spaceData;
         private TimeSpan _positionTimeLabel;
         private double _originalVolume;
@@ -116,8 +116,6 @@ namespace LiveDescribe.View_Model
 
         public RelayCommand RewindCommand  { get; private set; }
 
-        public RelayCommand RecordCommand  { get; private set; }
-
         public RelayCommand VideoOpenedCommand  { get; private set; }
 
         public RelayCommand MediaFailedCommand  { get; private set; }
@@ -153,7 +151,7 @@ namespace LiveDescribe.View_Model
         /// <param name="param"></param>
         public void OnMarkerMouseDown()
         {
-            this.PauseCommand.Execute(this);
+            PauseCommand.Execute(this);
             EventHandler handler = OnMarkerMouseDownRequested;
             if (handler == null) return;
             handler(this, EventArgs.Empty);
@@ -164,7 +162,7 @@ namespace LiveDescribe.View_Model
         /// <param name="param">params</param>
         public void Play()
         {
-            log.Info("Play video");
+            Log.Info("Play video");
 
             EventHandler handler = PlayRequested;
             _mediaVideo.CurrentState = LiveDescribeVideoStates.PlayingVideo;
@@ -180,7 +178,7 @@ namespace LiveDescribe.View_Model
         /// <param name="param">params</param>
         public void Pause()
         {
-            log.Info("Pause video");
+            Log.Info("Pause video");
 
             EventHandler handler = PauseRequested;
             _mediaVideo.CurrentState = LiveDescribeVideoStates.PausedVideo;
@@ -227,7 +225,7 @@ namespace LiveDescribe.View_Model
         public void VideoOpen()
         {
             EventHandler handler = VideoOpenedRequested;
-            log.Info("Video loaded");
+            Log.Info("Video loaded");
             _mediaVideo.CurrentState = LiveDescribeVideoStates.VideoLoaded;
 
             if (handler == null) return;
@@ -240,7 +238,7 @@ namespace LiveDescribe.View_Model
         /// <param name="param">params</param>
         public void Mute()
         {
-            log.Info("Video muted");
+            Log.Info("Video muted");
 
             EventHandler handler = MuteRequested;
 
@@ -257,7 +255,7 @@ namespace LiveDescribe.View_Model
         public void MediaFailed()
         {
             EventHandler handler = MediaFailedEvent;
-            log.Warn("Media Failed to load...");
+            Log.Warn("Media Failed to load...");
             _mediaVideo.CurrentState = LiveDescribeVideoStates.VideoNotLoaded;
             if (handler == null) return;
             handler(this, EventArgs.Empty);
@@ -270,7 +268,7 @@ namespace LiveDescribe.View_Model
         public void MediaEnded()
         {
             EventHandler handler = MediaEndedEvent;
-            log.Info("Video has ended");
+            Log.Info("Video has ended");
             //Changing state back to video loaded because it is starting from the beginning
             _mediaVideo.CurrentState = LiveDescribeVideoStates.VideoLoaded;
             if (handler == null) return;
@@ -388,7 +386,7 @@ namespace LiveDescribe.View_Model
         /// </summary>
         public List<Space> Spaces
         {
-            get { return this._spaceData; }
+            get { return _spaceData; }
         }
         #endregion
 
@@ -437,10 +435,7 @@ namespace LiveDescribe.View_Model
                 handler(this, EventArgs.Empty);
             };
 
-            worker.ProgressChanged += (sender, args) =>
-            {
-                _loadingViewModel.SetProgress("Importing Video", args.ProgressPercentage);
-            };
+            worker.ProgressChanged += (sender, args) => _loadingViewModel.SetProgress("Importing Video", args.ProgressPercentage);
 
             _loadingViewModel.SetProgress("Importing Video", 0);
             _loadingViewModel.Visible = true;

@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 using LiveDescribe.Interfaces;
 
@@ -35,13 +30,13 @@ namespace LiveDescribe.Controls
         /// </summary>
         public double DurationSeconds
         {
-            get { return this.NaturalDuration.TimeSpan.TotalSeconds;}
+            get { return NaturalDuration.TimeSpan.TotalSeconds;}
             
         }
 
         public double DurationMilliseconds
         {
-            get { return this.NaturalDuration.TimeSpan.TotalMilliseconds; }
+            get { return NaturalDuration.TimeSpan.TotalMilliseconds; }
         }
 
         /// <summary>

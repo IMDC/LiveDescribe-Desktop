@@ -20,7 +20,7 @@ namespace LiveDescribe.View
             dataContext.ProjectCreated += (sender, args) =>
             {
                 DialogResult = true;
-                this.Close();
+                Close();
             };
 
             //Set state for CopyVideo
@@ -30,7 +30,7 @@ namespace LiveDescribe.View
         private void Cancel_OnClick(object sender, RoutedEventArgs e)
         {
             DialogResult = false;
-            this.Close();
+            Close();
         }
 
         private void CopyVideo_OnChecked(object sender, RoutedEventArgs e)

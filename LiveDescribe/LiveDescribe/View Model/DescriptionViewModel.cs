@@ -13,7 +13,7 @@ namespace LiveDescribe.View_Model
     public class DescriptionViewModel : ViewModelBase
     {
         #region Logger
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger
+        private static readonly log4net.ILog Log = log4net.LogManager.GetLogger
             (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         #endregion
 
@@ -90,7 +90,7 @@ namespace LiveDescribe.View_Model
         /// <param name="param"></param>
         public void Record()
         {
-            log.Info("Beginning to record audio");
+            Log.Info("Beginning to record audio");
             //if the button was clicked once already it is in the RecordingDescription State
             //so end the recording because it is the second click
             if (_mediaVideo.CurrentState == LiveDescribeVideoStates.RecordingDescription)
@@ -110,17 +110,18 @@ namespace LiveDescribe.View_Model
                         DeviceNumber = 0,
                         WaveFormat = new WaveFormat(44100, WaveIn.GetCapabilities(0).Channels)
                     };
-                    log.Info("Product Name of Microphone: " + WaveIn.GetCapabilities(0).ProductName);
+                    Log.Info("Product Name of Microphone: " + NAudio.Wave.WaveIn.GetCapabilities(0).ProductName);
+
                 }
                 catch (NAudio.MmException e)
                 {
                     //Microphone not plugged in
-                    log.Warn("Microphone not found");
+                    Log.Warn("Microphone not found");
                     HandleNoMicrophoneException(e);
                     return;
                 }
             }
-            log.Info("Recording...");
+            Log.Info("Recording...");
          
             string path = Project.GenerateDescriptionFilePath();
             _waveWriter = new WaveFileWriter(path, MicrophoneStream.WaveFormat);
@@ -134,7 +135,7 @@ namespace LiveDescribe.View_Model
             catch (NAudio.MmException e)
             {
                 //Microphone not plugged in
-                log.Error("Previous Microphone was found then unplugged (No Microphone) Exception...");
+                Log.Error("Previous Microphone was found then unplugged (No Microphone) Exception...");
                 HandleNoMicrophoneException(e);
                 return;
             }
@@ -294,7 +295,7 @@ namespace LiveDescribe.View_Model
         /// </summary>
         private void FinishRecordingDescription()
         {
-            log.Info("Finished Recording");
+            Log.Info("Finished Recording");
             MicrophoneStream.StopRecording();
             string filepath = _waveWriter.Filename;
             _waveWriter.Dispose();
@@ -309,7 +310,7 @@ namespace LiveDescribe.View_Model
 
         private void HandleNoMicrophoneException(NAudio.MmException e)
         {
-            log.Error("No microphone", e);
+            Log.Error("No microphone", e);
             OnRecordRequestedMicrophoneNotPluggedIn();
         }
 
@@ -361,7 +362,7 @@ namespace LiveDescribe.View_Model
                             + (LiveDescribeConstants.ExtendedDescriptionStartIntervalMax - offset + 1)); 
                         _mediaVideo.Position = new TimeSpan(0,0,0,0,newStartInVideo);
                         _mediaControlViewModel.PlayCommand.Execute(this);
-                        log.Info("Extended description finished");
+                        Log.Info("Extended description finished");
                     }
                     else
                     {

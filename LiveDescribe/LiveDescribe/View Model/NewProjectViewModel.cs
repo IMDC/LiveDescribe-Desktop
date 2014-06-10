@@ -17,7 +17,7 @@ namespace LiveDescribe.View_Model
     public class NewProjectViewModel : ViewModelBase
     {
         #region Logger
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger
+        private static readonly log4net.ILog Log = log4net.LogManager.GetLogger
             (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         #endregion
 
@@ -126,7 +126,7 @@ namespace LiveDescribe.View_Model
             if (dialogSuccess == true)
             {
                 VideoPath = fileChooser.FileName;
-                log.Info("Video file chosen: " + VideoPath);
+                Log.Info("Video file chosen: " + VideoPath);
             }
         }
 
@@ -139,7 +139,7 @@ namespace LiveDescribe.View_Model
             if (result == System.Windows.Forms.DialogResult.OK)
             {
                 ProjectPath = folderChooser.SelectedPath;
-                log.Info("Project path chosen: " + ProjectPath);
+                Log.Info("Project path chosen: " + ProjectPath);
             }
         }
 
@@ -162,7 +162,7 @@ namespace LiveDescribe.View_Model
             if (_copyVideo)
             {
                 p = new Project(_projectName, Path.GetFileName(_videoPath), _projectPath);
-                log.Info("Attempting to create a project with a copied video");
+                Log.Info("Attempting to create a project with a copied video");
             }
             else
             {
@@ -176,7 +176,7 @@ namespace LiveDescribe.View_Model
                     AbsolutePath = _videoPath,
                     RelativePath = relativeRoot.MakeRelativeUri(projectPath).ToString(),
                 };
-                log.Info("Attempting to create a project with a video located outside of project");
+                Log.Info("Attempting to create a project with a video located outside of project");
             }
 
             //Ensure that path is absolute
@@ -184,7 +184,7 @@ namespace LiveDescribe.View_Model
             {
                 MessageBox.Show("Project location must be a root path.", "Error", MessageBoxButton.OK,
                     MessageBoxImage.Error);
-                log.Warn("Given project path is not rooted");
+                Log.Warn("Given project path is not rooted");
                 return;
             }
 
@@ -194,25 +194,25 @@ namespace LiveDescribe.View_Model
                     p.Folders.Project);
                 var result = MessageBox.Show(text, "Warning", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
 
-                log.Warn("Project folder already exists");
+                Log.Warn("Project folder already exists");
 
                 //Return if user doesn't agree to overwrite files.
                 if (result != MessageBoxResult.Yes)
                     return;
 
-                log.Info("User has decided to overwrite an existing project directory");
+                Log.Info("User has decided to overwrite an existing project directory");
                 FileDeleter.DeleteProject(p);
             }
 
             //Attempt to create files
             try
             {
-                log.Info("Creating project directories");
+                Log.Info("Creating project directories");
                 Directory.CreateDirectory(p.Folders.Project);
                 Directory.CreateDirectory(p.Folders.Cache);
                 Directory.CreateDirectory(p.Folders.Descriptions);
 
-                log.Info("Creating project file");
+                Log.Info("Creating project file");
                 FileWriter.WriteProjectFile(p);
             }
             //TODO: Catch individual exceptions?
@@ -221,7 +221,7 @@ namespace LiveDescribe.View_Model
                 MessageBox.Show("An error occured while attempting to create the project.",
                     "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
-                log.Error("An error occured when attempting to create files", e);
+                Log.Error("An error occured when attempting to create files", e);
 
                 /* TODO: Delete files on error? If we decide to do this, then only delete created
                  * files as opposed to deleting entire directory, as the latter can have
@@ -231,7 +231,7 @@ namespace LiveDescribe.View_Model
             }
 
             Project = p;
-            log.Info("Project Created");
+            Log.Info("Project Created");
             OnProjectCreated();
         }
         #endregion
