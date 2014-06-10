@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Threading;
-using LiveDescribe.Interfaces;
-using NAudio.Wave;
-using System.IO;
-using LiveDescribe.Model;
 using LiveDescribe.Events;
-using System.Windows.Data;
+using LiveDescribe.Interfaces;
+using LiveDescribe.Model;
+using NAudio.Wave;
+using System;
+using System.Collections.ObjectModel;
 
 namespace LiveDescribe.View_Model
 {
@@ -27,8 +21,8 @@ namespace LiveDescribe.View_Model
         private ObservableCollection<Description> _alldescriptions;      //this list contains all the descriptions both regular and extended
         private ObservableCollection<Description> _extendedDescriptions; //this list only contains the extended description this list should be used to bind to the list view of extended descriptions
         private ObservableCollection<Description> _regularDescriptions;  //this list only contains all the regular descriptions this list should only be used to bind to the list of regular descriptions
-        private NAudio.Wave.WaveIn _microphonestream;
-        private NAudio.Wave.WaveFileWriter _waveWriter;
+        private WaveIn _microphonestream;
+        private WaveFileWriter _waveWriter;
         private readonly ILiveDescribePlayer _mediaVideo;
         private bool _usingExistingMicrophone;
         /// <summary>Keeps track of the starting time of a description on recording.</summary>
@@ -111,12 +105,12 @@ namespace LiveDescribe.View_Model
             {
                 try
                 {
-                    MicrophoneStream = new NAudio.Wave.WaveIn
+                    MicrophoneStream = new WaveIn
                     {
                         DeviceNumber = 0,
-                        WaveFormat = new NAudio.Wave.WaveFormat(44100, NAudio.Wave.WaveIn.GetCapabilities(0).Channels)
+                        WaveFormat = new WaveFormat(44100, WaveIn.GetCapabilities(0).Channels)
                     };
-                    log.Info("Product Name of Microphone: " + NAudio.Wave.WaveIn.GetCapabilities(0).ProductName);
+                    log.Info("Product Name of Microphone: " + WaveIn.GetCapabilities(0).ProductName);
                 }
                 catch (NAudio.MmException e)
                 {
@@ -128,10 +122,9 @@ namespace LiveDescribe.View_Model
             }
             log.Info("Recording...");
          
-            //string path = Path.Combine(Project.Folders.Descriptions, Guid.NewGuid().ToString() + ".wav");
             string path = Project.GenerateDescriptionFilePath();
             _waveWriter = new WaveFileWriter(path, MicrophoneStream.WaveFormat);
-            MicrophoneStream.DataAvailable += new EventHandler<NAudio.Wave.WaveInEventArgs>(MicrophoneSteam_DataAvailable);
+            MicrophoneStream.DataAvailable += MicrophoneSteam_DataAvailable;
   
             try
             {
@@ -158,7 +151,7 @@ namespace LiveDescribe.View_Model
         /// <summary>
         /// property to set the Microphonestream
         /// </summary>
-        public NAudio.Wave.WaveIn MicrophoneStream
+        public WaveIn MicrophoneStream
         {
             set
             {
@@ -364,7 +357,8 @@ namespace LiveDescribe.View_Model
                     {
                         double offset = _mediaVideo.Position.TotalMilliseconds - desc.StartInVideo;
                         //+1 so we are out of the interval and it doesn't repeat the description
-                        int newStartInVideo = (int)(_mediaVideo.Position.TotalMilliseconds + (LiveDescribeConstants.ExtendedDescriptionStartIntervalMax - offset + 1)); 
+                        int newStartInVideo = (int)(_mediaVideo.Position.TotalMilliseconds
+                            + (LiveDescribeConstants.ExtendedDescriptionStartIntervalMax - offset + 1)); 
                         _mediaVideo.Position = new TimeSpan(0,0,0,0,newStartInVideo);
                         _mediaControlViewModel.PlayCommand.Execute(this);
                         log.Info("Extended description finished");
