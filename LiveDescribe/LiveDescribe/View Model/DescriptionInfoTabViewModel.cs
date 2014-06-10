@@ -14,9 +14,9 @@ namespace LiveDescribe.View_Model
     public class DescriptionInfoTabViewModel : ViewModelBase
     {
         #region Constants
-        private const int SPACE_TAB = 0;
-        private const int REGULAR_DESCRIPTION_TAB = 1;
-        private const int EXTENDED_DESCRIPTION_TAB = 2;
+        private const int SpaceTab = 0;
+        private const int RegularDescriptionTab = 1;
+        private const int ExtendedDescriptionTab = 2;
         #endregion
 
         #region Instance Variables
@@ -29,10 +29,10 @@ namespace LiveDescribe.View_Model
         private int _tabSelectedIndex;
         #endregion
 
-        public DescriptionInfoTabViewModel(DescriptionViewModel DescriptionViewModel, SpacesViewModel SpaceViewModel)
+        public DescriptionInfoTabViewModel(DescriptionViewModel descriptionViewModel, SpacesViewModel spaceViewModel)
         {
-            this._descriptionViewModel = DescriptionViewModel;
-            this._spacesViewModel = SpaceViewModel;
+            _descriptionViewModel = descriptionViewModel;
+            _spacesViewModel = spaceViewModel;
 
             SaveDescriptionTextCommand = new RelayCommand(SaveDescriptionText, SaveDescriptionTextStateCheck);
             ClearDescriptionTextCommand = new RelayCommand(ClearDescriptionText, () => true);
@@ -260,11 +260,11 @@ namespace LiveDescribe.View_Model
         /// </summary>
         public void SaveDescriptionText()
         {
-            if (TabSelectedIndex == REGULAR_DESCRIPTION_TAB)
+            if (TabSelectedIndex == RegularDescriptionTab)
                 RegularDescriptionSelectedInList.DescriptionText = DescriptionAndSpaceText;
-            else if (TabSelectedIndex == EXTENDED_DESCRIPTION_TAB)
+            else if (TabSelectedIndex == ExtendedDescriptionTab)
                 ExtendedDescriptionSelectedInList.DescriptionText = DescriptionAndSpaceText;
-            else if (TabSelectedIndex == SPACE_TAB)
+            else if (TabSelectedIndex == SpaceTab)
                 SpaceSelectedInList.SpaceText = DescriptionAndSpaceText;
 
         }
@@ -277,11 +277,11 @@ namespace LiveDescribe.View_Model
         /// <returns></returns>
         public bool SaveDescriptionTextStateCheck()
         {
-            if (ExtendedDescriptionSelectedInList != null && TabSelectedIndex == EXTENDED_DESCRIPTION_TAB)
+            if (ExtendedDescriptionSelectedInList != null && TabSelectedIndex == ExtendedDescriptionTab)
                 return true;
-            else if (RegularDescriptionSelectedInList != null && TabSelectedIndex == REGULAR_DESCRIPTION_TAB)
+            if (RegularDescriptionSelectedInList != null && TabSelectedIndex == RegularDescriptionTab)
                 return true;
-            else if (SpaceSelectedInList != null && TabSelectedIndex == SPACE_TAB)
+            if (SpaceSelectedInList != null && TabSelectedIndex == SpaceTab)
                 return true;
 
             return false;
@@ -289,9 +289,6 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Helper Functions
-        private void DeSelectPreviousDescscriptionsAndSpaces()
-        {
-        }
         #endregion
     }
 }

@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Reflection.Emit;
+﻿using System.IO;
 using Newtonsoft.Json;
 
 namespace LiveDescribe.Model
@@ -47,8 +45,8 @@ namespace LiveDescribe.Model
         /// directory.</param>
         public ProjectFile(string folderPath, string relativeFilePath)
         {
-            this.RelativePath = relativeFilePath;
-            this.AbsolutePath = Path.Combine(folderPath, relativeFilePath);
+            RelativePath = relativeFilePath;
+            AbsolutePath = Path.Combine(folderPath, relativeFilePath);
         }
 
         /// <summary>

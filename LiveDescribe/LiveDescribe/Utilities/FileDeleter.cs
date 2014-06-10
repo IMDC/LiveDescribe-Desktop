@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using LiveDescribe.Model;
 
 namespace LiveDescribe.Utilities
@@ -12,8 +7,8 @@ namespace LiveDescribe.Utilities
     public static class FileDeleter
     {
         #region Logger
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger
-            (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly log4net.ILog Log = log4net.LogManager.GetLogger
+            (MethodBase.GetCurrentMethod().DeclaringType);
         #endregion
 
         /// <summary>
@@ -36,7 +31,7 @@ namespace LiveDescribe.Utilities
                 if (f != null && File.Exists(f))
                 {
                     File.Delete(f);
-                    log.Info("Deleting project file " + f.RelativePath);
+                    Log.Info("Deleting project file " + f.RelativePath);
                 }
             }
 
@@ -54,7 +49,7 @@ namespace LiveDescribe.Utilities
                     if (files.Length == 0)
                     {
                         Directory.Delete(f, false);
-                        log.Info("Deleting project folder " + f.RelativePath);
+                        Log.Info("Deleting project folder " + f.RelativePath);
                     }
                 }
 

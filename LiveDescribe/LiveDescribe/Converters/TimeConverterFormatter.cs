@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Data;
 
 namespace LiveDescribe.Converters
@@ -12,7 +8,7 @@ namespace LiveDescribe.Converters
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            TimeSpan timespan = (TimeSpan)value;
+            var timespan = (TimeSpan)value;
             return timespan.ToString("hh\\:mm\\:ss\\.fff");
         }
 

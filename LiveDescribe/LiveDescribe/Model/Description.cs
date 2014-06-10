@@ -10,7 +10,7 @@ namespace LiveDescribe.Model
     public class Description: INotifyPropertyChanged
     {
         #region Logger
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger
+        private static readonly log4net.ILog Log = log4net.LogManager.GetLogger
             (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         #endregion
 
@@ -82,11 +82,11 @@ namespace LiveDescribe.Model
                 //most likely using the reader variable, and the waveOut variable
                 return;
             }
-            NAudio.Wave.WaveFileReader reader = new NAudio.Wave.WaveFileReader(FileName);
+            var reader = new NAudio.Wave.WaveFileReader(FileName);
             //reader.WaveFormat.AverageBytesPerSecond/ 1000 = Average Bytes Per Millisecond
             //AverageBytesPerMillisecond * (offset + StartWaveFileTime) = amount to play from
-            reader.Seek((long)((reader.WaveFormat.AverageBytesPerSecond / 1000) * (offset + StartWaveFileTime)), System.IO.SeekOrigin.Begin);
-            NAudio.Wave.WaveOutEvent waveOut = new NAudio.Wave.WaveOutEvent();
+            reader.Seek((long)((reader.WaveFormat.AverageBytesPerSecond / 1000) * (offset + StartWaveFileTime)), SeekOrigin.Begin);
+            var waveOut = new NAudio.Wave.WaveOutEvent();
             waveOut.PlaybackStopped += OnDescriptionPlaybackStopped;
             waveOut.Init(reader);
             waveOut.Play();
@@ -105,11 +105,11 @@ namespace LiveDescribe.Model
                 //most likely using the reader variable, and the waveOut variable
                 return;
             }
-            NAudio.Wave.WaveFileReader reader = new NAudio.Wave.WaveFileReader(FileName);
+            var reader = new NAudio.Wave.WaveFileReader(FileName);
             //reader.WaveFormat.AverageBytesPerSecond/ 1000 = Average Bytes Per Millisecond
             //AverageBytesPerMillisecond * (StartWaveFileTime) = amount to play from
-            reader.Seek((long)((reader.WaveFormat.AverageBytesPerSecond / 1000) * (StartWaveFileTime)), System.IO.SeekOrigin.Begin);
-            NAudio.Wave.WaveOutEvent waveOut = new NAudio.Wave.WaveOutEvent();
+            reader.Seek((long)((reader.WaveFormat.AverageBytesPerSecond / 1000) * (StartWaveFileTime)), SeekOrigin.Begin);
+            var waveOut = new NAudio.Wave.WaveOutEvent();
             waveOut.PlaybackStopped += OnDescriptionPlaybackStopped;
             waveOut.Init(reader);
             waveOut.Play();
@@ -381,7 +381,7 @@ namespace LiveDescribe.Model
         /// </summary>
         public void DescriptionDelete()
         {
-            log.Info("Description deleted");
+            Log.Info("Description deleted");
             EventHandler handler = DescriptionDeleteEvent;
             if (handler != null) handler(this, EventArgs.Empty);
         }

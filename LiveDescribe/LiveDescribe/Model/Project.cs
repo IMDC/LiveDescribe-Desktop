@@ -10,8 +10,8 @@ namespace LiveDescribe.Model
     public class Project
     {
         #region Logger
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger
-            (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly log4net.ILog Log = log4net.LogManager.GetLogger
+            (MethodBase.GetCurrentMethod().DeclaringType);
         #endregion
 
         #region Inner Class definitions

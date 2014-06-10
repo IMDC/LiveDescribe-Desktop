@@ -189,16 +189,10 @@ namespace LiveDescribe.View
                 };
 
             //captures the mouse when a mousedown request is sent to the Marker
-            mainWindowViewModel.MediaControlViewModel.OnMarkerMouseDownRequested += (sender, e) =>
-            {
-                Marker.CaptureMouse();
-            };
+            mainWindowViewModel.MediaControlViewModel.OnMarkerMouseDownRequested += (sender, e) => Marker.CaptureMouse();
 
             //updates the video position when the mouse is released on the Marker
-            mainWindowViewModel.MediaControlViewModel.OnMarkerMouseUpRequested += (sender, e) =>
-                {
-                    Marker.ReleaseMouseCapture();
-                };
+            mainWindowViewModel.MediaControlViewModel.OnMarkerMouseUpRequested += (sender, e) => Marker.ReleaseMouseCapture();
 
             //updates the canvas and video position when the Marker is moved
             mainWindowViewModel.MediaControlViewModel.OnMarkerMouseMoveRequested += (sender, e) =>
@@ -282,11 +276,7 @@ namespace LiveDescribe.View
                         }
                     };
 
-                    e.Description.DescriptionMouseMoveEvent += (sender1, e1) =>
-                    {
-                        //Add mouse move event on every description here
-                        Mouse.SetCursor(_grabCursor);
-                    };
+                    e.Description.DescriptionMouseMoveEvent += (sender1, e1) => Mouse.SetCursor(_grabCursor);
 
                     e.Description.PropertyChanged += (sender1, e1) =>
                     {
@@ -315,7 +305,7 @@ namespace LiveDescribe.View
 
                     space.SpaceMouseDownEvent += (sender1, e1) =>
                         {
-                            MouseEventArgs args = (MouseEventArgs)e1;
+                            var args = (MouseEventArgs)e1;
 
                             if (Mouse.LeftButton == MouseButtonState.Pressed)
                             {
@@ -348,7 +338,7 @@ namespace LiveDescribe.View
 
                     space.SpaceMouseMoveEvent += (sender1, e1) =>
                         {
-                            MouseEventArgs args = (MouseEventArgs)e1;
+                            var args = (MouseEventArgs)e1;
                             double xPos = args.GetPosition(AudioCanvas).X;
 
                             //Changes cursor if the mouse hovers over the end or the beginning of the space
@@ -417,9 +407,9 @@ namespace LiveDescribe.View
                 if (e.PropertyName.Equals("Visible"))
                 {
                     if (mainWindowViewModel.LoadingViewModel.Visible)
-                        Grid.SetZIndex(LoadingControl, 2);
+                        Panel.SetZIndex(LoadingControl, 2);
                     else
-                        Grid.SetZIndex(LoadingControl, -1);
+                        Panel.SetZIndex(LoadingControl, -1);
                 }
             };
             #endregion
@@ -712,7 +702,6 @@ namespace LiveDescribe.View
             //because this method is located in the Play_Tick method which runs in a separate thread
             //that is how you must get/set the values
 
-            double width = _canvasWidth;
             double singlePageWidth = 0;
             double scrolledAmount = 0;
 
@@ -724,7 +713,7 @@ namespace LiveDescribe.View
             double scrollOffsetRight = PageScrollPercent * singlePageWidth;
             if (!(xPos - scrolledAmount >= (scrollOffsetRight))) return false;
 
-            Dispatcher.Invoke(delegate { TimeLineScrollViewer.ScrollToHorizontalOffset(scrollOffsetRight + scrolledAmount); });
+            Dispatcher.Invoke(() => TimeLineScrollViewer.ScrollToHorizontalOffset(scrollOffsetRight + scrolledAmount));
             return true;
         }
 
@@ -912,7 +901,7 @@ namespace LiveDescribe.View
 
         private void MenuItemExit_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Close();
         }
         #endregion
     }

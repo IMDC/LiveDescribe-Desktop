@@ -30,7 +30,7 @@ namespace LiveDescribe.View
         private void Close_OnClick(object sender, RoutedEventArgs e)
         {
             DialogResult = false;
-            this.Close();
+            Close();
         }
     }
 }

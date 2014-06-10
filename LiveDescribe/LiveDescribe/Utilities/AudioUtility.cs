@@ -4,26 +4,21 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
-using System.Text;
-using System.Threading;
 using System.Windows;
 using LiveDescribe.Model;
-using log4net.Repository.Hierarchy;
-using NAudio.Wave;
-using System.Linq;
 
 namespace LiveDescribe.Utilities
 {
     public class AudioUtility
     {
         #region Logger
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger
-            (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly log4net.ILog Log = log4net.LogManager.GetLogger
+            (MethodBase.GetCurrentMethod().DeclaringType);
         #endregion
 
         private readonly string _videoFile;
         private readonly string _audioFile;
-        private Header _header;
+        private readonly Header _header;
 
         public AudioUtility(Project p)
         {
@@ -35,7 +30,7 @@ namespace LiveDescribe.Utilities
         #region Getter / Setter
         public Header Header
         {
-            get { return this._header; }
+            get { return _header; }
         }
         #endregion
 
@@ -48,7 +43,7 @@ namespace LiveDescribe.Utilities
         /// <param name="reportProgressWorker">Used to determine what the current progress of stripping the audio is</param>
         public void StripAudio(BackgroundWorker reportProgressWorker)
         {
-            log.Info("Preparing to strip audio from video");
+            Log.Info("Preparing to strip audio from video");
             //gets the path of the ffmpeg.exe file within the LiveDescribe solution
             var appDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             string ffmpegPath = Path.Combine(appDirectory, "Utilities/ffmpeg.exe");
@@ -56,7 +51,7 @@ namespace LiveDescribe.Utilities
             if (!File.Exists(ffmpegPath))
             {
                 MessageBox.Show("Cannot find ffmpeg.exe " + ffmpegPath);
-                log.Error("ffmpeg.exe can not be found at " + ffmpegPath);
+                Log.Error("ffmpeg.exe can not be found at " + ffmpegPath);
                 return;
             }
 
@@ -83,7 +78,7 @@ namespace LiveDescribe.Utilities
             //stream reader used to parse the output of the ffmpeg process
             StreamReader input = ffmpeg.StandardError;
 
-            log.Info("Attempting to parse ffmpeg output");
+            Log.Info("Attempting to parse ffmpeg output");
             /* Parsing the output of ffmpeg to obtain the total time and the current time 
              to  calculate a percentage whose value is used to update the progress bar*/
             try
@@ -107,7 +102,7 @@ namespace LiveDescribe.Utilities
                                     time += text[j];
                                 }
 
-                                totalTime = getTime(time);
+                                totalTime = GetTime(time);
                             }
                             word = "";
                         }
@@ -124,7 +119,7 @@ namespace LiveDescribe.Utilities
                                     time += text[j];
                                 }
 
-                                currentTime = getTime(time);
+                                currentTime = GetTime(time);
                             }
                         }
                     }
@@ -132,7 +127,7 @@ namespace LiveDescribe.Utilities
                     //updates the progress bar given that the total time is not zero
                     if (totalTime != 0)
                     {
-                        int percentComplete = Convert.ToInt32(((double)currentTime / (double)totalTime) * 100);
+                        int percentComplete = Convert.ToInt32((currentTime / totalTime) * 100);
                         if (percentComplete <= 100)
                         {
                             reportProgressWorker.ReportProgress(percentComplete);
@@ -143,13 +138,13 @@ namespace LiveDescribe.Utilities
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
-                log.Error("An error occured during ffmpeg audio stripping", ex);
+                Log.Error("An error occured during ffmpeg audio stripping", ex);
             }
 
             ffmpeg.WaitForExit();
 
             var fileInfo = new FileInfo(_audioFile);
-            log.Info("Audio file length: " + fileInfo.Length);
+            Log.Info("Audio file length: " + fileInfo.Length);
         }
 
         /// <summary>
@@ -157,7 +152,7 @@ namespace LiveDescribe.Utilities
         /// </summary>
         /// <param name="time">the time in ffmpeg format HH:MM:SS</param>
         /// <returns></returns>
-        private double getTime(string time)
+        private double GetTime(string time)
         {
             double hours = Convert.ToDouble(time.Substring(0, 2)) * 60 * 60;
             double minutes = Convert.ToDouble(time.Substring(3, 2)) * 60;
@@ -176,11 +171,11 @@ namespace LiveDescribe.Utilities
         {
             var data = new List<short>();
 
-            log.Info("Opening .wav file for reading at " + _audioFile);
+            Log.Info("Opening .wav file for reading at " + _audioFile);
             using (var fs = new FileStream(_audioFile, FileMode.Open, FileAccess.Read))
             using (var br = new BinaryReader(fs))
             {
-                log.Info("Reading header info from .wav file");
+                Log.Info("Reading header info from .wav file");
                 //RIFF chunk
                 _header.ChunkId = br.ReadBytes(4);
                 _header.ChunkSize = br.ReadUInt32();
@@ -202,10 +197,9 @@ namespace LiveDescribe.Utilities
                 _header.SubChunk2Id = br.ReadBytes(4);
                 _header.SubChunk2Size = br.ReadUInt32();
 
-                double maxSampleValue = Math.Pow(2, _header.BitsPerSample);
                 int ratio = _header.NumChannels == 2 ? 40 : 80;
 
-                log.Info("Reading sound data from .wav file");
+                Log.Info("Reading sound data from .wav file");
                 for (int i = 0; i < _header.SubChunk2Size; i += ratio)
                 {
                     data.Add(br.ReadInt16());
@@ -213,7 +207,7 @@ namespace LiveDescribe.Utilities
                     br.ReadBytes(ratio - 2);
                 }
 
-                log.Info("Sound data successfully read in from .wav file");
+                Log.Info("Sound data successfully read in from .wav file");
                 return data;
             }
         }
@@ -230,7 +224,7 @@ namespace LiveDescribe.Utilities
         /// <param name="oldMin">oldMin</param>
         /// <param name="oldMax">oldMax</param>
         /// <returns></returns>
-        private List<short> normalizeData(List<short> data, float newMin, float newMax, float oldMin, float oldMax)
+        private List<short> NormalizeData(List<short> data, float newMin, float newMax, float oldMin, float oldMax)
         {
             for (int dataPoint = 0; dataPoint < data.Count; dataPoint++)
             {
@@ -245,10 +239,10 @@ namespace LiveDescribe.Utilities
         /// </summary>
         /// <param name="data">data</param>
         /// <returns>root mean square</returns>
-        private float RMS(List<short> data)
+        private float Rms(List<short> data)
         {
             float total = 0;
-            float mid = 0.5F;
+            const float mid = 0.5F;
             for (int i = 0; i < data.Count; i++)
             {
                 total += (float)Math.Pow(data[i] - mid, 2);
@@ -262,20 +256,17 @@ namespace LiveDescribe.Utilities
         /// </summary>
         public void DeleteAudioFile()
         {
-            log.Info("Deleting audio .wav file");
+            Log.Info("Deleting audio .wav file");
             try
             {
                 File.Delete(_audioFile);
             }
             catch (Exception e)
             {
-                log.Warn("An error occured while trying to delete the audio file", e);
+                Log.Warn("An error occured while trying to delete the audio file", e);
             }
 
-            if (!File.Exists(_audioFile))
-                log.Info("Audio .wav file deleted");
-            else
-                log.Info("Audio .wav file NOT deleted");
+            Log.Info(!File.Exists(_audioFile) ? "Audio .wav file deleted" : "Audio .wav file NOT deleted");
         }
     }
 }

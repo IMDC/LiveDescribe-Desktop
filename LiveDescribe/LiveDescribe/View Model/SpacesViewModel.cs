@@ -20,7 +20,7 @@ namespace LiveDescribe.View_Model
 
         #region Instance Variables
         private ObservableCollection<Space> _spaces;
-        private ILiveDescribePlayer _videoPlayer;
+        private readonly ILiveDescribePlayer _videoPlayer;
         #endregion
 
         #region Event Handlers
@@ -82,7 +82,7 @@ namespace LiveDescribe.View_Model
         /// </summary>
         public void AddSpace()
         {
-            this.AddSpace(new Space());
+            AddSpace(new Space());
         }
 
         public void AddSpace(Space space)
@@ -102,10 +102,7 @@ namespace LiveDescribe.View_Model
         /// <param name="space">The space that the events are setup on</param>
         private void SetupEventsOnSpace(Space space)
         {
-            space.SpaceDeleteEvent += (sender, e) =>
-                {
-                    Spaces.Remove(space);
-                };
+            space.SpaceDeleteEvent += (sender, e) => Spaces.Remove(space);
         }
 
         public void CloseSpacesViewModel()

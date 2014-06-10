@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using LiveDescribe.Model;
 
 namespace LiveDescribe.Events
@@ -13,7 +9,7 @@ namespace LiveDescribe.Events
 
         public SpaceEventArgs(Space space)
         {
-            this._space = space;
+            _space = space;
         }
 
         public Space Space

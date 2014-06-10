@@ -19,7 +19,7 @@ namespace LiveDescribe.View_Model
     public class DescriptionViewModel : ViewModelBase
     {
         #region Logger
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger
+        private static readonly log4net.ILog Log = log4net.LogManager.GetLogger
             (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         #endregion
 
@@ -27,8 +27,8 @@ namespace LiveDescribe.View_Model
         private ObservableCollection<Description> _alldescriptions;      //this list contains all the descriptions both regular and extended
         private ObservableCollection<Description> _extendedDescriptions; //this list only contains the extended description this list should be used to bind to the list view of extended descriptions
         private ObservableCollection<Description> _regularDescriptions;  //this list only contains all the regular descriptions this list should only be used to bind to the list of regular descriptions
-        private NAudio.Wave.WaveIn _microphonestream;
-        private NAudio.Wave.WaveFileWriter _waveWriter;
+        private WaveIn _microphonestream;
+        private WaveFileWriter _waveWriter;
         private readonly ILiveDescribePlayer _mediaVideo;
         private readonly bool _usingExistingMicrophone;
         /// <summary>Keeps track of the starting time of a description on recording.</summary>
@@ -96,7 +96,7 @@ namespace LiveDescribe.View_Model
         /// <param name="param"></param>
         public void Record()
         {
-            log.Info("Beginning to record audio");
+            Log.Info("Beginning to record audio");
             //if the button was clicked once already it is in the RecordingDescription State
             //so end the recording because it is the second click
             if (_mediaVideo.CurrentState == LiveDescribeVideoStates.RecordingDescription)
@@ -116,17 +116,17 @@ namespace LiveDescribe.View_Model
                         DeviceNumber = 0,
                         WaveFormat = new NAudio.Wave.WaveFormat(44100, NAudio.Wave.WaveIn.GetCapabilities(0).Channels)
                     };
-                    log.Info("Product Name of Microphone: " + NAudio.Wave.WaveIn.GetCapabilities(0).ProductName);
+                    Log.Info("Product Name of Microphone: " + NAudio.Wave.WaveIn.GetCapabilities(0).ProductName);
                 }
                 catch (NAudio.MmException e)
                 {
                     //Microphone not plugged in
-                    log.Warn("Microphone not found");
+                    Log.Warn("Microphone not found");
                     HandleNoMicrophoneException(e);
                     return;
                 }
             }
-            log.Info("Recording...");
+            Log.Info("Recording...");
          
             // get a random guid to name the wave file
             // there is an EXTREMELY small chance that the guid used has been used before
@@ -142,7 +142,7 @@ namespace LiveDescribe.View_Model
             catch (NAudio.MmException e)
             {
                 //Microphone not plugged in
-                log.Error("Previous Microphone was found then unplugged (No Microphone) Exception...");
+                Log.Error("Previous Microphone was found then unplugged (No Microphone) Exception...");
                 HandleNoMicrophoneException(e);
                 return;
             }
@@ -302,7 +302,7 @@ namespace LiveDescribe.View_Model
         /// </summary>
         private void FinishRecordingDescription()
         {
-            log.Info("Finished Recording");
+            Log.Info("Finished Recording");
             MicrophoneStream.StopRecording();
             string filepath = _waveWriter.Filename;
             _waveWriter.Dispose();
@@ -317,7 +317,7 @@ namespace LiveDescribe.View_Model
 
         private void HandleNoMicrophoneException(NAudio.MmException e)
         {
-            log.Error("No microphone", e);
+            Log.Error("No microphone", e);
             OnRecordRequestedMicrophoneNotPluggedIn();
         }
 
@@ -368,7 +368,7 @@ namespace LiveDescribe.View_Model
                         int newStartInVideo = (int)(_mediaVideo.Position.TotalMilliseconds + (LiveDescribeConstants.ExtendedDescriptionStartIntervalMax - offset + 1)); 
                         _mediaVideo.Position = new TimeSpan(0,0,0,0,newStartInVideo);
                         _mediaControlViewModel.PlayCommand.Execute(this);
-                        log.Info("Extended description finished");
+                        Log.Info("Extended description finished");
                     }
                     else
                     {
