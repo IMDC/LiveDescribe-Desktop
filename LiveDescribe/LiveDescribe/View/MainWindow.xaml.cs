@@ -56,10 +56,8 @@ namespace LiveDescribe.View
         private double _videoDuration = -1;
         private readonly MediaControlViewModel _mediaControlViewModel;
         private readonly SpacesViewModel _spacesViewModel;
-        private readonly PreferencesViewModel _preferences;
         /// <summary>used to format a timespan object which in this case in the videoMedia.Position</summary>
         private readonly DescriptionViewModel _descriptionViewModel;
-        private readonly TimeConverterFormatter _formatter;
         private readonly DescriptionInfoTabViewModel _descriptionInfoTabViewModel;
         private readonly MainWindowViewModel _mainWindowViewModel;
         private double _originalPositionForDraggingDescription = -1;

@@ -121,6 +121,7 @@
 
                 <controls:MarkingSpacesControl
                     DataContext="{Binding MarkingSpacesControlViewModel}"
+                    Grid.Column="0"
                     Grid.Row="8"
                     Grid.RowSpan="3" />
 
