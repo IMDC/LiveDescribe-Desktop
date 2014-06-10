@@ -112,7 +112,7 @@ namespace LiveDescribe.View_Model
                         DeviceNumber = 0,
                         WaveFormat = new WaveFormat(44100, WaveIn.GetCapabilities(0).Channels)
                     };
-                    Log.Info("Product Name of Microphone: " + NAudio.Wave.WaveIn.GetCapabilities(0).ProductName);
+                    Log.Info("Product Name of Microphone: " + WaveIn.GetCapabilities(0).ProductName);
 
                 }
                 catch (NAudio.MmException e)

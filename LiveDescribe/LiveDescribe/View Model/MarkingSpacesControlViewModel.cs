@@ -13,15 +13,13 @@ namespace LiveDescribe.View_Model
 
         private bool _editingEnabled;
         private Space _selectedSpace;
-        private readonly DescriptionInfoTabViewModel _descriptionInfo;
         private readonly ILiveDescribePlayer _player;
         #endregion
 
         #region Constructors
         public MarkingSpacesControlViewModel(DescriptionInfoTabViewModel descriptionInfo, ILiveDescribePlayer player)
         {
-            _descriptionInfo = descriptionInfo;
-            _descriptionInfo.PropertyChanged += (sender, args) =>
+            descriptionInfo.PropertyChanged += (sender, args) =>
             {
                 if (args.PropertyName.Equals("SpaceSelectedInList"))
                     SelectedSpace = descriptionInfo.SpaceSelectedInList;
