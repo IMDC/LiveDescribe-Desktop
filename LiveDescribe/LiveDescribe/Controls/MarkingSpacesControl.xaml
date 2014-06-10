@@ -58,6 +58,7 @@
         <TextBox
             Style="{StaticResource TextBoxStyle}"
             Grid.Row="1"
+            Grid.Column="0"
             Grid.ColumnSpan="5"
             IsEnabled="{Binding EditingEnabled}"
             Text="{Binding Path=SelectedSpace_StartInVideo, Converter={StaticResource MillisecondsTimeConverter}}" />
@@ -65,6 +66,7 @@
         <!-- End -->
         <TextBlock
             Grid.Row="2"
+            Grid.Column="0"
             Grid.ColumnSpan="3"
             Text="End"
             VerticalAlignment="Center"
@@ -79,6 +81,7 @@
         <TextBox
             Style="{StaticResource TextBoxStyle}"
             Grid.Row="3"
+            Grid.Column="0"
             Grid.ColumnSpan="5"
             IsEnabled="{Binding EditingEnabled}"
             Text="{Binding Path=SelectedSpace_EndInVideo, Converter={StaticResource MillisecondsTimeConverter}}" />

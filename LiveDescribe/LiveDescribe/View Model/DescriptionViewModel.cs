@@ -30,7 +30,7 @@ namespace LiveDescribe.View_Model
         private NAudio.Wave.WaveIn _microphonestream;
         private NAudio.Wave.WaveFileWriter _waveWriter;
         private readonly ILiveDescribePlayer _mediaVideo;
-        private bool _usingExistingMicrophone;
+        private readonly bool _usingExistingMicrophone;
         /// <summary>Keeps track of the starting time of a description on recording.</summary>
         private double _descriptionStartTime;
         private bool _isRecording;
@@ -39,7 +39,7 @@ namespace LiveDescribe.View_Model
 
         //this variable should be used as little as possible in this class
         //most interactions between the  descriptionviewmodel and the MediaControlViewModel should be in the MainWindowViewModel
-        private MediaControlViewModel _mediaControlViewModel;
+        private readonly MediaControlViewModel _mediaControlViewModel;
 
         private LiveDescribeVideoStates _previousVideoState; //used to restore the previous video state after it's finished recording
 
@@ -230,7 +230,7 @@ namespace LiveDescribe.View_Model
             set
             {
                 _recordingExtendedDescription = value;
-                RaisePropertyChanged("RecordingExtendedDescription");
+                RaisePropertyChanged();
             }
             get
             {

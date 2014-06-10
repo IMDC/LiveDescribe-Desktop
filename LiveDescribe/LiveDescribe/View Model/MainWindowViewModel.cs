@@ -39,15 +39,15 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Instance Variables
-        private Timer _descriptiontimer;
-        private MediaControlViewModel _mediaControlViewModel;
-        private PreferencesViewModel _preferences;
-        private DescriptionViewModel _descriptionviewmodel;
-        private SpacesViewModel _spacesviewmodel;
-        private LoadingViewModel _loadingViewModel;
-        private MarkingSpacesControlViewModel _markingSpacesControlViewModel;
-        private ILiveDescribePlayer _mediaVideo;
-        private DescriptionInfoTabViewModel _descriptionInfoTabViewModel;
+        private readonly Timer _descriptiontimer;
+        private readonly MediaControlViewModel _mediaControlViewModel;
+        private readonly PreferencesViewModel _preferences;
+        private readonly DescriptionViewModel _descriptionviewmodel;
+        private readonly SpacesViewModel _spacesviewmodel;
+        private readonly LoadingViewModel _loadingViewModel;
+        private readonly MarkingSpacesControlViewModel _markingSpacesControlViewModel;
+        private readonly ILiveDescribePlayer _mediaVideo;
+        private readonly DescriptionInfoTabViewModel _descriptionInfoTabViewModel;
         private Project _project;
         private string _windowTitle;
         private bool _projectModified;
