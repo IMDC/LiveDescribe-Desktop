@@ -1,5 +1,7 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Reflection.Emit;
+using Newtonsoft.Json;
 
 namespace LiveDescribe.Model
 {
@@ -28,6 +30,7 @@ namespace LiveDescribe.Model
         /// The full path of the project file starting from its drive letter.
         /// Example is @"C:\Users\imdc\Documents\Test Projects\tProj\vid.avi".
         /// </summary>
+        [JsonIgnore]
         public string AbsolutePath { get; set; }
 
         /// <summary>
@@ -46,6 +49,15 @@ namespace LiveDescribe.Model
         {
             this.RelativePath = relativeFilePath;
             this.AbsolutePath = Path.Combine(folderPath, relativeFilePath);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pathToProjectFolder"></param>
+        public void MakeAbsoluteWith(string pathToProjectFolder)
+        {
+            AbsolutePath = Path.Combine(pathToProjectFolder, RelativePath);
         }
 
         /// <summary>

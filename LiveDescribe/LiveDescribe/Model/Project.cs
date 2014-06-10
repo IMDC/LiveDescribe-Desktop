@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Newtonsoft.Json;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
+using System.Reflection;
 
 namespace LiveDescribe.Model
 {
@@ -13,6 +9,11 @@ namespace LiveDescribe.Model
     /// </summary>
     public class Project
     {
+        #region Logger
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger
+            (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        #endregion
+
         #region Inner Class definitions
         /// <summary>
         /// Contains the default file names and extensions for program files.
@@ -90,7 +91,7 @@ namespace LiveDescribe.Model
             /// <summary>
             /// The absolute path to the project folder.
             /// </summary>
-            [JsonProperty(Required = Required.Always)]
+            [JsonIgnore]
             public string Project { set; get; }
 
             /// <summary>
@@ -116,8 +117,10 @@ namespace LiveDescribe.Model
         [JsonProperty(Required = Required.Always)]
         public string ProjectName { set; get; }
 
+        [JsonProperty(Required = Required.Always)]
         public ProjectFiles Files { set; get; }
 
+        [JsonProperty(Required = Required.Always)]
         public ProjectFolders Folders { set; get; }
 
         /// <summary>
@@ -167,6 +170,39 @@ namespace LiveDescribe.Model
             this(projectName, projectPath)
         {
             Files.Video = new ProjectFile(Folders.Project, videoFileName);
+        }
+
+        /// <summary>
+        /// Sets the absolute paths of each projectfile relative to the given project file.
+        /// </summary>
+        /// <param name="projectFilePath">The absolute path to the project file.</param>
+        public void SetAbsolutePaths(string projectFilePath)
+        {
+            string pathToProjectFolder = Path.GetDirectoryName(projectFilePath);
+
+            Folders.Project = pathToProjectFolder;
+
+            //Get a list of all the file properties
+            PropertyInfo[] fileProperties = typeof(ProjectFiles).GetProperties();
+
+            foreach (var propertyInfo in fileProperties)
+            {
+                //Get the actual value of the property from project
+                var file = propertyInfo.GetValue(Files) as ProjectFile;
+
+                if (file != null)
+                    file.MakeAbsoluteWith(pathToProjectFolder);
+            }
+
+            PropertyInfo[] folderProperties = typeof(ProjectFolders).GetProperties();
+
+            foreach (var propertyInfo in folderProperties)
+            {
+                var folder = propertyInfo.GetValue(Folders) as ProjectFile;
+
+                if (folder != null)
+                    folder.MakeAbsoluteWith(pathToProjectFolder);
+            }
         }
     }
 }

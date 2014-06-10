@@ -86,12 +86,9 @@ namespace LiveDescribe.View
             _mainWindowViewModel = mainWindowViewModel;
 
             _mediaControlViewModel = mainWindowViewModel.MediaControlViewModel;
-            _preferences = mainWindowViewModel.PreferencesViewModel;
             _descriptionViewModel = mainWindowViewModel.DescriptionViewModel;
             _spacesViewModel = mainWindowViewModel.SpacesViewModel;
             _descriptionInfoTabViewModel = mainWindowViewModel.DescriptionInfoTabViewModel;
-
-            _formatter = new TimeConverterFormatter();
 
             var cursfile = Application.GetResourceStream(new Uri("pack://application:,,,/Resources/Cursors/grab.cur"));
             _grabCursor = new Cursor(cursfile.Stream);
@@ -759,7 +756,7 @@ namespace LiveDescribe.View
             Log.Info("Drawing wave form");
 
             List<short> data = _mediaControlViewModel.Waveform.Data;
-            double samplesPerPixel = data.Count / _canvasWidth;
+            double samplesPerPixel = Math.Max(data.Count / _canvasWidth, 1);
             double middle =  AudioCanvas.ActualHeight / 2;
             double yscale = middle;
 
