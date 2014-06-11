@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight.Command;
+using NAudio.Wave;
 using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
@@ -29,6 +30,7 @@ namespace LiveDescribe.Model
         private double _height;
         private bool _isSelected;
         private bool _isPlaying;
+        private WaveOutEvent _currentWaveOut;
         #endregion
 
         #region Events
@@ -90,6 +92,7 @@ namespace LiveDescribe.Model
             waveOut.PlaybackStopped += OnDescriptionPlaybackStopped;
             waveOut.Init(reader);
             waveOut.Play();
+            _currentWaveOut = waveOut;
         }
         /// <summary>
         /// This method plays the description with no offset only at the time of the value StartWaveFileTime
@@ -113,6 +116,16 @@ namespace LiveDescribe.Model
             waveOut.PlaybackStopped += OnDescriptionPlaybackStopped;
             waveOut.Init(reader);
             waveOut.Play();
+        }
+
+        public void Stop()
+        {
+            if (IsPlaying)
+                IsPlaying = false;
+            else
+                return;
+
+            _currentWaveOut.Stop();
         }
         #endregion
 

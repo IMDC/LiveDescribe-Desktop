@@ -48,6 +48,7 @@ namespace LiveDescribe.View_Model
         private Project _project;
         private string _windowTitle;
         private bool _projectModified;
+        private Description _lastRegularDescriptionPlayed;
         #endregion
 
         #region Events
@@ -240,6 +241,8 @@ namespace LiveDescribe.View_Model
                 {
                     _mediaVideo.Pause();
                     _descriptiontimer.Stop();
+                    if (_lastRegularDescriptionPlayed != null && _lastRegularDescriptionPlayed.IsPlaying)
+                        _lastRegularDescriptionPlayed.Stop();
                     //this Handler should be attached to the view to update the graphics
                     OnPauseRequested(sender, e);
                 };
@@ -457,6 +460,7 @@ namespace LiveDescribe.View_Model
                     }
 
                     description.Play(offset);
+                    _lastRegularDescriptionPlayed = description;
                     _descriptionInfoTabViewModel.RegularDescriptionSelectedInList = description;
                     break;
                 }
