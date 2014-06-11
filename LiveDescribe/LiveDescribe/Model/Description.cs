@@ -1,4 +1,5 @@
-﻿using GalaSoft.MvvmLight.Command;
+﻿using System.Runtime.CompilerServices;
+using GalaSoft.MvvmLight.Command;
 using NAudio.Wave;
 using Newtonsoft.Json;
 using System;
@@ -121,7 +122,7 @@ namespace LiveDescribe.Model
             set
             {
                 _x = value;
-                NotifyPropertyChanged("X");
+                NotifyPropertyChanged();
             }
             get { return _x; }
         }
@@ -135,7 +136,7 @@ namespace LiveDescribe.Model
             set
             {
                 _y = value;
-                NotifyPropertyChanged("Y");
+                NotifyPropertyChanged();
             }
             get { return _y; }
         }
@@ -148,7 +149,7 @@ namespace LiveDescribe.Model
             set
             {
                 _height = value;
-                NotifyPropertyChanged("Height");
+                NotifyPropertyChanged();
             }
             get { return _height; }
         }
@@ -162,7 +163,7 @@ namespace LiveDescribe.Model
             set
             {
                 _width = value;
-                NotifyPropertyChanged("Width");
+                NotifyPropertyChanged();
             }
             get { return _width; }
         }
@@ -175,7 +176,7 @@ namespace LiveDescribe.Model
             set
             {
                 _filename = value;
-                NotifyPropertyChanged("FileName");
+                NotifyPropertyChanged();
             }
             get { return _filename; }
         }
@@ -188,7 +189,7 @@ namespace LiveDescribe.Model
             set
             {
                 _isextendeddescription = value;
-                NotifyPropertyChanged("IsExtendedDescription");
+                NotifyPropertyChanged();
             }
             get { return _isextendeddescription; }
         }
@@ -202,7 +203,7 @@ namespace LiveDescribe.Model
             set
             {
                 _startwavefiletime = value;
-                NotifyPropertyChanged("StartWaveFileTime");
+                NotifyPropertyChanged();
             }
             get { return _startwavefiletime; }
         }
@@ -215,7 +216,7 @@ namespace LiveDescribe.Model
             set
             {
                 _endwavefiletime = value;
-                NotifyPropertyChanged("EndWaveFileTime");
+                NotifyPropertyChanged();
             }
             get { return _endwavefiletime; }
         }
@@ -228,7 +229,7 @@ namespace LiveDescribe.Model
             set
             {
                 _startinvideo = value;
-                NotifyPropertyChanged("StartInVideo");
+                NotifyPropertyChanged();
             }
             get { return _startinvideo; }
         }
@@ -240,7 +241,7 @@ namespace LiveDescribe.Model
             set
             {
                 _endinvideo = value;
-                NotifyPropertyChanged("EndInVideo");
+                NotifyPropertyChanged();
             }
             get { return _endinvideo; }
         }
@@ -251,7 +252,7 @@ namespace LiveDescribe.Model
             set
             {
                 _isSelected = value;
-                NotifyPropertyChanged("IsSelected");
+                NotifyPropertyChanged();
             }
             get { return _isSelected; }
         }
@@ -261,7 +262,7 @@ namespace LiveDescribe.Model
             set
             {
                 _descriptiontext = value;
-                NotifyPropertyChanged("DescriptionText");
+                NotifyPropertyChanged();
             }
             get { return _descriptiontext; }
         }
@@ -272,7 +273,7 @@ namespace LiveDescribe.Model
             set
             {
                 _isPlaying = value;
-                NotifyPropertyChanged("IsPlaying");
+                NotifyPropertyChanged();
             }
             get { return _isPlaying; }
         }
@@ -375,16 +376,10 @@ namespace LiveDescribe.Model
         /// Raises the PropertyChanged event.
         /// </summary>
         /// <param name="propertyName">The name of the property changed.</param>
-        private void NotifyPropertyChanged(string propertyName)
+        private void NotifyPropertyChanged([CallerMemberName]string propertyName = "")
         {
-            /* Make a local copy of the event to prevent the case where the handler
-             * will be set as null in-between the null check and the handler call.
-             */
             PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
+            if (handler != null) { handler(this, new PropertyChangedEventArgs(propertyName)); }
         }
         #endregion
     }

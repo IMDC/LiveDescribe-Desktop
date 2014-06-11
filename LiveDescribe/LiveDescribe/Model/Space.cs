@@ -1,4 +1,5 @@
-﻿using GalaSoft.MvvmLight.Command;
+﻿using System.Runtime.CompilerServices;
+using GalaSoft.MvvmLight.Command;
 using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
@@ -86,7 +87,7 @@ namespace LiveDescribe.Model
             set
             {
                 _spaceText = value;
-                NotifyPropertyChanged("SpaceText");
+                NotifyPropertyChanged();
             }
             get
             {
@@ -102,7 +103,7 @@ namespace LiveDescribe.Model
             set
             {
                 _startInVideo = value;
-                NotifyPropertyChanged("StartInVideo");
+                NotifyPropertyChanged();
             }
             get { return _startInVideo; }
         }
@@ -115,7 +116,7 @@ namespace LiveDescribe.Model
             set
             {
                 _endInVideo = value;
-                NotifyPropertyChanged("EndInVideo");
+                NotifyPropertyChanged();
             }
             get { return _endInVideo; }
         }
@@ -126,7 +127,7 @@ namespace LiveDescribe.Model
             set
             {
                 _length = value;
-                NotifyPropertyChanged("Length");
+                NotifyPropertyChanged();
             }
             get { return _length; }
         }
@@ -137,7 +138,7 @@ namespace LiveDescribe.Model
             set
             {
                 _x = value;
-                NotifyPropertyChanged("X");
+                NotifyPropertyChanged();
             }
             get { return _x; }
         }
@@ -148,7 +149,7 @@ namespace LiveDescribe.Model
             set
             {
                 _y = value;
-                NotifyPropertyChanged("Y");
+                NotifyPropertyChanged();
             }
             get { return _y; }
         }
@@ -159,7 +160,7 @@ namespace LiveDescribe.Model
             set
             {
                 _height = value;
-                NotifyPropertyChanged("Height");
+                NotifyPropertyChanged();
             }
             get { return _height; }
         }
@@ -170,7 +171,7 @@ namespace LiveDescribe.Model
             set
             {
                 _width = value;
-                NotifyPropertyChanged("Width");
+                NotifyPropertyChanged();
             }
             get { return _width; }
         }
@@ -181,7 +182,7 @@ namespace LiveDescribe.Model
             set
             {
                 _isSelected = value;
-                NotifyPropertyChanged("IsSelected");
+                NotifyPropertyChanged();
             }
             get { return _isSelected; }
         }
@@ -240,16 +241,10 @@ namespace LiveDescribe.Model
         /// Raises the PropertyChanged event.
         /// </summary>
         /// <param name="propertyName">The name of the property changed.</param>
-        private void NotifyPropertyChanged(string propertyName)
+        private void NotifyPropertyChanged([CallerMemberName]string propertyName = "")
         {
-            /* Make a local copy of the event to prevent the case where the handler
-             * will be set as null in-between the null check and the handler call.
-             */
             PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
+            if (handler != null) { handler(this, new PropertyChangedEventArgs(propertyName)); }
         }
         #endregion
     }
