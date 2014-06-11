@@ -54,7 +54,7 @@ namespace LiveDescribe.Model
         /// <param name="pathToProjectFolder"></param>
         public void MakeAbsoluteWith(string pathToProjectFolder)
         {
-            var baseUri = new Uri(pathToProjectFolder, UriKind.Absolute);
+            var baseUri = new Uri(pathToProjectFolder + "\\", UriKind.Absolute);
             var relativeUri = new Uri(RelativePath, UriKind.Relative);
 
             AbsolutePath = new Uri(baseUri, relativeUri).LocalPath;
