@@ -436,7 +436,6 @@ namespace LiveDescribe.View_Model
                 double offset = currentPositionInVideo.TotalMilliseconds - description.StartInVideo;
 
                 if (!description.IsExtendedDescription &&
-                    //
                     0 <= offset && offset < description.WaveFileDuration * PlayDescriptionThreshold)
                 {
                     if (!description.IsPlaying)
@@ -445,8 +444,16 @@ namespace LiveDescribe.View_Model
                         //Reduce volume on the graphics thread to avoid an invalid operation exception.
                         DispatcherHelper.UIDispatcher.Invoke(() => _mediaControlViewModel.ReduceVolume());
                     }
-
-                    description.Play(offset);
+                    //description.Play(offset);
+                    try { description.Play(offset); }
+                    catch (Exception ex)
+                    {
+                        if (ex is FileNotFoundException ||
+                            ex is DirectoryNotFoundException)
+                            DescriptionFileNotFound(description);
+                        else
+                            throw;
+                    }
                     break;
                 }
                 if (description.IsExtendedDescription &&
@@ -459,11 +466,32 @@ namespace LiveDescribe.View_Model
                     {
                         _mediaControlViewModel.PauseCommand.Execute(this);
                         Log.Info("Playing Extended Description");
-                        description.Play();
+                        try { description.Play(); }
+                        catch (Exception ex)
+                        {
+                            if (ex is FileNotFoundException ||
+                                ex is DirectoryNotFoundException)
+                                DescriptionFileNotFound(description);
+                            else
+                                throw;
+                        }
                     });
                     break;
                 }
             }
+        }
+
+        private void DescriptionFileNotFound(Description d)
+        {
+            //Pause from the UI thread.
+            DispatcherHelper.UIDispatcher.Invoke(() => _mediaControlViewModel.PauseCommand.Execute(null));
+
+            //TODO: Delete description if not found, or ask for file location?
+            Log.ErrorFormat("The description file could not be found at {0}");
+
+            var text = string.Format("The audio file for description \"{0}\" could not be found.", d.DescriptionText );
+            var result = MessageBox.Show(text, "Error", MessageBoxButton.OK,
+                MessageBoxImage.Error);
         }
 
         /// <summary>

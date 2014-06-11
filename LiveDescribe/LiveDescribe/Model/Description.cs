@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight.Command;
+using NAudio.Wave;
 using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
@@ -72,7 +73,7 @@ namespace LiveDescribe.Model
         /// </summary>
         ///<param name="offset">The offset in the file in which to play offset is in Milliseconds</param>
         /// <exception cref="FileNotFoundException">It is thrown if the path (filepath) of the description does not exist</exception>
-        public void Play(double offset)
+        public void Play(double offset = 0)
         {
             if (IsPlaying == false)
                 IsPlaying = true;
@@ -82,34 +83,12 @@ namespace LiveDescribe.Model
                 //most likely using the reader variable, and the waveOut variable
                 return;
             }
-            var reader = new NAudio.Wave.WaveFileReader(FileName);
+            var reader = new WaveFileReader(FileName);
             //reader.WaveFormat.AverageBytesPerSecond/ 1000 = Average Bytes Per Millisecond
             //AverageBytesPerMillisecond * (offset + StartWaveFileTime) = amount to play from
-            reader.Seek((long)((reader.WaveFormat.AverageBytesPerSecond / 1000) * (offset + StartWaveFileTime)), SeekOrigin.Begin);
-            var waveOut = new NAudio.Wave.WaveOutEvent();
-            waveOut.PlaybackStopped += OnDescriptionPlaybackStopped;
-            waveOut.Init(reader);
-            waveOut.Play();
-        }
-        /// <summary>
-        /// This method plays the description with no offset only at the time of the value StartWaveFileTime
-        /// </summary>
-        public void Play()
-        {
-
-            if (IsPlaying == false)
-                IsPlaying = true;
-            else
-            {
-                //TODO: add a way to stop when the EndWaveFileTime has been reached
-                //most likely using the reader variable, and the waveOut variable
-                return;
-            }
-            var reader = new NAudio.Wave.WaveFileReader(FileName);
-            //reader.WaveFormat.AverageBytesPerSecond/ 1000 = Average Bytes Per Millisecond
-            //AverageBytesPerMillisecond * (StartWaveFileTime) = amount to play from
-            reader.Seek((long)((reader.WaveFormat.AverageBytesPerSecond / 1000) * (StartWaveFileTime)), SeekOrigin.Begin);
-            var waveOut = new NAudio.Wave.WaveOutEvent();
+            reader.Seek((long)((reader.WaveFormat.AverageBytesPerSecond / 1000) * (offset + StartWaveFileTime)),
+                SeekOrigin.Begin);
+            var waveOut = new WaveOutEvent();
             waveOut.PlaybackStopped += OnDescriptionPlaybackStopped;
             waveOut.Init(reader);
             waveOut.Play();
@@ -123,7 +102,7 @@ namespace LiveDescribe.Model
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void OnDescriptionPlaybackStopped(object sender, NAudio.Wave.StoppedEventArgs e)
+        private void OnDescriptionPlaybackStopped(object sender, StoppedEventArgs e)
         {
             IsPlaying = false;
             EventHandler handler = DescriptionFinishedPlaying;
@@ -348,7 +327,6 @@ namespace LiveDescribe.Model
         /// <summary>
         /// Called when the mouse is up on this description
         /// </summary>
-        /// <param name="param"></param>
         public void DescriptionMouseUp()
         {
             EventHandler handler = DescriptionMouseUpEvent;
