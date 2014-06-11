@@ -14,7 +14,6 @@ using System.IO;
 using System.Timers;
 using System.Windows;
 using System.Windows.Input;
-using MessageBox = System.Windows.MessageBox;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 using Timer = System.Timers.Timer;
 
@@ -82,13 +81,12 @@ namespace LiveDescribe.View_Model
                 {
                     if (ProjectModified)
                     {
-                        var text = string.Format("The LiveDescribe project \"{0}\" has been modified." +
-                            " Do you want to save changes before closing?", _project.ProjectName);
-                        var result = MessageBox.Show(text, "Warning", MessageBoxButton.YesNoCancel,
-                            MessageBoxImage.Warning);
+                        var result = MessageBoxFactory.ShowWarningQuestion(
+                            string.Format("The LiveDescribe project \"{0}\" has been modified." +
+                            " Do you want to save changes before closing?", _project.ProjectName));
 
                         if (result == MessageBoxResult.Yes)
-                            SaveProject.Execute(null);
+                            SaveProject.Execute();
                         else if (result == MessageBoxResult.Cancel)
                             return;
                     }
@@ -158,8 +156,7 @@ namespace LiveDescribe.View_Model
                 }
                 catch (JsonSerializationException)
                 {
-                    MessageBox.Show("The selected project is missing file locations.", "Error",
-                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBoxFactory.ShowError("The selected project is missing file locations.");
                 }
             });
 
@@ -186,7 +183,7 @@ namespace LiveDescribe.View_Model
                 {
                     var p = _project;
 
-                    CloseProject.Execute(null);
+                    CloseProject.Execute();
 
                     Directory.Delete(p.Folders.Cache, true);
 
@@ -269,7 +266,7 @@ namespace LiveDescribe.View_Model
                     _spacesviewmodel.AddSpace(space);
                 }
 
-                SaveProject.Execute(null);
+                SaveProject.Execute();
             };
             #endregion
 
@@ -449,7 +446,6 @@ namespace LiveDescribe.View_Model
                 double offset = currentPositionInVideo.TotalMilliseconds - description.StartInVideo;
 
                 if (!description.IsExtendedDescription &&
-                    //
                     0 <= offset && offset < description.WaveFileDuration * PlayDescriptionThreshold)
                 {
                     if (!description.IsPlaying)
@@ -459,9 +455,19 @@ namespace LiveDescribe.View_Model
                         DispatcherHelper.UIDispatcher.Invoke(() => _mediaControlViewModel.ReduceVolume());
                     }
 
-                    description.Play(offset);
                     _lastRegularDescriptionPlayed = description;
                     _descriptionInfoTabViewModel.RegularDescriptionSelectedInList = description;
+
+                    //description.Play(offset);
+                    try { description.Play(offset); }
+                    catch (Exception ex)
+                    {
+                        if (ex is FileNotFoundException ||
+                            ex is DirectoryNotFoundException)
+                            DescriptionFileNotFound(description);
+                        else
+                            throw;
+                    }
                     break;
                 }
                 if (description.IsExtendedDescription &&
@@ -472,12 +478,31 @@ namespace LiveDescribe.View_Model
                     {
                         _mediaControlViewModel.PauseCommand.Execute(this);
                         Log.Info("Playing Extended Description");
-                        description.Play();
+                        try { description.Play(); }
+                        catch (Exception ex)
+                        {
+                            if (ex is FileNotFoundException ||
+                                ex is DirectoryNotFoundException)
+                                DescriptionFileNotFound(description);
+                            else
+                                throw;
+                        }
                     });
                     _descriptionInfoTabViewModel.ExtendedDescriptionSelectedInList = description;
                     break;
                 }
             }
+        }
+
+        private void DescriptionFileNotFound(Description d)
+        {
+            //Pause from the UI thread.
+            DispatcherHelper.UIDispatcher.Invoke(() => _mediaControlViewModel.PauseCommand.Execute(null));
+
+            //TODO: Delete description if not found, or ask for file location?
+            Log.ErrorFormat("The description file could not be found at {0}");
+
+            MessageBoxFactory.ShowError("The audio file for description could not be found at " + d.FileName);
         }
 
         /// <summary>
@@ -486,8 +511,7 @@ namespace LiveDescribe.View_Model
         /// <param name="p">The project to initialize</param>
         public void SetProject(Project p)
         {
-            if (CloseProject.CanExecute(null))
-                CloseProject.Execute(null);
+            CloseProject.ExecuteIfCan();
 
             _project = p;
 
@@ -556,7 +580,7 @@ namespace LiveDescribe.View_Model
 
                 if (result == MessageBoxResult.Yes)
                 {
-                    SaveProject.Execute(null);
+                    SaveProject.Execute();
                     return true;
                 }
                 if (result == MessageBoxResult.No) //Exit but don't save

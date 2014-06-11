@@ -1,4 +1,5 @@
-﻿using GalaSoft.MvvmLight.Command;
+﻿using System.Runtime.CompilerServices;
+using GalaSoft.MvvmLight.Command;
 using NAudio.Wave;
 using Newtonsoft.Json;
 using System;
@@ -74,7 +75,7 @@ namespace LiveDescribe.Model
         /// </summary>
         ///<param name="offset">The offset in the file in which to play offset is in Milliseconds</param>
         /// <exception cref="FileNotFoundException">It is thrown if the path (filepath) of the description does not exist</exception>
-        public void Play(double offset)
+        public void Play(double offset = 0)
         {
             if (IsPlaying == false)
                 IsPlaying = true;
@@ -84,38 +85,16 @@ namespace LiveDescribe.Model
                 //most likely using the reader variable, and the waveOut variable
                 return;
             }
-            var reader = new NAudio.Wave.WaveFileReader(FileName);
+            var reader = new WaveFileReader(FileName);
             //reader.WaveFormat.AverageBytesPerSecond/ 1000 = Average Bytes Per Millisecond
             //AverageBytesPerMillisecond * (offset + StartWaveFileTime) = amount to play from
-            reader.Seek((long)((reader.WaveFormat.AverageBytesPerSecond / 1000) * (offset + StartWaveFileTime)), SeekOrigin.Begin);
-            var waveOut = new NAudio.Wave.WaveOutEvent();
+            reader.Seek((long)((reader.WaveFormat.AverageBytesPerSecond / 1000) * (offset + StartWaveFileTime)),
+                SeekOrigin.Begin);
+            var waveOut = new WaveOutEvent();
             waveOut.PlaybackStopped += OnDescriptionPlaybackStopped;
             waveOut.Init(reader);
             waveOut.Play();
             _currentWaveOut = waveOut;
-        }
-        /// <summary>
-        /// This method plays the description with no offset only at the time of the value StartWaveFileTime
-        /// </summary>
-        public void Play()
-        {
-
-            if (IsPlaying == false)
-                IsPlaying = true;
-            else
-            {
-                //TODO: add a way to stop when the EndWaveFileTime has been reached
-                //most likely using the reader variable, and the waveOut variable
-                return;
-            }
-            var reader = new NAudio.Wave.WaveFileReader(FileName);
-            //reader.WaveFormat.AverageBytesPerSecond/ 1000 = Average Bytes Per Millisecond
-            //AverageBytesPerMillisecond * (StartWaveFileTime) = amount to play from
-            reader.Seek((long)((reader.WaveFormat.AverageBytesPerSecond / 1000) * (StartWaveFileTime)), SeekOrigin.Begin);
-            var waveOut = new NAudio.Wave.WaveOutEvent();
-            waveOut.PlaybackStopped += OnDescriptionPlaybackStopped;
-            waveOut.Init(reader);
-            waveOut.Play();
         }
 
         public void Stop()
@@ -136,7 +115,7 @@ namespace LiveDescribe.Model
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void OnDescriptionPlaybackStopped(object sender, NAudio.Wave.StoppedEventArgs e)
+        private void OnDescriptionPlaybackStopped(object sender, StoppedEventArgs e)
         {
             IsPlaying = false;
             EventHandler handler = DescriptionFinishedPlaying;
@@ -155,7 +134,7 @@ namespace LiveDescribe.Model
             set
             {
                 _x = value;
-                NotifyPropertyChanged("X");
+                NotifyPropertyChanged();
             }
             get { return _x; }
         }
@@ -169,7 +148,7 @@ namespace LiveDescribe.Model
             set
             {
                 _y = value;
-                NotifyPropertyChanged("Y");
+                NotifyPropertyChanged();
             }
             get { return _y; }
         }
@@ -182,7 +161,7 @@ namespace LiveDescribe.Model
             set
             {
                 _height = value;
-                NotifyPropertyChanged("Height");
+                NotifyPropertyChanged();
             }
             get { return _height; }
         }
@@ -196,7 +175,7 @@ namespace LiveDescribe.Model
             set
             {
                 _width = value;
-                NotifyPropertyChanged("Width");
+                NotifyPropertyChanged();
             }
             get { return _width; }
         }
@@ -209,7 +188,7 @@ namespace LiveDescribe.Model
             set
             {
                 _filename = value;
-                NotifyPropertyChanged("FileName");
+                NotifyPropertyChanged();
             }
             get { return _filename; }
         }
@@ -222,7 +201,7 @@ namespace LiveDescribe.Model
             set
             {
                 _isextendeddescription = value;
-                NotifyPropertyChanged("IsExtendedDescription");
+                NotifyPropertyChanged();
             }
             get { return _isextendeddescription; }
         }
@@ -236,7 +215,7 @@ namespace LiveDescribe.Model
             set
             {
                 _startwavefiletime = value;
-                NotifyPropertyChanged("StartWaveFileTime");
+                NotifyPropertyChanged();
             }
             get { return _startwavefiletime; }
         }
@@ -249,7 +228,7 @@ namespace LiveDescribe.Model
             set
             {
                 _endwavefiletime = value;
-                NotifyPropertyChanged("EndWaveFileTime");
+                NotifyPropertyChanged();
             }
             get { return _endwavefiletime; }
         }
@@ -262,7 +241,7 @@ namespace LiveDescribe.Model
             set
             {
                 _startinvideo = value;
-                NotifyPropertyChanged("StartInVideo");
+                NotifyPropertyChanged();
             }
             get { return _startinvideo; }
         }
@@ -274,7 +253,7 @@ namespace LiveDescribe.Model
             set
             {
                 _endinvideo = value;
-                NotifyPropertyChanged("EndInVideo");
+                NotifyPropertyChanged();
             }
             get { return _endinvideo; }
         }
@@ -285,7 +264,7 @@ namespace LiveDescribe.Model
             set
             {
                 _isSelected = value;
-                NotifyPropertyChanged("IsSelected");
+                NotifyPropertyChanged();
             }
             get { return _isSelected; }
         }
@@ -295,7 +274,7 @@ namespace LiveDescribe.Model
             set
             {
                 _descriptiontext = value;
-                NotifyPropertyChanged("DescriptionText");
+                NotifyPropertyChanged();
             }
             get { return _descriptiontext; }
         }
@@ -306,7 +285,7 @@ namespace LiveDescribe.Model
             set
             {
                 _isPlaying = value;
-                NotifyPropertyChanged("IsPlaying");
+                NotifyPropertyChanged();
             }
             get { return _isPlaying; }
         }
@@ -361,7 +340,6 @@ namespace LiveDescribe.Model
         /// <summary>
         /// Called when the mouse is up on this description
         /// </summary>
-        /// <param name="param"></param>
         public void DescriptionMouseUp()
         {
             EventHandler handler = DescriptionMouseUpEvent;
@@ -410,16 +388,10 @@ namespace LiveDescribe.Model
         /// Raises the PropertyChanged event.
         /// </summary>
         /// <param name="propertyName">The name of the property changed.</param>
-        private void NotifyPropertyChanged(string propertyName)
+        private void NotifyPropertyChanged([CallerMemberName]string propertyName = "")
         {
-            /* Make a local copy of the event to prevent the case where the handler
-             * will be set as null in-between the null check and the handler call.
-             */
             PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
+            if (handler != null) { handler(this, new PropertyChangedEventArgs(propertyName)); }
         }
         #endregion
     }

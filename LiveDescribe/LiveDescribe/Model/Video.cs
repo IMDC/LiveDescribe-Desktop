@@ -1,4 +1,6 @@
-﻿namespace LiveDescribe.Model
+﻿using System.Runtime.CompilerServices;
+
+namespace LiveDescribe.Model
 {
     using System.ComponentModel;
 
@@ -38,7 +40,7 @@
             set
             {
                 _currentState = value;
-                NotifyPropertyChanged("CurrentState");
+                NotifyPropertyChanged();
 
             }
         }
@@ -48,7 +50,7 @@
             set
             {
                 _path = value;
-                NotifyPropertyChanged("Path");
+                NotifyPropertyChanged();
             }
             get
             {
@@ -61,7 +63,7 @@
             set
             {
                 _currentTime = value;
-                NotifyPropertyChanged("CurrentTime");
+                NotifyPropertyChanged();
             }
             get { return _currentTime; }
         }
@@ -71,7 +73,7 @@
             set
             {
                 _duration = value;
-                NotifyPropertyChanged("Duration");
+                NotifyPropertyChanged();
             }
             get { return _duration; }
         }
@@ -87,16 +89,10 @@
         /// Raises the PropertyChanged event.
         /// </summary>
         /// <param name="propertyName">The name of the property changed.</param>
-        private void NotifyPropertyChanged(string propertyName)
+        private void NotifyPropertyChanged([CallerMemberName]string propertyName = "")
         {
-            /* Make a local copy of the event to prevent the case where the handler
-             * will be set as null in-between the null check and the handler call.
-             */
             PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
+            if (handler != null) { handler(this, new PropertyChangedEventArgs(propertyName)); }
         }
         #endregion
     }

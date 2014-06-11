@@ -7,7 +7,6 @@ using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Forms;
-using MessageBox = System.Windows.MessageBox;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 
 namespace LiveDescribe.View_Model
@@ -179,17 +178,16 @@ namespace LiveDescribe.View_Model
             //Ensure that path is absolute
             if (!Path.IsPathRooted(p.Folders.Project))
             {
-                MessageBox.Show("Project location must be a root path.", "Error", MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                MessageBoxFactory.ShowError("Project location must be a root path.");
                 Log.Warn("Given project path is not rooted");
                 return;
             }
 
             if (Directory.Exists(p.Folders.Project))
             {
-                var text = string.Format("The folder {0} already exists. Do you wish to overwrite its contents?",
-                    p.Folders.Project);
-                var result = MessageBox.Show(text, "Warning", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+                var result = MessageBoxFactory.ShowWarningQuestion(
+                    string.Format("The folder {0} already exists. Do you wish to overwrite its contents?",
+                    p.Folders.Project));
 
                 Log.Warn("Project folder already exists");
 
@@ -215,8 +213,7 @@ namespace LiveDescribe.View_Model
             //TODO: Catch individual exceptions?
             catch (Exception e)
             {
-                MessageBox.Show("An error occured while attempting to create the project.",
-                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBoxFactory.ShowError("An error occured while attempting to create the project.");
 
                 Log.Error("An error occured when attempting to create files", e);
 

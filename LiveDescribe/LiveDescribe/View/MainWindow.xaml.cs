@@ -1,5 +1,6 @@
 ﻿using LiveDescribe.Controls;
 using LiveDescribe.Model;
+using LiveDescribe.Utilities;
 using LiveDescribe.View_Model;
 using System;
 using System.Collections.Generic;
@@ -247,7 +248,7 @@ namespace LiveDescribe.View
             _descriptionViewModel.RecordRequestedMicrophoneNotPluggedIn += (sender, e) =>
                 {
                     //perhaps show a popup when the Record button is pressed and there is no microphone plugged in
-                    MessageBox.Show("No Microphone Connected");
+                    MessageBoxFactory.ShowError("No Microphone Connected");
                     Log.Warn("No microphone connected");
                 };
 
@@ -660,7 +661,7 @@ namespace LiveDescribe.View
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 //execute the pause command because we want to pause the video when someone is clicking through the video
-                _mediaControlViewModel.PauseCommand.Execute(this);
+                _mediaControlViewModel.PauseCommand.Execute();
                 var xPosition = e.GetPosition(NumberTimeline).X;
                 var newValue = (xPosition / _canvasWidth) * _videoDuration;
 
