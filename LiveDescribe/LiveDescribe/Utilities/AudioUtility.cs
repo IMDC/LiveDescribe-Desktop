@@ -137,7 +137,7 @@ namespace LiveDescribe.Utilities
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBoxFactory.ShowError(ex.Message);
                 Log.Error("An error occured during ffmpeg audio stripping", ex);
             }
 

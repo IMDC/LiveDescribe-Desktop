@@ -13,7 +13,6 @@ using System.IO;
 using System.Timers;
 using System.Windows;
 using System.Windows.Input;
-using MessageBox = System.Windows.MessageBox;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 using Timer = System.Timers.Timer;
 
@@ -80,10 +79,9 @@ namespace LiveDescribe.View_Model
                 {
                     if (ProjectModified)
                     {
-                        var text = string.Format("The LiveDescribe project \"{0}\" has been modified." +
-                            " Do you want to save changes before closing?", _project.ProjectName);
-                        var result = MessageBox.Show(text, "Warning", MessageBoxButton.YesNoCancel,
-                            MessageBoxImage.Warning);
+                        var result = MessageBoxFactory.ShowWarningQuestion(
+                            string.Format("The LiveDescribe project \"{0}\" has been modified." +
+                            " Do you want to save changes before closing?", _project.ProjectName));
 
                         if (result == MessageBoxResult.Yes)
                             SaveProject.Execute(null);
@@ -156,8 +154,7 @@ namespace LiveDescribe.View_Model
                 }
                 catch (JsonSerializationException)
                 {
-                    MessageBox.Show("The selected project is missing file locations.", "Error",
-                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBoxFactory.ShowError("The selected project is missing file locations.");
                 }
             });
 
@@ -489,9 +486,7 @@ namespace LiveDescribe.View_Model
             //TODO: Delete description if not found, or ask for file location?
             Log.ErrorFormat("The description file could not be found at {0}");
 
-            var text = string.Format("The audio file for description \"{0}\" could not be found.", d.DescriptionText );
-            var result = MessageBox.Show(text, "Error", MessageBoxButton.OK,
-                MessageBoxImage.Error);
+            MessageBoxFactory.ShowError("The audio file for description could not be found at " + d.FileName);
         }
 
         /// <summary>
