@@ -1,4 +1,6 @@
-﻿using GalaSoft.MvvmLight;
+﻿using System;
+using System.Collections.ObjectModel;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Threading;
 using LiveDescribe.Events;
@@ -6,10 +8,8 @@ using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
 using LiveDescribe.Utilities;
 using NAudio.Wave;
-using System;
-using System.Collections.ObjectModel;
 
-namespace LiveDescribe.View_Model
+namespace LiveDescribe.ViewModel
 {
     public class DescriptionViewModel : ViewModelBase
     {

@@ -1,4 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.IO;
+using System.Threading.Tasks;
+using System.Timers;
+using System.Windows;
+using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Threading;
@@ -6,18 +13,10 @@ using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
 using LiveDescribe.Utilities;
 using LiveDescribe.View;
+using Microsoft.Win32;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.IO;
-using System.Timers;
-using System.Windows;
-using System.Windows.Input;
-using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
-using Timer = System.Timers.Timer;
 
-namespace LiveDescribe.View_Model
+namespace LiveDescribe.ViewModel
 {
     class MainWindowViewModel : ViewModelBase
     {

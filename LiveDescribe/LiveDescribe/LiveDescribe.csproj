@@ -113,14 +113,14 @@
     <Compile Include="Utilities\FileWriter.cs" />
     <Compile Include="Utilities\MessageBoxFactory.cs" />
     <Compile Include="Utilities\ProgressFileCopier.cs" />
-    <Compile Include="View Model\DescriptionInfoTabViewModel.cs" />
-    <Compile Include="View Model\LoadingViewModel.cs" />
-    <Compile Include="View Model\MarkingSpacesControlViewModel.cs" />
-    <Compile Include="View Model\SpacesViewModel.cs" />
+    <Compile Include="ViewModel\DescriptionInfoTabViewModel.cs" />
+    <Compile Include="ViewModel\LoadingViewModel.cs" />
+    <Compile Include="ViewModel\MarkingSpacesControlViewModel.cs" />
+    <Compile Include="ViewModel\SpacesViewModel.cs" />
     <Compile Include="View\NewProjectView.xaml.cs">
       <DependentUpon>NewProjectView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View Model\NewProjectViewModel.cs" />
+    <Compile Include="ViewModel\NewProjectViewModel.cs" />
     <Compile Include="View\PreferencesWindow.xaml.cs">
       <DependentUpon>PreferencesWindow.xaml</DependentUpon>
     </Compile>
@@ -164,10 +164,10 @@
     <Compile Include="Model\Video.cs" />
     <Compile Include="Converters\TimeConverterFormatter.cs" />
     <Compile Include="Utilities\AudioUtility.cs" />
-    <Compile Include="View Model\DescriptionViewModel.cs" />
-    <Compile Include="View Model\MainWindowViewModel.cs" />
-    <Compile Include="View Model\PreferencesViewModel.cs" />
-    <Compile Include="View Model\MediaControlViewModel.cs" />
+    <Compile Include="ViewModel\DescriptionViewModel.cs" />
+    <Compile Include="ViewModel\MainWindowViewModel.cs" />
+    <Compile Include="ViewModel\PreferencesViewModel.cs" />
+    <Compile Include="ViewModel\MediaControlViewModel.cs" />
     <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

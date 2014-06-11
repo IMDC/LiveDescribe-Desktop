@@ -1,13 +1,13 @@
-﻿using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
-using LiveDescribe.Properties;
-using NAudio.Wave;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Runtime.Serialization;
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
+using LiveDescribe.Properties;
+using NAudio.Wave;
 
-namespace LiveDescribe.View_Model
+namespace LiveDescribe.ViewModel
 {
     public class PreferencesViewModel : ViewModelBase
     {

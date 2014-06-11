@@ -1,13 +1,13 @@
-﻿using GalaSoft.MvvmLight;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Windows.Input;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Events;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
-using System;
-using System.Collections.ObjectModel;
-using System.Windows.Input;
 
-namespace LiveDescribe.View_Model
+namespace LiveDescribe.ViewModel
 {
     public class SpacesViewModel : ViewModelBase
     {

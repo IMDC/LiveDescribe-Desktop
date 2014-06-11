@@ -1,13 +1,13 @@
-﻿using GalaSoft.MvvmLight;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
 using LiveDescribe.Utilities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 
-namespace LiveDescribe.View_Model
+namespace LiveDescribe.ViewModel
 {
     public class MediaControlViewModel : ViewModelBase
     {

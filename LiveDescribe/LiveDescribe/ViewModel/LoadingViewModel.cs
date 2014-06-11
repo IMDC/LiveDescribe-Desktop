@@ -1,6 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 
-namespace LiveDescribe.View_Model
+namespace LiveDescribe.ViewModel
 {
     public class LoadingViewModel : ViewModelBase
     {

@@ -1,4 +1,4 @@
-﻿using LiveDescribe.View_Model;
+﻿using LiveDescribe.ViewModel;
 using System.Windows;
 
 namespace LiveDescribe.View

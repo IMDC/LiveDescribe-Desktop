@@ -1,15 +1,15 @@
-﻿using GalaSoft.MvvmLight;
+﻿using System;
+using System.IO;
+using System.Windows;
+using System.Windows.Forms;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Model;
 using LiveDescribe.Utilities;
 using LiveDescribe.View;
-using System;
-using System.IO;
-using System.Windows;
-using System.Windows.Forms;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 
-namespace LiveDescribe.View_Model
+namespace LiveDescribe.ViewModel
 {
     public class NewProjectViewModel : ViewModelBase
     {

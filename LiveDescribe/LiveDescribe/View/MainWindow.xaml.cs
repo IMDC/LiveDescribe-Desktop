@@ -1,7 +1,7 @@
 ﻿using LiveDescribe.Controls;
 using LiveDescribe.Model;
 using LiveDescribe.Utilities;
-using LiveDescribe.View_Model;
+using LiveDescribe.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

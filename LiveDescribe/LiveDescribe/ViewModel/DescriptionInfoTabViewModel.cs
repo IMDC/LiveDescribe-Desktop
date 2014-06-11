@@ -1,11 +1,11 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Model;
-using System;
-using System.Collections.ObjectModel;
 
-namespace LiveDescribe.View_Model
+namespace LiveDescribe.ViewModel
 {
     public class DescriptionInfoTabViewModel : ViewModelBase
     {
