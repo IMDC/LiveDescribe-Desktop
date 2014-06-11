@@ -592,9 +592,7 @@ namespace LiveDescribe.View
             //if we aren't dragging a description or space, we want to unselect them out of the list
             if (_spacesActionState == SpacesActionState.None && _descriptionActionState == DescriptionsActionState.None)
             {
-                _descriptionInfoTabViewModel.SpaceSelectedInList = null;
-                _descriptionInfoTabViewModel.ExtendedDescriptionSelectedInList = null;
-                _descriptionInfoTabViewModel.RegularDescriptionSelectedInList = null;
+               _descriptionInfoTabViewModel.UnSelectDescriptionsAndSpaceSelectedInList();
             }
         }
 

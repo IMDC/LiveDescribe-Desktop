@@ -31,6 +31,7 @@ namespace LiveDescribe.Model
         private double _height;
         private bool _isSelected;
         private bool _isPlaying;
+        private WaveOutEvent _currentWaveOut;
         #endregion
 
         #region Events
@@ -93,6 +94,17 @@ namespace LiveDescribe.Model
             waveOut.PlaybackStopped += OnDescriptionPlaybackStopped;
             waveOut.Init(reader);
             waveOut.Play();
+            _currentWaveOut = waveOut;
+        }
+
+        public void Stop()
+        {
+            if (IsPlaying)
+                IsPlaying = false;
+            else
+                return;
+
+            _currentWaveOut.Stop();
         }
         #endregion
 

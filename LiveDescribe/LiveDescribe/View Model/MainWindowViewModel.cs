@@ -1,4 +1,5 @@
-﻿using GalaSoft.MvvmLight;
+﻿using System.Threading.Tasks;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Threading;
 using LiveDescribe.Interfaces;
@@ -46,6 +47,7 @@ namespace LiveDescribe.View_Model
         private Project _project;
         private string _windowTitle;
         private bool _projectModified;
+        private Description _lastRegularDescriptionPlayed;
         #endregion
 
         #region Events
@@ -236,6 +238,8 @@ namespace LiveDescribe.View_Model
                 {
                     _mediaVideo.Pause();
                     _descriptiontimer.Stop();
+                    if (_lastRegularDescriptionPlayed != null && _lastRegularDescriptionPlayed.IsPlaying)
+                        _lastRegularDescriptionPlayed.Stop();
                     //this Handler should be attached to the view to update the graphics
                     OnPauseRequested(sender, e);
                 };
@@ -429,7 +433,16 @@ namespace LiveDescribe.View_Model
                 var description = _descriptionviewmodel.AllDescriptions[i];
                 var currentPositionInVideo = new TimeSpan();
                 //get the current position of the video from the UI thread
-                DispatcherHelper.UIDispatcher.Invoke(() => { currentPositionInVideo = _mediaVideo.Position; });
+
+                try
+                {
+                    DispatcherHelper.UIDispatcher.Invoke(() => { currentPositionInVideo = _mediaVideo.Position; });
+                }
+                catch (TaskCanceledException exception)
+                {
+                    Log.Warn("Task Canceled Exception", exception);
+                }
+               
                 double offset = currentPositionInVideo.TotalMilliseconds - description.StartInVideo;
 
                 if (!description.IsExtendedDescription &&
@@ -441,6 +454,10 @@ namespace LiveDescribe.View_Model
                         //Reduce volume on the graphics thread to avoid an invalid operation exception.
                         DispatcherHelper.UIDispatcher.Invoke(() => _mediaControlViewModel.ReduceVolume());
                     }
+
+                    _lastRegularDescriptionPlayed = description;
+                    _descriptionInfoTabViewModel.RegularDescriptionSelectedInList = description;
+
                     //description.Play(offset);
                     try { description.Play(offset); }
                     catch (Exception ex)
@@ -457,8 +474,6 @@ namespace LiveDescribe.View_Model
                     //if it is equal then the video time matches when the description should start dead on
                     0 <= offset && offset < LiveDescribeConstants.ExtendedDescriptionStartIntervalMax)
                 {
-                    Log.Info("Playing Extended Description");
-
                     DispatcherHelper.UIDispatcher.Invoke(() =>
                     {
                         _mediaControlViewModel.PauseCommand.Execute(this);
@@ -473,6 +488,7 @@ namespace LiveDescribe.View_Model
                                 throw;
                         }
                     });
+                    _descriptionInfoTabViewModel.ExtendedDescriptionSelectedInList = description;
                     break;
                 }
             }

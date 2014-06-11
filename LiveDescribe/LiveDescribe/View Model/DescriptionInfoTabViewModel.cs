@@ -1,4 +1,5 @@
-﻿using GalaSoft.MvvmLight;
+﻿using System.ComponentModel;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Model;
 using System;
@@ -55,9 +56,12 @@ namespace LiveDescribe.View_Model
             set
             {
                 if (_regularDescriptionSelectedInList != null && value == null)
+                {
                     _regularDescriptionSelectedInList.IsSelected = false;
+                    _regularDescriptionSelectedInList.PropertyChanged -= DescriptionFinishedPlaying;
+                }
 
-
+                // Unselect previous descriptions and spaces selected
                 if (_regularDescriptionSelectedInList != null)
                 {
                     _regularDescriptionSelectedInList.IsSelected = false;
@@ -78,8 +82,11 @@ namespace LiveDescribe.View_Model
 
                 _regularDescriptionSelectedInList = value;
 
-                if (_regularDescriptionSelectedInList != null && _regularDescriptionSelectedInList.IsSelected == false)
+                if (_regularDescriptionSelectedInList != null)
+                {
                     _regularDescriptionSelectedInList.IsSelected = true;
+                    _regularDescriptionSelectedInList.PropertyChanged += DescriptionFinishedPlaying;
+                }
 
                 RaisePropertyChanged();
             }
@@ -98,9 +105,12 @@ namespace LiveDescribe.View_Model
             {
 
                 if (_extendedDescriptionSelectedInList != null && value == null)
+                {
                     _extendedDescriptionSelectedInList.IsSelected = false;
+                    _extendedDescriptionSelectedInList.PropertyChanged -= DescriptionFinishedPlaying;
+                }
 
-
+                // Unselect previous descriptions and spaces selected
                 if (RegularDescriptionSelectedInList != null)
                 {
                     RegularDescriptionSelectedInList.IsSelected = false;
@@ -122,7 +132,10 @@ namespace LiveDescribe.View_Model
                 _extendedDescriptionSelectedInList = value;
 
                 if (_extendedDescriptionSelectedInList != null)
+                {
                     _extendedDescriptionSelectedInList.IsSelected = true;
+                    _extendedDescriptionSelectedInList.PropertyChanged += DescriptionFinishedPlaying;
+                }
 
                 RaisePropertyChanged();
             }
@@ -142,6 +155,8 @@ namespace LiveDescribe.View_Model
                 if (_spaceSelectedInList != null && value == null)
                     _spaceSelectedInList.IsSelected = false;
 
+
+                // Unselect previous descriptions and spaces selected
                 if (RegularDescriptionSelectedInList != null)
                 {
                     RegularDescriptionSelectedInList.IsSelected = false;
@@ -263,6 +278,19 @@ namespace LiveDescribe.View_Model
                 SpaceSelectedInList.SpaceText = DescriptionAndSpaceText;
 
         }
+
+        public void DescriptionFinishedPlaying(object sender, PropertyChangedEventArgs args)
+        {
+            if (args.PropertyName.Equals("IsPlaying"))
+            {
+                var description = (Description) sender;
+                if (!description.IsPlaying)
+                {
+                    description.IsSelected = false;
+                    UnSelectDescriptionsAndSpaceSelectedInList();
+                }
+            }
+        }
         #endregion
 
         #region State Checks
@@ -284,6 +312,13 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Helper Functions
+
+        public void UnSelectDescriptionsAndSpaceSelectedInList()
+        {
+            RegularDescriptionSelectedInList = null;
+            ExtendedDescriptionSelectedInList = null;
+            SpaceSelectedInList = null;
+        }
         #endregion
     }
 }
