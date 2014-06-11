@@ -1,4 +1,5 @@
-﻿using GalaSoft.MvvmLight;
+﻿using System.Threading.Tasks;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Threading;
 using LiveDescribe.Interfaces;
@@ -432,7 +433,16 @@ namespace LiveDescribe.View_Model
                 var description = _descriptionviewmodel.AllDescriptions[i];
                 var currentPositionInVideo = new TimeSpan();
                 //get the current position of the video from the UI thread
-                DispatcherHelper.UIDispatcher.Invoke(() => { currentPositionInVideo = _mediaVideo.Position; });
+
+                try
+                {
+                    DispatcherHelper.UIDispatcher.Invoke(() => { currentPositionInVideo = _mediaVideo.Position; });
+                }
+                catch (TaskCanceledException exception)
+                {
+                    Log.Warn("Task Canceled Exception", exception);
+                }
+               
                 double offset = currentPositionInVideo.TotalMilliseconds - description.StartInVideo;
 
                 if (!description.IsExtendedDescription &&
@@ -447,20 +457,20 @@ namespace LiveDescribe.View_Model
                     }
 
                     description.Play(offset);
+                    _descriptionInfoTabViewModel.RegularDescriptionSelectedInList = description;
                     break;
                 }
                 if (description.IsExtendedDescription &&
                     //if it is equal then the video time matches when the description should start dead on
                     0 <= offset && offset < LiveDescribeConstants.ExtendedDescriptionStartIntervalMax)
                 {
-                    Log.Info("Playing Extended Description");
-
                     DispatcherHelper.UIDispatcher.Invoke(() =>
                     {
                         _mediaControlViewModel.PauseCommand.Execute(this);
                         Log.Info("Playing Extended Description");
                         description.Play();
                     });
+                    _descriptionInfoTabViewModel.ExtendedDescriptionSelectedInList = description;
                     break;
                 }
             }

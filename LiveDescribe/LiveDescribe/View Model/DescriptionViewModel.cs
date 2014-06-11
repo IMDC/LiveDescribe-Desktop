@@ -84,7 +84,6 @@ namespace LiveDescribe.View_Model
         #endregion
 
         #region Binding Functions
-
         /// <summary>
         /// Records the description
         /// </summary>
