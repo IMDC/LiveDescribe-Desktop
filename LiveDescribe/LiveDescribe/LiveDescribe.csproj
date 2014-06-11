@@ -106,6 +106,7 @@
     <Compile Include="Model\Header.cs" />
     <Compile Include="Model\Waveform.cs" />
     <Compile Include="Utilities\AudioAnalyzer.cs" />
+    <Compile Include="Utilities\CommandExtensions.cs" />
     <Compile Include="Utilities\CopyFileProgressChangedEventArgs.cs" />
     <Compile Include="Utilities\FileDeleter.cs" />
     <Compile Include="Utilities\FileReader.cs" />

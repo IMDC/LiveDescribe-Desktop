@@ -151,7 +151,7 @@ namespace LiveDescribe.View_Model
         /// <param name="param"></param>
         public void OnMarkerMouseDown()
         {
-            PauseCommand.Execute(this);
+            PauseCommand.Execute();
             EventHandler handler = OnMarkerMouseDownRequested;
             if (handler == null) return;
             handler(this, EventArgs.Empty);

@@ -663,7 +663,7 @@ namespace LiveDescribe.View
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 //execute the pause command because we want to pause the video when someone is clicking through the video
-                _mediaControlViewModel.PauseCommand.Execute(this);
+                _mediaControlViewModel.PauseCommand.Execute();
                 var xPosition = e.GetPosition(NumberTimeline).X;
                 var newValue = (xPosition / _canvasWidth) * _videoDuration;
 

@@ -4,6 +4,7 @@ using GalaSoft.MvvmLight.Threading;
 using LiveDescribe.Events;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
+using LiveDescribe.Utilities;
 using NAudio.Wave;
 using System;
 using System.Collections.ObjectModel;
@@ -365,7 +366,7 @@ namespace LiveDescribe.View_Model
                         int newStartInVideo = (int)(_mediaVideo.Position.TotalMilliseconds
                             + (LiveDescribeConstants.ExtendedDescriptionStartIntervalMax - offset + 1));
                         _mediaVideo.Position = new TimeSpan(0, 0, 0, 0, newStartInVideo);
-                        _mediaControlViewModel.PlayCommand.Execute(this);
+                        _mediaControlViewModel.PlayCommand.Execute();
                         Log.Info("Extended description finished");
                     }
                     else

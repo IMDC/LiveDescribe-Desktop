@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 
 namespace LiveDescribe.Utilities
 {
     /// <summary>
-    /// Contains specific message boxes 
+    /// Contains specific message boxes
     /// </summary>
     public static class MessageBoxFactory
     {
@@ -32,7 +27,7 @@ namespace LiveDescribe.Utilities
         public static MessageBoxResult ShowWarningQuestion(string warningMessage)
         {
             return MessageBox.Show(warningMessage, "Warning", MessageBoxButton.YesNoCancel,
-                            MessageBoxImage.Warning);
+                MessageBoxImage.Warning);
         }
     }
 }

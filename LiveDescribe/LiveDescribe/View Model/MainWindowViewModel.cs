@@ -84,7 +84,7 @@ namespace LiveDescribe.View_Model
                             " Do you want to save changes before closing?", _project.ProjectName));
 
                         if (result == MessageBoxResult.Yes)
-                            SaveProject.Execute(null);
+                            SaveProject.Execute();
                         else if (result == MessageBoxResult.Cancel)
                             return;
                     }
@@ -181,7 +181,7 @@ namespace LiveDescribe.View_Model
                 {
                     var p = _project;
 
-                    CloseProject.Execute(null);
+                    CloseProject.Execute();
 
                     Directory.Delete(p.Folders.Cache, true);
 
@@ -262,7 +262,7 @@ namespace LiveDescribe.View_Model
                     _spacesviewmodel.AddSpace(space);
                 }
 
-                SaveProject.Execute(null);
+                SaveProject.Execute();
             };
             #endregion
 
@@ -495,8 +495,7 @@ namespace LiveDescribe.View_Model
         /// <param name="p">The project to initialize</param>
         public void SetProject(Project p)
         {
-            if (CloseProject.CanExecute(null))
-                CloseProject.Execute(null);
+            CloseProject.ExecuteIfCan();
 
             _project = p;
 
@@ -565,7 +564,7 @@ namespace LiveDescribe.View_Model
 
                 if (result == MessageBoxResult.Yes)
                 {
-                    SaveProject.Execute(null);
+                    SaveProject.Execute();
                     return true;
                 }
                 if (result == MessageBoxResult.No) //Exit but don't save
