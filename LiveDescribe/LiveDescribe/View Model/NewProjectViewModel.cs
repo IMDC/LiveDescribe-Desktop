@@ -164,13 +164,13 @@ namespace LiveDescribe.View_Model
             {
                 //Get a video path relative to the project folder
                 p = new Project(_projectName, _projectPath);
-                var projectPath = new Uri(p.Folders.Project, UriKind.Absolute);
-                var relativeRoot = new Uri(_videoPath, UriKind.Absolute);
+                var projectFolderUri = new Uri(p.Folders.Project, UriKind.Absolute);
+                var videoFileUri = new Uri(_videoPath, UriKind.Absolute);
 
                 p.Files.Video = new ProjectFile
                 {
                     AbsolutePath = _videoPath,
-                    RelativePath = relativeRoot.MakeRelativeUri(projectPath).ToString(),
+                    RelativePath = projectFolderUri.MakeRelativeUri(videoFileUri).ToString(),
                 };
                 Log.Info("Attempting to create a project with a video located outside of project");
             }

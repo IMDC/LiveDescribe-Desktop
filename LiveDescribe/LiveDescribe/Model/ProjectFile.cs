@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 using System.IO;
 
 namespace LiveDescribe.Model
@@ -53,7 +54,10 @@ namespace LiveDescribe.Model
         /// <param name="pathToProjectFolder"></param>
         public void MakeAbsoluteWith(string pathToProjectFolder)
         {
-            AbsolutePath = Path.Combine(pathToProjectFolder, RelativePath);
+            var baseUri = new Uri(pathToProjectFolder, UriKind.Absolute);
+            var relativeUri = new Uri(RelativePath, UriKind.Relative);
+
+            AbsolutePath = new Uri(baseUri, relativeUri).LocalPath;
         }
 
         /// <summary>
