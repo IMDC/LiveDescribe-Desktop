@@ -18,7 +18,7 @@ namespace LiveDescribe.Model
 
         //All units of time is in milliseconds
         #region Instance variables
-        private string _filename;
+        private ProjectFile _audioFile;
         private string _descriptiontext;
         private bool _isextendeddescription;
         private double _startwavefiletime;
@@ -42,10 +42,10 @@ namespace LiveDescribe.Model
         public event EventHandler DescriptionFinishedPlaying;
         #endregion
 
-        public Description(string filepath, double startwavefiletime, double endwavefiletime,
-            double startinvideo, bool extendedDescription)
+        public Description(ProjectFile filepath, double startwavefiletime, double endwavefiletime,
+            double startinvideo, bool extendedDescription) : this()
         {
-            FileName = filepath;
+            AudioFile = filepath;
 
             DescriptionText = Path.GetFileNameWithoutExtension(filepath);
             IsExtendedDescription = extendedDescription;
@@ -62,6 +62,10 @@ namespace LiveDescribe.Model
             else
                 _endinvideo = startinvideo;
 
+        }
+
+        public Description()
+        {
             DescriptionMouseDownCommand = new RelayCommand<MouseEventArgs>(DescriptionMouseDown, param => true);
             DescriptionMouseUpCommand = new RelayCommand(DescriptionMouseUp, () => true);
             DescriptionDeleteCommand = new RelayCommand(DescriptionDelete, () => true);
@@ -85,7 +89,7 @@ namespace LiveDescribe.Model
                 //most likely using the reader variable, and the waveOut variable
                 return;
             }
-            var reader = new WaveFileReader(FileName);
+            var reader = new WaveFileReader(AudioFile);
             //reader.WaveFormat.AverageBytesPerSecond/ 1000 = Average Bytes Per Millisecond
             //AverageBytesPerMillisecond * (offset + StartWaveFileTime) = amount to play from
             reader.Seek((long)((reader.WaveFormat.AverageBytesPerSecond / 1000) * (offset + StartWaveFileTime)),
@@ -184,14 +188,14 @@ namespace LiveDescribe.Model
         /// <summary>
         /// Filename of the wav file
         /// </summary>
-        public string FileName
+        public ProjectFile AudioFile
         {
             set
             {
-                _filename = value;
+                _audioFile = value;
                 NotifyPropertyChanged();
             }
-            get { return _filename; }
+            get { return _audioFile; }
         }
 
         /// <summary>

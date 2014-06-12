@@ -63,6 +63,11 @@ namespace LiveDescribe.Utilities
             {
                 descriptions = JsonConvert.DeserializeObject<List<Description>>(r.ReadToEnd());
             }
+
+            foreach (var description in descriptions)
+            {
+                description.AudioFile.MakeAbsoluteWith(project.Folders.Project);
+            }
             Log.Info("Descriptions successfully read from " + project.Files.Descriptions);
             return descriptions;
         }

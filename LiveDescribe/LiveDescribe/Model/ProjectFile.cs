@@ -49,7 +49,8 @@ namespace LiveDescribe.Model
         }
 
         /// <summary>
-        ///
+        /// Sets the absolute path of the project file based on the combination of the project
+        /// folder path and the file's relative path.
         /// </summary>
         /// <param name="pathToProjectFolder"></param>
         public void MakeAbsoluteWith(string pathToProjectFolder)

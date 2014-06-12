@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Threading;
@@ -299,12 +300,18 @@ namespace LiveDescribe.ViewModel
         {
             Log.Info("Finished Recording");
             MicrophoneStream.StopRecording();
-            string filepath = _waveWriter.Filename;
+            string audioFilePath = _waveWriter.Filename;
             _waveWriter.Dispose();
             _waveWriter = null;
-            var read = new WaveFileReader(filepath);
+            var read = new WaveFileReader(audioFilePath);
 
-            AddDescription(filepath, 0, read.TotalTime.TotalMilliseconds, _descriptionStartTime, ExtendedIsChecked);
+            var file = new ProjectFile
+            {
+                AbsolutePath = audioFilePath,
+                RelativePath = Path.Combine(Project.Folders.Descriptions.RelativePath, Path.GetFileName(audioFilePath))
+            };
+
+            AddDescription(file, 0, read.TotalTime.TotalMilliseconds, _descriptionStartTime, ExtendedIsChecked);
             read.Dispose();
             //have to change the state of recording
             IsRecording = false;
@@ -325,7 +332,7 @@ namespace LiveDescribe.ViewModel
         /// <param name="endwavefiletime">The end time in the wav file of the description</param>
         /// <param name="startinvideo">The time in the video the description should start playing</param>
         /// <param name="isExtendedDescription">Whether it is an extended description or not</param>
-        public void AddDescription(string filename, double startwavefiletime, double endwavefiletime,
+        public void AddDescription(ProjectFile filename, double startwavefiletime, double endwavefiletime,
             double startinvideo, bool isExtendedDescription)
         {
             AddDescription(new Description(filename, startwavefiletime, endwavefiletime, startinvideo,
