@@ -54,10 +54,14 @@ namespace LiveDescribe.Model
         /// <param name="pathToProjectFolder"></param>
         public void MakeAbsoluteWith(string pathToProjectFolder)
         {
+            /* Note: Uris don't treat the last level of a path as a directory unless it is followed
+             * by a slash (or an escaped backslash for a windows path), so one must be added for
+             * paths obtained by using folderchooser or the Path class.
+             */
             var baseUri = new Uri(pathToProjectFolder + "\\", UriKind.Absolute);
             var relativeUri = new Uri(RelativePath, UriKind.Relative);
-
-            AbsolutePath = new Uri(baseUri, relativeUri).LocalPath;
+            var absoluteUri = new Uri(baseUri, relativeUri);
+            AbsolutePath = absoluteUri.LocalPath;
         }
 
         /// <summary>
