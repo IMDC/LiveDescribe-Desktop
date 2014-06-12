@@ -496,11 +496,10 @@ namespace LiveDescribe.ViewModel
         private void DescriptionFileNotFound(Description d)
         {
             //Pause from the UI thread.
-            DispatcherHelper.UIDispatcher.Invoke(() => _mediaControlViewModel.PauseCommand.Execute(null));
+            DispatcherHelper.UIDispatcher.Invoke(() => _mediaControlViewModel.PauseCommand.Execute());
 
             //TODO: Delete description if not found, or ask for file location?
-            Log.ErrorFormat("The description file could not be found at {0}");
-
+            Log.ErrorFormat("The description file could not be found at {0}", d.FileName);
             MessageBoxFactory.ShowError("The audio file for description could not be found at " + d.FileName);
         }
 

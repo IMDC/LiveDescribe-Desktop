@@ -104,7 +104,8 @@ namespace LiveDescribe.Model
             else
                 return;
 
-            _currentWaveOut.Stop();
+            if(_currentWaveOut != null)
+                _currentWaveOut.Stop();
         }
         #endregion
 
