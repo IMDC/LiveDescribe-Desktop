@@ -57,6 +57,10 @@ namespace LiveDescribeUnitTests
         #endregion
         #endregion
 
+        /// <summary>
+        /// Tests the creation of project files from given relative file paths. These paths are
+        /// expected to be contained in their base folder.
+        /// </summary>
         [TestMethod]
         public void InternalRelativeFileCreationTest()
         {
@@ -71,38 +75,81 @@ namespace LiveDescribeUnitTests
             ProjectFile pf2;
 
             //Act
-            pf1 = new ProjectFile { RelativePath = relativePath1 };
-            pf1.MakeAbsoluteWith(pathToProjectFolder);
+            pf1 = ProjectFile.FromRelativePath(relativePath1, pathToProjectFolder);
 
-            pf2 = new ProjectFile { RelativePath = relativePath2 };
-            pf2.MakeAbsoluteWith(pathToProjectFolder);
+            pf2 = ProjectFile.FromRelativePath(relativePath2, pathToProjectFolder);
 
             //Assert
             Assert.AreEqual(pf1.AbsolutePath, expectedAbsolutePath1);
             Assert.AreEqual(pf2.AbsolutePath, expectedAbsolutePath2);
         }
 
+        /// <summary>
+        /// Tests the creation of project files from given relative file paths. These paths are
+        /// expected to be contained outside of the given base folder.
+        /// </summary>
         [TestMethod]
         public void ExternalRelativeFileCreationTest()
         {
             //Arrange
-            string relativePath = "../../Valentin/Videos/Wildlife.wmv";
             string pathToProjectFolder = "D:\\Test\\RelTest2";
+            string relativePath1 = "../../Valentin/Videos/Wildlife.wmv";
+            string expectedPath1 = "D:\\Valentin\\Videos\\Wildlife.wmv";
 
-            string expectedPath = "D:\\Valentin\\Videos\\Wildlife.wmv";
-
-            ProjectFile f;
+            ProjectFile pf1;
 
             //Act
-            f = new ProjectFile
-            {
-                RelativePath = relativePath,
-            };
-
-            f.MakeAbsoluteWith(pathToProjectFolder);
+            pf1 = ProjectFile.FromRelativePath(relativePath1, pathToProjectFolder);
 
             //Assert
-            Assert.AreEqual(f.AbsolutePath, expectedPath);
+            Assert.AreEqual(pf1.AbsolutePath, expectedPath1);
+        }
+
+        /// <summary>
+        /// Tests creation of project files from Absolute Paths expected to be contained inside
+        /// their given base folder.
+        /// </summary>
+        [TestMethod]
+        public void InternalAbsoluteFileCreationTest()
+        {
+            //Arrange
+            string pathToProjectFolder = "D:\\Test\\Wildlife";
+            string absolutePath1 = "D:\\Test\\Wildlife\\Wildlife.wmv";
+            string absolutePath2 = "D:\\Test\\Wildlife\\projectCache\\waveform.bin";
+            string expectedRelativePath1 = "Wildlife.wmv";
+            string expectedRelativePath2 = "projectCache/waveform.bin";
+
+            ProjectFile pf1;
+            ProjectFile pf2;
+
+            //Act
+            pf1 = ProjectFile.FromAbsolutePath(absolutePath1, pathToProjectFolder);
+            pf2 = ProjectFile.FromAbsolutePath(absolutePath2, pathToProjectFolder);
+
+            //Assert
+            Assert.AreEqual(pf1.RelativePath, expectedRelativePath1);
+            Assert.AreEqual(pf2.RelativePath, expectedRelativePath2);
+        }
+
+        /// <summary>
+        /// Tests creation of project files from Absolute paths expected to be contained outside
+        /// their given base folder.
+        /// </summary>
+        [TestMethod]
+        public void ExternalAbsoluteFileCreationTest()
+        {
+            //Arrange
+            string absolutePath1 = "D:\\Valentin\\Videos\\Wildlife.wmv";
+            string basePath = "D:\\Test\\RelTest2";
+            string expectedRelativePath1 = "../../Valentin/Videos/Wildlife.wmv";
+
+            ProjectFile pf1;
+
+            //Act
+            pf1 = ProjectFile.FromAbsolutePath(absolutePath1, basePath);
+
+            //Assert
+            Assert.AreEqual(pf1.RelativePath, expectedRelativePath1);
         }
     }
 }

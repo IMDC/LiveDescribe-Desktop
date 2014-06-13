@@ -145,19 +145,19 @@ namespace LiveDescribe.Model
             Folders = new ProjectFolders
             {
                 Project = projectFolder,
-                Cache = new ProjectFile(projectFolder, Names.CacheFolder),
-                Descriptions = new ProjectFile(projectFolder, Names.DescriptionsFolder),
+                Cache = ProjectFile.FromRelativePath(Names.CacheFolder, projectFolder),
+                Descriptions = ProjectFile.FromRelativePath(Names.DescriptionsFolder,projectFolder),
             };
 
             Files = new ProjectFiles
             {
-                Project = new ProjectFile(Folders.Project, ProjectName + Names.ProjectExtension),
-                Descriptions = new ProjectFile(Folders.Project, Names.DescriptionsFile),
-                Spaces = new ProjectFile(Folders.Project, Names.SpacesFile),
-                WaveFormHeader = new ProjectFile(Folders.Project, Path.Combine(Folders.Cache.RelativePath,
-                    Names.WaveFormHeader)),
-                WaveForm = new ProjectFile(Folders.Project, Path.Combine(Folders.Cache.RelativePath,
-                    Names.WaveFormFile)),
+                Project = ProjectFile.FromRelativePath(projectName + Names.ProjectExtension, projectFolder),
+                Descriptions = ProjectFile.FromRelativePath(Names.DescriptionsFile, projectFolder),
+                Spaces = ProjectFile.FromRelativePath(Names.SpacesFile, projectFolder),
+                WaveFormHeader = ProjectFile.FromRelativePath(Path.Combine(Folders.Cache.RelativePath,
+                    Names.WaveFormHeader), projectFolder),
+                WaveForm = ProjectFile.FromRelativePath(Path.Combine(Folders.Cache.RelativePath,
+                Names.WaveFormFile), projectFolder),
             };
         }
 
@@ -170,7 +170,7 @@ namespace LiveDescribe.Model
         public Project(string projectName, string videoFileName, string projectPath) :
             this(projectName, projectPath)
         {
-            Files.Video = new ProjectFile(Folders.Project, videoFileName);
+            Files.Video = ProjectFile.FromRelativePath(videoFileName, Folders.Project);
         }
 
         /// <summary>
