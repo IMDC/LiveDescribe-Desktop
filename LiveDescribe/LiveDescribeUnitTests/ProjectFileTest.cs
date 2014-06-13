@@ -76,7 +76,6 @@ namespace LiveDescribeUnitTests
 
             //Act
             pf1 = ProjectFile.FromRelativePath(relativePath1, pathToProjectFolder);
-
             pf2 = ProjectFile.FromRelativePath(relativePath2, pathToProjectFolder);
 
             //Assert

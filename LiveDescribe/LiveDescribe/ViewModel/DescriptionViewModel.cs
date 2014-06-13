@@ -305,11 +305,7 @@ namespace LiveDescribe.ViewModel
             _waveWriter = null;
             var read = new WaveFileReader(audioFilePath);
 
-            var file = new ProjectFile
-            {
-                AbsolutePath = audioFilePath,
-                RelativePath = Path.Combine(Project.Folders.Descriptions.RelativePath, Path.GetFileName(audioFilePath))
-            };
+            var file = ProjectFile.FromAbsolutePath(audioFilePath, Project.Folders.Project);
 
             AddDescription(file, 0, read.TotalTime.TotalMilliseconds, _descriptionStartTime, ExtendedIsChecked);
             read.Dispose();

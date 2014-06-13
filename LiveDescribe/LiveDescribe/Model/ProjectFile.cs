@@ -71,7 +71,8 @@ namespace LiveDescribe.Model
         #endregion
 
         /// <summary>
-        /// Empty Constructor to allow for JSON serialization.
+        /// Empty Constructor to allow for JSON serialization. The static factory constructor
+        /// methods should be favoured over this method.
         /// </summary>
         public ProjectFile()
         { }
