@@ -66,6 +66,7 @@ namespace LiveDescribe.View
         private readonly DescriptionViewModel _descriptionViewModel;
         private readonly DescriptionInfoTabViewModel _descriptionInfoTabViewModel;
         private readonly MainWindowViewModel _mainWindowViewModel;
+        private readonly AudioCanvasViewModel _audioCanvasViewModel;
         private double _originalPositionForDraggingDescription = -1;
         private double _originalPositionForDraggingSpace = -1;
         private Point _rightClickPointOnAudioCanvas;
@@ -74,6 +75,8 @@ namespace LiveDescribe.View
         private readonly Cursor _grabCursor;
         private readonly Cursor _grabbingCursor;
         private readonly LiveDescribeMediaPlayer _videoMedia;
+
+        private readonly Canvas _audioCanvas;
         #endregion
 
         public MainWindow()
@@ -95,6 +98,8 @@ namespace LiveDescribe.View
             _descriptionViewModel = mainWindowViewModel.DescriptionViewModel;
             _spacesViewModel = mainWindowViewModel.SpacesViewModel;
             _descriptionInfoTabViewModel = mainWindowViewModel.DescriptionInfoTabViewModel;
+            _audioCanvasViewModel = mainWindowViewModel.AudioCanvasViewModel;
+            _audioCanvas = AudioCanvasControl.AudioCanvas;
 
             var cursfile = Application.GetResourceStream(new Uri("pack://application:,,,/Resources/Cursors/grab.cur"));
             _grabCursor = new Cursor(cursfile.Stream);
@@ -134,7 +139,7 @@ namespace LiveDescribe.View
                     //this is to recheck all the graphics states
                     CommandManager.InvalidateRequerySuggested();
 
-                    double position = (_videoMedia.Position.TotalMilliseconds / _videoDuration) * (AudioCanvas.Width);
+                    double position = (_videoMedia.Position.TotalMilliseconds / _videoDuration) * (_audioCanvas.Width);
                     UpdateMarkerPosition(position - MarkerOffset);
                 };
 
@@ -151,7 +156,7 @@ namespace LiveDescribe.View
 
             mainWindowViewModel.ProjectClosed += (sender, e) =>
             {
-                AudioCanvas.Children.Clear();
+                _audioCanvas.Children.Clear();
                 NumberTimeline.Children.Clear();
 
                 UpdateMarkerPosition(-MarkerOffset);
@@ -212,7 +217,7 @@ namespace LiveDescribe.View
                     }
 
 
-                    var xPosition = Mouse.GetPosition(AudioCanvas).X;
+                    var xPosition = Mouse.GetPosition(_audioCanvas).X;
                     var middleOfMarker = xPosition - MarkerOffset;
 
                     //make sure the middle of the marker doesn't go below the beginning of the canvas
@@ -317,12 +322,12 @@ namespace LiveDescribe.View
                             {
                                 _descriptionInfoTabViewModel.SpaceSelectedInList = space;
 
-                                double xPos = args.GetPosition(AudioCanvas).X;
+                                double xPos = args.GetPosition(_audioCanvas).X;
 
                                 //prepare space for dragging
                                 _originalPositionForDraggingSpace = xPos;
                                 _spaceBeingModified = space;
-                                AudioCanvas.CaptureMouse();
+                                _audioCanvas.CaptureMouse();
 
                                 if (xPos > (space.X + space.Width - ResizeSpaceOffset))
                                 {
@@ -345,7 +350,7 @@ namespace LiveDescribe.View
                     space.SpaceMouseMoveEvent += (sender1, e1) =>
                         {
                             var args = (MouseEventArgs)e1;
-                            double xPos = args.GetPosition(AudioCanvas).X;
+                            double xPos = args.GetPosition(_audioCanvas).X;
 
                             //Changes cursor if the mouse hovers over the end or the beginning of the space
                             if (xPos > (space.X + space.Width - ResizeSpaceOffset))
@@ -375,7 +380,7 @@ namespace LiveDescribe.View
                 var space = args.Space;
 
                 double middle = _rightClickPointOnAudioCanvas.X;  // going to be the middle of the space
-                double middleTime = (_videoDuration / AudioCanvas.Width) * middle;  // middle of the space in milliseconds
+                double middleTime = (_videoDuration / _audioCanvas.Width) * middle;  // middle of the space in milliseconds
                 double starttime = middleTime - (DefaultSpaceLengthInMilliSeconds / 2);
                 double endtime = middleTime + (DefaultSpaceLengthInMilliSeconds / 2);
 
@@ -419,6 +424,14 @@ namespace LiveDescribe.View
                 }
             };
             #endregion
+
+            #region Event Listeners For AudioCanvasViewModel
+
+            _audioCanvasViewModel.AudioCanvasMouseDownEvent += AudioCanvas_OnMouseDown;
+            _audioCanvasViewModel.AudioCanvasMouseMoveEvent += AudioCanvas_MouseMove;
+            _audioCanvasViewModel.AudioCanvasMouseUpEvent += AudioCanvas_MouseUp;
+            _audioCanvasViewModel.AudioCanvasMouseRightButtonDownEvent += AudioCanvas_RecordRightClickPosition;
+            #endregion
         }
 
         /// <summary>
@@ -437,7 +450,7 @@ namespace LiveDescribe.View
                 ScrollRightIfCan(canvasLeft);
                 Dispatcher.Invoke(delegate
                 {
-                    double position = (_videoMedia.Position.TotalMilliseconds / _videoDuration) * (AudioCanvas.Width);
+                    double position = (_videoMedia.Position.TotalMilliseconds / _videoDuration) * (_audioCanvas.Width);
                     UpdateMarkerPosition(position - MarkerOffset);
                 });
 
@@ -474,11 +487,11 @@ namespace LiveDescribe.View
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void AudioCanvas_MouseUp(object sender, MouseButtonEventArgs e)
+        private void AudioCanvas_MouseUp(object sender, EventArgs e)
         {
             if (Mouse.LeftButton == MouseButtonState.Released)
             {
-                AudioCanvas.ReleaseMouseCapture();
+                _audioCanvas.ReleaseMouseCapture();
                 _spacesActionState = SpacesActionState.None;
             }
         }
@@ -488,10 +501,11 @@ namespace LiveDescribe.View
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void AudioCanvas_MouseMove(object sender, MouseEventArgs e)
+        private void AudioCanvas_MouseMove(object sender, EventArgs e)
         {
-            double xPos = e.GetPosition(AudioCanvas).X;
-            if (AudioCanvas.IsMouseCaptured)
+            MouseEventArgs e1 = (MouseEventArgs) e;
+            double xPos = e1.GetPosition(_audioCanvas).X;
+            if (_audioCanvas.IsMouseCaptured)
             {
                 if (_spacesActionState == SpacesActionState.ResizingEndOfSpace)
                 {
@@ -511,25 +525,25 @@ namespace LiveDescribe.View
         private void ResizeEndOfSpaceBeingModified(double mouseXPosition)
         {
             double newWidth = _spaceBeingModified.Width + (mouseXPosition - _originalPositionForDraggingSpace);
-            double lengthInMillisecondsNewWidth = (_videoDuration / AudioCanvas.Width) * newWidth;
+            double lengthInMillisecondsNewWidth = (_videoDuration / _audioCanvas.Width) * newWidth;
 
             //bounds checking
             if (lengthInMillisecondsNewWidth < SpacesViewModel.MinSpaceLengthInMSecs)
             {
-                newWidth = (AudioCanvas.Width / _videoDuration) * SpacesViewModel.MinSpaceLengthInMSecs;
+                newWidth = (_audioCanvas.Width / _videoDuration) * SpacesViewModel.MinSpaceLengthInMSecs;
                 //temporary fix, have to make the cursor attached to the end of the space somehow
-                AudioCanvas.ReleaseMouseCapture();
+                _audioCanvas.ReleaseMouseCapture();
             }
             else if ((_spaceBeingModified.StartInVideo + lengthInMillisecondsNewWidth) > _videoDuration)
             {
-                newWidth = (AudioCanvas.Width / _videoDuration) * (_videoDuration - _spaceBeingModified.StartInVideo);
+                newWidth = (_audioCanvas.Width / _videoDuration) * (_videoDuration - _spaceBeingModified.StartInVideo);
                 //temporary fix, have to make the cursor attached to the end of the space somehow
-                AudioCanvas.ReleaseMouseCapture();
+                _audioCanvas.ReleaseMouseCapture();
             }
 
             _spaceBeingModified.Width = newWidth;
             _originalPositionForDraggingSpace = mouseXPosition;
-            _spaceBeingModified.EndInVideo = _spaceBeingModified.StartInVideo + (_videoDuration / AudioCanvas.Width) * _spaceBeingModified.Width;
+            _spaceBeingModified.EndInVideo = _spaceBeingModified.StartInVideo + (_videoDuration / _audioCanvas.Width) * _spaceBeingModified.Width;
 
             Mouse.SetCursor(Cursors.SizeWE);
         }
@@ -538,25 +552,25 @@ namespace LiveDescribe.View
         {
             //left side of space
             double newPosition = _spaceBeingModified.X + (mouseXPosition - _originalPositionForDraggingSpace);
-            double newPositionMilliseconds = (_videoDuration / AudioCanvas.Width) * newPosition;
+            double newPositionMilliseconds = (_videoDuration / _audioCanvas.Width) * newPosition;
 
             //bounds checking
             if (newPositionMilliseconds < 0)
             {
                 newPosition = 0;
                 //temporary fix, have to make the cursor attached to the end of the space somehow
-                AudioCanvas.ReleaseMouseCapture();
+                _audioCanvas.ReleaseMouseCapture();
             }
             else if ((_spaceBeingModified.EndInVideo - newPositionMilliseconds) < SpacesViewModel.MinSpaceLengthInMSecs)
             {
-                newPosition = (AudioCanvas.Width / _videoDuration) * (_spaceBeingModified.EndInVideo - SpacesViewModel.MinSpaceLengthInMSecs);
+                newPosition = (_audioCanvas.Width / _videoDuration) * (_spaceBeingModified.EndInVideo - SpacesViewModel.MinSpaceLengthInMSecs);
                 //temporary fix, have to make the cursor attached to the end of the space somehow
-                AudioCanvas.ReleaseMouseCapture();
+                _audioCanvas.ReleaseMouseCapture();
             }
 
             _spaceBeingModified.X = newPosition;
-            _spaceBeingModified.StartInVideo = (_videoDuration / AudioCanvas.Width) * newPosition;
-            _spaceBeingModified.Width = (AudioCanvas.Width / _videoDuration) * (_spaceBeingModified.EndInVideo - _spaceBeingModified.StartInVideo);
+            _spaceBeingModified.StartInVideo = (_videoDuration / _audioCanvas.Width) * newPosition;
+            _spaceBeingModified.Width = (_audioCanvas.Width / _videoDuration) * (_spaceBeingModified.EndInVideo - _spaceBeingModified.StartInVideo);
 
             _originalPositionForDraggingSpace = mouseXPosition;
             Mouse.SetCursor(Cursors.SizeWE);
@@ -565,20 +579,20 @@ namespace LiveDescribe.View
         private void DragSpaceBeingModified(double mouseXPosition)
         {
             double newPosition = _spaceBeingModified.X + (mouseXPosition - _originalPositionForDraggingSpace);
-            double newPositionMilliseconds = (_videoDuration / AudioCanvas.Width) * newPosition;
+            double newPositionMilliseconds = (_videoDuration / _audioCanvas.Width) * newPosition;
             double lengthOfSpaceMilliseconds = _spaceBeingModified.EndInVideo - _spaceBeingModified.StartInVideo;
             //size in pixels of the space
-            double size = (AudioCanvas.Width / _videoDuration) * lengthOfSpaceMilliseconds;
+            double size = (_audioCanvas.Width / _videoDuration) * lengthOfSpaceMilliseconds;
 
             if (newPositionMilliseconds < 0)
                 newPosition = 0;
             else if ((newPositionMilliseconds + lengthOfSpaceMilliseconds) > _videoDuration)
-                newPosition = (AudioCanvas.Width / _videoDuration) * (_videoDuration - lengthOfSpaceMilliseconds);
+                newPosition = (_audioCanvas.Width / _videoDuration) * (_videoDuration - lengthOfSpaceMilliseconds);
 
             _spaceBeingModified.X = newPosition;
             _originalPositionForDraggingSpace = mouseXPosition;
-            _spaceBeingModified.StartInVideo = (_videoDuration / AudioCanvas.Width) * (_spaceBeingModified.X);
-            _spaceBeingModified.EndInVideo = _spaceBeingModified.StartInVideo + (_videoDuration / AudioCanvas.Width) * size;
+            _spaceBeingModified.StartInVideo = (_videoDuration / _audioCanvas.Width) * (_spaceBeingModified.X);
+            _spaceBeingModified.EndInVideo = _spaceBeingModified.StartInVideo + (_videoDuration / _audioCanvas.Width) * size;
             Mouse.SetCursor(_grabbingCursor);
         }
 
@@ -587,7 +601,7 @@ namespace LiveDescribe.View
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void AudioCanvas_OnMouseDown(object sender, MouseButtonEventArgs e)
+        private void AudioCanvas_OnMouseDown(object sender, EventArgs e)
         {
             //if we aren't dragging a description or space, we want to unselect them out of the list
             if (_spacesActionState == SpacesActionState.None && _descriptionActionState == DescriptionsActionState.None)
@@ -627,27 +641,28 @@ namespace LiveDescribe.View
         private void DragDescriptionBeingModified(double mouseXPos)
         {
             double newPosition = _descriptionBeingModified.X + (mouseXPos - _originalPositionForDraggingDescription);
-            double newPositionMilliseconds = (_videoDuration / AudioCanvas.Width) * newPosition;
+            double newPositionMilliseconds = (_videoDuration / _audioCanvas.Width) * newPosition;
             double lengthOfDescriptionMilliseconds = _descriptionBeingModified.EndInVideo - _descriptionBeingModified.StartInVideo;
 
             //bounds checking when dragging the description
             if (newPositionMilliseconds < 0)
                 newPosition = 0;
             else if ((newPositionMilliseconds + lengthOfDescriptionMilliseconds) > _videoDuration)
-                newPosition = (AudioCanvas.Width / _videoDuration) * (_videoDuration - lengthOfDescriptionMilliseconds);
+                newPosition = (_audioCanvas.Width / _videoDuration) * (_videoDuration - lengthOfDescriptionMilliseconds);
 
             _descriptionBeingModified.X = newPosition;
             _originalPositionForDraggingDescription = mouseXPos;
-            _descriptionBeingModified.StartInVideo = (_videoDuration / AudioCanvas.Width) * (_descriptionBeingModified.X);
+            _descriptionBeingModified.StartInVideo = (_videoDuration / _audioCanvas.Width) * (_descriptionBeingModified.X);
             _descriptionBeingModified.EndInVideo = _descriptionBeingModified.StartInVideo + (_descriptionBeingModified.EndWaveFileTime - _descriptionBeingModified.StartWaveFileTime);
             Mouse.SetCursor(_grabbingCursor);
         }
 
-        private void AudioCanvas_RecordRightClickPosition(object sender, MouseButtonEventArgs e)
+        private void AudioCanvas_RecordRightClickPosition(object sender, EventArgs e)
         {
             //record the position in which you right clicked on the canvas
             //this position is used to calculate where on the audio canvas to draw a space
-            _rightClickPointOnAudioCanvas = e.GetPosition(AudioCanvas);
+            MouseEventArgs e1 = (MouseEventArgs)e;
+            _rightClickPointOnAudioCanvas = e1.GetPosition(_audioCanvas);
         }
 
         /// <summary>
@@ -728,7 +743,7 @@ namespace LiveDescribe.View
         {
             double screenWidth = SystemParameters.PrimaryScreenWidth;
             double staticCanvasWidth = (_videoDuration / (PageTimeBeforeCanvasScrolls * 1000)) * screenWidth;
-            AudioCanvas.MaxWidth = staticCanvasWidth;
+            _audioCanvas.MaxWidth = staticCanvasWidth;
             return staticCanvasWidth;
         }
 
@@ -749,10 +764,10 @@ namespace LiveDescribe.View
 
             List<short> data = _mediaControlViewModel.Waveform.Data;
             double samplesPerPixel = Math.Max(data.Count / _canvasWidth, 1);
-            double middle = AudioCanvas.ActualHeight / 2;
+            double middle = _audioCanvas.ActualHeight / 2;
             double yscale = middle;
 
-            AudioCanvas.Children.Clear();
+            _audioCanvas.Children.Clear();
 
             int begin = (int)TimeLineScrollViewer.HorizontalOffset;
             int ratio = _mediaControlViewModel.Waveform.Header.NumChannels == 2 ? 40 : 80;
@@ -770,7 +785,7 @@ namespace LiveDescribe.View
                 {
                     double max = (double)data.GetRange((int)sampleStart, (int)samplesPerPixel).Max() / short.MaxValue;
                     double min = (double)data.GetRange((int)sampleStart, (int)samplesPerPixel).Min() / short.MaxValue;
-                    AudioCanvas.Children.Add(new Line
+                    _audioCanvas.Children.Add(new Line
                     {
                         Stroke = System.Windows.Media.Brushes.Black,
                         SnapsToDevicePixels = true, //Turn off anti-aliasing effect
@@ -785,16 +800,16 @@ namespace LiveDescribe.View
             }
 
             //re-add children of AudioCanvas
-            AudioCanvas.Children.Add(SpacesItemControl);
+            _audioCanvas.Children.Add(AudioCanvasControl.SpacesItemControl);
 
         }
 
         private void DrawDescription(Description description)
         {
             //set the Description values that are bound to the graphics in MainWindow.xaml
-            description.X = (description.StartInVideo / _videoDuration) * AudioCanvas.Width;
+            description.X = (description.StartInVideo / _videoDuration) * _audioCanvas.Width;
             description.Y = 0;
-            description.Width = (AudioCanvas.Width / _videoDuration) * (description.EndWaveFileTime -
+            description.Width = (_audioCanvas.Width / _videoDuration) * (description.EndWaveFileTime -
                 description.StartWaveFileTime);
             description.Height = DescriptionCanvas.ActualHeight;
         }
@@ -814,7 +829,7 @@ namespace LiveDescribe.View
         private void ResizeSpaces()
         {
             foreach (Space space in _spacesViewModel.Spaces)
-                space.Height = AudioCanvas.ActualHeight;
+                space.Height = _audioCanvas.ActualHeight;
         }
 
         private void AddLinesToNumberTimeLine()
@@ -869,7 +884,7 @@ namespace LiveDescribe.View
         {
             Log.Info("Setting timeline");
             NumberTimeline.Width = _canvasWidth;
-            AudioCanvas.Width = _canvasWidth;
+            _audioCanvas.Width = _canvasWidth;
             DescriptionCanvas.Width = _canvasWidth;
 
             DrawWaveForm();
@@ -884,10 +899,10 @@ namespace LiveDescribe.View
         /// <param name="space"></param>
         private void SetSpaceLocation(Space space)
         {
-            space.X = (AudioCanvas.Width / _videoDuration) * space.StartInVideo;
+            space.X = (_audioCanvas.Width / _videoDuration) * space.StartInVideo;
             space.Y = 0;
-            space.Height = AudioCanvas.ActualHeight;
-            space.Width = (AudioCanvas.Width / _videoDuration) * (space.EndInVideo - space.StartInVideo);
+            space.Height = _audioCanvas.ActualHeight;
+            space.Width = (_audioCanvas.Width / _videoDuration) * (space.EndInVideo - space.StartInVideo);
         }
         #endregion
 
