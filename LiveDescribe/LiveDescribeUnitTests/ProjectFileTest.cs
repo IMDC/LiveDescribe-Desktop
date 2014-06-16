@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Text;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -65,22 +66,32 @@ namespace LiveDescribeUnitTests
         public void InternalRelativeFileCreationTest()
         {
             //Arrange
-            string pathToProjectFolder = "D:\\Test\\Wildlife";
-            string relativePath1 = "Wildlife.wmv";
-            string relativePath2 = "projectCache\\waveform.bin";
-            string expectedAbsolutePath1 = "D:\\Test\\Wildlife\\Wildlife.wmv";
-            string expectedAbsolutePath2 = "D:\\Test\\Wildlife\\projectCache\\waveform.bin";
+            const string pathToProjectFolder = "D:\\Test\\Wildlife";
+            const string relativePath1 = "Wildlife.wmv";
+            const string relativePath2 = "projectCache\\waveform.bin";
+            const string expectedAbsolutePath1 = "D:\\Test\\Wildlife\\Wildlife.wmv";
+            const string expectedAbsolutePath2 = "D:\\Test\\Wildlife\\projectCache\\waveform.bin";
 
             ProjectFile pf1;
+            ProjectFile pf1a;
             ProjectFile pf2;
+            ProjectFile pf2a;
 
             //Act
             pf1 = ProjectFile.FromRelativePath(relativePath1, pathToProjectFolder);
+            pf1a = new ProjectFile { RelativePath = relativePath1 };
+            pf1a.MakeAbsoluteWith(pathToProjectFolder);
+
             pf2 = ProjectFile.FromRelativePath(relativePath2, pathToProjectFolder);
+            pf2a = new ProjectFile { RelativePath = relativePath2 };
+            pf2a.MakeAbsoluteWith(pathToProjectFolder);
 
             //Assert
-            Assert.AreEqual(pf1.AbsolutePath, expectedAbsolutePath1);
-            Assert.AreEqual(pf2.AbsolutePath, expectedAbsolutePath2);
+            Assert.AreEqual(expectedAbsolutePath1, pf1.AbsolutePath);
+            Assert.AreEqual(expectedAbsolutePath1, pf1a.AbsolutePath);
+
+            Assert.AreEqual(expectedAbsolutePath2, pf2.AbsolutePath);
+            Assert.AreEqual(expectedAbsolutePath2, pf2a.AbsolutePath);
         }
 
         /// <summary>
@@ -91,17 +102,21 @@ namespace LiveDescribeUnitTests
         public void ExternalRelativeFileCreationTest()
         {
             //Arrange
-            string pathToProjectFolder = "D:\\Test\\RelTest2";
-            string relativePath1 = "../../Valentin/Videos/Wildlife.wmv";
-            string expectedPath1 = "D:\\Valentin\\Videos\\Wildlife.wmv";
+            const string pathToProjectFolder = "D:\\Test\\RelTest2";
+            const string relativePath1 = "../../Valentin/Videos/Wildlife.wmv";
+            const string expectedPath1 = "D:\\Valentin\\Videos\\Wildlife.wmv";
 
             ProjectFile pf1;
+            ProjectFile pf1a;
 
             //Act
             pf1 = ProjectFile.FromRelativePath(relativePath1, pathToProjectFolder);
+            pf1a = new ProjectFile { RelativePath = relativePath1 };
+            pf1a.MakeAbsoluteWith(pathToProjectFolder);
 
             //Assert
-            Assert.AreEqual(pf1.AbsolutePath, expectedPath1);
+            Assert.AreEqual(expectedPath1, pf1.AbsolutePath);
+            Assert.AreEqual(expectedPath1, pf1a);
         }
 
         /// <summary>
@@ -112,22 +127,31 @@ namespace LiveDescribeUnitTests
         public void InternalAbsoluteFileCreationTest()
         {
             //Arrange
-            string pathToProjectFolder = "D:\\Test\\Wildlife";
-            string absolutePath1 = "D:\\Test\\Wildlife\\Wildlife.wmv";
-            string absolutePath2 = "D:\\Test\\Wildlife\\projectCache\\waveform.bin";
-            string expectedRelativePath1 = "Wildlife.wmv";
-            string expectedRelativePath2 = "projectCache/waveform.bin";
+            const string pathToProjectFolder = "D:\\Test\\Wildlife";
+            const string absolutePath1 = "D:\\Test\\Wildlife\\Wildlife.wmv";
+            const string absolutePath2 = "D:\\Test\\Wildlife\\projectCache\\waveform.bin";
+            const string expectedRelativePath1 = "Wildlife.wmv";
+            const string expectedRelativePath2 = "projectCache/waveform.bin";
 
             ProjectFile pf1;
+            ProjectFile pf1a;
             ProjectFile pf2;
+            ProjectFile pf2a;
 
             //Act
             pf1 = ProjectFile.FromAbsolutePath(absolutePath1, pathToProjectFolder);
+            pf1a = new ProjectFile { AbsolutePath = absolutePath1 };
+            pf1a.MakeRelativeTo(pathToProjectFolder);
+
             pf2 = ProjectFile.FromAbsolutePath(absolutePath2, pathToProjectFolder);
+            pf2a = new ProjectFile { AbsolutePath = absolutePath2 };
+            pf2a.MakeRelativeTo(pathToProjectFolder);
 
             //Assert
-            Assert.AreEqual(pf1.RelativePath, expectedRelativePath1);
-            Assert.AreEqual(pf2.RelativePath, expectedRelativePath2);
+            Assert.AreEqual(expectedRelativePath1, pf1.RelativePath);
+            Assert.AreEqual(expectedRelativePath1, pf1a.RelativePath);
+            Assert.AreEqual(expectedRelativePath2, pf2.RelativePath);
+            Assert.AreEqual(expectedRelativePath2, pf2a.RelativePath);
         }
 
         /// <summary>
@@ -138,17 +162,21 @@ namespace LiveDescribeUnitTests
         public void ExternalAbsoluteFileCreationTest()
         {
             //Arrange
-            string absolutePath1 = "D:\\Valentin\\Videos\\Wildlife.wmv";
-            string basePath = "D:\\Test\\RelTest2";
-            string expectedRelativePath1 = "../../Valentin/Videos/Wildlife.wmv";
+            const string absolutePath1 = "D:\\Valentin\\Videos\\Wildlife.wmv";
+            const string basePath = "D:\\Test\\RelTest2";
+            const string expectedRelativePath1 = "../../Valentin/Videos/Wildlife.wmv";
 
             ProjectFile pf1;
+            ProjectFile pf1a;
 
             //Act
             pf1 = ProjectFile.FromAbsolutePath(absolutePath1, basePath);
+            pf1a = new ProjectFile { AbsolutePath = absolutePath1 };
+            pf1a.MakeRelativeTo(basePath);
 
             //Assert
-            Assert.AreEqual(pf1.RelativePath, expectedRelativePath1);
+            Assert.AreEqual(expectedRelativePath1, pf1.RelativePath);
+            Assert.AreEqual(expectedRelativePath1, pf1a.RelativePath);
         }
     }
 }
