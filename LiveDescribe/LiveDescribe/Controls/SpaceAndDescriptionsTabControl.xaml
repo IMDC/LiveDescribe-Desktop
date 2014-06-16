@@ -38,7 +38,7 @@
                     ItemsSource="{Binding Spaces}">
                     <ListView.SelectedItem>
                         <Binding
-                            Path="SpaceSelectedInList"
+                            Path="SelectedSpace"
                             UpdateSourceTrigger="PropertyChanged"
                             ValidatesOnDataErrors="True"
                             Mode="TwoWay" />
@@ -91,7 +91,7 @@
                     ItemsSource="{Binding RegularDescriptions}">
                     <ListView.SelectedItem>
                         <Binding
-                            Path="RegularDescriptionSelectedInList"
+                            Path="SelectedRegularDescription"
                             UpdateSourceTrigger="PropertyChanged"
                             ValidatesOnDataErrors="True"
                             Mode="TwoWay" />
@@ -144,7 +144,7 @@
                     ItemsSource="{Binding ExtendedDescriptions}">
                     <ListView.SelectedItem>
                         <Binding
-                            Path="ExtendedDescriptionSelectedInList"
+                            Path="SelectedExtendedDescription"
                             UpdateSourceTrigger="PropertyChanged"
                             ValidatesOnDataErrors="True"
                             Mode="TwoWay" />

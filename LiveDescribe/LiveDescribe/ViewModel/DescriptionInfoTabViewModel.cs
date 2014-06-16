@@ -18,9 +18,9 @@ namespace LiveDescribe.ViewModel
         #region Instance Variables
         private readonly DescriptionViewModel _descriptionViewModel;
         private readonly SpacesViewModel _spacesViewModel;
-        private Description _regularDescriptionSelectedInList;
-        private Description _extendedDescriptionSelectedInList;
-        private Space _spaceSelectedInList;
+        private Description _selectedRegularDescription;
+        private Description _selecetedExtendedDescription;
+        private Space _selectedSpace;
         private String _descriptionAndSpaceText;
         private int _tabSelectedIndex;
         #endregion
@@ -33,9 +33,9 @@ namespace LiveDescribe.ViewModel
             SaveDescriptionTextCommand = new RelayCommand(SaveDescriptionText, SaveDescriptionTextStateCheck);
             ClearDescriptionTextCommand = new RelayCommand(ClearDescriptionText, () => true);
 
-            RegularDescriptionSelectedInList = null;
-            ExtendedDescriptionSelectedInList = null;
-            SpaceSelectedInList = null;
+            SelectedRegularDescription = null;
+            SelecetedExtendedDescription = null;
+            SelectedSpace = null;
             DescriptionAndSpaceText = null;
         }
 
@@ -51,139 +51,139 @@ namespace LiveDescribe.ViewModel
         /// <summary>
         /// Sets or gets the regular description selected in the tab control
         /// </summary>
-        public Description RegularDescriptionSelectedInList
+        public Description SelectedRegularDescription
         {
             set
             {
-                if (_regularDescriptionSelectedInList != null && value == null)
+                if (_selectedRegularDescription != null && value == null)
                 {
-                    _regularDescriptionSelectedInList.IsSelected = false;
-                    _regularDescriptionSelectedInList.PropertyChanged -= DescriptionFinishedPlaying;
+                    _selectedRegularDescription.IsSelected = false;
+                    _selectedRegularDescription.PropertyChanged -= DescriptionFinishedPlaying;
                 }
 
                 // Unselect previous descriptions and spaces selected
-                if (_regularDescriptionSelectedInList != null)
+                if (_selectedRegularDescription != null)
                 {
-                    _regularDescriptionSelectedInList.IsSelected = false;
-                    _regularDescriptionSelectedInList = null;
+                    _selectedRegularDescription.IsSelected = false;
+                    _selectedRegularDescription = null;
                 }
 
-                if (ExtendedDescriptionSelectedInList != null)
+                if (SelecetedExtendedDescription != null)
                 {
-                    ExtendedDescriptionSelectedInList.IsSelected = false;
-                    ExtendedDescriptionSelectedInList = null;
+                    SelecetedExtendedDescription.IsSelected = false;
+                    SelecetedExtendedDescription = null;
                 }
 
-                if (SpaceSelectedInList != null)
+                if (SelectedSpace != null)
                 {
-                    SpaceSelectedInList.IsSelected = false;
-                    SpaceSelectedInList = null;
+                    SelectedSpace.IsSelected = false;
+                    SelectedSpace = null;
                 }
 
-                _regularDescriptionSelectedInList = value;
+                _selectedRegularDescription = value;
 
-                if (_regularDescriptionSelectedInList != null)
+                if (_selectedRegularDescription != null)
                 {
-                    _regularDescriptionSelectedInList.IsSelected = true;
-                    _regularDescriptionSelectedInList.PropertyChanged += DescriptionFinishedPlaying;
+                    _selectedRegularDescription.IsSelected = true;
+                    _selectedRegularDescription.PropertyChanged += DescriptionFinishedPlaying;
                 }
 
                 RaisePropertyChanged();
             }
             get
             {
-                return _regularDescriptionSelectedInList;
+                return _selectedRegularDescription;
             }
         }
 
         /// <summary>
         /// Sets or gets the extended description selected in the tab control
         /// </summary>
-        public Description ExtendedDescriptionSelectedInList
+        public Description SelecetedExtendedDescription
         {
             set
             {
 
-                if (_extendedDescriptionSelectedInList != null && value == null)
+                if (_selecetedExtendedDescription != null && value == null)
                 {
-                    _extendedDescriptionSelectedInList.IsSelected = false;
-                    _extendedDescriptionSelectedInList.PropertyChanged -= DescriptionFinishedPlaying;
+                    _selecetedExtendedDescription.IsSelected = false;
+                    _selecetedExtendedDescription.PropertyChanged -= DescriptionFinishedPlaying;
                 }
 
                 // Unselect previous descriptions and spaces selected
-                if (RegularDescriptionSelectedInList != null)
+                if (SelectedRegularDescription != null)
                 {
-                    RegularDescriptionSelectedInList.IsSelected = false;
-                    RegularDescriptionSelectedInList = null;
+                    SelectedRegularDescription.IsSelected = false;
+                    SelectedRegularDescription = null;
                 }
 
-                if (_extendedDescriptionSelectedInList != null)
+                if (_selecetedExtendedDescription != null)
                 {
-                    _extendedDescriptionSelectedInList.IsSelected = false;
-                    _extendedDescriptionSelectedInList = null;
+                    _selecetedExtendedDescription.IsSelected = false;
+                    _selecetedExtendedDescription = null;
                 }
 
-                if (SpaceSelectedInList != null)
+                if (SelectedSpace != null)
                 {
-                    SpaceSelectedInList.IsSelected = false;
-                    SpaceSelectedInList = null;
+                    SelectedSpace.IsSelected = false;
+                    SelectedSpace = null;
                 }
 
-                _extendedDescriptionSelectedInList = value;
+                _selecetedExtendedDescription = value;
 
-                if (_extendedDescriptionSelectedInList != null)
+                if (_selecetedExtendedDescription != null)
                 {
-                    _extendedDescriptionSelectedInList.IsSelected = true;
-                    _extendedDescriptionSelectedInList.PropertyChanged += DescriptionFinishedPlaying;
+                    _selecetedExtendedDescription.IsSelected = true;
+                    _selecetedExtendedDescription.PropertyChanged += DescriptionFinishedPlaying;
                 }
 
                 RaisePropertyChanged();
             }
             get
             {
-                return _extendedDescriptionSelectedInList;
+                return _selecetedExtendedDescription;
             }
         }
 
         /// <summary>
         /// Sets or gets the space selected in the tab control
         /// </summary>
-        public Space SpaceSelectedInList
+        public Space SelectedSpace
         {
             set
             {
-                if (_spaceSelectedInList != null && value == null)
-                    _spaceSelectedInList.IsSelected = false;
+                if (_selectedSpace != null && value == null)
+                    _selectedSpace.IsSelected = false;
 
 
                 // Unselect previous descriptions and spaces selected
-                if (RegularDescriptionSelectedInList != null)
+                if (SelectedRegularDescription != null)
                 {
-                    RegularDescriptionSelectedInList.IsSelected = false;
-                    RegularDescriptionSelectedInList = null;
+                    SelectedRegularDescription.IsSelected = false;
+                    SelectedRegularDescription = null;
                 }
 
-                if (ExtendedDescriptionSelectedInList != null)
+                if (SelecetedExtendedDescription != null)
                 {
-                    ExtendedDescriptionSelectedInList.IsSelected = false;
-                    ExtendedDescriptionSelectedInList = null;
+                    SelecetedExtendedDescription.IsSelected = false;
+                    SelecetedExtendedDescription = null;
                 }
 
-                if (_spaceSelectedInList != null)
+                if (_selectedSpace != null)
                 {
-                    _spaceSelectedInList.IsSelected = false;
-                    _spaceSelectedInList = null;
+                    _selectedSpace.IsSelected = false;
+                    _selectedSpace = null;
                 }
 
-                _spaceSelectedInList = value;
+                _selectedSpace = value;
 
-                if (_spaceSelectedInList != null)
-                    _spaceSelectedInList.IsSelected = true;
+                if (_selectedSpace != null)
+                    _selectedSpace.IsSelected = true;
                 RaisePropertyChanged();
             }
             get
             {
-                return _spaceSelectedInList;
+                return _selectedSpace;
             }
         }
 
@@ -271,11 +271,11 @@ namespace LiveDescribe.ViewModel
         public void SaveDescriptionText()
         {
             if (TabSelectedIndex == RegularDescriptionTab)
-                RegularDescriptionSelectedInList.DescriptionText = DescriptionAndSpaceText;
+                SelectedRegularDescription.DescriptionText = DescriptionAndSpaceText;
             else if (TabSelectedIndex == ExtendedDescriptionTab)
-                ExtendedDescriptionSelectedInList.DescriptionText = DescriptionAndSpaceText;
+                SelecetedExtendedDescription.DescriptionText = DescriptionAndSpaceText;
             else if (TabSelectedIndex == SpaceTab)
-                SpaceSelectedInList.SpaceText = DescriptionAndSpaceText;
+                SelectedSpace.SpaceText = DescriptionAndSpaceText;
 
         }
 
@@ -300,11 +300,11 @@ namespace LiveDescribe.ViewModel
         /// <returns></returns>
         public bool SaveDescriptionTextStateCheck()
         {
-            if (ExtendedDescriptionSelectedInList != null && TabSelectedIndex == ExtendedDescriptionTab)
+            if (SelecetedExtendedDescription != null && TabSelectedIndex == ExtendedDescriptionTab)
                 return true;
-            if (RegularDescriptionSelectedInList != null && TabSelectedIndex == RegularDescriptionTab)
+            if (SelectedRegularDescription != null && TabSelectedIndex == RegularDescriptionTab)
                 return true;
-            if (SpaceSelectedInList != null && TabSelectedIndex == SpaceTab)
+            if (SelectedSpace != null && TabSelectedIndex == SpaceTab)
                 return true;
 
             return false;
@@ -315,9 +315,9 @@ namespace LiveDescribe.ViewModel
 
         public void UnSelectDescriptionsAndSpaceSelectedInList()
         {
-            RegularDescriptionSelectedInList = null;
-            ExtendedDescriptionSelectedInList = null;
-            SpaceSelectedInList = null;
+            SelectedRegularDescription = null;
+            SelecetedExtendedDescription = null;
+            SelectedSpace = null;
         }
         #endregion
     }

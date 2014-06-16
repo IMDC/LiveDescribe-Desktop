@@ -275,9 +275,9 @@ namespace LiveDescribe.View
                         if (Mouse.LeftButton == MouseButtonState.Pressed)
                         {
                             if (e.Description.IsExtendedDescription)
-                                _descriptionInfoTabViewModel.ExtendedDescriptionSelectedInList = e.Description;
+                                _descriptionInfoTabViewModel.SelecetedExtendedDescription = e.Description;
                             else
-                                _descriptionInfoTabViewModel.RegularDescriptionSelectedInList = e.Description;
+                                _descriptionInfoTabViewModel.SelectedRegularDescription = e.Description;
 
                             _originalPositionForDraggingDescription = e2.GetPosition(DescriptionCanvas).X;
                             _descriptionBeingModified = e.Description;
@@ -320,7 +320,7 @@ namespace LiveDescribe.View
 
                             if (Mouse.LeftButton == MouseButtonState.Pressed)
                             {
-                                _descriptionInfoTabViewModel.SpaceSelectedInList = space;
+                                _descriptionInfoTabViewModel.SelectedSpace = space;
 
                                 double xPos = args.GetPosition(_audioCanvas).X;
 

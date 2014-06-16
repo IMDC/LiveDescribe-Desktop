@@ -462,7 +462,7 @@ namespace LiveDescribe.ViewModel
                     }
 
                     _lastRegularDescriptionPlayed = description;
-                    _descriptionInfoTabViewModel.RegularDescriptionSelectedInList = description;
+                    _descriptionInfoTabViewModel.SelectedRegularDescription = description;
 
                     //description.Play(offset);
                     try { description.Play(offset); }
@@ -494,7 +494,7 @@ namespace LiveDescribe.ViewModel
                                 throw;
                         }
                     });
-                    _descriptionInfoTabViewModel.ExtendedDescriptionSelectedInList = description;
+                    _descriptionInfoTabViewModel.SelecetedExtendedDescription = description;
                     break;
                 }
             }

@@ -21,8 +21,8 @@ namespace LiveDescribe.ViewModel
         {
             descriptionInfo.PropertyChanged += (sender, args) =>
             {
-                if (args.PropertyName.Equals("SpaceSelectedInList"))
-                    SelectedSpace = descriptionInfo.SpaceSelectedInList;
+                if (args.PropertyName.Equals("SelectedSpace"))
+                    SelectedSpace = descriptionInfo.SelectedSpace;
             };
 
             _player = player;
