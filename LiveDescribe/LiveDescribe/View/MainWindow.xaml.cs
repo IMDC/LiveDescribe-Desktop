@@ -67,6 +67,7 @@ namespace LiveDescribe.View
         private readonly DescriptionInfoTabViewModel _descriptionInfoTabViewModel;
         private readonly MainWindowViewModel _mainWindowViewModel;
         private readonly AudioCanvasViewModel _audioCanvasViewModel;
+        private readonly DescriptionCanvasViewModel _descriptionCanvasViewModel;
         private double _originalPositionForDraggingDescription = -1;
         private double _originalPositionForDraggingSpace = -1;
         private Point _rightClickPointOnAudioCanvas;
@@ -77,6 +78,7 @@ namespace LiveDescribe.View
         private readonly LiveDescribeMediaPlayer _videoMedia;
 
         private readonly Canvas _audioCanvas;
+        private readonly Canvas _descriptionCanvas;
         #endregion
 
         public MainWindow()
@@ -99,11 +101,13 @@ namespace LiveDescribe.View
             _spacesViewModel = mainWindowViewModel.SpacesViewModel;
             _descriptionInfoTabViewModel = mainWindowViewModel.DescriptionInfoTabViewModel;
             _audioCanvasViewModel = mainWindowViewModel.AudioCanvasViewModel;
-            _audioCanvas = AudioCanvasControl.AudioCanvas;
+            _descriptionCanvasViewModel = mainWindowViewModel.DescriptionCanvasViewModel;
 
+            _audioCanvas = AudioCanvasControl.AudioCanvas;
+            _descriptionCanvas = DescriptionCanvasControl.DescriptionCanvas;
+            
             var cursfile = Application.GetResourceStream(new Uri("pack://application:,,,/Resources/Cursors/grab.cur"));
             _grabCursor = new Cursor(cursfile.Stream);
-
             cursfile = Application.GetResourceStream(new Uri("pack://application:,,,/Resources/Cursors/grabbing.cur"));
             _grabbingCursor = new Cursor(cursfile.Stream);
 
@@ -279,9 +283,9 @@ namespace LiveDescribe.View
                             else
                                 _descriptionInfoTabViewModel.RegularDescriptionSelectedInList = e.Description;
 
-                            _originalPositionForDraggingDescription = e2.GetPosition(DescriptionCanvas).X;
+                            _originalPositionForDraggingDescription = e2.GetPosition(_descriptionCanvas).X;
                             _descriptionBeingModified = e.Description;
-                            DescriptionCanvas.CaptureMouse();
+                            _descriptionCanvas.CaptureMouse();
                             Mouse.SetCursor(_grabbingCursor);
                             _descriptionActionState = DescriptionsActionState.Dragging;
                         }
@@ -432,6 +436,11 @@ namespace LiveDescribe.View
             _audioCanvasViewModel.AudioCanvasMouseUpEvent += AudioCanvas_MouseUp;
             _audioCanvasViewModel.AudioCanvasMouseRightButtonDownEvent += AudioCanvas_RecordRightClickPosition;
             #endregion
+
+            #region Event Listeners For DescriptionCanvasViewModel
+            _descriptionCanvasViewModel.DescriptionCanvasMouseUpEvent += DescriptionCanvas_MouseUp;
+            _descriptionCanvasViewModel.DescriptionCanvasMouseMoveEvent += DescriptionCanvas_MouseMove;
+            #endregion
         }
 
         /// <summary>
@@ -487,7 +496,7 @@ namespace LiveDescribe.View
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void AudioCanvas_MouseUp(object sender, EventArgs e)
+        private void AudioCanvas_MouseUp(object sender, MouseEventArgs e)
         {
             if (Mouse.LeftButton == MouseButtonState.Released)
             {
@@ -501,10 +510,9 @@ namespace LiveDescribe.View
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void AudioCanvas_MouseMove(object sender, EventArgs e)
+        private void AudioCanvas_MouseMove(object sender, MouseEventArgs e)
         {
-            MouseEventArgs e1 = (MouseEventArgs) e;
-            double xPos = e1.GetPosition(_audioCanvas).X;
+            double xPos = e.GetPosition(_audioCanvas).X;
             if (_audioCanvas.IsMouseCaptured)
             {
                 if (_spacesActionState == SpacesActionState.ResizingEndOfSpace)
@@ -601,7 +609,7 @@ namespace LiveDescribe.View
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void AudioCanvas_OnMouseDown(object sender, EventArgs e)
+        private void AudioCanvas_OnMouseDown(object sender, MouseEventArgs e)
         {
             //if we aren't dragging a description or space, we want to unselect them out of the list
             if (_spacesActionState == SpacesActionState.None && _descriptionActionState == DescriptionsActionState.None)
@@ -615,14 +623,14 @@ namespace LiveDescribe.View
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void DescriptionCanvas_MouseUp(object sender, MouseButtonEventArgs e)
+        private void DescriptionCanvas_MouseUp(object sender, MouseEventArgs e)
         {
             if (Mouse.LeftButton == MouseButtonState.Released)
             {
                 //used for drag and drop, when the left click is released we want to release the mouse capture over  the description
                 //and stop dragging the description
                 //the mouse gets captured when a description is left clicked
-                DescriptionCanvas.ReleaseMouseCapture();
+                _descriptionCanvas.ReleaseMouseCapture();
                 _descriptionActionState = DescriptionsActionState.None;
             }
         }
@@ -631,10 +639,10 @@ namespace LiveDescribe.View
         {
             //while the mouse is moving over the description canvas and if a description is clicked (DescriptionCanvas.IsMouseCaptured)
             //update the position of the description and the start and end times in the video
-            if (DescriptionCanvas.IsMouseCaptured)
+            if (_descriptionCanvas.IsMouseCaptured)
             {
                 if (_descriptionActionState == DescriptionsActionState.Dragging)
-                    DragDescriptionBeingModified(e.GetPosition(DescriptionCanvas).X);
+                    DragDescriptionBeingModified(e.GetPosition(_descriptionCanvas).X);
             }
         }
 
@@ -811,7 +819,7 @@ namespace LiveDescribe.View
             description.Y = 0;
             description.Width = (_audioCanvas.Width / _videoDuration) * (description.EndWaveFileTime -
                 description.StartWaveFileTime);
-            description.Height = DescriptionCanvas.ActualHeight;
+            description.Height = _descriptionCanvas.ActualHeight;
         }
 
         /// <summary>
@@ -820,7 +828,7 @@ namespace LiveDescribe.View
         private void ResizeDescriptions()
         {
             foreach (Description description in _descriptionViewModel.AllDescriptions)
-                description.Height = DescriptionCanvas.ActualHeight;
+                description.Height = _descriptionCanvas.ActualHeight;
         }
 
         /// <summary>
@@ -885,7 +893,7 @@ namespace LiveDescribe.View
             Log.Info("Setting timeline");
             NumberTimeline.Width = _canvasWidth;
             _audioCanvas.Width = _canvasWidth;
-            DescriptionCanvas.Width = _canvasWidth;
+            _descriptionCanvas.Width = _canvasWidth;
 
             DrawWaveForm();
             AddLinesToNumberTimeLine();

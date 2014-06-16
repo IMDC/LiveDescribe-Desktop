@@ -83,6 +83,9 @@
     <Compile Include="Controls\AudioCanvasControl.xaml.cs">
       <DependentUpon>AudioCanvasControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\DescriptionCanvasControl.xaml.cs">
+      <DependentUpon>DescriptionCanvasControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\DescriptionRecordingControl.xaml.cs">
       <DependentUpon>DescriptionRecordingControl.xaml</DependentUpon>
     </Compile>
@@ -117,6 +120,7 @@
     <Compile Include="Utilities\MessageBoxFactory.cs" />
     <Compile Include="Utilities\ProgressFileCopier.cs" />
     <Compile Include="ViewModel\AudioCanvasViewModel.cs" />
+    <Compile Include="ViewModel\DescriptionCanvasViewModel.cs" />
     <Compile Include="ViewModel\DescriptionInfoTabViewModel.cs" />
     <Compile Include="ViewModel\LoadingViewModel.cs" />
     <Compile Include="ViewModel\MarkingSpacesControlViewModel.cs" />
@@ -129,6 +133,10 @@
       <DependentUpon>PreferencesWindow.xaml</DependentUpon>
     </Compile>
     <Page Include="Controls\AudioCanvasControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\DescriptionCanvasControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
