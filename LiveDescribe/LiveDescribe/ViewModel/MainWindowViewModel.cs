@@ -44,6 +44,7 @@ namespace LiveDescribe.ViewModel
         private readonly ILiveDescribePlayer _mediaVideo;
         private readonly DescriptionInfoTabViewModel _descriptionInfoTabViewModel;
         private readonly AudioCanvasViewModel _audioCanvasViewModel;
+        private readonly DescriptionCanvasViewModel _descriptionCanvasViewModel;
         private Project _project;
         private string _windowTitle;
         private bool _projectModified;
@@ -73,6 +74,7 @@ namespace LiveDescribe.ViewModel
             _descriptionInfoTabViewModel = new DescriptionInfoTabViewModel(_descriptionviewmodel, _spacesviewmodel);
             _markingSpacesControlViewModel = new MarkingSpacesControlViewModel(_descriptionInfoTabViewModel, mediaVideo);
             _audioCanvasViewModel = new AudioCanvasViewModel(_spacesviewmodel);
+            _descriptionCanvasViewModel = new DescriptionCanvasViewModel(_descriptionviewmodel);
 
             #region Commands
             //Commands
@@ -368,41 +370,25 @@ namespace LiveDescribe.ViewModel
             get { return ProjectLoaded && _projectModified; }
         }
 
-        /// <summary>
-        /// returns the spaces view model so a control in the main window can use it as a data context
-        /// </summary>
         public SpacesViewModel SpacesViewModel
         {
             get { return _spacesviewmodel; }
         }
 
-        /// <summary>
-        /// returns the video control so it can be binded to a control in the mainwindow
-        /// </summary>
         public MediaControlViewModel MediaControlViewModel
         {
             get { return _mediaControlViewModel; }
         }
 
-        /// <summary>
-        /// returns the PreferenceViewModel so it can be binded to a control in the main window
-        /// </summary>
         public PreferencesViewModel PreferencesViewModel
         {
             get { return _preferences; }
         }
 
-        /// <summary>
-        /// returns the description view model so it can be binded to a control in the main window
-        /// </summary>
         public DescriptionViewModel DescriptionViewModel
         {
             get { return _descriptionviewmodel; }
         }
-
-        /// <summary>
-        /// returns the loading view model so it can be binded to a control in the main window
-        /// </summary>
         public LoadingViewModel LoadingViewModel
         {
             get { return _loadingViewModel; }
@@ -422,6 +408,12 @@ namespace LiveDescribe.ViewModel
         {
             get { return _audioCanvasViewModel; }
         }
+
+        public DescriptionCanvasViewModel DescriptionCanvasViewModel
+        {
+            get { return _descriptionCanvasViewModel; }
+        }
+
         #endregion
 
         #region Helper Functions

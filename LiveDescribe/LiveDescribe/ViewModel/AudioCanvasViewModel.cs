@@ -1,11 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using LiveDescribe.Model;
 
 namespace LiveDescribe.ViewModel
 {
@@ -16,10 +17,10 @@ namespace LiveDescribe.ViewModel
 
         #region Events
 
-        public EventHandler AudioCanvasMouseDownEvent;
-        public EventHandler AudioCanvasMouseUpEvent;
-        public EventHandler AudioCanvasMouseMoveEvent;
-        public EventHandler AudioCanvasMouseRightButtonDownEvent;
+        public EventHandler<MouseEventArgs> AudioCanvasMouseDownEvent;
+        public EventHandler<MouseEventArgs> AudioCanvasMouseUpEvent;
+        public EventHandler<MouseEventArgs> AudioCanvasMouseMoveEvent;
+        public EventHandler<MouseEventArgs> AudioCanvasMouseRightButtonDownEvent;
         #endregion
 
         public AudioCanvasViewModel(SpacesViewModel spacesViewModel)
@@ -39,33 +40,35 @@ namespace LiveDescribe.ViewModel
         public RelayCommand<MouseEventArgs> AudioCanvasMouseRightButtonDownCommand { private set; get; }
         #endregion
 
+        #region Binding Properties
+        public ObservableCollection<Space> Spaces
+        {
+            get { return _spacesViewModel.Spaces; }
+        }
+        #endregion
+
         #region Binding Functions
 
         public void AudioCanvasMouseDown(MouseEventArgs e)
         {
-            EventHandler handler = AudioCanvasMouseDownEvent;
+            EventHandler<MouseEventArgs> handler = AudioCanvasMouseDownEvent;
             if (handler != null) handler(this, e);
         }
         public void AudioCanvasMouseUp(MouseEventArgs e)
         {
-            EventHandler handler = AudioCanvasMouseUpEvent;
+            EventHandler<MouseEventArgs> handler = AudioCanvasMouseUpEvent;
             if (handler != null) handler(this, e);
         }
         public void AudioCanvasMouseMove(MouseEventArgs e)
         {
-            EventHandler handler = AudioCanvasMouseMoveEvent;
+            EventHandler<MouseEventArgs> handler = AudioCanvasMouseMoveEvent;
             if (handler != null) handler(this, e);
         }
         public void AudioCanvasMouseRightButtonDown(MouseEventArgs e)
         {
-            EventHandler handler = AudioCanvasMouseRightButtonDownEvent;
+            EventHandler<MouseEventArgs> handler = AudioCanvasMouseRightButtonDownEvent;
             if (handler != null) handler(this, e);
         }
         #endregion
-
-        public SpacesViewModel SpacesViewModel
-        {
-            get { return _spacesViewModel; }
-        }
     }
 }

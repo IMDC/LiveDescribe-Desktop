@@ -30,7 +30,6 @@
 
                 <ItemsControl
                     Name="SpacesItemControl"
-                    DataContext="{Binding SpacesViewModel}"
                     ItemsSource="{Binding Spaces}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
