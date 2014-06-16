@@ -434,69 +434,59 @@ namespace LiveDescribe.ViewModel
         {
             OnGraphicsTick(sender, e);
             //I put this method in it's own timer in the MainWindowViewModel for now, because I believe it should be separate from the view
-            for (int i = 0; i < _descriptionviewmodel.AllDescriptions.Count; i++)
+            foreach (var description in _descriptionviewmodel.AllDescriptions)
             {
-                var description = _descriptionviewmodel.AllDescriptions[i];
-                var currentPositionInVideo = new TimeSpan();
+                double videoPosition = 0;
+
                 //get the current position of the video from the UI thread
+                try
+                {
+                    DispatcherHelper.UIDispatcher.Invoke(() => { videoPosition = _mediaVideo.Position.TotalMilliseconds; });
+                }
+                catch (TaskCanceledException exception) { Log.Warn("Task Canceled Exception", exception); }
 
                 try
                 {
-                    DispatcherHelper.UIDispatcher.Invoke(() => { currentPositionInVideo = _mediaVideo.Position; });
-                }
-                catch (TaskCanceledException exception)
-                {
-                    Log.Warn("Task Canceled Exception", exception);
-                }
-               
-                double offset = currentPositionInVideo.TotalMilliseconds - description.StartInVideo;
-
-                if (!description.IsExtendedDescription &&
-                    0 <= offset && offset < description.WaveFileDuration * PlayDescriptionThreshold)
-                {
-                    if (!description.IsPlaying)
+                    if (_descriptionviewmodel.DescriptionPlayer.CanPlay(description, videoPosition))
                     {
-                        Log.Info("Playing Regular Description");
-                        //Reduce volume on the graphics thread to avoid an invalid operation exception.
-                        DispatcherHelper.UIDispatcher.Invoke(() => _mediaControlViewModel.ReduceVolume());
+                        PrepareForDescription(description);
+                        _descriptionviewmodel.DescriptionPlayer.Play(description, videoPosition);
                     }
-
-                    _lastRegularDescriptionPlayed = description;
-                    _descriptionInfoTabViewModel.SelectedRegularDescription = description;
-
-                    //description.Play(offset);
-                    try { description.Play(offset); }
-                    catch (Exception ex)
-                    {
-                        if (ex is FileNotFoundException ||
-                            ex is DirectoryNotFoundException)
-                            DescriptionFileNotFound(description);
-                        else
-                            throw;
-                    }
-                    break;
                 }
-                if (description.IsExtendedDescription &&
-                    //if it is equal then the video time matches when the description should start dead on
-                    0 <= offset && offset < LiveDescribeConstants.ExtendedDescriptionStartIntervalMax)
+                catch (Exception ex)
                 {
-                    DispatcherHelper.UIDispatcher.Invoke(() =>
-                    {
-                        _mediaControlViewModel.PauseCommand.Execute(this);
-                        Log.Info("Playing Extended Description");
-                        try { description.Play(); }
-                        catch (Exception ex)
-                        {
-                            if (ex is FileNotFoundException ||
-                                ex is DirectoryNotFoundException)
-                                DescriptionFileNotFound(description);
-                            else
-                                throw;
-                        }
-                    });
-                    _descriptionInfoTabViewModel.SelecetedExtendedDescription = description;
-                    break;
+                    if (ex is FileNotFoundException ||
+                        ex is DirectoryNotFoundException)
+                        DescriptionFileNotFound(description);
+                    else
+                        throw;
                 }
+            }
+        }
+
+        private void PrepareForDescription(Description description)
+        {
+            if (description.IsExtendedDescription)
+            {
+                DispatcherHelper.UIDispatcher.Invoke(() =>
+                {
+                    _mediaControlViewModel.PauseCommand.Execute(this);
+                    Log.Info("Playing Extended Description");
+                });
+
+                _descriptionInfoTabViewModel.SelecetedExtendedDescription = description;
+            }
+            else
+            {
+                if (!description.IsPlaying)
+                {
+                    Log.Info("Playing Regular Description");
+                    //Reduce volume on the graphics thread to avoid an invalid operation exception.
+                    DispatcherHelper.UIDispatcher.Invoke(() => _mediaControlViewModel.ReduceVolume());
+                }
+
+                _lastRegularDescriptionPlayed = description;
+                _descriptionInfoTabViewModel.SelectedRegularDescription = description;
             }
         }
 

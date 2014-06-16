@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Threading;
@@ -75,6 +77,8 @@ namespace LiveDescribe.ViewModel
             AllDescriptions = new ObservableCollection<Description>();
             RegularDescriptions = new ObservableCollection<Description>();
             ExtendedDescriptions = new ObservableCollection<Description>();
+
+            DescriptionPlayer = new DescriptionPlayer();
         }
         #endregion
 
@@ -150,7 +154,9 @@ namespace LiveDescribe.ViewModel
         }
         #endregion
 
-        #region BindingProperties
+        #region Properties
+
+        public DescriptionPlayer DescriptionPlayer { private set; get; }
 
         /// <summary>
         /// property to set the Microphonestream
@@ -363,13 +369,16 @@ namespace LiveDescribe.ViewModel
                     //then we want to replay the video
                     if (desc.IsExtendedDescription)
                     {
-                        double offset = _mediaVideo.Position.TotalMilliseconds - desc.StartInVideo;
-                        //+1 so we are out of the interval and it doesn't repeat the description
-                        int newStartInVideo = (int)(_mediaVideo.Position.TotalMilliseconds
-                            + (LiveDescribeConstants.ExtendedDescriptionStartIntervalMax - offset + 1));
-                        _mediaVideo.Position = new TimeSpan(0, 0, 0, 0, newStartInVideo);
-                        _mediaControlViewModel.PlayCommand.Execute();
-                        Log.Info("Extended description finished");
+                        DispatcherHelper.UIDispatcher.Invoke(() =>
+                        {
+                            double offset = _mediaVideo.Position.TotalMilliseconds - desc.StartInVideo;
+                            //+1 so we are out of the interval and it doesn't repeat the description
+                            int newStartInVideo = (int) (_mediaVideo.Position.TotalMilliseconds
+                                + (LiveDescribeConstants.ExtendedDescriptionStartIntervalMax - offset + 1));
+                            _mediaVideo.Position = new TimeSpan(0, 0, 0, 0, newStartInVideo);
+                            _mediaControlViewModel.PlayCommand.Execute();
+                            Log.Info("Extended description finished");
+                        });
                     }
                     else
                     {
