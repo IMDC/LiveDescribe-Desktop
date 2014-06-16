@@ -34,7 +34,7 @@ namespace LiveDescribe.ViewModel
             ClearDescriptionTextCommand = new RelayCommand(ClearDescriptionText, () => true);
 
             SelectedRegularDescription = null;
-            SelecetedExtendedDescription = null;
+            SelectedExtendedDescription = null;
             SelectedSpace = null;
             DescriptionAndSpaceText = null;
         }
@@ -68,10 +68,10 @@ namespace LiveDescribe.ViewModel
                     _selectedRegularDescription = null;
                 }
 
-                if (SelecetedExtendedDescription != null)
+                if (SelectedExtendedDescription != null)
                 {
-                    SelecetedExtendedDescription.IsSelected = false;
-                    SelecetedExtendedDescription = null;
+                    SelectedExtendedDescription.IsSelected = false;
+                    SelectedExtendedDescription = null;
                 }
 
                 if (SelectedSpace != null)
@@ -99,7 +99,7 @@ namespace LiveDescribe.ViewModel
         /// <summary>
         /// Sets or gets the extended description selected in the tab control
         /// </summary>
-        public Description SelecetedExtendedDescription
+        public Description SelectedExtendedDescription
         {
             set
             {
@@ -163,10 +163,10 @@ namespace LiveDescribe.ViewModel
                     SelectedRegularDescription = null;
                 }
 
-                if (SelecetedExtendedDescription != null)
+                if (SelectedExtendedDescription != null)
                 {
-                    SelecetedExtendedDescription.IsSelected = false;
-                    SelecetedExtendedDescription = null;
+                    SelectedExtendedDescription.IsSelected = false;
+                    SelectedExtendedDescription = null;
                 }
 
                 if (_selectedSpace != null)
@@ -273,7 +273,7 @@ namespace LiveDescribe.ViewModel
             if (TabSelectedIndex == RegularDescriptionTab)
                 SelectedRegularDescription.DescriptionText = DescriptionAndSpaceText;
             else if (TabSelectedIndex == ExtendedDescriptionTab)
-                SelecetedExtendedDescription.DescriptionText = DescriptionAndSpaceText;
+                SelectedExtendedDescription.DescriptionText = DescriptionAndSpaceText;
             else if (TabSelectedIndex == SpaceTab)
                 SelectedSpace.SpaceText = DescriptionAndSpaceText;
 
@@ -300,7 +300,7 @@ namespace LiveDescribe.ViewModel
         /// <returns></returns>
         public bool SaveDescriptionTextStateCheck()
         {
-            if (SelecetedExtendedDescription != null && TabSelectedIndex == ExtendedDescriptionTab)
+            if (SelectedExtendedDescription != null && TabSelectedIndex == ExtendedDescriptionTab)
                 return true;
             if (SelectedRegularDescription != null && TabSelectedIndex == RegularDescriptionTab)
                 return true;
@@ -316,7 +316,7 @@ namespace LiveDescribe.ViewModel
         public void UnSelectDescriptionsAndSpaceSelectedInList()
         {
             SelectedRegularDescription = null;
-            SelecetedExtendedDescription = null;
+            SelectedExtendedDescription = null;
             SelectedSpace = null;
         }
         #endregion

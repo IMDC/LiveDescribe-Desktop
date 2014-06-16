@@ -466,7 +466,7 @@ namespace LiveDescribe.ViewModel
                     Log.Info("Playing Extended Description");
                 });
 
-                _descriptionInfoTabViewModel.SelecetedExtendedDescription = description;
+                _descriptionInfoTabViewModel.SelectedExtendedDescription = description;
             }
             else
             {

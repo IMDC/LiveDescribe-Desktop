@@ -279,7 +279,7 @@ namespace LiveDescribe.View
                         if (Mouse.LeftButton == MouseButtonState.Pressed)
                         {
                             if (e.Description.IsExtendedDescription)
-                                _descriptionInfoTabViewModel.SelecetedExtendedDescription = e.Description;
+                                _descriptionInfoTabViewModel.SelectedExtendedDescription = e.Description;
                             else
                                 _descriptionInfoTabViewModel.SelectedRegularDescription = e.Description;
 
