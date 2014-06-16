@@ -79,6 +79,9 @@ namespace LiveDescribe.ViewModel
             ExtendedDescriptions = new ObservableCollection<Description>();
 
             DescriptionPlayer = new DescriptionPlayer();
+            DescriptionPlayer.DescriptionFinishedPlaying += (sender, e) =>
+                DispatcherHelper.UIDispatcher.Invoke(() =>
+                    _mediaControlViewModel.ResumeFromDescription(e.Value));
         }
         #endregion
 
@@ -361,32 +364,6 @@ namespace LiveDescribe.ViewModel
         /// <param name="desc">The description to setup the events on</param>
         private void SetupEventsOnDescription(Description desc)
         {
-            //this method is called when a description is finished playing
-            desc.DescriptionFinishedPlaying += (sender1, e1) =>
-                {
-                    //if the description is an extended description, we want to move the video forward to get out of the interval of
-                    //where the extended description will play
-                    //then we want to replay the video
-                    if (desc.IsExtendedDescription)
-                    {
-                        DispatcherHelper.UIDispatcher.Invoke(() =>
-                        {
-                            double offset = _mediaVideo.Position.TotalMilliseconds - desc.StartInVideo;
-                            //+1 so we are out of the interval and it doesn't repeat the description
-                            int newStartInVideo = (int) (_mediaVideo.Position.TotalMilliseconds
-                                + (LiveDescribeConstants.ExtendedDescriptionStartIntervalMax - offset + 1));
-                            _mediaVideo.Position = new TimeSpan(0, 0, 0, 0, newStartInVideo);
-                            _mediaControlViewModel.PlayCommand.Execute();
-                            Log.Info("Extended description finished");
-                        });
-                    }
-                    else
-                    {
-                        DispatcherHelper.UIDispatcher.Invoke(() => _mediaControlViewModel.RestoreVolume());
-                    }
-
-                };
-
             //this method gets called when a description is deleted
             desc.DescriptionDeleteEvent += (sender1, e1) =>
                 {

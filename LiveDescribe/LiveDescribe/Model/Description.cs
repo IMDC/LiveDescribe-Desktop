@@ -31,7 +31,6 @@ namespace LiveDescribe.Model
         private double _height;
         private bool _isSelected;
         private bool _isPlaying;
-        private WaveOutEvent _currentWaveOut;
         #endregion
 
         #region Events
@@ -72,62 +71,6 @@ namespace LiveDescribe.Model
             //called when mouse moves over description
             DescriptionMouseMoveCommand = new RelayCommand<MouseEventArgs>(DescriptionMouseMove, param => true);
         }
-
-        #region Public Methods
-        /// <summary>
-        /// This method plays the description from a specified offset in milliseconds
-        /// </summary>
-        ///<param name="offset">The offset in the file in which to play offset is in Milliseconds</param>
-        /// <exception cref="FileNotFoundException">It is thrown if the path (filepath) of the description does not exist</exception>
-        public void Play(double offset = 0)
-        {
-            if (IsPlaying == false)
-                IsPlaying = true;
-            else
-            {
-                //TODO: add a way to stop when the EndWaveFileTime has been reached
-                //most likely using the reader variable, and the waveOut variable
-                return;
-            }
-            var reader = new WaveFileReader(AudioFile);
-            //reader.WaveFormat.AverageBytesPerSecond/ 1000 = Average Bytes Per Millisecond
-            //AverageBytesPerMillisecond * (offset + StartWaveFileTime) = amount to play from
-            reader.Seek((long)((reader.WaveFormat.AverageBytesPerSecond / 1000) * (offset + StartWaveFileTime)),
-                SeekOrigin.Begin);
-            var waveOut = new WaveOutEvent();
-            waveOut.PlaybackStopped += OnDescriptionPlaybackStopped;
-            waveOut.Init(reader);
-            waveOut.Play();
-            _currentWaveOut = waveOut;
-        }
-
-        public void Stop()
-        {
-            if (IsPlaying)
-                IsPlaying = false;
-            else
-                return;
-
-            if(_currentWaveOut != null)
-                _currentWaveOut.Stop();
-        }
-        #endregion
-
-        #region Private Methods
-        /// <summary>
-        /// When the playback of the wave file stops naturally, this method gets called and sets the
-        /// description IsPlaying value to false
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void OnDescriptionPlaybackStopped(object sender, StoppedEventArgs e)
-        {
-            IsPlaying = false;
-            EventHandler handler = DescriptionFinishedPlaying;
-            if (handler == null) return;
-            handler(this, EventArgs.Empty);
-        }
-        #endregion
 
         #region Properties
         /// <summary>

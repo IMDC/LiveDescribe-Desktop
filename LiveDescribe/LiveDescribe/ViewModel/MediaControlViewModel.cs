@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Threading;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
 using LiveDescribe.Utilities;
@@ -395,7 +396,7 @@ namespace LiveDescribe.ViewModel
         }
         #endregion
 
-        #region Helper Methods
+        #region Methods
         /// <summary>
         /// This function is to close the video control, it is called by the main control
         /// </summary>
@@ -462,6 +463,25 @@ namespace LiveDescribe.ViewModel
         public void RestoreVolume()
         {
             _mediaVideo.Volume = _originalVolume;
+        }
+
+        public void ResumeFromDescription(Description description)
+        {
+            //if the description is an extended description, we want to move the video forward to get out of the interval of
+            //where the extended description will play
+            //then we want to replay the video
+            if (description.IsExtendedDescription)
+            {
+                double offset = _mediaVideo.Position.TotalMilliseconds - description.StartInVideo;
+                //+1 so we are out of the interval and it doesn't repeat the description
+                int newStartInVideo = (int)(_mediaVideo.Position.TotalMilliseconds
+                    + (LiveDescribeConstants.ExtendedDescriptionStartIntervalMax - offset + 1));
+                _mediaVideo.Position = new TimeSpan(0, 0, 0, 0, newStartInVideo);
+                PlayCommand.Execute();
+                Log.Info("Extended description finished");
+            }
+            else
+                RestoreVolume();
         }
         #endregion
     }

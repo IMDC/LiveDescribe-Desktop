@@ -240,7 +240,7 @@ namespace LiveDescribe.ViewModel
                     _mediaVideo.Pause();
                     _descriptiontimer.Stop();
                     if (_lastRegularDescriptionPlayed != null && _lastRegularDescriptionPlayed.IsPlaying)
-                        _lastRegularDescriptionPlayed.Stop();
+                        _descriptionviewmodel.DescriptionPlayer.Stop();//_lastRegularDescriptionPlayed.Stop();
                     //this Handler should be attached to the view to update the graphics
                     OnPauseRequested(sender, e);
                 };
