@@ -465,6 +465,10 @@ namespace LiveDescribe.ViewModel
             _mediaVideo.Volume = _originalVolume;
         }
 
+        /// <summary>
+        /// Restores the media back to its original state before playing the given description.
+        /// </summary>
+        /// <param name="description"></param>
         public void ResumeFromDescription(Description description)
         {
             //if the description is an extended description, we want to move the video forward to get out of the interval of

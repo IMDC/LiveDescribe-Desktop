@@ -35,6 +35,18 @@ namespace LiveDescribe.Utilities
             get { return _isPlaying; }
         }
 
+        public WaveOutEvent DescriptionStream
+        {
+            private set
+            {
+                //Close the old instance
+                if(_descriptionStream != null)
+                    _descriptionStream.Dispose();
+                _descriptionStream = value;
+            }
+            get { return _descriptionStream; }
+        }
+
         #region Methods
         /// <summary>
         /// Determines if the given description can play at the given time.
@@ -75,12 +87,13 @@ namespace LiveDescribe.Utilities
             descriptionStream.PlaybackStopped += DescriptionStream_PlaybackStopped;
             descriptionStream.Init(reader);
 
-            _descriptionStream = descriptionStream;
+            DescriptionStream = descriptionStream;
             _playingDescription = description;
 
             descriptionStream.Play();
 
             IsPlaying = true;
+            _playingDescription.IsPlaying = true;
         }
 
         /// <summary>
@@ -88,10 +101,15 @@ namespace LiveDescribe.Utilities
         /// </summary>
         public void Stop()
         {
-            if (IsPlaying)
-                IsPlaying = false;
-            else
+            if (!IsPlaying)
                 return;
+
+            IsPlaying = false;
+            /* For some reason setting IsPlaying to false here creates a very quick flash on the
+             * first description played. For now it seems better to set it to false only in the
+             * event handler below
+             */
+            //_playingDescription.IsPlaying = false;
 
             if (_descriptionStream != null)
                 _descriptionStream.Stop();
@@ -100,11 +118,8 @@ namespace LiveDescribe.Utilities
         private void DescriptionStream_PlaybackStopped(object sender, StoppedEventArgs e)
         {
             IsPlaying = false;
+            _playingDescription.IsPlaying = false;
             OnDescriptionFinishedPlaying(_playingDescription);
-
-            _descriptionStream.Dispose();
-            _descriptionStream = null;
-            _playingDescription = null;
         }
         #endregion
 
