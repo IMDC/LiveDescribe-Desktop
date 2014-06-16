@@ -63,7 +63,7 @@ namespace LiveDescribeUnitTests
         /// expected to be contained in their base folder.
         /// </summary>
         [TestMethod]
-        public void InternalRelativeFileCreationTest()
+        public void ProjectFile_InternalRelativeFileCreationTest()
         {
             //Arrange
             const string pathToProjectFolder = "D:\\Test\\Wildlife";
@@ -99,7 +99,7 @@ namespace LiveDescribeUnitTests
         /// expected to be contained outside of the given base folder.
         /// </summary>
         [TestMethod]
-        public void ExternalRelativeFileCreationTest()
+        public void ProjectFile_ExternalRelativeFileCreationTest()
         {
             //Arrange
             const string pathToProjectFolder = "D:\\Test\\RelTest2";
@@ -124,7 +124,7 @@ namespace LiveDescribeUnitTests
         /// their given base folder.
         /// </summary>
         [TestMethod]
-        public void InternalAbsoluteFileCreationTest()
+        public void ProjectFile_InternalAbsoluteFileCreationTest()
         {
             //Arrange
             const string pathToProjectFolder = "D:\\Test\\Wildlife";
@@ -159,7 +159,7 @@ namespace LiveDescribeUnitTests
         /// their given base folder.
         /// </summary>
         [TestMethod]
-        public void ExternalAbsoluteFileCreationTest()
+        public void ProjectFile_ExternalAbsoluteFileCreationTest()
         {
             //Arrange
             const string absolutePath1 = "D:\\Valentin\\Videos\\Wildlife.wmv";
@@ -177,6 +177,33 @@ namespace LiveDescribeUnitTests
             //Assert
             Assert.AreEqual(expectedRelativePath1, pf1.RelativePath);
             Assert.AreEqual(expectedRelativePath1, pf1a.RelativePath);
+        }
+
+        /// <summary>
+        /// Tests the output of the toString method, as well as other methods of converting a
+        /// ProjectFile to a string.
+        /// </summary>
+        [TestMethod]
+        public void ProjectFile_StringTest()
+        {
+            //Arrange
+            const string absolutePath1 = "D:\\Valentin\\Videos\\Wildlife.wmv";
+            const string relativePath1 = "../../Valentin/Videos/Wildlife.wmv";
+            const string expectedString = absolutePath1;
+
+            ProjectFile pf1;
+
+            //Act
+            pf1 = new ProjectFile
+            {
+                AbsolutePath = absolutePath1,
+                RelativePath = relativePath1
+            };
+
+            //Assert
+            Assert.AreEqual(expectedString, pf1);
+            Assert.AreEqual(expectedString, pf1.AbsolutePath);
+            Assert.AreEqual(expectedString, pf1.ToString());
         }
     }
 }
