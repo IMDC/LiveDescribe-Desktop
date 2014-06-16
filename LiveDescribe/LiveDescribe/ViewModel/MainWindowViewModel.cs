@@ -506,14 +506,14 @@ namespace LiveDescribe.ViewModel
             DispatcherHelper.UIDispatcher.Invoke(() => _mediaControlViewModel.PauseCommand.Execute());
 
             //TODO: Delete description if not found, or ask for file location?
-            Log.ErrorFormat("The description file could not be found at {0}", d.FileName);
-            MessageBoxFactory.ShowError("The audio file for description could not be found at " + d.FileName);
+            Log.ErrorFormat("The description file could not be found at {0}", d.AudioFile);
+            MessageBoxFactory.ShowError("The audio file for description could not be found at " + d.AudioFile);
         }
 
         /// <summary>
         /// Initializes and sets up the progam for a given project file.
         /// </summary>
-        /// <param name="p">The project to initialize</param>
+        /// <param name="pf">The project to initialize</param>
         public void SetProject(Project p)
         {
             CloseProject.ExecuteIfCan();
@@ -646,7 +646,7 @@ namespace LiveDescribe.ViewModel
             switch (e.PropertyName)
             {
                 //Fallthrough cases
-                case "FileName":
+                case "AudioFile":
                 case "IsExtendedDescription":
                 case "StartWaveFileTime":
                 case "EndWaveFileTime":
