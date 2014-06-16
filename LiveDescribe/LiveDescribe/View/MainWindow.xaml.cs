@@ -79,6 +79,7 @@ namespace LiveDescribe.View
 
         private readonly Canvas _audioCanvas;
         private readonly Canvas _descriptionCanvas;
+        private readonly Polyline _marker;
         #endregion
 
         public MainWindow()
@@ -105,6 +106,7 @@ namespace LiveDescribe.View
 
             _audioCanvas = AudioCanvasControl.AudioCanvas;
             _descriptionCanvas = DescriptionCanvasControl.DescriptionCanvas;
+            _marker = MarkerControl.Marker;
             
             var cursfile = Application.GetResourceStream(new Uri("pack://application:,,,/Resources/Cursors/grab.cur"));
             _grabCursor = new Cursor(cursfile.Stream);
@@ -164,7 +166,7 @@ namespace LiveDescribe.View
                 NumberTimeline.Children.Clear();
 
                 UpdateMarkerPosition(-MarkerOffset);
-                Marker.IsEnabled = false;
+                _marker.IsEnabled = false;
             };
 
             mainWindowViewModel.GraphicsTick += Play_Tick;
@@ -179,7 +181,7 @@ namespace LiveDescribe.View
                 {
                     _videoDuration = _videoMedia.NaturalDuration.TimeSpan.TotalMilliseconds;
                     _canvasWidth = CalculateWidth();
-                    Marker.IsEnabled = true;
+                    _marker.IsEnabled = true;
                     SetTimeline();
 
                     foreach (var desc in _descriptionViewModel.AllDescriptions)
@@ -204,19 +206,19 @@ namespace LiveDescribe.View
                 };
 
             //captures the mouse when a mousedown request is sent to the Marker
-            mainWindowViewModel.MediaControlViewModel.OnMarkerMouseDownRequested += (sender, e) => Marker.CaptureMouse();
+            mainWindowViewModel.MediaControlViewModel.OnMarkerMouseDownRequested += (sender, e) => _marker.CaptureMouse();
 
             //updates the video position when the mouse is released on the Marker
-            mainWindowViewModel.MediaControlViewModel.OnMarkerMouseUpRequested += (sender, e) => Marker.ReleaseMouseCapture();
+            mainWindowViewModel.MediaControlViewModel.OnMarkerMouseUpRequested += (sender, e) => _marker.ReleaseMouseCapture();
 
             //updates the canvas and video position when the Marker is moved
             mainWindowViewModel.MediaControlViewModel.OnMarkerMouseMoveRequested += (sender, e) =>
                 {
-                    if (!Marker.IsMouseCaptured) return;
+                    if (!_marker.IsMouseCaptured) return;
 
-                    if (ScrollRightIfCan(Canvas.GetLeft(Marker)))
+                    if (ScrollRightIfCan(Canvas.GetLeft(_marker)))
                     {
-                        Marker.ReleaseMouseCapture();
+                        _marker.ReleaseMouseCapture();
                         return;
                     }
 
@@ -227,7 +229,7 @@ namespace LiveDescribe.View
                     //make sure the middle of the marker doesn't go below the beginning of the canvas
                     if (xPosition < -MarkerOffset)
                     {
-                        Canvas.SetLeft(Marker, -MarkerOffset);
+                        Canvas.SetLeft(_marker, -MarkerOffset);
                         UpdateVideoPosition(0);
                         return;
                     }
@@ -236,11 +238,11 @@ namespace LiveDescribe.View
                     if (newPositionInVideo >= _videoDuration)
                     {
                         var newPositionOfMarker = (_canvasWidth / _videoDuration) * (_videoDuration);
-                        Canvas.SetLeft(Marker, newPositionOfMarker - MarkerOffset);
+                        Canvas.SetLeft(_marker, newPositionOfMarker - MarkerOffset);
                         UpdateVideoPosition((int)(_videoDuration));
                         return;
                     }
-                    Canvas.SetLeft(Marker, middleOfMarker);
+                    Canvas.SetLeft(_marker, middleOfMarker);
                     UpdateVideoPosition((int)newPositionInVideo);
                 };
 
@@ -455,7 +457,7 @@ namespace LiveDescribe.View
                 //This method runs on a separate thread therefore all calls to get values or set
                 //values that are located on the UI thread must be gotten with Dispatcher.Invoke
                 double canvasLeft = 0;
-                Dispatcher.Invoke(delegate { canvasLeft = Canvas.GetLeft(Marker); });
+                Dispatcher.Invoke(delegate { canvasLeft = Canvas.GetLeft(_marker); });
                 ScrollRightIfCan(canvasLeft);
                 Dispatcher.Invoke(delegate
                 {
@@ -488,7 +490,7 @@ namespace LiveDescribe.View
                 SetTimeline();
             }
             //update marker to fit the entire AudioCanvas even when there's no video loaded
-            Marker.Points[4] = new Point(Marker.Points[4].X, TimeLineScrollViewer.ActualHeight);
+            _marker.Points[4] = new Point(_marker.Points[4].X, TimeLineScrollViewer.ActualHeight);
         }
 
         /// <summary>
@@ -703,7 +705,7 @@ namespace LiveDescribe.View
         /// <param name="xPos">the x position in which the marker is supposed to move</param>
         private void UpdateMarkerPosition(double xPos)
         {
-            Canvas.SetLeft(Marker, xPos);
+            Canvas.SetLeft(_marker, xPos);
             _mediaControlViewModel.PositionTimeLabel = _videoMedia.Position;
         }
 

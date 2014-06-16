@@ -169,43 +169,15 @@
 
                             <!--Description Canvas Constrol that holds all the descriptions--> 
                             <controls:DescriptionCanvasControl
-                                x:Name="DescriptionCanvasControl"
-                                DataContext="{Binding DescriptionCanvasViewModel}"
-                                Grid.Row="3"/>
-
-                            <Canvas
+                                x:Name="DescriptionCanvasControl" 
+                                Grid.Row="3"
+                                DataContext="{Binding DescriptionCanvasViewModel}"/>
+                            
+                            <controls:MarkerControl
+                                x:Name="MarkerControl"
                                 Grid.Row="0"
-                                Grid.RowSpan="4">
-                                <Polyline
-                                    DataContext="{Binding MediaControlViewModel}"
-                                    IsEnabled="False"
-                                    Points="10,20, 0,0,  20,0, 10,20, 10,220"
-                                    RenderOptions.EdgeMode="Aliased"
-                                    Stroke="Black"
-                                    Fill="Black"
-                                    StrokeThickness="2"
-                                    Width="20"
-                                    Name="Marker"
-                                    Canvas.Left="-10">
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger
-                                            EventName="MouseDown">
-                                            <i:InvokeCommandAction
-                                                Command="{Binding MarkerMouseDownCommand}" />
-                                        </i:EventTrigger>
-                                        <i:EventTrigger
-                                            EventName="MouseUp">
-                                            <i:InvokeCommandAction
-                                                Command="{Binding MarkerMouseUpCommand}" />
-                                        </i:EventTrigger>
-                                        <i:EventTrigger
-                                            EventName="MouseMove">
-                                            <i:InvokeCommandAction
-                                                Command="{Binding MarkerMouseMoveCommand}" />
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
-                                </Polyline>
-                            </Canvas>
+                                Grid.RowSpan="4"
+                                DataContext="{Binding MediaControlViewModel}"/>                           
                         </Grid>
                     </ScrollViewer>
                 </Border>
