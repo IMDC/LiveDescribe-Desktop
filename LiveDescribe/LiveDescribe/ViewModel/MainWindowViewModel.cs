@@ -43,6 +43,7 @@ namespace LiveDescribe.ViewModel
         private readonly MarkingSpacesControlViewModel _markingSpacesControlViewModel;
         private readonly ILiveDescribePlayer _mediaVideo;
         private readonly DescriptionInfoTabViewModel _descriptionInfoTabViewModel;
+        private readonly AudioCanvasViewModel _audioCanvasViewModel;
         private Project _project;
         private string _windowTitle;
         private bool _projectModified;
@@ -71,6 +72,7 @@ namespace LiveDescribe.ViewModel
             _descriptionviewmodel = new DescriptionViewModel(mediaVideo, _mediaControlViewModel);
             _descriptionInfoTabViewModel = new DescriptionInfoTabViewModel(_descriptionviewmodel, _spacesviewmodel);
             _markingSpacesControlViewModel = new MarkingSpacesControlViewModel(_descriptionInfoTabViewModel, mediaVideo);
+            _audioCanvasViewModel = new AudioCanvasViewModel(_spacesviewmodel);
 
             #region Commands
             //Commands
@@ -414,6 +416,11 @@ namespace LiveDescribe.ViewModel
         public MarkingSpacesControlViewModel MarkingSpacesControlViewModel
         {
             get { return _markingSpacesControlViewModel; }
+        }
+
+        public AudioCanvasViewModel AudioCanvasViewModel
+        {
+            get { return _audioCanvasViewModel; }
         }
         #endregion
 

@@ -1,0 +1,149 @@
+﻿<UserControl x:Class="LiveDescribe.Controls.AudioCanvasControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:command="http://www.galasoft.ch/mvvmlight"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Border
+            Name="AudioCanvasBorder"
+            BorderBrush="Black"
+            BorderThickness="1">
+            <Canvas
+                Background="Transparent"
+                VirtualizingPanel.IsVirtualizing="True"
+                Name="AudioCanvas"
+                HorizontalAlignment="Left">
+
+                <Canvas.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem
+                            DataContext="{Binding SpacesViewModel}"
+                            Header="Add Space"
+                            Command="{Binding GetNewSpaceTime}" />
+                    </ContextMenu>
+                </Canvas.ContextMenu>
+
+
+                <ItemsControl
+                    Name="SpacesItemControl"
+                    DataContext="{Binding SpacesViewModel}"
+                    ItemsSource="{Binding Spaces}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemContainerStyle>
+                        <Style>
+                            <Setter
+                                Property="Canvas.Left"
+                                Value="{Binding X}" />
+                            <Setter
+                                Property="Canvas.Top"
+                                Value="{Binding Y}" />
+                            <Setter
+                                Property="Canvas.Height"
+                                Value="{Binding Height}" />
+                            <Setter
+                                Property="Canvas.Width"
+                                Value="{Binding Width}" />
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Rectangle>
+                                <Rectangle.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem
+                                            Header="Delete Space"
+                                            Command="{Binding DeleteSpaceCommand}" />
+                                    </ContextMenu>
+                                </Rectangle.ContextMenu>
+                                <Rectangle.Style>
+                                    <Style
+                                        TargetType="Rectangle">
+
+                                        <Style.Triggers>
+                                            <DataTrigger
+                                                Binding="{Binding IsSelected}"
+                                                Value="false">
+                                                <Setter
+                                                    Property="Fill"
+                                                    Value="Blue" />
+                                                <Setter
+                                                    Property="Opacity"
+                                                    Value="0.2" />
+                                            </DataTrigger>
+                                            <DataTrigger
+                                                Binding="{Binding IsSelected}"
+                                                Value="true">
+                                                <Setter
+                                                    Property="Fill"
+                                                    Value="Yellow" />
+                                                <Setter
+                                                    Property="Opacity"
+                                                    Value="0.2" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Rectangle.Style>
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger
+                                        EventName="MouseDown">
+                                        <command:EventToCommand
+                                            Command="{Binding SpaceMouseDownCommand, Mode=OneWay}"
+                                            PassEventArgsToCommand="True" />
+                                    </i:EventTrigger>
+                                    <i:EventTrigger
+                                        EventName="MouseUp">
+                                        <i:InvokeCommandAction
+                                            Command="{Binding SpaceMouseUpCommand}" />
+                                    </i:EventTrigger>
+                                    <i:EventTrigger
+                                        EventName="MouseMove">
+                                        <command:EventToCommand
+                                            Command="{Binding SpaceMouseMoveCommand, Mode=OneWay}"
+                                            PassEventArgsToCommand="True" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Rectangle>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger
+                        EventName="MouseDown">
+                        <command:EventToCommand
+                            Command="{Binding AudioCanvasMouseDownCommand, Mode=OneWay}"
+                            PassEventArgsToCommand="True"/>
+                    </i:EventTrigger>
+                    
+                    <i:EventTrigger
+                        EventName="MouseUp">
+                        <command:EventToCommand 
+                            Command="{Binding AudioCanvasMouseUpCommand, Mode=OneWay}"
+                            PassEventArgsToCommand="True"/>
+                    </i:EventTrigger>
+                    
+                    <i:EventTrigger
+                        EventName="MouseMove">
+                        <command:EventToCommand Command="{Binding AudioCanvasMouseMoveCommand, Mode=OneWay}"
+                            PassEventArgsToCommand="True"/>
+                    </i:EventTrigger>
+                    
+                    <i:EventTrigger
+                        EventName="MouseRightButtonDown">
+                        <command:EventToCommand Command="{Binding AudioCanvasMouseRightButtonDownCommand, Mode=OneWay}"
+                            PassEventArgsToCommand="True"/>
+                    </i:EventTrigger>
+                    
+                </i:Interaction.Triggers>
+            </Canvas>
+        </Border>
+    </Grid>
+</UserControl>

@@ -160,124 +160,12 @@
                                     MouseDown="NumberTimeline_OnMouseDown"
                                     Name="NumberTimeline" />
                             </Border>
-
-                            <!--Audio Canvas which includes the marker and the number line-->
-                            <Border
+                            
+                            <controls:AudioCanvasControl
+                                x:Name="AudioCanvasControl"
                                 Grid.Row="1"
                                 Grid.RowSpan="2"
-                                Name="AudioCanvasBorder"
-                                BorderBrush="Black"
-                                BorderThickness="1">
-                                <Canvas
-                                    Background="Transparent"
-                                    VirtualizingPanel.IsVirtualizing="True"
-                                    Name="AudioCanvas"
-                                    HorizontalAlignment="Left"
-                                    MouseRightButtonDown="AudioCanvas_RecordRightClickPosition"
-                                    MouseUp="AudioCanvas_MouseUp"
-                                    MouseMove="AudioCanvas_MouseMove"
-                                    MouseDown="AudioCanvas_OnMouseDown">
-
-                                    <Canvas.ContextMenu>
-                                        <ContextMenu>
-                                            <MenuItem
-                                                DataContext="{Binding SpacesViewModel}"
-                                                Header="Add Space"
-                                                Command="{Binding GetNewSpaceTime}" />
-                                        </ContextMenu>
-                                    </Canvas.ContextMenu>
-
-
-                                    <ItemsControl
-                                        Name="SpacesItemControl"
-                                        DataContext="{Binding SpacesViewModel}"
-                                        ItemsSource="{Binding Spaces}">
-                                        <ItemsControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <Canvas />
-                                            </ItemsPanelTemplate>
-                                        </ItemsControl.ItemsPanel>
-
-                                        <ItemsControl.ItemContainerStyle>
-                                            <Style>
-                                                <Setter
-                                                    Property="Canvas.Left"
-                                                    Value="{Binding X}" />
-                                                <Setter
-                                                    Property="Canvas.Top"
-                                                    Value="{Binding Y}" />
-                                                <Setter
-                                                    Property="Canvas.Height"
-                                                    Value="{Binding Height}" />
-                                                <Setter
-                                                    Property="Canvas.Width"
-                                                    Value="{Binding Width}" />
-                                            </Style>
-                                        </ItemsControl.ItemContainerStyle>
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <Rectangle>
-                                                    <Rectangle.ContextMenu>
-                                                        <ContextMenu>
-                                                            <MenuItem
-                                                                Header="Delete Space"
-                                                                Command="{Binding DeleteSpaceCommand}" />
-                                                        </ContextMenu>
-                                                    </Rectangle.ContextMenu>
-                                                    <Rectangle.Style>
-                                                        <Style
-                                                            TargetType="Rectangle">
-
-                                                            <Style.Triggers>
-                                                                <DataTrigger
-                                                                    Binding="{Binding IsSelected}"
-                                                                    Value="false">
-                                                                    <Setter
-                                                                        Property="Fill"
-                                                                        Value="Blue" />
-                                                                    <Setter
-                                                                        Property="Opacity"
-                                                                        Value="0.2" />
-                                                                </DataTrigger>
-                                                                <DataTrigger
-                                                                    Binding="{Binding IsSelected}"
-                                                                    Value="true">
-                                                                    <Setter
-                                                                        Property="Fill"
-                                                                        Value="Yellow" />
-                                                                    <Setter
-                                                                        Property="Opacity"
-                                                                        Value="0.2" />
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </Rectangle.Style>
-                                                    <i:Interaction.Triggers>
-                                                        <i:EventTrigger
-                                                            EventName="MouseDown">
-                                                            <command:EventToCommand
-                                                                Command="{Binding SpaceMouseDownCommand, Mode=OneWay}"
-                                                                PassEventArgsToCommand="True" />
-                                                        </i:EventTrigger>
-                                                        <i:EventTrigger
-                                                            EventName="MouseUp">
-                                                            <i:InvokeCommandAction
-                                                                Command="{Binding SpaceMouseUpCommand}" />
-                                                        </i:EventTrigger>
-                                                        <i:EventTrigger
-                                                            EventName="MouseMove">
-                                                            <command:EventToCommand
-                                                                Command="{Binding SpaceMouseMoveCommand, Mode=OneWay}"
-                                                                PassEventArgsToCommand="True" />
-                                                        </i:EventTrigger>
-                                                    </i:Interaction.Triggers>
-                                                </Rectangle>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-
-                                </Canvas>
-                            </Border>
+                                DataContext="{Binding AudioCanvasViewModel}"/>
 
                             <!--Description Canvas that holds all the descriptions-->
                             <Border
