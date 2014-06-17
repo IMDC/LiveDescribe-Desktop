@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using LiveDescribe.ViewModel;
 
 namespace LiveDescribe.View
 {
@@ -19,9 +20,10 @@ namespace LiveDescribe.View
     /// </summary>
     public partial class SpaceRecordingView : Window
     {
-        public SpaceRecordingView()
+        public SpaceRecordingView(SpaceRecordingViewModel viewModel)
         {
             InitializeComponent();
+            DataContext = viewModel;
         }
     }
 }

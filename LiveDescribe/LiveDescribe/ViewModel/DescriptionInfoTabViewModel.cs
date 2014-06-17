@@ -40,7 +40,7 @@ namespace LiveDescribe.ViewModel
                 execute: () =>
                 {
                     //TODO: This
-                    var view = new SpaceRecordingView();
+                    var view = new SpaceRecordingView(new SpaceRecordingViewModel(SelectedSpace));
                     view.ShowDialog();
                 });
 
