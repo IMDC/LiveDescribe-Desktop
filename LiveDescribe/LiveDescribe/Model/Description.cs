@@ -38,7 +38,6 @@ namespace LiveDescribe.Model
         public event EventHandler DescriptionMouseDownEvent;
         public event EventHandler DescriptionMouseUpEvent;
         public event EventHandler DescriptionMouseMoveEvent;
-        public event EventHandler DescriptionFinishedPlaying;
         #endregion
 
         public Description(ProjectFile filepath, double startwavefiletime, double endwavefiletime,

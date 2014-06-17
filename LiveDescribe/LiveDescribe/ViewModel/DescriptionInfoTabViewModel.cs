@@ -21,7 +21,7 @@ namespace LiveDescribe.ViewModel
         private readonly DescriptionViewModel _descriptionViewModel;
         private readonly SpacesViewModel _spacesViewModel;
         private Description _selectedRegularDescription;
-        private Description _selecetedExtendedDescription;
+        private Description _selectedExtendedDescription;
         private Space _selectedSpace;
         private String _descriptionAndSpaceText;
         private int _tabSelectedIndex;
@@ -98,6 +98,7 @@ namespace LiveDescribe.ViewModel
                 if (_selectedRegularDescription != null)
                 {
                     _selectedRegularDescription.IsSelected = true;
+                    DescriptionAndSpaceText = _selectedRegularDescription.DescriptionText;
                     _selectedRegularDescription.PropertyChanged += DescriptionFinishedPlaying;
                 }
 
@@ -117,10 +118,10 @@ namespace LiveDescribe.ViewModel
             set
             {
 
-                if (_selecetedExtendedDescription != null && value == null)
+                if (_selectedExtendedDescription != null && value == null)
                 {
-                    _selecetedExtendedDescription.IsSelected = false;
-                    _selecetedExtendedDescription.PropertyChanged -= DescriptionFinishedPlaying;
+                    _selectedExtendedDescription.IsSelected = false;
+                    _selectedExtendedDescription.PropertyChanged -= DescriptionFinishedPlaying;
                 }
 
                 // Unselect previous descriptions and spaces selected
@@ -130,10 +131,10 @@ namespace LiveDescribe.ViewModel
                     SelectedRegularDescription = null;
                 }
 
-                if (_selecetedExtendedDescription != null)
+                if (_selectedExtendedDescription != null)
                 {
-                    _selecetedExtendedDescription.IsSelected = false;
-                    _selecetedExtendedDescription = null;
+                    _selectedExtendedDescription.IsSelected = false;
+                    _selectedExtendedDescription = null;
                 }
 
                 if (SelectedSpace != null)
@@ -142,19 +143,20 @@ namespace LiveDescribe.ViewModel
                     SelectedSpace = null;
                 }
 
-                _selecetedExtendedDescription = value;
+                _selectedExtendedDescription = value;
 
-                if (_selecetedExtendedDescription != null)
+                if (_selectedExtendedDescription != null)
                 {
-                    _selecetedExtendedDescription.IsSelected = true;
-                    _selecetedExtendedDescription.PropertyChanged += DescriptionFinishedPlaying;
+                    _selectedExtendedDescription.IsSelected = true;
+                    DescriptionAndSpaceText = _selectedExtendedDescription.DescriptionText;
+                    _selectedExtendedDescription.PropertyChanged += DescriptionFinishedPlaying;
                 }
 
                 RaisePropertyChanged();
             }
             get
             {
-                return _selecetedExtendedDescription;
+                return _selectedExtendedDescription;
             }
         }
 
@@ -191,7 +193,10 @@ namespace LiveDescribe.ViewModel
                 _selectedSpace = value;
 
                 if (_selectedSpace != null)
+                {
                     _selectedSpace.IsSelected = true;
+                    DescriptionAndSpaceText = _selectedSpace.SpaceText;
+                }
                 RaisePropertyChanged();
             }
             get

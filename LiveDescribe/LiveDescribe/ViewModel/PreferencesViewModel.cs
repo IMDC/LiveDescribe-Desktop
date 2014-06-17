@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Linq;
 using System.Runtime.Serialization;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -37,6 +38,36 @@ namespace LiveDescribe.ViewModel
             {
                 Source =
                     (WaveInCapabilities)info.GetValue("source", typeof(WaveInCapabilities));
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (obj == null)
+                    return false;
+
+                var info = obj as AudioSourceInfo;
+                if ((System.Object) info == null)
+                    return false;
+
+                return (Name == info.Name)
+                    && (Channels == info.Channels)
+                    && (DeviceNumber == info.DeviceNumber);
+            }
+
+            public bool Equals(AudioSourceInfo info)
+            {
+                if (info == null)
+                    return false;
+
+                return (Name == info.Name)
+                    && (Channels == info.Channels)
+                    && (DeviceNumber == info.DeviceNumber);
+            }
+
+            public override int GetHashCode()
+            {
+                String str = Name + Channels + DeviceNumber;
+                return str.GetHashCode();
             }
         }
         #endregion
@@ -125,7 +156,10 @@ namespace LiveDescribe.ViewModel
             for (int i = 0; i < WaveIn.DeviceCount; ++i)
             {
                 var capability = WaveIn.GetCapabilities(i);
-                Sources.Add(new AudioSourceInfo(capability.ProductName, capability.Channels.ToString(CultureInfo.InvariantCulture), capability, i));
+                var audioSource = new AudioSourceInfo(capability.ProductName,
+                    capability.Channels.ToString(CultureInfo.InvariantCulture), capability, i);
+                if (!Sources.Contains(audioSource))
+                    Sources.Add(audioSource);
             }
         }
 
