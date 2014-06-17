@@ -329,7 +329,6 @@ namespace LiveDescribe.View
                             if (Mouse.LeftButton == MouseButtonState.Pressed)
                             {
                                 _descriptionInfoTabViewModel.SelectedSpace = space;
-
                                 double xPos = args.GetPosition(_audioCanvas).X;
 
                                 //prepare space for dragging
@@ -447,6 +446,19 @@ namespace LiveDescribe.View
 
             descriptionCanvasViewModel.DescriptionCanvasMouseUpEvent += DescriptionCanvas_MouseUp;
             descriptionCanvasViewModel.DescriptionCanvasMouseMoveEvent += DescriptionCanvas_MouseMove;
+            #endregion
+
+            #region Event Listeners For DescriptionInfoTabViewModel
+
+            _descriptionInfoTabViewModel.PropertyChanged += (sender, e) =>
+            {
+                if (e.PropertyName.Equals("SelectedSpace"))
+                {
+                    UpdateMarkerPosition((_descriptionInfoTabViewModel.SelectedSpace.StartInVideo /_videoDuration)*(_audioCanvas.Width) - MarkerOffset);
+                    UpdateVideoPosition((int)_descriptionInfoTabViewModel.SelectedSpace.StartInVideo);
+                }
+            };
+
             #endregion
         }
 
