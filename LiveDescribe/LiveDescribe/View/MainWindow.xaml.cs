@@ -1,4 +1,7 @@
-﻿using LiveDescribe.Controls;
+﻿using System.Globalization;
+using System.Runtime.InteropServices;
+using LiveDescribe.Controls;
+using LiveDescribe.Converters;
 using LiveDescribe.Model;
 using LiveDescribe.Utilities;
 using LiveDescribe.ViewModel;
@@ -66,8 +69,7 @@ namespace LiveDescribe.View
         private readonly DescriptionViewModel _descriptionViewModel;
         private readonly DescriptionInfoTabViewModel _descriptionInfoTabViewModel;
         private readonly MainWindowViewModel _mainWindowViewModel;
-        private readonly AudioCanvasViewModel _audioCanvasViewModel;
-        private readonly DescriptionCanvasViewModel _descriptionCanvasViewModel;
+        private readonly MillisecondsTimeConverterFormatter _millisecondsTimeConverter;
         private double _originalPositionForDraggingDescription = -1;
         private double _originalPositionForDraggingSpace = -1;
         private Point _rightClickPointOnAudioCanvas;
@@ -84,7 +86,6 @@ namespace LiveDescribe.View
 
         public MainWindow()
         {
-
             var splashScreen = new SplashScreen("../Images/LiveDescribe-Splashscreen.png");
             splashScreen.Show(true);
             Thread.Sleep(2000);
@@ -101,12 +102,13 @@ namespace LiveDescribe.View
             _descriptionViewModel = mainWindowViewModel.DescriptionViewModel;
             _spacesViewModel = mainWindowViewModel.SpacesViewModel;
             _descriptionInfoTabViewModel = mainWindowViewModel.DescriptionInfoTabViewModel;
-            _audioCanvasViewModel = mainWindowViewModel.AudioCanvasViewModel;
-            _descriptionCanvasViewModel = mainWindowViewModel.DescriptionCanvasViewModel;
+           
 
             _audioCanvas = AudioCanvasControl.AudioCanvas;
             _descriptionCanvas = DescriptionCanvasControl.DescriptionCanvas;
             _marker = MarkerControl.Marker;
+
+            _millisecondsTimeConverter = new MillisecondsTimeConverterFormatter();
             
             var cursfile = Application.GetResourceStream(new Uri("pack://application:,,,/Resources/Cursors/grab.cur"));
             _grabCursor = new Cursor(cursfile.Stream);
@@ -432,16 +434,19 @@ namespace LiveDescribe.View
             #endregion
 
             #region Event Listeners For AudioCanvasViewModel
-
-            _audioCanvasViewModel.AudioCanvasMouseDownEvent += AudioCanvas_OnMouseDown;
-            _audioCanvasViewModel.AudioCanvasMouseMoveEvent += AudioCanvas_MouseMove;
-            _audioCanvasViewModel.AudioCanvasMouseUpEvent += AudioCanvas_MouseUp;
-            _audioCanvasViewModel.AudioCanvasMouseRightButtonDownEvent += AudioCanvas_RecordRightClickPosition;
+            AudioCanvasViewModel audioCanvasViewModel = mainWindowViewModel.AudioCanvasViewModel;
+           
+            audioCanvasViewModel.AudioCanvasMouseDownEvent += AudioCanvas_OnMouseDown;
+            audioCanvasViewModel.AudioCanvasMouseMoveEvent += AudioCanvas_MouseMove;
+            audioCanvasViewModel.AudioCanvasMouseUpEvent += AudioCanvas_MouseUp;
+            audioCanvasViewModel.AudioCanvasMouseRightButtonDownEvent += AudioCanvas_RecordRightClickPosition;
             #endregion
 
             #region Event Listeners For DescriptionCanvasViewModel
-            _descriptionCanvasViewModel.DescriptionCanvasMouseUpEvent += DescriptionCanvas_MouseUp;
-            _descriptionCanvasViewModel.DescriptionCanvasMouseMoveEvent += DescriptionCanvas_MouseMove;
+            DescriptionCanvasViewModel descriptionCanvasViewModel = mainWindowViewModel.DescriptionCanvasViewModel;
+
+            descriptionCanvasViewModel.DescriptionCanvasMouseUpEvent += DescriptionCanvas_MouseUp;
+            descriptionCanvasViewModel.DescriptionCanvasMouseMoveEvent += DescriptionCanvas_MouseMove;
             #endregion
         }
 
@@ -770,8 +775,6 @@ namespace LiveDescribe.View
             if (_mediaControlViewModel.Waveform == null || _canvasWidth == 0 || width == 0)
                 return;
 
-            Log.Info("Drawing wave form");
-
             List<short> data = _mediaControlViewModel.Waveform.Data;
             double samplesPerPixel = Math.Max(data.Count / _canvasWidth, 1);
             double middle = _audioCanvas.ActualHeight / 2;
@@ -849,7 +852,6 @@ namespace LiveDescribe.View
 
             //Number of lines in the amount of time that the video plays for
             int numlines = (int)(_videoDuration / (LineTime * 1000));
-
             int beginLine = (int)((numlines / _canvasWidth) * TimeLineScrollViewer.HorizontalOffset);
             int endLine = beginLine + (int)((numlines / _canvasWidth) * TimeLineScrollViewer.ActualWidth) + 1;
             //Clear the canvas because we don't want the remaining lines due to importing a new video
@@ -857,7 +859,7 @@ namespace LiveDescribe.View
             NumberTimeline.Children.Clear();
 
             for (int i = beginLine; i <= endLine; ++i)
-            {
+            {               
                 if (i % LongLineTime == 0)
                 {
                     NumberTimeline.Children.Add(new Line
@@ -869,6 +871,11 @@ namespace LiveDescribe.View
                         X1 = _canvasWidth / numlines * i,
                         X2 = _canvasWidth / numlines * i,
                     });
+
+                    var timestamp = new TextBlock();
+                    timestamp.Text = (string)_millisecondsTimeConverter.Convert((i * LineTime) * 1000, typeof(int), null, CultureInfo.CurrentCulture);
+                    Canvas.SetLeft(timestamp, ((_canvasWidth / numlines * i) - 24));
+                    NumberTimeline.Children.Add(timestamp);
                 }
                 else
                 {
