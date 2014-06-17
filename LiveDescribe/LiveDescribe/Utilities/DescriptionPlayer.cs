@@ -76,6 +76,9 @@ namespace LiveDescribe.Utilities
         /// <param name="videoPositionMilliseconds">Time to the description at.</param>
         public void Play(Description description, double videoPositionMilliseconds)
         {
+            if(IsPlaying)
+                return;
+
             double offset = videoPositionMilliseconds - description.StartInVideo;
 
             var reader = new WaveFileReader(description.AudioFile);
@@ -90,10 +93,10 @@ namespace LiveDescribe.Utilities
             DescriptionStream = descriptionStream;
             _playingDescription = description;
 
-            descriptionStream.Play();
-
             IsPlaying = true;
             _playingDescription.IsPlaying = true;
+
+            descriptionStream.Play();
         }
 
         /// <summary>

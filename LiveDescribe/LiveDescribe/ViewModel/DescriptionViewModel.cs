@@ -77,11 +77,6 @@ namespace LiveDescribe.ViewModel
             AllDescriptions = new ObservableCollection<Description>();
             RegularDescriptions = new ObservableCollection<Description>();
             ExtendedDescriptions = new ObservableCollection<Description>();
-
-            DescriptionPlayer = new DescriptionPlayer();
-            DescriptionPlayer.DescriptionFinishedPlaying += (sender, e) =>
-                DispatcherHelper.UIDispatcher.Invoke(() =>
-                    _mediaControlViewModel.ResumeFromDescription(e.Value));
         }
         #endregion
 
@@ -158,8 +153,6 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Properties
-
-        public DescriptionPlayer DescriptionPlayer { private set; get; }
 
         /// <summary>
         /// property to set the Microphonestream

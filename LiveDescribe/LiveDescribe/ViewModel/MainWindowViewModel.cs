@@ -76,6 +76,11 @@ namespace LiveDescribe.ViewModel
             _audioCanvasViewModel = new AudioCanvasViewModel(_spacesviewmodel);
             _descriptionCanvasViewModel = new DescriptionCanvasViewModel(_descriptionviewmodel);
 
+            DescriptionPlayer = new DescriptionPlayer();
+            DescriptionPlayer.DescriptionFinishedPlaying += (sender, e) =>
+                DispatcherHelper.UIDispatcher.Invoke(() =>
+                    _mediaControlViewModel.ResumeFromDescription(e.Value));
+
             #region Commands
             //Commands
             CloseProject = new RelayCommand(
@@ -242,7 +247,7 @@ namespace LiveDescribe.ViewModel
                     _mediaVideo.Pause();
                     _descriptiontimer.Stop();
                     if (_lastRegularDescriptionPlayed != null && _lastRegularDescriptionPlayed.IsPlaying)
-                        _descriptionviewmodel.DescriptionPlayer.Stop();//_lastRegularDescriptionPlayed.Stop();
+                        DescriptionPlayer.Stop();
                     //this Handler should be attached to the view to update the graphics
                     OnPauseRequested(sender, e);
                 };
@@ -333,7 +338,9 @@ namespace LiveDescribe.ViewModel
         public ICommand FindSpaces { private set; get; }
         #endregion
 
-        #region Binding Properties
+        #region Properties
+
+        public DescriptionPlayer DescriptionPlayer { private set; get; }
 
         /// <summary>
         /// The window title.
@@ -416,7 +423,7 @@ namespace LiveDescribe.ViewModel
 
         #endregion
 
-        #region Helper Functions
+        #region Methods
         /// <summary>
         /// Gets called by the description timer
         /// </summary>
@@ -439,10 +446,10 @@ namespace LiveDescribe.ViewModel
 
                 try
                 {
-                    if (_descriptionviewmodel.DescriptionPlayer.CanPlay(description, videoPosition))
+                    if (DescriptionPlayer.CanPlay(description, videoPosition))
                     {
                         PrepareForDescription(description);
-                        _descriptionviewmodel.DescriptionPlayer.Play(description, videoPosition);
+                        DescriptionPlayer.Play(description, videoPosition);
                     }
                 }
                 catch (Exception ex)
