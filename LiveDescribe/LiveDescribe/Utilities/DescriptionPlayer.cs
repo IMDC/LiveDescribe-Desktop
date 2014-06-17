@@ -20,6 +20,7 @@ namespace LiveDescribe.Utilities
         private bool _isPlaying;
         private Description _playingDescription;
         private WaveOutEvent _descriptionStream;
+        private readonly object _lock = new object();
 
         public event EventHandler<EventArgs<Description>> DescriptionFinishedPlaying;
         public event PropertyChangedEventHandler PropertyChanged;
@@ -56,17 +57,20 @@ namespace LiveDescribe.Utilities
         /// <returns>Whether the description can be played or not.</returns>
         public bool CanPlay(Description description, double videoPositionMilliseconds)
         {
-            double offset = videoPositionMilliseconds - description.StartInVideo;
+            lock (_lock)
+            {
+                double offset = videoPositionMilliseconds - description.StartInVideo;
 
-            //if it is equal then the video time matches when the description should start dead on
-            return
-                !IsPlaying
-                && ((!description.IsExtendedDescription
-                        && 0 <= offset
-                        && offset < description.WaveFileDuration)
-                    || (description.IsExtendedDescription
-                        && 0 <= offset
-                        && offset < LiveDescribeConstants.ExtendedDescriptionStartIntervalMax));
+                //if it is equal then the video time matches when the description should start dead on
+                return
+                    !IsPlaying
+                    && ((!description.IsExtendedDescription
+                         && 0 <= offset
+                         && offset < description.WaveFileDuration)
+                        || (description.IsExtendedDescription
+                            && 0 <= offset
+                            && offset < LiveDescribeConstants.ExtendedDescriptionStartIntervalMax));
+            }
         }
 
         /// <summary>
@@ -76,27 +80,30 @@ namespace LiveDescribe.Utilities
         /// <param name="videoPositionMilliseconds">Time to the description at.</param>
         public void Play(Description description, double videoPositionMilliseconds)
         {
-            if(IsPlaying)
-                return;
+            lock (_lock)
+            {
+                if (IsPlaying)
+                    return;
 
-            double offset = videoPositionMilliseconds - description.StartInVideo;
+                double offset = videoPositionMilliseconds - description.StartInVideo;
 
-            var reader = new WaveFileReader(description.AudioFile);
-            //reader.WaveFormat.AverageBytesPerSecond/ 1000 = Average Bytes Per Millisecond
-            //AverageBytesPerMillisecond * (offset + StartWaveFileTime) = amount to play from
-            reader.Seek((long)((reader.WaveFormat.AverageBytesPerSecond / 1000)
-                * (offset + description.StartWaveFileTime)), SeekOrigin.Begin);
-            var descriptionStream = new WaveOutEvent();
-            descriptionStream.PlaybackStopped += DescriptionStream_PlaybackStopped;
-            descriptionStream.Init(reader);
+                var reader = new WaveFileReader(description.AudioFile);
+                //reader.WaveFormat.AverageBytesPerSecond/ 1000 = Average Bytes Per Millisecond
+                //AverageBytesPerMillisecond * (offset + StartWaveFileTime) = amount to play from
+                reader.Seek((long) ((reader.WaveFormat.AverageBytesPerSecond/1000)
+                                    *(offset + description.StartWaveFileTime)), SeekOrigin.Begin);
+                var descriptionStream = new WaveOutEvent();
+                descriptionStream.PlaybackStopped += DescriptionStream_PlaybackStopped;
+                descriptionStream.Init(reader);
 
-            DescriptionStream = descriptionStream;
-            _playingDescription = description;
+                DescriptionStream = descriptionStream;
+                _playingDescription = description;
 
-            IsPlaying = true;
-            _playingDescription.IsPlaying = true;
+                IsPlaying = true;
+                _playingDescription.IsPlaying = true;
 
-            descriptionStream.Play();
+                descriptionStream.Play();
+            }
         }
 
         /// <summary>
@@ -104,25 +111,31 @@ namespace LiveDescribe.Utilities
         /// </summary>
         public void Stop()
         {
-            if (!IsPlaying)
-                return;
+            lock (_lock)
+            {
+                if (!IsPlaying)
+                    return;
 
-            IsPlaying = false;
-            /* For some reason setting IsPlaying to false here creates a very quick flash on the
-             * first description played. For now it seems better to set it to false only in the
-             * event handler below
-             */
-            //_playingDescription.IsPlaying = false;
+                IsPlaying = false;
+                /* For some reason setting IsPlaying to false here creates a very quick flash on the
+                 * first description played. For now it seems better to set it to false only in the
+                 * event handler below
+                 */
+                //_playingDescription.IsPlaying = false;
 
-            if (_descriptionStream != null)
-                _descriptionStream.Stop();
+                if (_descriptionStream != null)
+                    _descriptionStream.Stop();
+            }
         }
 
         private void DescriptionStream_PlaybackStopped(object sender, StoppedEventArgs e)
         {
-            IsPlaying = false;
-            _playingDescription.IsPlaying = false;
-            OnDescriptionFinishedPlaying(_playingDescription);
+            lock (_lock)
+            {
+                IsPlaying = false;
+                _playingDescription.IsPlaying = false;
+                OnDescriptionFinishedPlaying(_playingDescription);
+            }
         }
         #endregion
 
