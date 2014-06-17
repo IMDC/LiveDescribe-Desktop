@@ -5,7 +5,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     mc:Ignorable="d"
-    d:DesignHeight="300"
+    d:DesignHeight="400"
     d:DesignWidth="300"
     xmlns:converters="clr-namespace:LiveDescribe.Converters">
     <UserControl.Resources>
@@ -16,7 +16,7 @@
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition
-                Height="80" />
+                Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
@@ -204,11 +204,15 @@
             Grid.Column="1"
             Grid.Row="1">
             <Button
-                Margin="10"
+                Margin="5"
                 Command="{Binding SaveDescriptionTextCommand}"
                 Content="Save Text" />
             <Button
-                Margin="10"
+                Margin="5"
+                Command="{Binding RecordInSpace}"
+                Content="Record" />
+            <Button
+                Margin="5"
                 Command="{Binding ClearDescriptionTextCommand}"
                 Content="Clear" />
         </StackPanel>
