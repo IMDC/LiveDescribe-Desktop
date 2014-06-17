@@ -27,7 +27,6 @@
                     </ContextMenu>
                 </Canvas.ContextMenu>
 
-
                 <ItemsControl
                     Name="SpacesItemControl"
                     ItemsSource="{Binding Spaces}">
@@ -36,7 +35,6 @@
                             <Canvas />
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
-
                     <ItemsControl.ItemContainerStyle>
                         <Style>
                             <Setter
@@ -66,7 +64,6 @@
                                 <Rectangle.Style>
                                     <Style
                                         TargetType="Rectangle">
-
                                         <Style.Triggers>
                                             <DataTrigger
                                                 Binding="{Binding IsSelected}"
@@ -140,7 +137,6 @@
                         <command:EventToCommand Command="{Binding AudioCanvasMouseRightButtonDownCommand, Mode=OneWay}"
                             PassEventArgsToCommand="True"/>
                     </i:EventTrigger>
-                    
                 </i:Interaction.Triggers>
             </Canvas>
         </Border>
