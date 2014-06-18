@@ -447,18 +447,6 @@ namespace LiveDescribe.View
 
             #region Event Listeners For DescriptionInfoTabViewModel
 
-            _descriptionInfoTabViewModel.PropertyChanged += (sender, e) =>
-            {
-                if (e.PropertyName.Equals("SelectedSpace"))
-                {
-                    if (_descriptionInfoTabViewModel.SelectedSpace == null)
-                        return;
-
-                    UpdateMarkerPosition((_descriptionInfoTabViewModel.SelectedSpace.StartInVideo /_videoDuration)*(_audioCanvas.Width) - MarkerOffset);
-                    UpdateVideoPosition((int)_descriptionInfoTabViewModel.SelectedSpace.StartInVideo);
-                }
-            };
-
             #endregion
         }
 
