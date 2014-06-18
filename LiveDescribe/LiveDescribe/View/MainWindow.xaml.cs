@@ -451,6 +451,9 @@ namespace LiveDescribe.View
             {
                 if (e.PropertyName.Equals("SelectedSpace"))
                 {
+                    if (_descriptionInfoTabViewModel.SelectedSpace == null)
+                        return;
+
                     UpdateMarkerPosition((_descriptionInfoTabViewModel.SelectedSpace.StartInVideo /_videoDuration)*(_audioCanvas.Width) - MarkerOffset);
                     UpdateVideoPosition((int)_descriptionInfoTabViewModel.SelectedSpace.StartInVideo);
                 }
