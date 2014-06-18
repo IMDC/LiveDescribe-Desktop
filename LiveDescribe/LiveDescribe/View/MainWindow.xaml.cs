@@ -290,7 +290,7 @@ namespace LiveDescribe.View
                             _originalPositionForDraggingDescription = e2.GetPosition(_descriptionCanvas).X;
                             _descriptionBeingModified = e.Description;
                             _descriptionCanvas.CaptureMouse();
-                            Mouse.SetCursor(_grabbingCursor);
+                            _descriptionCanvas.Cursor = _grabbingCursor;
                             _descriptionActionState = DescriptionsActionState.Dragging;
                         }
                     };
@@ -648,6 +648,7 @@ namespace LiveDescribe.View
                 //the mouse gets captured when a description is left clicked
                 _descriptionCanvas.ReleaseMouseCapture();
                 _descriptionActionState = DescriptionsActionState.None;
+                _descriptionCanvas.Cursor = Cursors.Arrow;
             }
         }
 
@@ -678,7 +679,6 @@ namespace LiveDescribe.View
             _originalPositionForDraggingDescription = mouseXPos;
             _descriptionBeingModified.StartInVideo = (_videoDuration / _audioCanvas.Width) * (_descriptionBeingModified.X);
             _descriptionBeingModified.EndInVideo = _descriptionBeingModified.StartInVideo + (_descriptionBeingModified.EndWaveFileTime - _descriptionBeingModified.StartWaveFileTime);
-            Mouse.SetCursor(_grabbingCursor);
         }
 
         private void AudioCanvas_RecordRightClickPosition(object sender, EventArgs e)
