@@ -336,17 +336,17 @@ namespace LiveDescribe.View
 
                         if (xPos > (space.X + space.Width - ResizeSpaceOffset))
                         {
-                            Mouse.SetCursor(Cursors.SizeWE);
+                            _audioCanvas.Cursor = Cursors.SizeWE;
                             _spacesActionState = SpacesActionState.ResizingEndOfSpace;
                         }
                         else if (xPos < (space.X + ResizeSpaceOffset))
                         {
-                            Mouse.SetCursor(Cursors.SizeWE);
+                            _audioCanvas.Cursor = Cursors.SizeWE;
                             _spacesActionState = SpacesActionState.ResizingBeginningOfSpace;
                         }
                         else
                         {
-                            Mouse.SetCursor(_grabbingCursor);
+                            _audioCanvas.Cursor = _grabbingCursor;
                             _spacesActionState = SpacesActionState.Dragging;
                         }
                     }
@@ -521,6 +521,7 @@ namespace LiveDescribe.View
             {
                 _audioCanvas.ReleaseMouseCapture();
                 _spacesActionState = SpacesActionState.None;
+                _audioCanvas.Cursor = Cursors.Arrow;
             }
         }
 
@@ -571,8 +572,6 @@ namespace LiveDescribe.View
             _spaceBeingModified.Width = newWidth;
             _originalPositionForDraggingSpace = mouseXPosition;
             _spaceBeingModified.EndInVideo = _spaceBeingModified.StartInVideo + (_videoDuration / _audioCanvas.Width) * _spaceBeingModified.Width;
-
-            Mouse.SetCursor(Cursors.SizeWE);
         }
 
         private void ResizeBeginningOfSpaceBeingModified(double mouseXPosition)
@@ -600,7 +599,6 @@ namespace LiveDescribe.View
             _spaceBeingModified.Width = (_audioCanvas.Width / _videoDuration) * (_spaceBeingModified.EndInVideo - _spaceBeingModified.StartInVideo);
 
             _originalPositionForDraggingSpace = mouseXPosition;
-            Mouse.SetCursor(Cursors.SizeWE);
         }
 
         private void DragSpaceBeingModified(double mouseXPosition)
@@ -620,7 +618,6 @@ namespace LiveDescribe.View
             _originalPositionForDraggingSpace = mouseXPosition;
             _spaceBeingModified.StartInVideo = (_videoDuration / _audioCanvas.Width) * (_spaceBeingModified.X);
             _spaceBeingModified.EndInVideo = _spaceBeingModified.StartInVideo + (_videoDuration / _audioCanvas.Width) * size;
-            Mouse.SetCursor(_grabbingCursor);
         }
 
         /// <summary>
