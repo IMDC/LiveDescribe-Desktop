@@ -26,15 +26,8 @@ namespace LiveDescribe.ViewModel
         private ObservableCollection<Description> _alldescriptions;      //this list contains all the descriptions both regular and extended
         private ObservableCollection<Description> _extendedDescriptions; //this list only contains the extended description this list should be used to bind to the list view of extended descriptions
         private ObservableCollection<Description> _regularDescriptions;  //this list only contains all the regular descriptions this list should only be used to bind to the list of regular descriptions
-        private WaveIn _microphonestream;
-        private WaveFileWriter _waveWriter;
         private readonly ILiveDescribePlayer _mediaVideo;
-        private readonly bool _usingExistingMicrophone;
-        /// <summary>
-        /// Keeps track of the starting time of a description on recording.
-        /// </summary>
-        private double _descriptionStartTime;
-        private bool _isRecording;
+        private DescriptionRecorder _recorder;
 
         private bool _recordingExtendedDescription;
 
@@ -55,26 +48,29 @@ namespace LiveDescribe.ViewModel
         #region Constructors
         public DescriptionViewModel(ILiveDescribePlayer mediaVideo, MediaControlViewModel mediaControlViewModel)
         {
-            _isRecording = false;
-            _waveWriter = null;
             _mediaVideo = mediaVideo;
             _mediaControlViewModel = mediaControlViewModel;
 
             Project = null;
+            _recorder = new DescriptionRecorder();
+            _recorder.DescriptionRecorded += (sender, args) => AddDescription(args.Value);
 
             RecordCommand = new RelayCommand(
-                canExecute: () => Project != null && _mediaVideo.CurrentState != LiveDescribeVideoStates.VideoNotLoaded,
+                canExecute: () => 
+                    Project != null
+                    && _mediaVideo.CurrentState != LiveDescribeVideoStates.VideoNotLoaded
+                    && _recorder.CanRecord(),
                 execute: () =>
                 {
-                    if (IsRecording)
+                    if (_recorder.IsRecording)
                     {
-                        FinishRecordingDescription();
+                        _recorder.StopRecording(Project.Folders.Project,ExtendedIsChecked);
                     }
                     else
                     {
                         try
                         {
-                            Record();
+                            _recorder.RecordDescription(Project.GenerateDescriptionFilePath(),_mediaVideo.Position.TotalMilliseconds);
                             //save the current state so when the button is pressed again you can restore it back to that state
                             _previousVideoState = _mediaVideo.CurrentState;
                         }
@@ -83,24 +79,11 @@ namespace LiveDescribe.ViewModel
                             HandleNoMicrophoneException(e);
                         }
                     }
-                    _mediaVideo.CurrentState = IsRecording
+                    _mediaVideo.CurrentState = _recorder.IsRecording
                         ? LiveDescribeVideoStates.RecordingDescription
                         : _previousVideoState;
                 });
 
-            DescriptionRecorded += (sender, args) => AddDescription(args.Value);
-
-            //check if the current microphone exists in the settings
-            //if it doesn't use the first one or else get the one stored in the settings
-            if (Properties.Settings.Default.Microphone == null)
-            {
-                _usingExistingMicrophone = false;
-            }
-            else
-            {
-                _usingExistingMicrophone = true;
-                MicrophoneStream = Properties.Settings.Default.Microphone;
-            }
             AllDescriptions = new ObservableCollection<Description>();
             RegularDescriptions = new ObservableCollection<Description>();
             ExtendedDescriptions = new ObservableCollection<Description>();
@@ -114,86 +97,15 @@ namespace LiveDescribe.ViewModel
         public RelayCommand RecordCommand { private set; get; }
         #endregion
 
-        #region Binding Functions
-        /// <summary>
-        /// Records the description
-        /// </summary>
-        /// <param name="param"></param>
-        public void Record()
-        {
-            Log.Info("Beginning to record audio");
-            // if we don't have an existing microphone we try to create a new one with the first
-            // available microphone if no microphone exists an exception is thrown and we throw the
-            // event "RecordRequestedMicrophoneNotPluggedIn
-            if (!_usingExistingMicrophone)
-            {
-                try
-                {
-                    MicrophoneStream = GetMicrophone();
-                }
-                catch (MmException)
-                {
-                    Log.Warn("Microphone not found");
-                    throw;
-                }
-            }
-            Log.Info("Recording...");
-
-            string path = Project.GenerateDescriptionFilePath();
-            _waveWriter = new WaveFileWriter(path, MicrophoneStream.WaveFormat);
-
-            try
-            {
-                _descriptionStartTime = _mediaVideo.Position.TotalMilliseconds;
-                MicrophoneStream.StartRecording();
-            }
-            catch (MmException)
-            {
-                Log.Error("Previous Microphone was found then unplugged (No Microphone) Exception...");
-                throw;
-            }
-
-            if (_mediaVideo != null)
-                IsRecording = true;
-        }
-
-        private WaveIn GetMicrophone()
-        {
-            var micStream = new WaveIn
-            {
-                DeviceNumber = 0,
-                WaveFormat = new WaveFormat(44100, WaveIn.GetCapabilities(0).Channels)
-            };
-            Log.Info("Product Name of Microphone: " + WaveIn.GetCapabilities(0).ProductName);
-
-            return micStream;
-        }
-        #endregion
-
         #region Properties
-
-        /// <summary>
-        /// property to set the Microphonestream
-        /// </summary>
-        public WaveIn MicrophoneStream
+        public DescriptionRecorder Recorder
         {
             set
             {
-                //Cleanup
-                if (_microphonestream != null)
-                {
-                    _microphonestream.DataAvailable -= MicrophoneSteam_DataAvailable;
-                    _microphonestream.Dispose();
-                }
-
-                _microphonestream = value;
-
-                if(_microphonestream != null)
-                    _microphonestream.DataAvailable += MicrophoneSteam_DataAvailable;
-
+                _recorder = value;
                 RaisePropertyChanged();
             }
-            get { return _microphonestream; }
+            get { return _recorder; }
         }
 
         /// <summary>
@@ -249,66 +161,9 @@ namespace LiveDescribe.ViewModel
             }
             get { return _recordingExtendedDescription; }
         }
-
-        public bool IsRecording
-        {
-            set
-            {
-                _isRecording = value;
-                RaisePropertyChanged();
-            }
-            get { return _isRecording; }
-        }
         #endregion
 
-        #region Private Handler Event Methods
-        /// <summary>
-        /// Write to the wave file, on data available in the microphone stream
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void MicrophoneSteam_DataAvailable(object sender, WaveInEventArgs e)
-        {
-            if (_waveWriter == null) return;
-
-            _waveWriter.Write(e.Buffer, 0, e.BytesRecorded);
-            _waveWriter.Flush();
-        }
-
-        #endregion
-
-        public event EventHandler<EventArgs<Description>> DescriptionRecorded;
-
-        private void OnDescriptionRecorded(Description d)
-        {
-            EventHandler<EventArgs<Description>> handler = DescriptionRecorded;
-            if (handler != null) handler(this, new EventArgs<Description>(d));
-        }
-
-        #region Helper Methods
-        /// <summary>
-        /// Stops recording a description, and sets the correct state of the media video it also
-        /// adds the description that was recorded to the list of descriptions
-        /// </summary>
-        private void FinishRecordingDescription()
-        {
-            Log.Info("Finished Recording");
-            MicrophoneStream.StopRecording();
-            string audioFilePath = _waveWriter.Filename;
-            _waveWriter.Dispose();
-            _waveWriter = null;
-            var read = new WaveFileReader(audioFilePath);
-
-            var file = ProjectFile.FromAbsolutePath(audioFilePath, Project.Folders.Project);
-
-            var d = new Description(file, 0, read.TotalTime.TotalMilliseconds, _descriptionStartTime, ExtendedIsChecked);
-            OnDescriptionRecorded(d);
-
-            read.Dispose();
-            //have to change the state of recording
-            IsRecording = false;
-        }
-
+        #region Methods
         private void HandleNoMicrophoneException(MmException e)
         {
             Log.Error("No microphone", e);
@@ -374,7 +229,7 @@ namespace LiveDescribe.ViewModel
             AllDescriptions.Clear();
             ExtendedDescriptions.Clear();
             RegularDescriptions.Clear();
-            _waveWriter = null;
+            _recorder = new DescriptionRecorder(); //TODO: Write clear method?
         }
         #endregion
 

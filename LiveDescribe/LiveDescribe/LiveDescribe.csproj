@@ -118,6 +118,7 @@
     <Compile Include="Utilities\CommandExtensions.cs" />
     <Compile Include="Utilities\CopyFileProgressChangedEventArgs.cs" />
     <Compile Include="Utilities\DescriptionPlayer.cs" />
+    <Compile Include="Utilities\DescriptionRecorder.cs" />
     <Compile Include="Utilities\FileDeleter.cs" />
     <Compile Include="Utilities\FileReader.cs" />
     <Compile Include="Utilities\FileWriter.cs" />

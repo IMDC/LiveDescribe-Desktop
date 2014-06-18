@@ -33,7 +33,7 @@
             <Button
                 Command="{Binding RecordCommand}"
                 Style="{StaticResource ControlPanelStyle}"
-                Content="{Binding Path=IsRecording,
+                Content="{Binding Path=Recorder.IsRecording,
                 Converter={StaticResource BoolToRecordingContentConverter}}"
                 HorizontalAlignment="Center"
                 Width="100"

@@ -228,9 +228,9 @@ namespace LiveDescribe.ViewModel
 
             _preferences.ApplyRequested += (sender, e) =>
                 {
-                    _descriptionviewmodel.MicrophoneStream = Properties.Settings.Default.Microphone;
+                    _descriptionviewmodel.Recorder.MicrophoneStream = Properties.Settings.Default.Microphone;
                     Log.Info("Product Name of Apply Requested Microphone: " +
-                        NAudio.Wave.WaveIn.GetCapabilities(_descriptionviewmodel.MicrophoneStream.DeviceNumber).ProductName);
+                        NAudio.Wave.WaveIn.GetCapabilities(_descriptionviewmodel.Recorder.MicrophoneStream.DeviceNumber).ProductName);
                 };
 
             #region MediaControlViewModel Events
