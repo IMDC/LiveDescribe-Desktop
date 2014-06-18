@@ -10,6 +10,7 @@ using LiveDescribe.Events;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
 using LiveDescribe.Utilities;
+using NAudio;
 using NAudio.Wave;
 
 namespace LiveDescribe.ViewModel
@@ -48,7 +49,6 @@ namespace LiveDescribe.ViewModel
 
         #region Event Handlers
         public event EventHandler<DescriptionEventArgs> AddDescriptionEvent;
-        public event EventHandler RecordRequested;
         public event EventHandler RecordRequestedMicrophoneNotPluggedIn;
         #endregion
 
@@ -57,11 +57,38 @@ namespace LiveDescribe.ViewModel
         {
             _isRecording = false;
             _waveWriter = null;
-            RecordCommand = new RelayCommand(Record, RecordStateCheck);
             _mediaVideo = mediaVideo;
             _mediaControlViewModel = mediaControlViewModel;
 
             Project = null;
+
+            RecordCommand = new RelayCommand(
+                canExecute: () => Project != null && _mediaVideo.CurrentState != LiveDescribeVideoStates.VideoNotLoaded,
+                execute: () =>
+                {
+                    if (IsRecording)
+                    {
+                        FinishRecordingDescription();
+                    }
+                    else
+                    {
+                        try
+                        {
+                            Record();
+                            //save the current state so when the button is pressed again you can restore it back to that state
+                            _previousVideoState = _mediaVideo.CurrentState;
+                        }
+                        catch (MmException e)
+                        {
+                            HandleNoMicrophoneException(e);
+                        }
+                    }
+                    _mediaVideo.CurrentState = IsRecording
+                        ? LiveDescribeVideoStates.RecordingDescription
+                        : _previousVideoState;
+                });
+
+            DescriptionRecorded += (sender, args) => AddDescription(args.Value);
 
             //check if the current microphone exists in the settings
             //if it doesn't use the first one or else get the one stored in the settings
@@ -95,14 +122,6 @@ namespace LiveDescribe.ViewModel
         public void Record()
         {
             Log.Info("Beginning to record audio");
-            //if the button was clicked once already it is in the RecordingDescription State
-            //so end the recording because it is the second click
-            if (_mediaVideo.CurrentState == LiveDescribeVideoStates.RecordingDescription)
-            {
-                FinishRecordingDescription();
-                return;
-            }
-
             // if we don't have an existing microphone we try to create a new one with the first
             // available microphone if no microphone exists an exception is thrown and we throw the
             // event "RecordRequestedMicrophoneNotPluggedIn
@@ -110,45 +129,44 @@ namespace LiveDescribe.ViewModel
             {
                 try
                 {
-                    MicrophoneStream = new WaveIn
-                    {
-                        DeviceNumber = 0,
-                        WaveFormat = new WaveFormat(44100, WaveIn.GetCapabilities(0).Channels)
-                    };
-                    Log.Info("Product Name of Microphone: " + WaveIn.GetCapabilities(0).ProductName);
-
+                    MicrophoneStream = GetMicrophone();
                 }
-                catch (NAudio.MmException e)
+                catch (MmException)
                 {
-                    //Microphone not plugged in
                     Log.Warn("Microphone not found");
-                    HandleNoMicrophoneException(e);
-                    return;
+                    throw;
                 }
             }
             Log.Info("Recording...");
 
             string path = Project.GenerateDescriptionFilePath();
             _waveWriter = new WaveFileWriter(path, MicrophoneStream.WaveFormat);
-            MicrophoneStream.DataAvailable += MicrophoneSteam_DataAvailable;
 
             try
             {
                 _descriptionStartTime = _mediaVideo.Position.TotalMilliseconds;
                 MicrophoneStream.StartRecording();
             }
-            catch (NAudio.MmException e)
+            catch (MmException)
             {
-                //Microphone not plugged in
                 Log.Error("Previous Microphone was found then unplugged (No Microphone) Exception...");
-                HandleNoMicrophoneException(e);
-                return;
+                throw;
             }
-            //save the current state so when the button is pressed again you can restore it back to that state
-            _previousVideoState = _mediaVideo.CurrentState;
 
-            if (_mediaVideo != null) IsRecording = true;
-            OnRecordRequested();
+            if (_mediaVideo != null)
+                IsRecording = true;
+        }
+
+        private WaveIn GetMicrophone()
+        {
+            var micStream = new WaveIn
+            {
+                DeviceNumber = 0,
+                WaveFormat = new WaveFormat(44100, WaveIn.GetCapabilities(0).Channels)
+            };
+            Log.Info("Product Name of Microphone: " + WaveIn.GetCapabilities(0).ProductName);
+
+            return micStream;
         }
         #endregion
 
@@ -161,13 +179,21 @@ namespace LiveDescribe.ViewModel
         {
             set
             {
+                //Cleanup
+                if (_microphonestream != null)
+                {
+                    _microphonestream.DataAvailable -= MicrophoneSteam_DataAvailable;
+                    _microphonestream.Dispose();
+                }
+
                 _microphonestream = value;
+
+                if(_microphonestream != null)
+                    _microphonestream.DataAvailable += MicrophoneSteam_DataAvailable;
+
                 RaisePropertyChanged();
             }
-            get
-            {
-                return _microphonestream;
-            }
+            get { return _microphonestream; }
         }
 
         /// <summary>
@@ -180,10 +206,7 @@ namespace LiveDescribe.ViewModel
                 _alldescriptions = value;
                 RaisePropertyChanged();
             }
-            get
-            {
-                return _alldescriptions;
-            }
+            get { return _alldescriptions; }
         }
 
         /// <summary>
@@ -197,10 +220,7 @@ namespace LiveDescribe.ViewModel
                 _extendedDescriptions = value;
                 RaisePropertyChanged();
             }
-            get
-            {
-                return _extendedDescriptions;
-            }
+            get { return _extendedDescriptions; }
         }
 
         /// <summary>
@@ -214,10 +234,7 @@ namespace LiveDescribe.ViewModel
                 _regularDescriptions = value;
                 RaisePropertyChanged();
             }
-            get
-            {
-                return _regularDescriptions;
-            }
+            get { return _regularDescriptions; }
         }
 
         /// <summary>
@@ -230,51 +247,18 @@ namespace LiveDescribe.ViewModel
                 _recordingExtendedDescription = value;
                 RaisePropertyChanged();
             }
-            get
-            {
-                return _recordingExtendedDescription;
-            }
+            get { return _recordingExtendedDescription; }
         }
 
         public bool IsRecording
         {
             set
             {
-                _mediaVideo.CurrentState = value ? LiveDescribeVideoStates.RecordingDescription : _previousVideoState;
                 _isRecording = value;
                 RaisePropertyChanged();
             }
-            get
-            {
-                return _isRecording;
-            }
+            get { return _isRecording; }
         }
-        #endregion
-
-        #region State Checks
-        /// <summary>
-        /// method to check whether the record command can be executed or not
-        /// </summary>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        public bool RecordStateCheck()
-        {
-            return Project != null && _mediaVideo.CurrentState != LiveDescribeVideoStates.VideoNotLoaded;
-        }
-
-        /// <summary>
-        /// method to check whether the extended description checkbox can be checked or not
-        /// </summary>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        public bool ExtendedDescriptionCheckboxStateCheck(object param)
-        {
-            if (_mediaVideo.CurrentState == LiveDescribeVideoStates.VideoNotLoaded || _mediaVideo.CurrentState == LiveDescribeVideoStates.RecordingDescription)
-                return false;
-
-            return true;
-        }
-
         #endregion
 
         #region Private Handler Event Methods
@@ -293,6 +277,14 @@ namespace LiveDescribe.ViewModel
 
         #endregion
 
+        public event EventHandler<EventArgs<Description>> DescriptionRecorded;
+
+        private void OnDescriptionRecorded(Description d)
+        {
+            EventHandler<EventArgs<Description>> handler = DescriptionRecorded;
+            if (handler != null) handler(this, new EventArgs<Description>(d));
+        }
+
         #region Helper Methods
         /// <summary>
         /// Stops recording a description, and sets the correct state of the media video it also
@@ -309,13 +301,15 @@ namespace LiveDescribe.ViewModel
 
             var file = ProjectFile.FromAbsolutePath(audioFilePath, Project.Folders.Project);
 
-            AddDescription(file, 0, read.TotalTime.TotalMilliseconds, _descriptionStartTime, ExtendedIsChecked);
+            var d = new Description(file, 0, read.TotalTime.TotalMilliseconds, _descriptionStartTime, ExtendedIsChecked);
+            OnDescriptionRecorded(d);
+
             read.Dispose();
             //have to change the state of recording
             IsRecording = false;
         }
 
-        private void HandleNoMicrophoneException(NAudio.MmException e)
+        private void HandleNoMicrophoneException(MmException e)
         {
             Log.Error("No microphone", e);
             OnRecordRequestedMicrophoneNotPluggedIn();
@@ -391,13 +385,6 @@ namespace LiveDescribe.ViewModel
             EventHandler<DescriptionEventArgs> addDescriptionHandler = AddDescriptionEvent;
             if (addDescriptionHandler != null)
                 addDescriptionHandler(this, new DescriptionEventArgs(desc));
-        }
-
-        private void OnRecordRequested()
-        {
-            EventHandler handlerRecordRequested = RecordRequested;
-            if (handlerRecordRequested != null)
-                handlerRecordRequested(this, EventArgs.Empty);
         }
 
         private void OnRecordRequestedMicrophoneNotPluggedIn()
