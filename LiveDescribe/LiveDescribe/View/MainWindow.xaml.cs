@@ -314,73 +314,70 @@ namespace LiveDescribe.View
             #region Event Listeners for SpacesViewModel
 
             _spacesViewModel.SpaceAddedEvent += (sender, e) =>
+            {
+                //Adding a space depends on where you right clicked so we create and add it in the view
+                Space space = e.Space;
+
+                //Set space only if the video is loaded/playing/recording/etc
+                if (_videoMedia.CurrentState != LiveDescribeVideoStates.VideoNotLoaded)
+                    SetSpaceLocation(space);
+
+                space.SpaceMouseDownEvent += (sender1, e1) =>
                 {
-                    //Adding a space depends on where you right clicked so we create and add it in the view
-                    Space space = e.Space;
-
-                    //Set space only if the video is loaded/playing/recording/etc
-                    if (_videoMedia.CurrentState != LiveDescribeVideoStates.VideoNotLoaded)
-                        SetSpaceLocation(space);
-
-                    space.SpaceMouseDownEvent += (sender1, e1) =>
-                        {
-                            var args = (MouseEventArgs)e1;
-
-                            if (Mouse.LeftButton == MouseButtonState.Pressed)
-                            {
-                                _descriptionInfoTabViewModel.SelectedSpace = space;
-                                double xPos = args.GetPosition(_audioCanvas).X;
-
-                                //prepare space for dragging
-                                _originalPositionForDraggingSpace = xPos;
-                                _spaceBeingModified = space;
-                                _audioCanvas.CaptureMouse();
-
-                                if (xPos > (space.X + space.Width - ResizeSpaceOffset))
-                                {
-                                    Mouse.SetCursor(Cursors.SizeWE);
-                                    _spacesActionState = SpacesActionState.ResizingEndOfSpace;
-                                }
-                                else if (xPos < (space.X + ResizeSpaceOffset))
-                                {
-                                    Mouse.SetCursor(Cursors.SizeWE);
-                                    _spacesActionState = SpacesActionState.ResizingBeginningOfSpace;
-                                }
-                                else
-                                {
-                                    Mouse.SetCursor(_grabbingCursor);
-                                    _spacesActionState = SpacesActionState.Dragging;
-                                }
-                            }
-                        };
-
-                    space.SpaceMouseMoveEvent += (sender1, e1) =>
-                        {
-                            var args = (MouseEventArgs)e1;
-                            double xPos = args.GetPosition(_audioCanvas).X;
-
-                            //Changes cursor if the mouse hovers over the end or the beginning of the space
-                            if (xPos > (space.X + space.Width - ResizeSpaceOffset))
-                            {
-                                //resizing right side of the space
-                                Mouse.SetCursor(Cursors.SizeWE);
-                            }
-                            else if (xPos < (space.X + ResizeSpaceOffset))
-                            {
-                                Mouse.SetCursor(Cursors.SizeWE);
-                            }
-                            else
-                            {
-                                Mouse.SetCursor(_grabCursor);
-                            }
-                        };
-
-                    space.PropertyChanged += (o, args) =>
+                    if (Mouse.LeftButton == MouseButtonState.Pressed)
                     {
-                        if (args.PropertyName.Equals("StartInVideo") || args.PropertyName.Equals("EndInVideo"))
-                            SetSpaceLocation(space);
-                    };
+                        _descriptionInfoTabViewModel.SelectedSpace = space;
+                        double xPos = e1.GetPosition(_audioCanvas).X;
+
+                        //prepare space for dragging
+                        _originalPositionForDraggingSpace = xPos;
+                        _spaceBeingModified = space;
+                        _audioCanvas.CaptureMouse();
+
+                        if (xPos > (space.X + space.Width - ResizeSpaceOffset))
+                        {
+                            Mouse.SetCursor(Cursors.SizeWE);
+                            _spacesActionState = SpacesActionState.ResizingEndOfSpace;
+                        }
+                        else if (xPos < (space.X + ResizeSpaceOffset))
+                        {
+                            Mouse.SetCursor(Cursors.SizeWE);
+                            _spacesActionState = SpacesActionState.ResizingBeginningOfSpace;
+                        }
+                        else
+                        {
+                            Mouse.SetCursor(_grabbingCursor);
+                            _spacesActionState = SpacesActionState.Dragging;
+                        }
+                    }
                 };
+
+                space.SpaceMouseMoveEvent += (sender1, e1) =>
+                {
+                    double xPos = e1.GetPosition(_audioCanvas).X;
+
+                    //Changes cursor if the mouse hovers over the end or the beginning of the space
+                    if (xPos > (space.X + space.Width - ResizeSpaceOffset))
+                    {
+                        //resizing right side of the space
+                        Mouse.SetCursor(Cursors.SizeWE);
+                    }
+                    else if (xPos < (space.X + ResizeSpaceOffset))
+                    {
+                        Mouse.SetCursor(Cursors.SizeWE);
+                    }
+                    else
+                    {
+                        Mouse.SetCursor(_grabCursor);
+                    }
+                };
+
+                space.PropertyChanged += (o, args) =>
+                {
+                    if (args.PropertyName.Equals("StartInVideo") || args.PropertyName.Equals("EndInVideo"))
+                        SetSpaceLocation(space);
+                };
+            };
 
             _spacesViewModel.RequestSpaceTime += (sender, args) =>
             {
