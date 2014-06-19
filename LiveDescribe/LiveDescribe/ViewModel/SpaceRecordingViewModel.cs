@@ -72,6 +72,8 @@ namespace LiveDescribe.ViewModel
                 canExecute: () => Description != null,
                 execute: () =>
                 {
+                    //Give Space text to description before exiting
+                    _description.DescriptionText = _space.SpaceText;
                     OnCloseRequested();
                 });
         }
