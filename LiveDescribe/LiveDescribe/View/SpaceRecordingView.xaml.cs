@@ -23,6 +23,13 @@ namespace LiveDescribe.View
         public SpaceRecordingView(SpaceRecordingViewModel viewModel)
         {
             InitializeComponent();
+
+            viewModel.CloseRequested += (sender, args) =>
+            {
+                DialogResult = true;
+                Close();
+            };
+
             DataContext = viewModel;
         }
     }

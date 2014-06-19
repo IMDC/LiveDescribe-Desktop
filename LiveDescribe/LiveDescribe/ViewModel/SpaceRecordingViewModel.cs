@@ -20,6 +20,10 @@ namespace LiveDescribe.ViewModel
         private DescriptionPlayer _player;
         #endregion
 
+        #region Events
+        public event EventHandler CloseRequested;
+        #endregion
+
         #region Constructor
         public SpaceRecordingViewModel(Space space, Project project)
         {
@@ -68,7 +72,7 @@ namespace LiveDescribe.ViewModel
                 canExecute: () => Description != null,
                 execute: () =>
                 {
-
+                    OnCloseRequested();
                 });
         }
         #endregion
@@ -112,6 +116,15 @@ namespace LiveDescribe.ViewModel
                 RaisePropertyChanged();
             }
             get { return _space; }
+        }
+        #endregion
+
+        #region Event Invokations
+
+        public void OnCloseRequested()
+        {
+            EventHandler handler = CloseRequested;
+            if (handler != null) handler(this, EventArgs.Empty);
         }
         #endregion
     }
