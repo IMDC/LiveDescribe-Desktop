@@ -97,8 +97,9 @@
                                     </i:EventTrigger>
                                     <i:EventTrigger
                                         EventName="MouseUp">
-                                        <i:InvokeCommandAction
-                                            Command="{Binding SpaceMouseUpCommand}" />
+                                        <command:EventToCommand
+                                            Command="{Binding SpaceMouseUpCommand, Mode=OneWay}"
+                                            PassEventArgsToCommand="True"/>
                                     </i:EventTrigger>
                                     <i:EventTrigger
                                         EventName="MouseMove">

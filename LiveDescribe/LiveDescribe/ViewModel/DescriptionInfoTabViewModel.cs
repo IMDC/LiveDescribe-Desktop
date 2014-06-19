@@ -98,6 +98,7 @@ namespace LiveDescribe.ViewModel
                 if (_selectedRegularDescription != null)
                 {
                     _selectedRegularDescription.IsSelected = true;
+                    TabSelectedIndex = RegularDescriptionTab;
                     DescriptionAndSpaceText = _selectedRegularDescription.DescriptionText;
                     _selectedRegularDescription.PropertyChanged += DescriptionFinishedPlaying;
                 }
@@ -148,7 +149,9 @@ namespace LiveDescribe.ViewModel
                 if (_selectedExtendedDescription != null)
                 {
                     _selectedExtendedDescription.IsSelected = true;
+                    //we don't want the text to appear in the textbox if a description is playing
                     DescriptionAndSpaceText = _selectedExtendedDescription.DescriptionText;
+                    TabSelectedIndex = ExtendedDescriptionTab;
                     _selectedExtendedDescription.PropertyChanged += DescriptionFinishedPlaying;
                 }
 
@@ -195,6 +198,7 @@ namespace LiveDescribe.ViewModel
                 if (_selectedSpace != null)
                 {
                     _selectedSpace.IsSelected = true;
+                    TabSelectedIndex = SpaceTab;
                     DescriptionAndSpaceText = _selectedSpace.SpaceText;
                 }
                 RaisePropertyChanged();
