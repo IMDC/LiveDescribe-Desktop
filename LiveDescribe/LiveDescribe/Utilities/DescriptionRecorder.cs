@@ -19,10 +19,14 @@ namespace LiveDescribe.Utilities
             (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         #endregion
 
+        #region Constants
+        public const int DefaultDeviceNumber = 0;
+        #endregion
+
         #region Fields
         private bool _isRecording;
         private bool _recordExtended;
-        private readonly bool _useExistingMicrophone;
+        private int _deviceNumber;
         private double _descriptionStartTime;
         private ProjectFile _recordedFile;
         private WaveIn _microphonestream;
@@ -38,16 +42,10 @@ namespace LiveDescribe.Utilities
         public DescriptionRecorder()
         {
             _isRecording = false;
+            _deviceNumber = DefaultDeviceNumber;
 
-            if (Properties.Settings.Default.Microphone == null)
-            {
-                _useExistingMicrophone = false;
-            }
-            else
-            {
-                _useExistingMicrophone = true;
-                MicrophoneStream = Properties.Settings.Default.Microphone;
-            }
+            if (Properties.Settings.Default.Microphone != null)
+                MicrophoneDeviceNumber = Properties.Settings.Default.Microphone.DeviceNumber;
         }
         #endregion
 
@@ -63,9 +61,23 @@ namespace LiveDescribe.Utilities
         }
 
         /// <summary>
-        /// The stream that the recorder reads data from.
+        /// The microphone device number to use. NAudio pics mics by device number.
         /// </summary>
-        public WaveIn MicrophoneStream
+        public int MicrophoneDeviceNumber
+        {
+            set
+            {
+                _deviceNumber = value;
+                NotifyPropertyChanged();
+            }
+            get { return _deviceNumber; }
+        }
+
+        /// <summary>
+        /// The stream that the recorder reads data from. This property is private because it gets
+        /// re-generated every time a description is recorded. 
+        /// </summary>
+        private WaveIn MicrophoneStream
         {
             set
             {
@@ -78,6 +90,7 @@ namespace LiveDescribe.Utilities
 
                 _microphonestream = value;
 
+                //Setup
                 if (_microphonestream != null)
                     _microphonestream.DataAvailable += MicrophoneSteam_DataAvailable;
 
@@ -97,17 +110,12 @@ namespace LiveDescribe.Utilities
         public void RecordDescription(ProjectFile file, bool recordExtended, double videoPositionMilliseconds)
         {
             Log.Info("Beginning to record audio");
-            // if we don't have an existing microphone we try to create a new one with the first
-            // available microphone if no microphone exists an exception is thrown and we throw the
-            // event "RecordRequestedMicrophoneNotPluggedIn
-            if (!_useExistingMicrophone)
+
+            try { MicrophoneStream = GetMicrophone(_deviceNumber); }
+            catch (MmException)
             {
-                try { MicrophoneStream = GetMicrophone(); }
-                catch (MmException)
-                {
-                    Log.Warn("Microphone not found");
-                    throw;
-                }
+                Log.Warn("Microphone not found");
+                throw;
             }
             Log.Info("Recording...");
 
@@ -132,15 +140,16 @@ namespace LiveDescribe.Utilities
         /// <summary>
         /// Creates a WaveIn object representing the microphone.
         /// </summary>
+        /// <param name="deviceNumber">Device number to create microphone from.</param>
         /// <returns>Microphone WaveIn object.</returns>
-        private WaveIn GetMicrophone()
+        private WaveIn GetMicrophone(int deviceNumber)
         {
             var micStream = new WaveIn
             {
-                DeviceNumber = 0,
-                WaveFormat = new WaveFormat(44100, WaveIn.GetCapabilities(0).Channels)
+                DeviceNumber = deviceNumber,
+                WaveFormat = new WaveFormat(44100, WaveIn.GetCapabilities(deviceNumber).Channels)
             };
-            Log.Info("Name of Microphone to Use: " + WaveIn.GetCapabilities(0).ProductName);
+            Log.Info("Name of Microphone to Use: " + WaveIn.GetCapabilities(deviceNumber).ProductName);
 
             return micStream;
         }
