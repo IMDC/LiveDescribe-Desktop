@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Model;
+using LiveDescribe.View;
 
 namespace LiveDescribe.ViewModel
 {
@@ -33,6 +35,15 @@ namespace LiveDescribe.ViewModel
             SaveDescriptionTextCommand = new RelayCommand(SaveDescriptionText, SaveDescriptionTextStateCheck);
             ClearDescriptionTextCommand = new RelayCommand(ClearDescriptionText, () => true);
 
+            RecordInSpace = new RelayCommand(
+                canExecute: () => SelectedSpace != null,
+                execute: () =>
+                {
+                    //TODO: This
+                    var view = new SpaceRecordingView(new SpaceRecordingViewModel(SelectedSpace));
+                    view.ShowDialog();
+                });
+
             SelectedRegularDescription = null;
             SelectedExtendedDescription = null;
             SelectedSpace = null;
@@ -44,6 +55,8 @@ namespace LiveDescribe.ViewModel
         public RelayCommand SaveDescriptionTextCommand { private set; get; }
 
         public RelayCommand ClearDescriptionTextCommand { private set; get; }
+
+        public ICommand RecordInSpace { private set; get; }
 
         #endregion
 
