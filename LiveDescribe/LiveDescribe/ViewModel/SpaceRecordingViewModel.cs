@@ -7,6 +7,7 @@ using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Model;
+using LiveDescribe.Utilities;
 
 namespace LiveDescribe.ViewModel
 {
@@ -15,35 +16,56 @@ namespace LiveDescribe.ViewModel
         #region Fields
         private Description _description;
         private Space _space;
+        private DescriptionRecorder _recorder;
+        private DescriptionPlayer _player;
         #endregion
 
         #region Constructor
-        public SpaceRecordingViewModel(Space space)
+        public SpaceRecordingViewModel(Space space, Project project)
         {
             InitCommands();
 
             _description = null;
             Space = space;
+            Project = project;
+
+            _recorder = new DescriptionRecorder();
+            _recorder.DescriptionRecorded += (sender, args) => Description = args.Value;
+
+            _player = new DescriptionPlayer();
+            _player.DescriptionFinishedPlaying += (sender, args) => CommandManager.InvalidateRequerySuggested();
         }
 
         public void InitCommands()
         {
             RecordDescription = new RelayCommand(
-                canExecute: () => _space != null,
+                canExecute: () =>
+                    Space != null
+                    && _recorder.CanRecord()
+                    && !_player.IsPlaying,
                 execute: () =>
                 {
-                    
+                    if(_recorder.IsRecording)
+                        _recorder.StopRecording();
+                    else
+                    {
+                        var pf = ProjectFile.FromAbsolutePath(Project.GenerateDescriptionFilePath(),
+                                Project.Folders.Descriptions);
+                        _recorder.RecordDescription(pf, false, Space.StartInVideo);
+                    }
                 });
 
             PlayRecordedDescription = new RelayCommand(
-                canExecute: () => _description != null,
+                canExecute: () =>
+                    Description != null
+                    && _player.CanPlay(_description),
                 execute: () =>
                 {
-
+                    _player.Play(_description);
                 });
 
             SaveDescription = new RelayCommand(
-                canExecute: () => _description != null,
+                canExecute: () => Description != null,
                 execute: () =>
                 {
 
@@ -58,6 +80,8 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Properties
+        public Project Project { set; get; }
+
         public string Text
         {
             set

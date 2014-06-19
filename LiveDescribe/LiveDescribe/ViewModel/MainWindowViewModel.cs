@@ -446,10 +446,10 @@ namespace LiveDescribe.ViewModel
 
                 try
                 {
-                    if (DescriptionPlayer.CanPlay(description, videoPosition))
+                    if (DescriptionPlayer.CanPlayInVideo(description, videoPosition))
                     {
                         PrepareForDescription(description);
-                        DescriptionPlayer.Play(description, videoPosition);
+                        DescriptionPlayer.PlayInVideo(description, videoPosition);
                     }
                 }
                 catch (Exception ex)
