@@ -185,6 +185,7 @@ namespace LiveDescribe.ViewModel
                 if (_selectedSpace != null)
                 {
                     _selectedSpace.IsSelected = true;
+                    TabSelectedIndex = SpaceTab;
                     DescriptionAndSpaceText = _selectedSpace.SpaceText;
                 }
                 RaisePropertyChanged();
