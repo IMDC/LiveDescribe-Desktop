@@ -19,17 +19,22 @@ namespace LiveDescribe.Utilities
             (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         #endregion
 
+        #region Fields
         private bool _isRecording;
+        private bool _recordExtended;
         private readonly bool _useExistingMicrophone;
         private double _descriptionStartTime;
+        private ProjectFile _recordedFile;
         private WaveIn _microphonestream;
         private WaveFileWriter _waveWriter;
+        #endregion
 
         #region Events
         public event EventHandler<EventArgs<Description>> DescriptionRecorded;
         public event PropertyChangedEventHandler PropertyChanged;
         #endregion
 
+        #region Constructor
         public DescriptionRecorder()
         {
             _isRecording = false;
@@ -44,7 +49,9 @@ namespace LiveDescribe.Utilities
                 MicrophoneStream = Properties.Settings.Default.Microphone;
             }
         }
+        #endregion
 
+        #region Properties
         public bool IsRecording
         {
             set
@@ -55,6 +62,9 @@ namespace LiveDescribe.Utilities
             get { return _isRecording; }
         }
 
+        /// <summary>
+        /// The stream that the recorder reads data from.
+        /// </summary>
         public WaveIn MicrophoneStream
         {
             set
@@ -75,6 +85,7 @@ namespace LiveDescribe.Utilities
             }
             get { return _microphonestream; }
         }
+        #endregion
 
         #region Methods
 
@@ -83,7 +94,7 @@ namespace LiveDescribe.Utilities
             return true; //!IsRecording
         }
 
-        public void RecordDescription(string filePath, double videoPositionMilliseconds)
+        public void RecordDescription(ProjectFile file, bool recordExtended, double videoPositionMilliseconds)
         {
             Log.Info("Beginning to record audio");
             // if we don't have an existing microphone we try to create a new one with the first
@@ -91,10 +102,7 @@ namespace LiveDescribe.Utilities
             // event "RecordRequestedMicrophoneNotPluggedIn
             if (!_useExistingMicrophone)
             {
-                try
-                {
-                    MicrophoneStream = GetMicrophone();
-                }
+                try { MicrophoneStream = GetMicrophone(); }
                 catch (MmException)
                 {
                     Log.Warn("Microphone not found");
@@ -103,8 +111,9 @@ namespace LiveDescribe.Utilities
             }
             Log.Info("Recording...");
 
-            string path = filePath;
-            _waveWriter = new WaveFileWriter(path, MicrophoneStream.WaveFormat);
+            _waveWriter = new WaveFileWriter(file.AbsolutePath, MicrophoneStream.WaveFormat);
+            _recordExtended = recordExtended;
+            _recordedFile = file;
 
             try
             {
@@ -120,6 +129,10 @@ namespace LiveDescribe.Utilities
             IsRecording = true;
         }
 
+        /// <summary>
+        /// Creates a WaveIn object representing the microphone.
+        /// </summary>
+        /// <returns>Microphone WaveIn object.</returns>
         private WaveIn GetMicrophone()
         {
             var micStream = new WaveIn
@@ -127,24 +140,21 @@ namespace LiveDescribe.Utilities
                 DeviceNumber = 0,
                 WaveFormat = new WaveFormat(44100, WaveIn.GetCapabilities(0).Channels)
             };
-            Log.Info("Product Name of Microphone: " + WaveIn.GetCapabilities(0).ProductName);
+            Log.Info("Name of Microphone to Use: " + WaveIn.GetCapabilities(0).ProductName);
 
             return micStream;
         }
 
-        //TODO: get rid of paramaters
-        public void StopRecording(string projectFolderPath, bool createExtendedDescription)
+        public void StopRecording()
         {
             Log.Info("Finished Recording");
             MicrophoneStream.StopRecording();
-            string audioFilePath = _waveWriter.Filename;
             _waveWriter.Dispose();
             _waveWriter = null;
-            var read = new WaveFileReader(audioFilePath);
+            var read = new WaveFileReader(_recordedFile);
 
-            var file = ProjectFile.FromAbsolutePath(audioFilePath, projectFolderPath);
-
-            var d = new Description(file, 0, read.TotalTime.TotalMilliseconds, _descriptionStartTime, createExtendedDescription);
+            var d = new Description(_recordedFile, 0, read.TotalTime.TotalMilliseconds,
+                _descriptionStartTime, _recordExtended);
             OnDescriptionRecorded(d);
 
             read.Dispose();
@@ -162,7 +172,8 @@ namespace LiveDescribe.Utilities
         /// <param name="e"></param>
         private void MicrophoneSteam_DataAvailable(object sender, WaveInEventArgs e)
         {
-            if (_waveWriter == null) return;
+            if (_waveWriter == null)
+                return;
 
             _waveWriter.Write(e.Buffer, 0, e.BytesRecorded);
             _waveWriter.Flush();

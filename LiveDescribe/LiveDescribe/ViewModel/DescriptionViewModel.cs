@@ -56,7 +56,7 @@ namespace LiveDescribe.ViewModel
             _recorder.DescriptionRecorded += (sender, args) => AddDescription(args.Value);
 
             RecordCommand = new RelayCommand(
-                canExecute: () => 
+                canExecute: () =>
                     Project != null
                     && _mediaVideo.CurrentState != LiveDescribeVideoStates.VideoNotLoaded
                     && _recorder.CanRecord(),
@@ -64,13 +64,15 @@ namespace LiveDescribe.ViewModel
                 {
                     if (_recorder.IsRecording)
                     {
-                        _recorder.StopRecording(Project.Folders.Project,ExtendedIsChecked);
+                        _recorder.StopRecording();
                     }
                     else
                     {
                         try
                         {
-                            _recorder.RecordDescription(Project.GenerateDescriptionFilePath(),_mediaVideo.Position.TotalMilliseconds);
+                            var pf = ProjectFile.FromAbsolutePath(Project.GenerateDescriptionFilePath(),
+                                Project.Folders.Descriptions);
+                            _recorder.RecordDescription(pf, ExtendedIsChecked, _mediaVideo.Position.TotalMilliseconds);
                             //save the current state so when the button is pressed again you can restore it back to that state
                             _previousVideoState = _mediaVideo.CurrentState;
                         }
