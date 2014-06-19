@@ -171,8 +171,10 @@ namespace LiveDescribe.ViewModel
             set
             {
                 if (_selectedSpace != null && value == null)
+                {
                     _selectedSpace.IsSelected = false;
-
+                    _selectedSpace.PropertyChanged -= SelectedSpaceTextChanged;
+                }
 
                 // Unselect previous descriptions and spaces selected
                 if (SelectedRegularDescription != null)
@@ -200,6 +202,7 @@ namespace LiveDescribe.ViewModel
                     _selectedSpace.IsSelected = true;
                     TabSelectedIndex = SpaceTab;
                     DescriptionAndSpaceText = _selectedSpace.SpaceText;
+                    _selectedSpace.PropertyChanged += SelectedSpaceTextChanged;
                 }
                 RaisePropertyChanged();
             }
@@ -311,6 +314,15 @@ namespace LiveDescribe.ViewModel
                     description.IsSelected = false;
                     UnSelectDescriptionsAndSpaceSelectedInList();
                 }
+            }
+        }
+
+        public void SelectedSpaceTextChanged(object sender, PropertyChangedEventArgs args)
+        {
+            if (args.PropertyName.Equals("SpaceText"))
+            {
+                Space space = (Space) sender;
+                DescriptionAndSpaceText = space.SpaceText;
             }
         }
         #endregion
