@@ -29,7 +29,11 @@ namespace LiveDescribe.ViewModel
 
             EditingEnabled = false;
 
-            //Commands
+            InitCommands();
+        }
+
+        public void InitCommands()
+        {
             SetBeginToMarker = new RelayCommand(
                 canExecute: () => EditingEnabled,
                 execute: () => SelectedSpace_StartInVideo = _player.Position.TotalMilliseconds

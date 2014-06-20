@@ -241,9 +241,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Commands\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Resource Include="Images\LiveDescribe-Splashscreen.png" />
     <Resource Include="Resources\Cursors\grab.cur" />
