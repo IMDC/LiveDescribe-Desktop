@@ -59,7 +59,7 @@ namespace LiveDescribe.View
         /// <summary>
         /// The width of the entire canvas.
         /// </summary>
-        private double _canvasWidth = 0;
+        private double _canvasWidth;
         private double _videoDuration = -1;
         private readonly MediaControlViewModel _mediaControlViewModel;
         private readonly SpacesViewModel _spacesViewModel;
@@ -102,14 +102,14 @@ namespace LiveDescribe.View
             _descriptionViewModel = mainWindowViewModel.DescriptionViewModel;
             _spacesViewModel = mainWindowViewModel.SpacesViewModel;
             _descriptionInfoTabViewModel = mainWindowViewModel.DescriptionInfoTabViewModel;
-           
+
 
             _audioCanvas = AudioCanvasControl.AudioCanvas;
             _descriptionCanvas = DescriptionCanvasControl.DescriptionCanvas;
             _marker = MarkerControl.Marker;
 
             _millisecondsTimeConverter = new MillisecondsTimeConverterFormatter();
-            
+
             var cursfile = Application.GetResourceStream(new Uri("pack://application:,,,/Resources/Cursors/grab.cur"));
             _grabCursor = new Cursor(cursfile.Stream);
             cursfile = Application.GetResourceStream(new Uri("pack://application:,,,/Resources/Cursors/grabbing.cur"));
@@ -431,7 +431,7 @@ namespace LiveDescribe.View
 
             #region Event Listeners For AudioCanvasViewModel
             AudioCanvasViewModel audioCanvasViewModel = mainWindowViewModel.AudioCanvasViewModel;
-           
+
             audioCanvasViewModel.AudioCanvasMouseDownEvent += AudioCanvas_OnMouseDown;
             audioCanvasViewModel.AudioCanvasMouseMoveEvent += AudioCanvas_MouseMove;
             audioCanvasViewModel.AudioCanvasMouseUpEvent += AudioCanvas_MouseUp;
@@ -618,7 +618,7 @@ namespace LiveDescribe.View
             //if we aren't dragging a description or space, we want to unselect them out of the list
             if (_spacesActionState == SpacesActionState.None && _descriptionActionState == DescriptionsActionState.None)
             {
-               _descriptionInfoTabViewModel.UnSelectDescriptionsAndSpaceSelectedInList();
+                _descriptionInfoTabViewModel.UnSelectDescriptionsAndSpaceSelectedInList();
             }
         }
 
@@ -673,7 +673,7 @@ namespace LiveDescribe.View
         {
             //record the position in which you right clicked on the canvas
             //this position is used to calculate where on the audio canvas to draw a space
-            MouseEventArgs e1 = (MouseEventArgs)e;
+            var e1 = (MouseEventArgs)e;
             _rightClickPointOnAudioCanvas = e1.GetPosition(_audioCanvas);
         }
 
@@ -856,7 +856,7 @@ namespace LiveDescribe.View
             NumberTimeline.Children.Clear();
 
             for (int i = beginLine; i <= endLine; ++i)
-            {               
+            {
                 if (i % LongLineTime == 0)
                 {
                     NumberTimeline.Children.Add(new Line
@@ -869,8 +869,11 @@ namespace LiveDescribe.View
                         X2 = _canvasWidth / numlines * i,
                     });
 
-                    var timestamp = new TextBlock();
-                    timestamp.Text = (string)_millisecondsTimeConverter.Convert((i * LineTime) * 1000, typeof(int), null, CultureInfo.CurrentCulture);
+                    var timestamp = new TextBlock
+                    {
+                        Text = (string) _millisecondsTimeConverter.Convert((i * LineTime) * 1000, typeof(int), null,
+                            CultureInfo.CurrentCulture)
+                    };
                     Canvas.SetLeft(timestamp, ((_canvasWidth / numlines * i) - 24));
                     NumberTimeline.Children.Add(timestamp);
                 }

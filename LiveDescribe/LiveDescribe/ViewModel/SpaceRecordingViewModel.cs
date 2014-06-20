@@ -63,10 +63,7 @@ namespace LiveDescribe.ViewModel
                 canExecute: () =>
                     Description != null
                     && _player.CanPlay(_description),
-                execute: () =>
-                {
-                    _player.Play(_description);
-                });
+                execute: () => _player.Play(_description));
 
             SaveDescription = new RelayCommand(
                 canExecute: () => Description != null,

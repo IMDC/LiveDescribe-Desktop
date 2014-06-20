@@ -50,9 +50,9 @@ namespace LiveDescribe.Model
         /// </summary>
         /// <param name="pf">A ProjectFile.</param>
         /// <returns>The absolute path of the Project file.</returns>
-        public static implicit operator string(ProjectFile p)
+        public static implicit operator string(ProjectFile pf)
         {
-            return p.AbsolutePath;
+            return pf.AbsolutePath;
         }
         #endregion
 

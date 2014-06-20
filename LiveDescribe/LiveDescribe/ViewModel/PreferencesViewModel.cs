@@ -101,7 +101,6 @@ namespace LiveDescribe.ViewModel
         /// <summary>
         /// called when the preferences should be saved and applied to the settings
         /// </summary>
-        /// <param name="obj"></param>
         private void Apply()
         {
             EventHandler handler = ApplyRequested;

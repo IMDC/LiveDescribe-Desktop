@@ -325,7 +325,7 @@ namespace LiveDescribe.ViewModel
         {
             if (args.PropertyName.Equals("SpaceText"))
             {
-                Space space = (Space) sender;
+                var space = (Space) sender;
                 DescriptionAndSpaceText = space.SpaceText;
             }
         }

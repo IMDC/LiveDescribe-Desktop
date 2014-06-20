@@ -127,7 +127,6 @@ namespace LiveDescribe.ViewModel
         /// <summary>
         /// what happens when the marker is moved using the mouse
         /// </summary>
-        /// <param name="param"></param>
         public void OnMarkerMouseMove()
         {
             EventHandler handler = OnMarkerMouseMoveRequested;
@@ -138,7 +137,6 @@ namespace LiveDescribe.ViewModel
         /// <summary>
         /// What happens when the mouse is released on the marker
         /// </summary>
-        /// <param name="param"></param>
         public void OnMarkerMouseUp()
         {
             EventHandler handler = OnMarkerMouseUpRequested;
@@ -149,7 +147,6 @@ namespace LiveDescribe.ViewModel
         /// <summary>
         /// What hapens when the marker is pressed down
         /// </summary>
-        /// <param name="param"></param>
         public void OnMarkerMouseDown()
         {
             PauseCommand.Execute();
@@ -160,7 +157,6 @@ namespace LiveDescribe.ViewModel
         /// <summary>
         /// Plays the video
         /// </summary>
-        /// <param name="param">params</param>
         public void Play()
         {
             Log.Info("Play video");
@@ -176,7 +172,6 @@ namespace LiveDescribe.ViewModel
         /// <summary>
         /// Pauses the video
         /// </summary>
-        /// <param name="param">params</param>
         public void Pause()
         {
             Log.Info("Pause video");
@@ -222,7 +217,6 @@ namespace LiveDescribe.ViewModel
         /// <summary>
         /// This event is thrown when the video is opened or "loaded"
         /// </summary>
-        /// <param name="param"></param>
         public void VideoOpen()
         {
             EventHandler handler = VideoOpenedRequested;
@@ -236,7 +230,6 @@ namespace LiveDescribe.ViewModel
         /// <summary>
         /// Mutes the video's audio
         /// </summary>
-        /// <param name="param">params</param>
         public void Mute()
         {
             Log.Info("Video muted");
@@ -252,7 +245,6 @@ namespace LiveDescribe.ViewModel
         /// throws an event when the media fails to load an example of this happening would be if
         /// the video format is not supported
         /// </summary>
-        /// <param name="param"></param>
         public void MediaFailed()
         {
             EventHandler handler = MediaFailedEvent;
@@ -265,7 +257,6 @@ namespace LiveDescribe.ViewModel
         /// <summary>
         /// thros an event when the media is finished
         /// </summary>
-        /// <param name="param"></param>
         public void MediaEnded()
         {
             EventHandler handler = MediaEndedEvent;
@@ -282,7 +273,6 @@ namespace LiveDescribe.ViewModel
         /// Used for the RelayCommand "PlayCommand" to check whether the play button can be pressed
         /// or not
         /// </summary>
-        /// <param name="param">param</param>
         /// <returns>true if button can be enabled</returns>
         public bool PlayCheck()
         {
@@ -296,7 +286,6 @@ namespace LiveDescribe.ViewModel
         /// Used for the RelayCommand "PauseCommand" to check whether the pause button can be presse
         /// or not
         /// </summary>
-        /// <param name="param">param</param>
         /// <returns>true if button can be enabled</returns>
         public bool PauseCheck()
         {
@@ -310,7 +299,6 @@ namespace LiveDescribe.ViewModel
         /// Used for the RelayCommand "RewindCommand" to check whether the rewind button can be
         /// pressed or not
         /// </summary>
-        /// <param name="param">param</param>
         /// <returns>true if the button can be enabled</returns>
         public bool RewindCheck()
         {
@@ -323,7 +311,6 @@ namespace LiveDescribe.ViewModel
         /// Used for the RelayCommand "FastForwardCommand" to check whether the fastforward button
         /// can be pressed or not
         /// </summary>
-        /// <param name="param"></param>
         /// <returns></returns>
         public bool FastForwardCheck()
         {
@@ -336,7 +323,6 @@ namespace LiveDescribe.ViewModel
         /// Used for the RelayCommand "RecordCommand" to check whether the record button can be
         /// pressed or not
         /// </summary>
-        /// <param name="param"></param>
         /// <returns></returns>
         public bool RecordCheck()
         {
@@ -413,7 +399,6 @@ namespace LiveDescribe.ViewModel
         /// This function is used to setup all the events for the background worker and to run it to
         /// strip the audio from the video
         /// </summary>
-        /// <param name="path"></param>
         public void SetupAndStripAudio(Project p)
         {
             //changes the Path variable that is binded to the media element

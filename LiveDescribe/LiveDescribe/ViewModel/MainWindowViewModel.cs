@@ -502,7 +502,7 @@ namespace LiveDescribe.ViewModel
         /// <summary>
         /// Initializes and sets up the progam for a given project file.
         /// </summary>
-        /// <param name="pf">The project to initialize</param>
+        /// <param name="p">The project to initialize</param>
         public void SetProject(Project p)
         {
             CloseProject.ExecuteIfCan();
