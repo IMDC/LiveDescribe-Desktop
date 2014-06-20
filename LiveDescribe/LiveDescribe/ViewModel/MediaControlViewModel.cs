@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Threading;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
 using LiveDescribe.Utilities;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace LiveDescribe.ViewModel
 {
@@ -181,7 +180,6 @@ namespace LiveDescribe.ViewModel
 
             if (handler == null) return;
             handler(this, EventArgs.Empty);
-
         }
 
         /// <summary>
@@ -238,7 +236,6 @@ namespace LiveDescribe.ViewModel
 
             if (handler == null) return;
             handler(this, EventArgs.Empty);
-
         }
 
         /// <summary>

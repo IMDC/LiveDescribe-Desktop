@@ -1,5 +1,4 @@
-﻿
-namespace LiveDescribe
+﻿namespace LiveDescribe
 {
     public enum LiveDescribeVideoStates
     {

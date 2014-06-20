@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using GalaSoft.MvvmLight.Threading;
-using LiveDescribe.Events;
+﻿using LiveDescribe.Events;
 using LiveDescribe.Model;
 using NAudio.Wave;
+using System;
+using System.ComponentModel;
+using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace LiveDescribe.Utilities
 {
@@ -41,7 +35,7 @@ namespace LiveDescribe.Utilities
             private set
             {
                 //Close the old instance
-                if(_descriptionStream != null)
+                if (_descriptionStream != null)
                     _descriptionStream.Dispose();
                 _descriptionStream = value;
             }
@@ -104,7 +98,7 @@ namespace LiveDescribe.Utilities
 
                 double offset = videoPositionMilliseconds - description.StartInVideo;
 
-                PlayAtOffset(description,offset);
+                PlayAtOffset(description, offset);
             }
         }
 

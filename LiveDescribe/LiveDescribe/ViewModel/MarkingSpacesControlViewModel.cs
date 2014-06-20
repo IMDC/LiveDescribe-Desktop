@@ -1,9 +1,9 @@
-﻿using System.ComponentModel;
-using System.Windows.Input;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
+using System.ComponentModel;
+using System.Windows.Input;
 
 namespace LiveDescribe.ViewModel
 {

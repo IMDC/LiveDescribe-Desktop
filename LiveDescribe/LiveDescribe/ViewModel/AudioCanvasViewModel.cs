@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Model;
+using System;
+using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 namespace LiveDescribe.ViewModel
 {
     class AudioCanvasViewModel : ViewModelBase
     {
-
         private readonly SpacesViewModel _spacesViewModel;
 
         #region Events

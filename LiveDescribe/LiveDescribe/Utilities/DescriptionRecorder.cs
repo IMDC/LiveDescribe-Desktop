@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using LiveDescribe.Events;
+﻿using LiveDescribe.Events;
 using LiveDescribe.Model;
 using NAudio;
 using NAudio.Wave;
+using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace LiveDescribe.Utilities
 {
@@ -75,7 +71,7 @@ namespace LiveDescribe.Utilities
 
         /// <summary>
         /// The stream that the recorder reads data from. This property is private because it gets
-        /// re-generated every time a description is recorded. 
+        /// re-generated every time a description is recorded.
         /// </summary>
         private WaveIn MicrophoneStream
         {

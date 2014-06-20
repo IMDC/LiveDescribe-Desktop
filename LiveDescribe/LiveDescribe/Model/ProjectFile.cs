@@ -1,6 +1,5 @@
-﻿using System;
-using Newtonsoft.Json;
-using System.IO;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace LiveDescribe.Model
 {
@@ -15,8 +14,9 @@ namespace LiveDescribe.Model
         /// relative path. Use this when given a relative path but not an absolute path.
         /// </summary>
         /// <param name="relativePath">A non-rooted path.</param>
-        /// <param name="basePath">A rooted path that will serve as the parent folder to the
-        /// relative path.</param>
+        /// <param name="basePath">
+        /// A rooted path that will serve as the parent folder to the relative path.
+        /// </param>
         /// <returns>A ProjectFile with a set AbsolutePath and RelativePath.</returns>
         public static ProjectFile FromRelativePath(string relativePath, string basePath)
         {

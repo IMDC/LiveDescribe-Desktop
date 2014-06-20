@@ -1,18 +1,16 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Globalization;
-using System.Linq;
-using System.Runtime.Serialization;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Properties;
 using NAudio.Wave;
+using System;
+using System.Collections.ObjectModel;
+using System.Globalization;
+using System.Runtime.Serialization;
 
 namespace LiveDescribe.ViewModel
 {
     public class PreferencesViewModel : ViewModelBase
     {
-
         #region Inner Classes
 
         public class AudioSourceInfo : ISerializable
@@ -46,7 +44,7 @@ namespace LiveDescribe.ViewModel
                     return false;
 
                 var info = obj as AudioSourceInfo;
-                if ((System.Object) info == null)
+                if ((System.Object)info == null)
                     return false;
 
                 return (Name == info.Name)

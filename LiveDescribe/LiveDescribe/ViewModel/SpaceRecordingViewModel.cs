@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Model;
 using LiveDescribe.Utilities;
+using System;
+using System.Windows.Input;
 
 namespace LiveDescribe.ViewModel
 {
@@ -49,7 +45,7 @@ namespace LiveDescribe.ViewModel
                     && !_player.IsPlaying,
                 execute: () =>
                 {
-                    if(_recorder.IsRecording)
+                    if (_recorder.IsRecording)
                         _recorder.StopRecording();
                     else
                     {

@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-using System.Runtime.InteropServices;
-using LiveDescribe.Controls;
+﻿using LiveDescribe.Controls;
 using LiveDescribe.Converters;
 using LiveDescribe.Model;
 using LiveDescribe.Utilities;
@@ -8,6 +6,7 @@ using LiveDescribe.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Windows;
@@ -403,7 +402,6 @@ namespace LiveDescribe.View
                 {
                     space.StartInVideo = 0;
                     space.EndInVideo = endtime;
-
                 }
                 else if (endtime > _videoDuration)
                 {
@@ -469,7 +467,6 @@ namespace LiveDescribe.View
                     double position = (_videoMedia.Position.TotalMilliseconds / _videoDuration) * (_audioCanvas.Width);
                     UpdateMarkerPosition(position - MarkerOffset);
                 });
-
             }
             catch (System.Threading.Tasks.TaskCanceledException exception)
             {
@@ -804,14 +801,12 @@ namespace LiveDescribe.View
                         X1 = pixel,
                         X2 = pixel,
                     });
-
                 }
                 pixel++;
             }
 
             //re-add children of AudioCanvas
             _audioCanvas.Children.Add(AudioCanvasControl.SpacesItemControl);
-
         }
 
         private void DrawDescription(Description description)
@@ -871,7 +866,7 @@ namespace LiveDescribe.View
 
                     var timestamp = new TextBlock
                     {
-                        Text = (string) _millisecondsTimeConverter.Convert((i * LineTime) * 1000, typeof(int), null,
+                        Text = (string)_millisecondsTimeConverter.Convert((i * LineTime) * 1000, typeof(int), null,
                             CultureInfo.CurrentCulture)
                     };
                     Canvas.SetLeft(timestamp, ((_canvasWidth / numlines * i) - 24));

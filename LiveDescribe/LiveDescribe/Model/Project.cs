@@ -146,7 +146,7 @@ namespace LiveDescribe.Model
             {
                 Project = projectFolder,
                 Cache = ProjectFile.FromRelativePath(Names.CacheFolder, projectFolder),
-                Descriptions = ProjectFile.FromRelativePath(Names.DescriptionsFolder,projectFolder),
+                Descriptions = ProjectFile.FromRelativePath(Names.DescriptionsFolder, projectFolder),
             };
 
             Files = new ProjectFiles

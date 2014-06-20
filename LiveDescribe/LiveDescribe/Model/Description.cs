@@ -1,10 +1,9 @@
-﻿using System.Runtime.CompilerServices;
-using GalaSoft.MvvmLight.Command;
-using NAudio.Wave;
+﻿using GalaSoft.MvvmLight.Command;
 using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
 namespace LiveDescribe.Model
@@ -41,7 +40,8 @@ namespace LiveDescribe.Model
         #endregion
 
         public Description(ProjectFile filepath, double startwavefiletime, double endwavefiletime,
-            double startinvideo, bool extendedDescription) : this()
+            double startinvideo, bool extendedDescription)
+            : this()
         {
             AudioFile = filepath;
 
@@ -59,7 +59,6 @@ namespace LiveDescribe.Model
                 _endinvideo = startinvideo + (endwavefiletime - startwavefiletime);
             else
                 _endinvideo = startinvideo;
-
         }
 
         public Description()

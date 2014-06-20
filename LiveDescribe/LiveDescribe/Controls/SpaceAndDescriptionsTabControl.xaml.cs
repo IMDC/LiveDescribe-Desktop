@@ -8,7 +8,6 @@ namespace LiveDescribe.Controls
     /// </summary>
     public partial class SpaceAndDescriptionsTabControl : UserControl
     {
-
         public SpaceAndDescriptionsTabControl()
         {
             InitializeComponent();

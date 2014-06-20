@@ -1,8 +1,8 @@
-﻿using System.Runtime.CompilerServices;
-using GalaSoft.MvvmLight.Command;
+﻿using GalaSoft.MvvmLight.Command;
 using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
 namespace LiveDescribe.Model
