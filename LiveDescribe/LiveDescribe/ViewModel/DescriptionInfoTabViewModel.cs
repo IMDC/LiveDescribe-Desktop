@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Windows.Input;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Model;
 using LiveDescribe.View;
+using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Windows.Input;
 
 namespace LiveDescribe.ViewModel
 {
@@ -40,11 +40,11 @@ namespace LiveDescribe.ViewModel
                 execute: () =>
                 {
                     //TODO: Move this out of method
-                    var viewModel = new SpaceRecordingViewModel(SelectedSpace,_descriptionViewModel.Project);
+                    var viewModel = new SpaceRecordingViewModel(SelectedSpace, _descriptionViewModel.Project);
                     var view = new SpaceRecordingView(viewModel);
-                    view.ShowDialog();
+                    bool? success = view.ShowDialog();
 
-                    if(viewModel.Description != null)
+                    if (success == true)
                         _descriptionViewModel.AddDescription(viewModel.Description);
                 });
 
@@ -122,7 +122,6 @@ namespace LiveDescribe.ViewModel
         {
             set
             {
-
                 if (_selectedExtendedDescription != null && value == null)
                 {
                     _selectedExtendedDescription.IsSelected = false;
@@ -305,14 +304,13 @@ namespace LiveDescribe.ViewModel
                 SelectedExtendedDescription.DescriptionText = DescriptionAndSpaceText;
             else if (TabSelectedIndex == SpaceTab)
                 SelectedSpace.SpaceText = DescriptionAndSpaceText;
-
         }
 
         public void DescriptionFinishedPlaying(object sender, PropertyChangedEventArgs args)
         {
             if (args.PropertyName.Equals("IsPlaying"))
             {
-                var description = (Description) sender;
+                var description = (Description)sender;
                 if (!description.IsPlaying)
                 {
                     description.IsSelected = false;
@@ -325,7 +323,7 @@ namespace LiveDescribe.ViewModel
         {
             if (args.PropertyName.Equals("SpaceText"))
             {
-                Space space = (Space) sender;
+                var space = (Space)sender;
                 DescriptionAndSpaceText = space.SpaceText;
             }
         }

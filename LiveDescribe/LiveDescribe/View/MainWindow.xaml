@@ -160,24 +160,24 @@
                                     MouseDown="NumberTimeline_OnMouseDown"
                                     Name="NumberTimeline" />
                             </Border>
-                            
+
                             <controls:AudioCanvasControl
                                 x:Name="AudioCanvasControl"
                                 Grid.Row="1"
                                 Grid.RowSpan="2"
                                 DataContext="{Binding AudioCanvasViewModel}"/>
 
-                            <!--Description Canvas Constrol that holds all the descriptions--> 
+                            <!--Description Canvas Constrol that holds all the descriptions-->
                             <controls:DescriptionCanvasControl
-                                x:Name="DescriptionCanvasControl" 
+                                x:Name="DescriptionCanvasControl"
                                 Grid.Row="3"
                                 DataContext="{Binding DescriptionCanvasViewModel}"/>
-                            
+
                             <controls:MarkerControl
                                 x:Name="MarkerControl"
                                 Grid.Row="0"
                                 Grid.RowSpan="4"
-                                DataContext="{Binding MediaControlViewModel}"/>                           
+                                DataContext="{Binding MediaControlViewModel}"/>
                         </Grid>
                     </ScrollViewer>
                 </Border>

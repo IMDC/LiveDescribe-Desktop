@@ -1,15 +1,14 @@
 ﻿using GalaSoft.MvvmLight;
-using System.Collections.ObjectModel;
 using GalaSoft.MvvmLight.Command;
-using System;
-using System.Windows.Input;
 using LiveDescribe.Model;
+using System;
+using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 namespace LiveDescribe.ViewModel
 {
     public class DescriptionCanvasViewModel : ViewModelBase
     {
-
         private readonly DescriptionViewModel _descriptionViewModel;
 
         #region Events
@@ -20,8 +19,8 @@ namespace LiveDescribe.ViewModel
         public DescriptionCanvasViewModel(DescriptionViewModel descriptionViewModel)
         {
             _descriptionViewModel = descriptionViewModel;
-            DescriptionCanvasMouseUpCommand = new RelayCommand<MouseEventArgs>(DescriptionCanvasMouseUp, param=>true);
-            DescriptionCanvasMouseMoveCommand = new RelayCommand<MouseEventArgs>(DescriptionCanvasMouseMove, param=>true);
+            DescriptionCanvasMouseUpCommand = new RelayCommand<MouseEventArgs>(DescriptionCanvasMouseUp, param => true);
+            DescriptionCanvasMouseMoveCommand = new RelayCommand<MouseEventArgs>(DescriptionCanvasMouseMove, param => true);
         }
 
         #region Commands
@@ -47,7 +46,7 @@ namespace LiveDescribe.ViewModel
         {
             EventHandler<MouseEventArgs> handler = DescriptionCanvasMouseMoveEvent;
             if (handler != null) handler(this, e);
-        } 
+        }
         #endregion
     }
 }

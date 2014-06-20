@@ -1,5 +1,4 @@
-﻿
-namespace LiveDescribe
+﻿namespace LiveDescribe
 {
     public static class LiveDescribeConstants
     {

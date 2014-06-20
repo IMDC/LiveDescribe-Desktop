@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using LiveDescribe.Events;
+﻿using LiveDescribe.Events;
 using LiveDescribe.Model;
 using NAudio;
 using NAudio.Wave;
+using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace LiveDescribe.Utilities
 {
@@ -31,6 +27,11 @@ namespace LiveDescribe.Utilities
         private ProjectFile _recordedFile;
         private WaveIn _microphonestream;
         private WaveFileWriter _waveWriter;
+        /// <summary>
+        /// Controls access to the recording methods, so that IsRecording accurately reflects
+        /// whether or not the Recorder is recording.
+        /// </summary>
+        private object _recordingAccessLock = new object();
         #endregion
 
         #region Events
@@ -54,10 +55,16 @@ namespace LiveDescribe.Utilities
         {
             set
             {
-                _isRecording = value;
-                NotifyPropertyChanged();
+                lock (_recordingAccessLock)
+                {
+                    _isRecording = value;
+                    NotifyPropertyChanged();
+                }
             }
-            get { return _isRecording; }
+            get
+            {
+                lock (_recordingAccessLock) { return _isRecording; }
+            }
         }
 
         /// <summary>
@@ -75,7 +82,7 @@ namespace LiveDescribe.Utilities
 
         /// <summary>
         /// The stream that the recorder reads data from. This property is private because it gets
-        /// re-generated every time a description is recorded. 
+        /// re-generated every time a description is recorded.
         /// </summary>
         private WaveIn MicrophoneStream
         {
@@ -104,37 +111,46 @@ namespace LiveDescribe.Utilities
 
         public bool CanRecord()
         {
-            return true; //!IsRecording
+            lock (_recordingAccessLock)
+            {
+                return true; //!IsRecording
+            }
         }
 
         public void RecordDescription(ProjectFile file, bool recordExtended, double videoPositionMilliseconds)
         {
-            Log.Info("Beginning to record audio");
-
-            try { MicrophoneStream = GetMicrophone(_deviceNumber); }
-            catch (MmException)
+            lock (_recordingAccessLock)
             {
-                Log.Warn("Microphone not found");
-                throw;
-            }
-            Log.Info("Recording...");
+                Log.Info("Beginning to record audio");
 
-            _waveWriter = new WaveFileWriter(file.AbsolutePath, MicrophoneStream.WaveFormat);
-            _recordExtended = recordExtended;
-            _recordedFile = file;
+                try
+                {
+                    MicrophoneStream = GetMicrophone(_deviceNumber);
+                }
+                catch (MmException)
+                {
+                    Log.Warn("Microphone not found");
+                    throw;
+                }
+                Log.Info("Recording...");
 
-            try
-            {
-                _descriptionStartTime = videoPositionMilliseconds;
-                MicrophoneStream.StartRecording();
-            }
-            catch (MmException)
-            {
-                Log.Error("Previous Microphone was found then unplugged (No Microphone) Exception...");
-                throw;
-            }
+                _waveWriter = new WaveFileWriter(file.AbsolutePath, MicrophoneStream.WaveFormat);
+                _recordExtended = recordExtended;
+                _recordedFile = file;
 
-            IsRecording = true;
+                try
+                {
+                    _descriptionStartTime = videoPositionMilliseconds;
+                    MicrophoneStream.StartRecording();
+                }
+                catch (MmException)
+                {
+                    Log.Error("Previous Microphone was found then unplugged (No Microphone) Exception...");
+                    throw;
+                }
+
+                IsRecording = true;
+            }
         }
 
         /// <summary>
@@ -156,21 +172,23 @@ namespace LiveDescribe.Utilities
 
         public void StopRecording()
         {
-            Log.Info("Finished Recording");
-            MicrophoneStream.StopRecording();
-            _waveWriter.Dispose();
-            _waveWriter = null;
-            var read = new WaveFileReader(_recordedFile);
+            lock (_recordingAccessLock)
+            {
+                Log.Info("Finished Recording");
+                MicrophoneStream.StopRecording();
+                _waveWriter.Dispose();
+                _waveWriter = null;
+                var read = new WaveFileReader(_recordedFile);
 
-            var d = new Description(_recordedFile, 0, read.TotalTime.TotalMilliseconds,
-                _descriptionStartTime, _recordExtended);
-            OnDescriptionRecorded(d);
+                var d = new Description(_recordedFile, 0, read.TotalTime.TotalMilliseconds,
+                    _descriptionStartTime, _recordExtended);
+                OnDescriptionRecorded(d);
 
-            read.Dispose();
+                read.Dispose();
 
-            IsRecording = false;
+                IsRecording = false;
+            }
         }
-
         #endregion
 
         #region Event Handlers

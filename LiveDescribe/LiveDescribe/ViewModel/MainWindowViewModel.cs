@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.IO;
-using System.Threading.Tasks;
-using System.Timers;
-using System.Windows;
-using System.Windows.Input;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Threading;
 using LiveDescribe.Interfaces;
@@ -15,6 +7,14 @@ using LiveDescribe.Utilities;
 using LiveDescribe.View;
 using Microsoft.Win32;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.IO;
+using System.Threading.Tasks;
+using System.Timers;
+using System.Windows;
+using System.Windows.Input;
 
 namespace LiveDescribe.ViewModel
 {
@@ -203,7 +203,6 @@ namespace LiveDescribe.ViewModel
                 _preferences.InitializeAudioSourceInfo();
                 var preferencesWindow = new PreferencesWindow(_preferences);
                 preferencesWindow.ShowDialog();
-
             });
 
             FindSpaces = new RelayCommand(
@@ -254,7 +253,6 @@ namespace LiveDescribe.ViewModel
 
             _mediaControlViewModel.MuteRequested += (sender, e) =>
                 {
-
                     //this Handler should be attached to the view to update the graphics
                     _mediaVideo.IsMuted = !_mediaVideo.IsMuted;
                     OnMuteRequested(sender, e);
@@ -300,7 +298,6 @@ namespace LiveDescribe.ViewModel
             };
 
             #endregion
-
         }
         #endregion
 
@@ -502,7 +499,7 @@ namespace LiveDescribe.ViewModel
         /// <summary>
         /// Initializes and sets up the progam for a given project file.
         /// </summary>
-        /// <param name="pf">The project to initialize</param>
+        /// <param name="p">The project to initialize</param>
         public void SetProject(Project p)
         {
             CloseProject.ExecuteIfCan();

@@ -1,5 +1,4 @@
-﻿
-namespace LiveDescribe.Utilities
+﻿namespace LiveDescribe.Utilities
 {
     public class CopyFileProgressChangedEventArgs
     {

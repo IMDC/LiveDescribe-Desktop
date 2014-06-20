@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Threading;
 using LiveDescribe.Events;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
 using LiveDescribe.Utilities;
 using NAudio;
-using NAudio.Wave;
+using System;
+using System.Collections.ObjectModel;
 
 namespace LiveDescribe.ViewModel
 {
@@ -52,8 +47,7 @@ namespace LiveDescribe.ViewModel
             _mediaControlViewModel = mediaControlViewModel;
 
             Project = null;
-            _recorder = new DescriptionRecorder();
-            _recorder.DescriptionRecorded += (sender, args) => AddDescription(args.Value);
+            _recorder = GetDescriptionRecorder();
 
             RecordCommand = new RelayCommand(
                 canExecute: () =>
@@ -220,9 +214,7 @@ namespace LiveDescribe.ViewModel
                     AllDescriptions.Remove(desc);
                 };
         }
-        #endregion
 
-        #region Functions Called by MainWindowViewModel
         /// <summary>
         /// This function closes everything necessary to start fresh
         /// </summary>
@@ -231,7 +223,14 @@ namespace LiveDescribe.ViewModel
             AllDescriptions.Clear();
             ExtendedDescriptions.Clear();
             RegularDescriptions.Clear();
-            _recorder = new DescriptionRecorder(); //TODO: Write clear method?
+            Recorder = GetDescriptionRecorder();
+        }
+
+        private DescriptionRecorder GetDescriptionRecorder()
+        {
+            var dr = new DescriptionRecorder();
+            dr.DescriptionRecorded += (sender, args) => AddDescription(args.Value);
+            return dr;
         }
         #endregion
 

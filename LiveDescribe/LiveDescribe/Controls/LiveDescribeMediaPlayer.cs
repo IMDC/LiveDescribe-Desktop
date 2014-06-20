@@ -32,7 +32,6 @@ namespace LiveDescribe.Controls
         public double DurationSeconds
         {
             get { return NaturalDuration.TimeSpan.TotalSeconds; }
-
         }
 
         public double DurationMilliseconds

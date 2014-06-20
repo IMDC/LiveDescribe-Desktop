@@ -1,9 +1,9 @@
-﻿using System.ComponentModel;
-using System.Windows.Input;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
+using System.ComponentModel;
+using System.Windows.Input;
 
 namespace LiveDescribe.ViewModel
 {
@@ -29,7 +29,11 @@ namespace LiveDescribe.ViewModel
 
             EditingEnabled = false;
 
-            //Commands
+            InitCommands();
+        }
+
+        public void InitCommands()
+        {
             SetBeginToMarker = new RelayCommand(
                 canExecute: () => EditingEnabled,
                 execute: () => SelectedSpace_StartInVideo = _player.Position.TotalMilliseconds

@@ -41,7 +41,6 @@ namespace LiveDescribe.Model
             {
                 _currentState = value;
                 NotifyPropertyChanged();
-
             }
         }
 

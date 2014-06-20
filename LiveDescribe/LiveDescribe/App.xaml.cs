@@ -1,6 +1,5 @@
 ﻿namespace LiveDescribe
 {
-
     using System.Windows;
     /// <summary>
     /// Interaction logic for App.xaml

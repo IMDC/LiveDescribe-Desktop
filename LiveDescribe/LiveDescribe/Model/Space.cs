@@ -1,8 +1,8 @@
-﻿using System.Runtime.CompilerServices;
-using GalaSoft.MvvmLight.Command;
+﻿using GalaSoft.MvvmLight.Command;
 using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
 namespace LiveDescribe.Model
@@ -126,6 +126,11 @@ namespace LiveDescribe.Model
                 NotifyPropertyChanged();
             }
             get { return _endInVideo; }
+        }
+
+        public double Duration
+        {
+            get { return EndInVideo - StartInVideo; }
         }
 
         [JsonIgnore]
