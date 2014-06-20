@@ -166,7 +166,6 @@ namespace LiveDescribe.Utilities
 
             IsRecording = false;
         }
-
         #endregion
 
         #region Event Handlers

@@ -47,8 +47,7 @@ namespace LiveDescribe.ViewModel
             _mediaControlViewModel = mediaControlViewModel;
 
             Project = null;
-            _recorder = new DescriptionRecorder();
-            _recorder.DescriptionRecorded += (sender, args) => AddDescription(args.Value);
+            _recorder = GetDescriptionRecorder();
 
             RecordCommand = new RelayCommand(
                 canExecute: () =>
@@ -215,9 +214,7 @@ namespace LiveDescribe.ViewModel
                     AllDescriptions.Remove(desc);
                 };
         }
-        #endregion
 
-        #region Functions Called by MainWindowViewModel
         /// <summary>
         /// This function closes everything necessary to start fresh
         /// </summary>
@@ -226,7 +223,14 @@ namespace LiveDescribe.ViewModel
             AllDescriptions.Clear();
             ExtendedDescriptions.Clear();
             RegularDescriptions.Clear();
-            _recorder = new DescriptionRecorder(); //TODO: Write clear method?
+            Recorder = GetDescriptionRecorder();
+        }
+
+        private DescriptionRecorder GetDescriptionRecorder()
+        {
+            var dr = new DescriptionRecorder();
+            dr.DescriptionRecorded += (sender, args) => AddDescription(args.Value);
+            return dr;
         }
         #endregion
 
