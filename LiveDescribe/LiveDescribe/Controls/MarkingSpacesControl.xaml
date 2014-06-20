@@ -61,10 +61,12 @@
             Grid.Column="0"
             Grid.ColumnSpan="5"
             IsEnabled="{Binding EditingEnabled}"
-            Text="{Binding Path=SelectedSpace_StartInVideo, Converter={StaticResource MillisecondsTimeConverter}}" />
+            Text="{Binding Path=SelectedSpace_StartInVideo, Converter={StaticResource MillisecondsTimeConverter}, UpdateSourceTrigger=LostFocus}"
+            KeyDown="Textbox_KeyDown"/>
 
         <!-- End -->
         <TextBlock
+            Name="StartInVideoTextBox"
             Grid.Row="2"
             Grid.Column="0"
             Grid.ColumnSpan="3"
@@ -79,12 +81,14 @@
             Command="{Binding SetEndToMarker}" />
 
         <TextBox
+            Name="EndInVideoTextBox"
             Style="{StaticResource TextBoxStyle}"
             Grid.Row="3"
             Grid.Column="0"
             Grid.ColumnSpan="5"
             IsEnabled="{Binding EditingEnabled}"
-            Text="{Binding Path=SelectedSpace_EndInVideo, Converter={StaticResource MillisecondsTimeConverter}}" />
+            Text="{Binding Path=SelectedSpace_EndInVideo, Converter={StaticResource MillisecondsTimeConverter}, UpdateSourceTrigger=LostFocus}"
+            KeyDown="Textbox_KeyDown"/>
 
     </Grid>
 </UserControl>
