@@ -17,7 +17,7 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Fields
-
+        private double _timeLeft;
         private double _elapsedTime;
         private Description _description;
         private Space _space;
@@ -39,6 +39,8 @@ namespace LiveDescribe.ViewModel
             _description = null;
             Space = space;
             Project = project;
+            ResetElapsedTime();
+            ResetTimeLeft();
 
             _recorder = new DescriptionRecorder();
             _recorder.DescriptionRecorded += (sender, args) => Description = args.Value;
@@ -46,20 +48,14 @@ namespace LiveDescribe.ViewModel
             _player = new DescriptionPlayer();
             _player.DescriptionFinishedPlaying += (sender, args) => CommandManager.InvalidateRequerySuggested();
 
-            _recordingTimer = new DispatcherTimer();
-            _recordingTimer.Interval = TimeSpan.FromMilliseconds(CountdownTimerIntervalMsec);
+            _recordingTimer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(CountdownTimerIntervalMsec)};
             _recordingTimer.Tick += (sender, args) =>
             {
                 ElapsedTime = _stopwatch.ElapsedMilliseconds;
+                TimeLeft = Space.Duration - ElapsedTime;
 
-                if (Space.Duration < ElapsedTime)
-                {
-                    RecordDescription.ExecuteIfCan();
-                    _recordingTimer.Stop();
-                    _stopwatch.Reset();
-                    ElapsedTime = 0;
-                    CommandManager.InvalidateRequerySuggested();
-                }
+                if (Space.Duration < ElapsedTime && _recorder.IsRecording)
+                    StopRecording();
             };
 
             _stopwatch = new Stopwatch();
@@ -75,15 +71,9 @@ namespace LiveDescribe.ViewModel
                 execute: () =>
                 {
                     if (_recorder.IsRecording)
-                        _recorder.StopRecording();
+                        StopRecording();
                     else
-                    {
-                        var pf = ProjectFile.FromAbsolutePath(Project.GenerateDescriptionFilePath(),
-                                Project.Folders.Descriptions);
-                        _recorder.RecordDescription(pf, false, Space.StartInVideo);
-                        _recordingTimer.Start();
-                        _stopwatch.Start();
-                    }
+                        StartRecording();
                 });
 
             PlayRecordedDescription = new RelayCommand(
@@ -110,6 +100,16 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Properties
+
+        public double TimeLeft
+        {
+            set
+            {
+                _timeLeft = value;
+                RaisePropertyChanged();
+            }
+            get { return _timeLeft; }
+        }
 
         public double ElapsedTime
         {
@@ -156,6 +156,34 @@ namespace LiveDescribe.ViewModel
         }
         #endregion
 
+        private void StartRecording()
+        {
+            var pf = ProjectFile.FromAbsolutePath(Project.GenerateDescriptionFilePath(),
+                                Project.Folders.Descriptions);
+            _recorder.RecordDescription(pf, false, Space.StartInVideo);
+            _recordingTimer.Start();
+            _stopwatch.Start();
+        }
+
+        private void StopRecording()
+        {
+            _recorder.StopRecording();
+            _recordingTimer.Stop();
+            _stopwatch.Reset();
+            ResetElapsedTime();
+            ResetTimeLeft();
+            CommandManager.InvalidateRequerySuggested();
+        }
+
+        private void ResetElapsedTime()
+        {
+            ElapsedTime = 0;
+        }
+
+        private void ResetTimeLeft()
+        {
+            TimeLeft = Space.Duration;
+        }
         #region Event Invokations
 
         public void OnCloseRequested()

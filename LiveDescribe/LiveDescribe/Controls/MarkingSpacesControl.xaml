@@ -17,9 +17,7 @@
                 Property="Margin"
                 Value="5" />
         </Style>
-
     </UserControl.Resources>
-
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition

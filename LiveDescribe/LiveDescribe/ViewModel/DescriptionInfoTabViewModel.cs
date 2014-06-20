@@ -42,9 +42,9 @@ namespace LiveDescribe.ViewModel
                     //TODO: Move this out of method
                     var viewModel = new SpaceRecordingViewModel(SelectedSpace, _descriptionViewModel.Project);
                     var view = new SpaceRecordingView(viewModel);
-                    view.ShowDialog();
+                    bool? success = view.ShowDialog();
 
-                    if (viewModel.Description != null)
+                    if (success == true)
                         _descriptionViewModel.AddDescription(viewModel.Description);
                 });
 
