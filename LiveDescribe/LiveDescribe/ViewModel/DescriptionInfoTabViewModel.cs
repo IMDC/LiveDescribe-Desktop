@@ -39,9 +39,13 @@ namespace LiveDescribe.ViewModel
                 canExecute: () => SelectedSpace != null,
                 execute: () =>
                 {
-                    //TODO: This
-                    var view = new SpaceRecordingView(new SpaceRecordingViewModel(SelectedSpace));
+                    //TODO: Move this out of method
+                    var viewModel = new SpaceRecordingViewModel(SelectedSpace,_descriptionViewModel.Project);
+                    var view = new SpaceRecordingView(viewModel);
                     view.ShowDialog();
+
+                    if(viewModel.Description != null)
+                        _descriptionViewModel.AddDescription(viewModel.Description);
                 });
 
             SelectedRegularDescription = null;

@@ -20,7 +20,7 @@ namespace LiveDescribe.Utilities
         private bool _isPlaying;
         private Description _playingDescription;
         private WaveOutEvent _descriptionStream;
-        private readonly object _lock = new object();
+        private readonly object _playLock = new object();
 
         public event EventHandler<EventArgs<Description>> DescriptionFinishedPlaying;
         public event PropertyChangedEventHandler PropertyChanged;
@@ -28,7 +28,7 @@ namespace LiveDescribe.Utilities
 
         public bool IsPlaying
         {
-            set
+            private set
             {
                 _isPlaying = value;
                 NotifyPropertyChanged();
@@ -49,21 +49,30 @@ namespace LiveDescribe.Utilities
         }
 
         #region Methods
+
+        public bool CanPlay(Description description)
+        {
+            lock (_playLock)
+            {
+                return !IsPlaying;
+            }
+        }
+
         /// <summary>
         /// Determines if the given description can play at the given time.
         /// </summary>
         /// <param name="description">The description to check.</param>
         /// <param name="videoPositionMilliseconds">The time to check the description against.</param>
         /// <returns>Whether the description can be played or not.</returns>
-        public bool CanPlay(Description description, double videoPositionMilliseconds)
+        public bool CanPlayInVideo(Description description, double videoPositionMilliseconds)
         {
-            lock (_lock)
+            lock (_playLock)
             {
                 double offset = videoPositionMilliseconds - description.StartInVideo;
 
                 //if it is equal then the video time matches when the description should start dead on
                 return
-                    !IsPlaying
+                    CanPlay(description)
                     && ((!description.IsExtendedDescription
                          && 0 <= offset
                          && offset < description.WaveFileDuration)
@@ -73,25 +82,46 @@ namespace LiveDescribe.Utilities
             }
         }
 
+        public void Play(Description description)
+        {
+            lock (_playLock)
+            {
+                PlayAtOffset(description, 0);
+            }
+        }
+
         /// <summary>
-        /// Plays the given description at the given time.
+        /// Plays the given description at the given video time.
         /// </summary>
         /// <param name="description">Description to play.</param>
         /// <param name="videoPositionMilliseconds">Time to the description at.</param>
-        public void Play(Description description, double videoPositionMilliseconds)
+        public void PlayInVideo(Description description, double videoPositionMilliseconds)
         {
-            lock (_lock)
+            lock (_playLock)
             {
                 if (IsPlaying)
                     return;
 
                 double offset = videoPositionMilliseconds - description.StartInVideo;
 
+                PlayAtOffset(description,offset);
+            }
+        }
+
+        /// <summary>
+        /// Plays a description, beginning from a time offset from the beginning of the wav file.
+        /// </summary>
+        /// <param name="description">Description to play.</param>
+        /// <param name="offset">How far into the description to start playing at.</param>
+        private void PlayAtOffset(Description description, double offset)
+        {
+            lock (_playLock)
+            {
                 var reader = new WaveFileReader(description.AudioFile);
                 //reader.WaveFormat.AverageBytesPerSecond/ 1000 = Average Bytes Per Millisecond
                 //AverageBytesPerMillisecond * (offset + StartWaveFileTime) = amount to play from
-                reader.Seek((long) ((reader.WaveFormat.AverageBytesPerSecond/1000)
-                                    *(offset + description.StartWaveFileTime)), SeekOrigin.Begin);
+                reader.Seek((long)((reader.WaveFormat.AverageBytesPerSecond / 1000)
+                                    * (offset + description.StartWaveFileTime)), SeekOrigin.Begin);
                 var descriptionStream = new WaveOutEvent();
                 descriptionStream.PlaybackStopped += DescriptionStream_PlaybackStopped;
                 descriptionStream.Init(reader);
@@ -111,7 +141,7 @@ namespace LiveDescribe.Utilities
         /// </summary>
         public void Stop()
         {
-            lock (_lock)
+            lock (_playLock)
             {
                 if (!IsPlaying)
                     return;
@@ -130,7 +160,7 @@ namespace LiveDescribe.Utilities
 
         private void DescriptionStream_PlaybackStopped(object sender, StoppedEventArgs e)
         {
-            lock (_lock)
+            lock (_playLock)
             {
                 IsPlaying = false;
                 _playingDescription.IsPlaying = false;
