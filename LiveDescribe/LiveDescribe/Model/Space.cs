@@ -121,6 +121,11 @@ namespace LiveDescribe.Model
             get { return _endInVideo; }
         }
 
+        public double Duration
+        {
+            get { return EndInVideo - StartInVideo; }
+        }
+
         [JsonIgnore]
         public double Length
         {

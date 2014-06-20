@@ -44,7 +44,10 @@
         <ProgressBar
             Grid.Row="5"
             Grid.Column="0"
-            Grid.ColumnSpan="5" />
+            Grid.ColumnSpan="5"
+            Minimum="0"
+            Maximum="{Binding Space.Duration}"
+            Value="{Binding ElapsedTime}"/>
 
         <Button
             Grid.Row="6"

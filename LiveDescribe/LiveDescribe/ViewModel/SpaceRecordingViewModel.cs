@@ -1,4 +1,6 @@
-﻿using GalaSoft.MvvmLight;
+﻿using System.Diagnostics;
+using System.Windows.Threading;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Model;
 using LiveDescribe.Utilities;
@@ -9,11 +11,20 @@ namespace LiveDescribe.ViewModel
 {
     public class SpaceRecordingViewModel : ViewModelBase
     {
+        #region Constants
+
+        public const double CountdownTimerIntervalMsec = 25; //40 times a second
+        #endregion
+
         #region Fields
+
+        private double _elapsedTime;
         private Description _description;
         private Space _space;
-        private DescriptionRecorder _recorder;
-        private DescriptionPlayer _player;
+        private readonly DescriptionRecorder _recorder;
+        private readonly DescriptionPlayer _player;
+        private readonly DispatcherTimer _recordingTimer;
+        private readonly Stopwatch _stopwatch;
         #endregion
 
         #region Events
@@ -34,6 +45,24 @@ namespace LiveDescribe.ViewModel
 
             _player = new DescriptionPlayer();
             _player.DescriptionFinishedPlaying += (sender, args) => CommandManager.InvalidateRequerySuggested();
+
+            _recordingTimer = new DispatcherTimer();
+            _recordingTimer.Interval = TimeSpan.FromMilliseconds(CountdownTimerIntervalMsec);
+            _recordingTimer.Tick += (sender, args) =>
+            {
+                ElapsedTime = _stopwatch.ElapsedMilliseconds;
+
+                if (Space.Duration < ElapsedTime)
+                {
+                    RecordDescription.ExecuteIfCan();
+                    _recordingTimer.Stop();
+                    _stopwatch.Reset();
+                    ElapsedTime = 0;
+                    CommandManager.InvalidateRequerySuggested();
+                }
+            };
+
+            _stopwatch = new Stopwatch();
         }
 
         public void InitCommands()
@@ -52,6 +81,8 @@ namespace LiveDescribe.ViewModel
                         var pf = ProjectFile.FromAbsolutePath(Project.GenerateDescriptionFilePath(),
                                 Project.Folders.Descriptions);
                         _recorder.RecordDescription(pf, false, Space.StartInVideo);
+                        _recordingTimer.Start();
+                        _stopwatch.Start();
                     }
                 });
 
@@ -79,6 +110,17 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Properties
+
+        public double ElapsedTime
+        {
+            set
+            {
+                _elapsedTime = value;
+                RaisePropertyChanged();
+            }
+            get { return _elapsedTime; }
+        }
+
         public Project Project { set; get; }
 
         public string Text
