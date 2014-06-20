@@ -377,6 +377,15 @@ namespace LiveDescribe.View
                     if (args.PropertyName.Equals("StartInVideo") || args.PropertyName.Equals("EndInVideo"))
                         SetSpaceLocation(space);
                 };
+
+                space.GoToThisSpaceEvent += (o, args) =>
+                {
+                    UpdateMarkerPosition((space.StartInVideo / _videoDuration) * (_audioCanvas.Width) - MarkerOffset);
+                    UpdateVideoPosition((int)space.StartInVideo);
+                    //Scroll 1 second before the start in video of the space
+                    TimeLineScrollViewer.ScrollToHorizontalOffset((_audioCanvas.Width/_videoDuration)*
+                                                                  (space.StartInVideo - 1000));
+                };
             };
 
             _spacesViewModel.RequestSpaceTime += (sender, args) =>

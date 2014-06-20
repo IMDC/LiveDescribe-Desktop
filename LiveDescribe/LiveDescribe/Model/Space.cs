@@ -35,6 +35,8 @@ namespace LiveDescribe.Model
         public EventHandler<MouseEventArgs> SpaceMouseDownEvent;
         [JsonIgnore]
         public EventHandler<MouseEventArgs> SpaceMouseMoveEvent;
+        [JsonIgnore] 
+        public EventHandler GoToThisSpaceEvent;
         #endregion
 
         #region Constructors
@@ -44,6 +46,7 @@ namespace LiveDescribe.Model
             StartInVideo = starttime;
             EndInVideo = endtime;
             DeleteSpaceCommand = new RelayCommand(DeleteSpace, () => true);
+
 
             SpaceMouseUpCommand = new RelayCommand<MouseEventArgs>(SpaceMouseUp, param => true);
             SpaceMouseDownCommand = new RelayCommand<MouseEventArgs>(SpaceMouseDown, param => true);
@@ -55,6 +58,8 @@ namespace LiveDescribe.Model
             IsSelected = false;
 
             DeleteSpaceCommand = new RelayCommand(DeleteSpace, () => true);
+            
+            GoToThisSpaceCommand = new RelayCommand(GoToThisSpace, () => true);
 
             SpaceMouseUpCommand = new RelayCommand<MouseEventArgs>(SpaceMouseUp, param => true);
             SpaceMouseDownCommand = new RelayCommand<MouseEventArgs>(SpaceMouseDown, param => true);
@@ -76,6 +81,8 @@ namespace LiveDescribe.Model
         public RelayCommand<MouseEventArgs> SpaceMouseMoveCommand { get; private set; }
         [JsonIgnore]
         public RelayCommand<MouseEventArgs> SpaceMouseUpCommand { get; private set; }
+        [JsonIgnore]
+        public RelayCommand GoToThisSpaceCommand { get; private set; }
         #endregion
 
         #region Properties
@@ -228,6 +235,12 @@ namespace LiveDescribe.Model
         {
             EventHandler<MouseEventArgs> handler = SpaceMouseUpEvent;
             if (handler != null) handler(this, e);
+        }
+
+        public void GoToThisSpace()
+        {
+            EventHandler handler = GoToThisSpaceEvent;
+            if (handler != null) handler(this, EventArgs.Empty);
         }
         #endregion
 

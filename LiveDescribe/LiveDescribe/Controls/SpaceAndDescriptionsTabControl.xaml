@@ -43,6 +43,18 @@
                             ValidatesOnDataErrors="True"
                             Mode="TwoWay" />
                     </ListView.SelectedItem>
+                    <ListView.Resources>
+                        <ContextMenu x:Key="SpaceItemContextMenu">
+                            <MenuItem Header="Go to Space" Command="{Binding GoToThisSpaceCommand}"/>
+                            <MenuItem Header="Delete Space" Command="{Binding DeleteSpaceCommand}"/>
+                        </ContextMenu>
+                    </ListView.Resources>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="ContextMenu"
+                                    Value="{StaticResource SpaceItemContextMenu}"/>
+                        </Style>
+                    </ListView.ItemContainerStyle>
                     <ListView.View>
                         <GridView>
                             <GridViewColumn
