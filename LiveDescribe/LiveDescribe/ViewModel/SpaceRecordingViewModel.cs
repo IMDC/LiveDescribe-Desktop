@@ -159,7 +159,7 @@ namespace LiveDescribe.ViewModel
         private void StartRecording()
         {
             var pf = ProjectFile.FromAbsolutePath(Project.GenerateDescriptionFilePath(),
-                                Project.Folders.Descriptions);
+                Project.Folders.Descriptions);
             _recorder.RecordDescription(pf, false, Space.StartInVideo);
             _recordingTimer.Start();
             _stopwatch.Start();
