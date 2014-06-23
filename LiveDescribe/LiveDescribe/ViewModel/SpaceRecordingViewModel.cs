@@ -13,7 +13,7 @@ namespace LiveDescribe.ViewModel
     {
         #region Constants
 
-        public const double CountdownTimerIntervalMsec = 25; //40 times a second
+        public const double CountdownTimerIntervalMsec = 1000/40; //40 times a second
         #endregion
 
         #region Fields
@@ -25,8 +25,11 @@ namespace LiveDescribe.ViewModel
         private readonly DescriptionPlayer _player;
         private readonly DispatcherTimer _recordingTimer;
         private readonly Stopwatch _stopwatch;
+        /// <summary>Defines how long each word should be selected while recording a description.</summary>
         private double _timePerWordMsec;
         private double _wordTimeAccumulator;
+        /// <summary>Keeps track of SpaceText words during recording.</summary>
+        private PositionalStringTokenizer _tokenizer;
         #endregion
 
         #region Events
@@ -53,7 +56,7 @@ namespace LiveDescribe.ViewModel
             _player = new DescriptionPlayer();
             _player.DescriptionFinishedPlaying += (sender, args) => CommandManager.InvalidateRequerySuggested();
 
-            _recordingTimer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(CountdownTimerIntervalMsec)};
+            _recordingTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(CountdownTimerIntervalMsec) };
             _recordingTimer.Tick += (sender, args) =>
             {
                 ElapsedTime = _stopwatch.ElapsedMilliseconds;
@@ -111,6 +114,7 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Properties
+        public PositionalStringTokenizer SpaceTextTokenizer { get { return _tokenizer; }}
 
         public double TimeLeft
         {
@@ -167,10 +171,12 @@ namespace LiveDescribe.ViewModel
         }
         #endregion
 
+        #region Methods
         private void StartRecording()
         {
             var pf = ProjectFile.FromAbsolutePath(Project.GenerateDescriptionFilePath(),
                 Project.Folders.Descriptions);
+            TokenizeSpaceText();
             CalculateWordTime();
             _wordTimeAccumulator = 0;
             _recorder.RecordDescription(pf, false, Space.StartInVideo);
@@ -179,15 +185,17 @@ namespace LiveDescribe.ViewModel
             OnRecordingStarted();
         }
 
+        private void TokenizeSpaceText()
+        {
+            _tokenizer = new PositionalStringTokenizer(Space.SpaceText);
+            _tokenizer.Tokenize();
+        }
+
         private void CalculateWordTime()
         {
-            if (string.IsNullOrWhiteSpace(Space.SpaceText))
-                _timePerWordMsec = 0;
-            else
-            {
-                var words = Space.SpaceText.Split();
-                _timePerWordMsec = Space.Duration / words.Length;
-            }
+            _timePerWordMsec = (!string.IsNullOrWhiteSpace(Space.SpaceText))
+                ? _timePerWordMsec = Space.Duration / _tokenizer.Tokens.Count
+                : 0;
         }
 
         private void StopRecording()
@@ -210,6 +218,8 @@ namespace LiveDescribe.ViewModel
         {
             TimeLeft = Space.Duration;
         }
+        #endregion
+
         #region Event Invokations
 
         private void OnCloseRequested()

@@ -31,9 +31,7 @@ namespace LiveDescribe.View
             {
                 SpaceTextBox.Focus();
                 SpaceTextBox.IsReadOnly = true;
-                var tokenizer = new PositionalStringTokenizer(_viewModel.Space.SpaceText);
-                tokenizer.Tokenize();
-                _enumerator = tokenizer.Tokens.GetEnumerator();
+                _enumerator = _viewModel.SpaceTextTokenizer.Tokens.GetEnumerator();
             };
 
             _viewModel.RecordingEnded += (sender, args) =>
