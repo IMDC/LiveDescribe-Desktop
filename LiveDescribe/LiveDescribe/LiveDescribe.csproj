@@ -123,6 +123,7 @@
     <Compile Include="Utilities\FileDeleter.cs" />
     <Compile Include="Utilities\FileReader.cs" />
     <Compile Include="Utilities\FileWriter.cs" />
+    <Compile Include="Utilities\ItemsControlExtensions.cs" />
     <Compile Include="Utilities\MessageBoxFactory.cs" />
     <Compile Include="Utilities\ProgressFileCopier.cs" />
     <Compile Include="ViewModel\AudioCanvasViewModel.cs" />

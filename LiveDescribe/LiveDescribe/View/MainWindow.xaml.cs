@@ -287,9 +287,15 @@ namespace LiveDescribe.View
                         if (Mouse.LeftButton == MouseButtonState.Pressed)
                         {
                             if (e.Description.IsExtendedDescription)
+                            {
                                 _descriptionInfoTabViewModel.SelectedExtendedDescription = e.Description;
+                                SpaceAndDescriptionsTabControl.ExtendedDescriptionsListView.ScrollToCenterOfView(e.Description);
+                            }
                             else
+                            {
                                 _descriptionInfoTabViewModel.SelectedRegularDescription = e.Description;
+                                SpaceAndDescriptionsTabControl.DescriptionsListView.ScrollToCenterOfView(e.Description);
+                            }
 
                             _originalPositionForDraggingDescription = e2.GetPosition(_descriptionCanvas).X;
                             _descriptionBeingModified = e.Description;
@@ -331,6 +337,7 @@ namespace LiveDescribe.View
                     if (Mouse.LeftButton == MouseButtonState.Pressed)
                     {
                         _descriptionInfoTabViewModel.SelectedSpace = space;
+                        SpaceAndDescriptionsTabControl.SpacesListView.ScrollToCenterOfView(space);
                         double xPos = e1.GetPosition(_audioCanvas).X;
 
                         //prepare space for dragging
@@ -838,7 +845,7 @@ namespace LiveDescribe.View
         /// </summary>
         private void ResizeDescriptions()
         {
-            foreach (Description description in _descriptionViewModel.AllDescriptions)
+            foreach (var description in _descriptionViewModel.AllDescriptions)
                 description.Height = _descriptionCanvas.ActualHeight;
         }
 
@@ -847,7 +854,7 @@ namespace LiveDescribe.View
         /// </summary>
         private void ResizeSpaces()
         {
-            foreach (Space space in _spacesViewModel.Spaces)
+            foreach (var space in _spacesViewModel.Spaces)
                 space.Height = _audioCanvas.ActualHeight;
         }
 

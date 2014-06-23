@@ -113,6 +113,7 @@
 
                 <!--Description Information-->
                 <controls:SpaceAndDescriptionsTabControl
+                    x:Name="SpaceAndDescriptionsTabControl"
                     DataContext="{Binding DescriptionInfoTabViewModel}"
                     Grid.Row="0"
                     Grid.Column="4"

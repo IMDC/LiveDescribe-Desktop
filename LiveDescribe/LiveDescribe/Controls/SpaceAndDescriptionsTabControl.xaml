@@ -25,6 +25,7 @@
         </Grid.ColumnDefinitions>
 
         <TabControl
+            Name="TabControl"
             Grid.Row="0"
             Grid.Column="0"
             Grid.ColumnSpan="2"
@@ -106,7 +107,7 @@
                             Path="SelectedRegularDescription"
                             UpdateSourceTrigger="PropertyChanged"
                             ValidatesOnDataErrors="True"
-                            Mode="TwoWay" />
+                            Mode="TwoWay"/>
                     </ListView.SelectedItem>
                     <ListView.View>
                         <GridView>
