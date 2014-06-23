@@ -41,6 +41,11 @@ namespace LiveDescribe.ViewModel
         {
             get { return _spacesViewModel.Spaces; }
         }
+
+        public SpacesViewModel SpacesViewModel
+        {
+            get { return _spacesViewModel; }
+        }
         #endregion
 
         #region Binding Functions

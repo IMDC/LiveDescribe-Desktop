@@ -102,6 +102,18 @@
                     Name="DescriptionsListView"
                     VirtualizingPanel.IsVirtualizing="True"
                     ItemsSource="{Binding RegularDescriptions}">
+                    <ListView.Resources>
+                        <ContextMenu x:Key="RegularDescriptionContextMenu">
+                            <MenuItem Header="Go to Description" Command="{Binding GoToThisDescriptionCommand}"/>
+                            <MenuItem Header="Delete Description" Command="{Binding DescriptionDeleteCommand}"/>
+                        </ContextMenu>
+                    </ListView.Resources>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="ContextMenu"
+                                    Value="{StaticResource RegularDescriptionContextMenu}"/>
+                        </Style>
+                    </ListView.ItemContainerStyle>
                     <ListView.SelectedItem>
                         <Binding
                             Path="SelectedRegularDescription"
@@ -155,6 +167,18 @@
                     Name="ExtendedDescriptionsListView"
                     VirtualizingPanel.IsVirtualizing="True"
                     ItemsSource="{Binding ExtendedDescriptions}">
+                    <ListView.Resources>
+                        <ContextMenu x:Key="ExtendedDescriptionContextMenu">
+                            <MenuItem Header="Go to Description" Command="{Binding GoToThisDescriptionCommand}"/>
+                            <MenuItem Header="Delete Description" Command="{Binding DescriptionDeleteCommand}"/>
+                        </ContextMenu>
+                    </ListView.Resources>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="ContextMenu"
+                                    Value="{StaticResource ExtendedDescriptionContextMenu}"/>
+                        </Style>
+                    </ListView.ItemContainerStyle>
                     <ListView.SelectedItem>
                         <Binding
                             Path="SelectedExtendedDescription"

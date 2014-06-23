@@ -318,6 +318,15 @@ namespace LiveDescribe.View
                             //change end in the wave file for resizing the end time
                         }
                     };
+
+                    e.Description.GoToThisDescriptionEvent += (sender1, e1) =>
+                    {
+                        UpdateMarkerPosition((e.Description.StartInVideo / _videoDuration) * (_audioCanvas.Width) - MarkerOffset);
+                        UpdateVideoPosition((int)e.Description.StartInVideo);
+                        //Scroll 1 second before the start in video of the space
+                        TimeLineScrollViewer.ScrollToHorizontalOffset((_audioCanvas.Width / _videoDuration) *
+                                                                      (e.Description.StartInVideo - 1000));
+                    };
                 };
             #endregion
 
