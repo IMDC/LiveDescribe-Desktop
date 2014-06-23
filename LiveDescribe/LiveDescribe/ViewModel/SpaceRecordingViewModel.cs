@@ -13,7 +13,7 @@ namespace LiveDescribe.ViewModel
     {
         #region Constants
 
-        public const double CountdownTimerIntervalMsec = 25; //40 times a second
+        public const double CountdownTimerIntervalMsec = 1000/40; //40 times a second
         #endregion
 
         #region Fields
@@ -25,10 +25,18 @@ namespace LiveDescribe.ViewModel
         private readonly DescriptionPlayer _player;
         private readonly DispatcherTimer _recordingTimer;
         private readonly Stopwatch _stopwatch;
+        /// <summary>Defines how long each word should be selected while recording a description.</summary>
+        private double _timePerWordMsec;
+        private double _wordTimeAccumulator;
+        /// <summary>Keeps track of SpaceText words during recording.</summary>
+        private PositionalStringTokenizer _tokenizer;
         #endregion
 
         #region Events
         public event EventHandler CloseRequested;
+        public event EventHandler NextWordSelected;
+        public event EventHandler RecordingEnded;
+        public event EventHandler RecordingStarted;
         #endregion
 
         #region Constructor
@@ -48,11 +56,17 @@ namespace LiveDescribe.ViewModel
             _player = new DescriptionPlayer();
             _player.DescriptionFinishedPlaying += (sender, args) => CommandManager.InvalidateRequerySuggested();
 
-            _recordingTimer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(CountdownTimerIntervalMsec)};
+            _recordingTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(CountdownTimerIntervalMsec) };
             _recordingTimer.Tick += (sender, args) =>
             {
                 ElapsedTime = _stopwatch.ElapsedMilliseconds;
                 TimeLeft = Space.Duration - ElapsedTime;
+
+                if (_timePerWordMsec != 0 && _wordTimeAccumulator < ElapsedTime)
+                {
+                    _wordTimeAccumulator += _timePerWordMsec;
+                    OnNextWordSelected();
+                }
 
                 if (Space.Duration < ElapsedTime && _recorder.IsRecording)
                     StopRecording();
@@ -100,6 +114,7 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Properties
+        public PositionalStringTokenizer SpaceTextTokenizer { get { return _tokenizer; }}
 
         public double TimeLeft
         {
@@ -156,13 +171,31 @@ namespace LiveDescribe.ViewModel
         }
         #endregion
 
+        #region Methods
         private void StartRecording()
         {
             var pf = ProjectFile.FromAbsolutePath(Project.GenerateDescriptionFilePath(),
                 Project.Folders.Descriptions);
+            TokenizeSpaceText();
+            CalculateWordTime();
+            _wordTimeAccumulator = 0;
             _recorder.RecordDescription(pf, false, Space.StartInVideo);
             _recordingTimer.Start();
             _stopwatch.Start();
+            OnRecordingStarted();
+        }
+
+        private void TokenizeSpaceText()
+        {
+            _tokenizer = new PositionalStringTokenizer(Space.SpaceText);
+            _tokenizer.Tokenize();
+        }
+
+        private void CalculateWordTime()
+        {
+            _timePerWordMsec = (!string.IsNullOrWhiteSpace(Space.SpaceText))
+                ? _timePerWordMsec = Space.Duration / _tokenizer.Tokens.Count
+                : 0;
         }
 
         private void StopRecording()
@@ -172,6 +205,7 @@ namespace LiveDescribe.ViewModel
             _stopwatch.Reset();
             ResetElapsedTime();
             ResetTimeLeft();
+            OnRecordingEnded();
             CommandManager.InvalidateRequerySuggested();
         }
 
@@ -184,11 +218,31 @@ namespace LiveDescribe.ViewModel
         {
             TimeLeft = Space.Duration;
         }
+        #endregion
+
         #region Event Invokations
 
-        public void OnCloseRequested()
+        private void OnCloseRequested()
         {
             EventHandler handler = CloseRequested;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
+        private void OnNextWordSelected()
+        {
+            EventHandler handler = NextWordSelected;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
+        private void OnRecordingEnded()
+        {
+            EventHandler handler = RecordingEnded;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
+        private void OnRecordingStarted()
+        {
+            EventHandler handler = RecordingStarted;
             if (handler != null) handler(this, EventArgs.Empty);
         }
         #endregion

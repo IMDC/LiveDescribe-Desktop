@@ -5,7 +5,8 @@
     xmlns:converters="clr-namespace:LiveDescribe.Converters"
     Title="SpaceRecordingView"
     Height="400"
-    Width="400">
+    Width="400"
+    ResizeMode="NoResize">
     <Window.Resources>
         <converters:MillisecondsToTimeLeftStringConverter
             x:Key="MillisecondsToTimeLeftStringConverter" />
@@ -31,11 +32,24 @@
         </Grid.ColumnDefinitions>
 
         <TextBox
+            x:Name="SpaceTextBox"
+            TextWrapping="Wrap"
             Grid.Row="0"
             Grid.RowSpan="4"
             Grid.Column="0"
             Grid.ColumnSpan="5"
-            Text="{Binding Text}" />
+            IsInactiveSelectionHighlightEnabled="True"
+            LostFocus="SpaceTextBox_OnLostFocus"
+            VerticalScrollBarVisibility="Auto"
+            FontSize="16"
+            VerticalContentAlignment="Center"
+            HorizontalContentAlignment="Center">
+            <TextBox.Text>
+                <Binding
+                    Path="Text"
+                    UpdateSourceTrigger="PropertyChanged" />
+            </TextBox.Text>
+        </TextBox>
 
         <TextBlock
             Grid.Row="4"
@@ -53,7 +67,7 @@
             Grid.ColumnSpan="5"
             Minimum="0"
             Maximum="{Binding Space.Duration}"
-            Value="{Binding ElapsedTime}"/>
+            Value="{Binding ElapsedTime}" />
 
         <Button
             Grid.Row="6"
