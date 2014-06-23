@@ -31,11 +31,17 @@
         </Grid.ColumnDefinitions>
 
         <TextBox
+            x:Name="SpaceTextBox"
+            TextWrapping="Wrap"
             Grid.Row="0"
             Grid.RowSpan="4"
             Grid.Column="0"
             Grid.ColumnSpan="5"
-            Text="{Binding Text}" />
+            IsInactiveSelectionHighlightEnabled="True"
+            SelectionOpacity="0.5"
+            SelectionBrush="Blue"
+            Text="{Binding Text}"
+            LostFocus="SpaceTextBox_OnLostFocus"/>
 
         <TextBlock
             Grid.Row="4"

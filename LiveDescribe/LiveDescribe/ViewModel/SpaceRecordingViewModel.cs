@@ -25,10 +25,15 @@ namespace LiveDescribe.ViewModel
         private readonly DescriptionPlayer _player;
         private readonly DispatcherTimer _recordingTimer;
         private readonly Stopwatch _stopwatch;
+        private double _timePerWordMsec;
+        private double _wordTimeAccumulator;
         #endregion
 
         #region Events
         public event EventHandler CloseRequested;
+        public event EventHandler NextWordSelected;
+        public event EventHandler RecordingEnded;
+        public event EventHandler RecordingStarted;
         #endregion
 
         #region Constructor
@@ -53,6 +58,12 @@ namespace LiveDescribe.ViewModel
             {
                 ElapsedTime = _stopwatch.ElapsedMilliseconds;
                 TimeLeft = Space.Duration - ElapsedTime;
+
+                if (_timePerWordMsec != 0 && _wordTimeAccumulator < ElapsedTime)
+                {
+                    _wordTimeAccumulator += _timePerWordMsec;
+                    OnNextWordSelected();
+                }
 
                 if (Space.Duration < ElapsedTime && _recorder.IsRecording)
                     StopRecording();
@@ -160,9 +171,23 @@ namespace LiveDescribe.ViewModel
         {
             var pf = ProjectFile.FromAbsolutePath(Project.GenerateDescriptionFilePath(),
                 Project.Folders.Descriptions);
+            CalculateWordTime();
+            _wordTimeAccumulator = 0;
             _recorder.RecordDescription(pf, false, Space.StartInVideo);
             _recordingTimer.Start();
             _stopwatch.Start();
+            OnRecordingStarted();
+        }
+
+        private void CalculateWordTime()
+        {
+            if (string.IsNullOrWhiteSpace(Space.SpaceText))
+                _timePerWordMsec = 0;
+            else
+            {
+                var words = Space.SpaceText.Split();
+                _timePerWordMsec = Space.Duration / words.Length;
+            }
         }
 
         private void StopRecording()
@@ -172,6 +197,7 @@ namespace LiveDescribe.ViewModel
             _stopwatch.Reset();
             ResetElapsedTime();
             ResetTimeLeft();
+            OnRecordingEnded();
             CommandManager.InvalidateRequerySuggested();
         }
 
@@ -186,9 +212,27 @@ namespace LiveDescribe.ViewModel
         }
         #region Event Invokations
 
-        public void OnCloseRequested()
+        private void OnCloseRequested()
         {
             EventHandler handler = CloseRequested;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
+        private void OnNextWordSelected()
+        {
+            EventHandler handler = NextWordSelected;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
+        private void OnRecordingEnded()
+        {
+            EventHandler handler = RecordingEnded;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
+        private void OnRecordingStarted()
+        {
+            EventHandler handler = RecordingStarted;
             if (handler != null) handler(this, EventArgs.Empty);
         }
         #endregion
