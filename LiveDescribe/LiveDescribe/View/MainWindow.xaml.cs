@@ -124,7 +124,7 @@ namespace LiveDescribe.View
 
             #region Event Listeners for VideoMedia
             //if the videomedia's path changes (a video is added)
-            //then play and stop the video to load the video
+            //then play and stop the video to load the video so the VideoOpenedRequest event gets fired
             //this is done because the MediaElement does not load the video until it is played
             //therefore you can't know the duration of the video or if it hasn't been loaded properly unless it fails
             //I know this is a little hackish, but it's a consequence of how the MediaElement works
@@ -183,6 +183,11 @@ namespace LiveDescribe.View
                     _videoDuration = _videoMedia.NaturalDuration.TimeSpan.TotalMilliseconds;
                     _canvasWidth = CalculateWidth();
                     _marker.IsEnabled = true;
+
+                    //Video gets played and paused so you can seek initially when the video gets loaded
+                    _videoMedia.Play();
+                    _videoMedia.Pause();
+                    
                     SetTimeline();
 
                     foreach (var desc in _descriptionViewModel.AllDescriptions)
