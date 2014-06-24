@@ -38,7 +38,7 @@ namespace LiveDescribe.ViewModel
         private readonly MediaControlViewModel _mediaControlViewModel;
         private readonly PreferencesViewModel _preferences;
         private readonly DescriptionCollectionViewModel _descriptioncollectionviewmodel;
-        private readonly SpacesViewModel _spacesviewmodel;
+        private readonly SpaceCollectionViewModel _spacecollectionviewmodel;
         private readonly LoadingViewModel _loadingViewModel;
         private readonly MarkingSpacesControlViewModel _markingSpacesControlViewModel;
         private readonly ILiveDescribePlayer _mediaVideo;
@@ -66,14 +66,14 @@ namespace LiveDescribe.ViewModel
             DispatcherHelper.Initialize();
             WindowTitle = DefaultWindowTitle;
 
-            _spacesviewmodel = new SpacesViewModel(mediaVideo);
+            _spacecollectionviewmodel = new SpaceCollectionViewModel(mediaVideo);
             _loadingViewModel = new LoadingViewModel(100, null, 0, false);
             _mediaControlViewModel = new MediaControlViewModel(mediaVideo, _loadingViewModel);
             _preferences = new PreferencesViewModel();
             _descriptioncollectionviewmodel = new DescriptionCollectionViewModel(mediaVideo, _mediaControlViewModel);
-            _descriptionInfoTabViewModel = new DescriptionInfoTabViewModel(_descriptioncollectionviewmodel, _spacesviewmodel);
+            _descriptionInfoTabViewModel = new DescriptionInfoTabViewModel(_descriptioncollectionviewmodel, _spacecollectionviewmodel);
             _markingSpacesControlViewModel = new MarkingSpacesControlViewModel(_descriptionInfoTabViewModel, mediaVideo);
-            _audioCanvasViewModel = new AudioCanvasViewModel(_spacesviewmodel);
+            _audioCanvasViewModel = new AudioCanvasViewModel(_spacecollectionviewmodel);
             _descriptionCanvasViewModel = new DescriptionCanvasViewModel(_descriptioncollectionviewmodel);
 
             DescriptionPlayer = new DescriptionPlayer();
@@ -103,7 +103,7 @@ namespace LiveDescribe.ViewModel
 
                     _descriptioncollectionviewmodel.CloseDescriptionCollectionViewModel();
                     _mediaControlViewModel.CloseMediaControlViewModel();
-                    _spacesviewmodel.CloseSpacesViewModel();
+                    _spacecollectionviewmodel.CloseSpaceCollectionViewModel();
                     _project = null;
                     ProjectModified = false;
 
@@ -180,7 +180,7 @@ namespace LiveDescribe.ViewModel
                     FileWriter.WriteWaveFormHeader(_project, _mediaControlViewModel.Waveform.Header);
                     FileWriter.WriteWaveFormFile(_project, _mediaControlViewModel.Waveform.Data);
                     FileWriter.WriteDescriptionsFile(_project, _descriptioncollectionviewmodel.AllDescriptions);
-                    FileWriter.WriteSpacesFile(_project, _spacesviewmodel.Spaces);
+                    FileWriter.WriteSpacesFile(_project, _spacecollectionviewmodel.Spaces);
 
                     ProjectModified = false;
                 });
@@ -212,7 +212,7 @@ namespace LiveDescribe.ViewModel
                     var spaces = AudioAnalyzer.FindSpaces(_mediaControlViewModel.Waveform);
                     foreach (var space in spaces)
                     {
-                        _spacesviewmodel.AddSpace(space);
+                        _spacecollectionviewmodel.AddSpace(space);
                     }
                 }
             );
@@ -269,7 +269,7 @@ namespace LiveDescribe.ViewModel
             {
                 foreach (var space in _mediaControlViewModel.Spaces)
                 {
-                    _spacesviewmodel.AddSpace(space);
+                    _spacecollectionviewmodel.AddSpace(space);
                 }
 
                 SaveProject.Execute();
@@ -278,7 +278,7 @@ namespace LiveDescribe.ViewModel
 
             #region Property Changed Events
 
-            _spacesviewmodel.Spaces.CollectionChanged += ObservableCollection_CollectionChanged;
+            _spacecollectionviewmodel.Spaces.CollectionChanged += ObservableCollection_CollectionChanged;
             _descriptioncollectionviewmodel.ExtendedDescriptions.CollectionChanged += ObservableCollection_CollectionChanged;
             _descriptioncollectionviewmodel.RegularDescriptions.CollectionChanged += ObservableCollection_CollectionChanged;
             _mediaControlViewModel.PropertyChanged += PropertyChangedHandler;
@@ -374,9 +374,9 @@ namespace LiveDescribe.ViewModel
             get { return ProjectLoaded && _projectModified; }
         }
 
-        public SpacesViewModel SpacesViewModel
+        public SpaceCollectionViewModel SpaceCollectionViewModel
         {
-            get { return _spacesviewmodel; }
+            get { return _spacecollectionviewmodel; }
         }
 
         public MediaControlViewModel MediaControlViewModel
@@ -547,7 +547,7 @@ namespace LiveDescribe.ViewModel
                 var spaces = FileReader.ReadSpacesFile(_project);
                 foreach (var s in spaces)
                 {
-                    _spacesviewmodel.AddSpace(s);
+                    _spacecollectionviewmodel.AddSpace(s);
                 }
             }
 

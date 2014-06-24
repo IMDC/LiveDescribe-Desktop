@@ -19,7 +19,7 @@ namespace LiveDescribe.ViewModel
 
         #region Instance Variables
         private readonly DescriptionCollectionViewModel _descriptionCollectionViewModel;
-        private readonly SpacesViewModel _spacesViewModel;
+        private readonly SpaceCollectionViewModel _spaceCollectionViewModel;
         private Description _selectedRegularDescription;
         private Description _selectedExtendedDescription;
         private Space _selectedSpace;
@@ -27,10 +27,10 @@ namespace LiveDescribe.ViewModel
         private int _tabSelectedIndex;
         #endregion
 
-        public DescriptionInfoTabViewModel(DescriptionCollectionViewModel descriptionCollectionViewModel, SpacesViewModel spaceViewModel)
+        public DescriptionInfoTabViewModel(DescriptionCollectionViewModel descriptionCollectionViewModel, SpaceCollectionViewModel spaceViewModel)
         {
             _descriptionCollectionViewModel = descriptionCollectionViewModel;
-            _spacesViewModel = spaceViewModel;
+            _spaceCollectionViewModel = spaceViewModel;
 
             SaveDescriptionTextCommand = new RelayCommand(SaveDescriptionText, SaveDescriptionTextStateCheck);
             ClearDescriptionTextCommand = new RelayCommand(ClearDescriptionText, () => true);
@@ -278,7 +278,7 @@ namespace LiveDescribe.ViewModel
         {
             get
             {
-                return _spacesViewModel.Spaces;
+                return _spaceCollectionViewModel.Spaces;
             }
         }
 

@@ -61,7 +61,7 @@ namespace LiveDescribe.View
         private double _canvasWidth;
         private double _videoDuration = -1;
         private readonly MediaControlViewModel _mediaControlViewModel;
-        private readonly SpacesViewModel _spacesViewModel;
+        private readonly SpaceCollectionViewModel _spaceCollectionViewModel;
         /// <summary>
         /// used to format a timespan object which in this case in the videoMedia.Position
         /// </summary>
@@ -99,7 +99,7 @@ namespace LiveDescribe.View
 
             _mediaControlViewModel = mainWindowViewModel.MediaControlViewModel;
             _descriptionCollectionViewModel = mainWindowViewModel.DescriptionCollectionViewModel;
-            _spacesViewModel = mainWindowViewModel.SpacesViewModel;
+            _spaceCollectionViewModel = mainWindowViewModel.SpaceCollectionViewModel;
             _descriptionInfoTabViewModel = mainWindowViewModel.DescriptionInfoTabViewModel;
 
 
@@ -195,7 +195,7 @@ namespace LiveDescribe.View
                         DrawDescription(desc);
                     }
 
-                    foreach (var space in _spacesViewModel.Spaces)
+                    foreach (var space in _spaceCollectionViewModel.Spaces)
                     {
                         SetSpaceLocation(space);
                     }
@@ -330,9 +330,9 @@ namespace LiveDescribe.View
                 };
             #endregion
 
-            #region Event Listeners for SpacesViewModel
+            #region Event Listeners for SpaceCollectionViewModel
 
-            _spacesViewModel.SpaceAddedEvent += (sender, e) =>
+            _spaceCollectionViewModel.SpaceAddedEvent += (sender, e) =>
             {
                 //Adding a space depends on where you right clicked so we create and add it in the view
                 Space space = e.Space;
@@ -408,7 +408,7 @@ namespace LiveDescribe.View
                 };
             };
 
-            _spacesViewModel.RequestSpaceTime += (sender, args) =>
+            _spaceCollectionViewModel.RequestSpaceTime += (sender, args) =>
             {
                 var space = args.Space;
 
@@ -571,9 +571,9 @@ namespace LiveDescribe.View
             double lengthInMillisecondsNewWidth = (_videoDuration / _audioCanvas.Width) * newWidth;
 
             //bounds checking
-            if (lengthInMillisecondsNewWidth < SpacesViewModel.MinSpaceLengthInMSecs)
+            if (lengthInMillisecondsNewWidth < SpaceCollectionViewModel.MinSpaceLengthInMSecs)
             {
-                newWidth = (_audioCanvas.Width / _videoDuration) * SpacesViewModel.MinSpaceLengthInMSecs;
+                newWidth = (_audioCanvas.Width / _videoDuration) * SpaceCollectionViewModel.MinSpaceLengthInMSecs;
                 //temporary fix, have to make the cursor attached to the end of the space somehow
                 _audioCanvas.ReleaseMouseCapture();
             }
@@ -602,9 +602,9 @@ namespace LiveDescribe.View
                 //temporary fix, have to make the cursor attached to the end of the space somehow
                 _audioCanvas.ReleaseMouseCapture();
             }
-            else if ((_spaceBeingModified.EndInVideo - newPositionMilliseconds) < SpacesViewModel.MinSpaceLengthInMSecs)
+            else if ((_spaceBeingModified.EndInVideo - newPositionMilliseconds) < SpaceCollectionViewModel.MinSpaceLengthInMSecs)
             {
-                newPosition = (_audioCanvas.Width / _videoDuration) * (_spaceBeingModified.EndInVideo - SpacesViewModel.MinSpaceLengthInMSecs);
+                newPosition = (_audioCanvas.Width / _videoDuration) * (_spaceBeingModified.EndInVideo - SpaceCollectionViewModel.MinSpaceLengthInMSecs);
                 //temporary fix, have to make the cursor attached to the end of the space somehow
                 _audioCanvas.ReleaseMouseCapture();
             }
@@ -863,7 +863,7 @@ namespace LiveDescribe.View
         /// </summary>
         private void ResizeSpaces()
         {
-            foreach (var space in _spacesViewModel.Spaces)
+            foreach (var space in _spaceCollectionViewModel.Spaces)
                 space.Height = _audioCanvas.ActualHeight;
         }
 
