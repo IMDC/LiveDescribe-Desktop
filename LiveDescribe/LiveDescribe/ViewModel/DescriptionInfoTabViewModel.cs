@@ -18,7 +18,7 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Instance Variables
-        private readonly DescriptionViewModel _descriptionViewModel;
+        private readonly DescriptionCollectionViewModel _descriptionCollectionViewModel;
         private readonly SpacesViewModel _spacesViewModel;
         private Description _selectedRegularDescription;
         private Description _selectedExtendedDescription;
@@ -27,9 +27,9 @@ namespace LiveDescribe.ViewModel
         private int _tabSelectedIndex;
         #endregion
 
-        public DescriptionInfoTabViewModel(DescriptionViewModel descriptionViewModel, SpacesViewModel spaceViewModel)
+        public DescriptionInfoTabViewModel(DescriptionCollectionViewModel descriptionCollectionViewModel, SpacesViewModel spaceViewModel)
         {
-            _descriptionViewModel = descriptionViewModel;
+            _descriptionCollectionViewModel = descriptionCollectionViewModel;
             _spacesViewModel = spaceViewModel;
 
             SaveDescriptionTextCommand = new RelayCommand(SaveDescriptionText, SaveDescriptionTextStateCheck);
@@ -40,12 +40,12 @@ namespace LiveDescribe.ViewModel
                 execute: () =>
                 {
                     //TODO: Move this out of method
-                    var viewModel = new SpaceRecordingViewModel(SelectedSpace, _descriptionViewModel.Project);
+                    var viewModel = new SpaceRecordingViewModel(SelectedSpace, _descriptionCollectionViewModel.Project);
                     var view = new SpaceRecordingView(viewModel);
                     bool? success = view.ShowDialog();
 
                     if (success == true)
-                        _descriptionViewModel.AddDescription(viewModel.Description);
+                        _descriptionCollectionViewModel.AddDescription(viewModel.Description);
                 });
 
             SelectedRegularDescription = null;
@@ -255,7 +255,7 @@ namespace LiveDescribe.ViewModel
         {
             get
             {
-                return _descriptionViewModel.ExtendedDescriptions;
+                return _descriptionCollectionViewModel.ExtendedDescriptions;
             }
         }
 
@@ -267,7 +267,7 @@ namespace LiveDescribe.ViewModel
         {
             get
             {
-                return _descriptionViewModel.RegularDescriptions;
+                return _descriptionCollectionViewModel.RegularDescriptions;
             }
         }
 

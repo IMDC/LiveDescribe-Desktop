@@ -65,7 +65,7 @@ namespace LiveDescribe.View
         /// <summary>
         /// used to format a timespan object which in this case in the videoMedia.Position
         /// </summary>
-        private readonly DescriptionViewModel _descriptionViewModel;
+        private readonly DescriptionCollectionViewModel _descriptionCollectionViewModel;
         private readonly DescriptionInfoTabViewModel _descriptionInfoTabViewModel;
         private readonly MainWindowViewModel _mainWindowViewModel;
         private readonly MillisecondsTimeConverterFormatter _millisecondsTimeConverter;
@@ -98,7 +98,7 @@ namespace LiveDescribe.View
             _mainWindowViewModel = mainWindowViewModel;
 
             _mediaControlViewModel = mainWindowViewModel.MediaControlViewModel;
-            _descriptionViewModel = mainWindowViewModel.DescriptionViewModel;
+            _descriptionCollectionViewModel = mainWindowViewModel.DescriptionCollectionViewModel;
             _spacesViewModel = mainWindowViewModel.SpacesViewModel;
             _descriptionInfoTabViewModel = mainWindowViewModel.DescriptionInfoTabViewModel;
 
@@ -137,7 +137,7 @@ namespace LiveDescribe.View
 
             #region Event Listeners For Main Control (Pause, Play, Mute)
             //These events are put inside the main control because they will also effect the list
-            //of audio descriptions an instance of DescriptionViewModel is inside the main control
+            //of audio descriptions an instance of DescriptionCollectionViewModel is inside the main control
             //and the main control will take care of synchronizing the video, and the descriptions
 
             //listens for PlayRequested Event
@@ -190,7 +190,7 @@ namespace LiveDescribe.View
                     
                     SetTimeline();
 
-                    foreach (var desc in _descriptionViewModel.AllDescriptions)
+                    foreach (var desc in _descriptionCollectionViewModel.AllDescriptions)
                     {
                         DrawDescription(desc);
                     }
@@ -260,9 +260,9 @@ namespace LiveDescribe.View
 
             #endregion
 
-            #region Event Listeners for DescriptionViewModel
+            #region Event Listeners for DescriptionCollectionViewModel
 
-            _descriptionViewModel.RecordRequestedMicrophoneNotPluggedIn += (sender, e) =>
+            _descriptionCollectionViewModel.RecordRequestedMicrophoneNotPluggedIn += (sender, e) =>
                 {
                     //perhaps show a popup when the Record button is pressed and there is no microphone plugged in
                     MessageBoxFactory.ShowError("No Microphone Connected");
@@ -271,7 +271,7 @@ namespace LiveDescribe.View
 
             //When a description is added, attach an event to the StartInVideo and EndInVideo properties
             //so when those properties change it redraws them
-            _descriptionViewModel.AddDescriptionEvent += (sender, e) =>
+            _descriptionCollectionViewModel.AddDescriptionEvent += (sender, e) =>
                 {
                     /* Draw the description only if the video is loaded, because there is currently
                      * an issue with the video loading after the descriptions are added from an
@@ -854,7 +854,7 @@ namespace LiveDescribe.View
         /// </summary>
         private void ResizeDescriptions()
         {
-            foreach (var description in _descriptionViewModel.AllDescriptions)
+            foreach (var description in _descriptionCollectionViewModel.AllDescriptions)
                 description.Height = _descriptionCanvas.ActualHeight;
         }
 

@@ -9,16 +9,16 @@ namespace LiveDescribe.ViewModel
 {
     public class DescriptionCanvasViewModel : ViewModelBase
     {
-        private readonly DescriptionViewModel _descriptionViewModel;
+        private readonly DescriptionCollectionViewModel _descriptionCollectionViewModel;
 
         #region Events
         public EventHandler<MouseEventArgs> DescriptionCanvasMouseUpEvent;
         public EventHandler<MouseEventArgs> DescriptionCanvasMouseMoveEvent;
         #endregion
 
-        public DescriptionCanvasViewModel(DescriptionViewModel descriptionViewModel)
+        public DescriptionCanvasViewModel(DescriptionCollectionViewModel descriptionCollectionViewModel)
         {
-            _descriptionViewModel = descriptionViewModel;
+            _descriptionCollectionViewModel = descriptionCollectionViewModel;
             DescriptionCanvasMouseUpCommand = new RelayCommand<MouseEventArgs>(DescriptionCanvasMouseUp, param => true);
             DescriptionCanvasMouseMoveCommand = new RelayCommand<MouseEventArgs>(DescriptionCanvasMouseMove, param => true);
         }
@@ -31,7 +31,7 @@ namespace LiveDescribe.ViewModel
         #region Binding Properties
         public ObservableCollection<Description> AllDescriptions
         {
-            get { return _descriptionViewModel.AllDescriptions; }
+            get { return _descriptionCollectionViewModel.AllDescriptions; }
         }
         #endregion
 

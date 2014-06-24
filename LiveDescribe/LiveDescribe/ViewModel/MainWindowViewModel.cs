@@ -37,7 +37,7 @@ namespace LiveDescribe.ViewModel
         private readonly Timer _descriptiontimer;
         private readonly MediaControlViewModel _mediaControlViewModel;
         private readonly PreferencesViewModel _preferences;
-        private readonly DescriptionViewModel _descriptionviewmodel;
+        private readonly DescriptionCollectionViewModel _descriptioncollectionviewmodel;
         private readonly SpacesViewModel _spacesviewmodel;
         private readonly LoadingViewModel _loadingViewModel;
         private readonly MarkingSpacesControlViewModel _markingSpacesControlViewModel;
@@ -70,11 +70,11 @@ namespace LiveDescribe.ViewModel
             _loadingViewModel = new LoadingViewModel(100, null, 0, false);
             _mediaControlViewModel = new MediaControlViewModel(mediaVideo, _loadingViewModel);
             _preferences = new PreferencesViewModel();
-            _descriptionviewmodel = new DescriptionViewModel(mediaVideo, _mediaControlViewModel);
-            _descriptionInfoTabViewModel = new DescriptionInfoTabViewModel(_descriptionviewmodel, _spacesviewmodel);
+            _descriptioncollectionviewmodel = new DescriptionCollectionViewModel(mediaVideo, _mediaControlViewModel);
+            _descriptionInfoTabViewModel = new DescriptionInfoTabViewModel(_descriptioncollectionviewmodel, _spacesviewmodel);
             _markingSpacesControlViewModel = new MarkingSpacesControlViewModel(_descriptionInfoTabViewModel, mediaVideo);
             _audioCanvasViewModel = new AudioCanvasViewModel(_spacesviewmodel);
-            _descriptionCanvasViewModel = new DescriptionCanvasViewModel(_descriptionviewmodel);
+            _descriptionCanvasViewModel = new DescriptionCanvasViewModel(_descriptioncollectionviewmodel);
 
             DescriptionPlayer = new DescriptionPlayer();
             DescriptionPlayer.DescriptionFinishedPlaying += (sender, e) =>
@@ -101,7 +101,7 @@ namespace LiveDescribe.ViewModel
 
                     Log.Info("Closed Project");
 
-                    _descriptionviewmodel.CloseDescriptionViewModel();
+                    _descriptioncollectionviewmodel.CloseDescriptionCollectionViewModel();
                     _mediaControlViewModel.CloseMediaControlViewModel();
                     _spacesviewmodel.CloseSpacesViewModel();
                     _project = null;
@@ -179,7 +179,7 @@ namespace LiveDescribe.ViewModel
 
                     FileWriter.WriteWaveFormHeader(_project, _mediaControlViewModel.Waveform.Header);
                     FileWriter.WriteWaveFormFile(_project, _mediaControlViewModel.Waveform.Data);
-                    FileWriter.WriteDescriptionsFile(_project, _descriptionviewmodel.AllDescriptions);
+                    FileWriter.WriteDescriptionsFile(_project, _descriptioncollectionviewmodel.AllDescriptions);
                     FileWriter.WriteSpacesFile(_project, _spacesviewmodel.Spaces);
 
                     ProjectModified = false;
@@ -227,9 +227,9 @@ namespace LiveDescribe.ViewModel
 
             _preferences.ApplyRequested += (sender, e) =>
                 {
-                    _descriptionviewmodel.Recorder.MicrophoneDeviceNumber = Properties.Settings.Default.Microphone.DeviceNumber;
+                    _descriptioncollectionviewmodel.Recorder.MicrophoneDeviceNumber = Properties.Settings.Default.Microphone.DeviceNumber;
                     Log.Info("Product Name of Apply Requested Microphone: " +
-                        NAudio.Wave.WaveIn.GetCapabilities(_descriptionviewmodel.Recorder.MicrophoneDeviceNumber).ProductName);
+                        NAudio.Wave.WaveIn.GetCapabilities(_descriptioncollectionviewmodel.Recorder.MicrophoneDeviceNumber).ProductName);
                 };
 
             #region MediaControlViewModel Events
@@ -279,8 +279,8 @@ namespace LiveDescribe.ViewModel
             #region Property Changed Events
 
             _spacesviewmodel.Spaces.CollectionChanged += ObservableCollection_CollectionChanged;
-            _descriptionviewmodel.ExtendedDescriptions.CollectionChanged += ObservableCollection_CollectionChanged;
-            _descriptionviewmodel.RegularDescriptions.CollectionChanged += ObservableCollection_CollectionChanged;
+            _descriptioncollectionviewmodel.ExtendedDescriptions.CollectionChanged += ObservableCollection_CollectionChanged;
+            _descriptioncollectionviewmodel.RegularDescriptions.CollectionChanged += ObservableCollection_CollectionChanged;
             _mediaControlViewModel.PropertyChanged += PropertyChangedHandler;
 
             //Update window title based on project name
@@ -389,9 +389,9 @@ namespace LiveDescribe.ViewModel
             get { return _preferences; }
         }
 
-        public DescriptionViewModel DescriptionViewModel
+        public DescriptionCollectionViewModel DescriptionCollectionViewModel
         {
-            get { return _descriptionviewmodel; }
+            get { return _descriptioncollectionviewmodel; }
         }
         public LoadingViewModel LoadingViewModel
         {
@@ -430,7 +430,7 @@ namespace LiveDescribe.ViewModel
         {
             OnGraphicsTick(sender, e);
             //I put this method in it's own timer in the MainWindowViewModel for now, because I believe it should be separate from the view
-            foreach (var description in _descriptionviewmodel.AllDescriptions)
+            foreach (var description in _descriptioncollectionviewmodel.AllDescriptions)
             {
                 double videoPosition = 0;
 
@@ -533,7 +533,7 @@ namespace LiveDescribe.ViewModel
 
                     foreach (Description d in descriptions)
                     {
-                        _descriptionviewmodel.AddDescription(d);
+                        _descriptioncollectionviewmodel.AddDescription(d);
                     }
                 }
             }
@@ -554,7 +554,7 @@ namespace LiveDescribe.ViewModel
             _mediaVideo.CurrentState = LiveDescribeVideoStates.PausedVideo;
 
             //Set Children
-            _descriptionviewmodel.Project = _project;
+            _descriptioncollectionviewmodel.Project = _project;
 
             //Ensure that project is not modified.
             ProjectModified = false;
