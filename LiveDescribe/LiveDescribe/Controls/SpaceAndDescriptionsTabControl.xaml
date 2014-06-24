@@ -25,6 +25,7 @@
         </Grid.ColumnDefinitions>
 
         <TabControl
+            Name="TabControl"
             Grid.Row="0"
             Grid.Column="0"
             Grid.ColumnSpan="2"
@@ -101,12 +102,24 @@
                     Name="DescriptionsListView"
                     VirtualizingPanel.IsVirtualizing="True"
                     ItemsSource="{Binding RegularDescriptions}">
+                    <ListView.Resources>
+                        <ContextMenu x:Key="RegularDescriptionContextMenu">
+                            <MenuItem Header="Go to Description" Command="{Binding GoToThisDescriptionCommand}"/>
+                            <MenuItem Header="Delete Description" Command="{Binding DescriptionDeleteCommand}"/>
+                        </ContextMenu>
+                    </ListView.Resources>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="ContextMenu"
+                                    Value="{StaticResource RegularDescriptionContextMenu}"/>
+                        </Style>
+                    </ListView.ItemContainerStyle>
                     <ListView.SelectedItem>
                         <Binding
                             Path="SelectedRegularDescription"
                             UpdateSourceTrigger="PropertyChanged"
                             ValidatesOnDataErrors="True"
-                            Mode="TwoWay" />
+                            Mode="TwoWay"/>
                     </ListView.SelectedItem>
                     <ListView.View>
                         <GridView>
@@ -154,6 +167,18 @@
                     Name="ExtendedDescriptionsListView"
                     VirtualizingPanel.IsVirtualizing="True"
                     ItemsSource="{Binding ExtendedDescriptions}">
+                    <ListView.Resources>
+                        <ContextMenu x:Key="ExtendedDescriptionContextMenu">
+                            <MenuItem Header="Go to Description" Command="{Binding GoToThisDescriptionCommand}"/>
+                            <MenuItem Header="Delete Description" Command="{Binding DescriptionDeleteCommand}"/>
+                        </ContextMenu>
+                    </ListView.Resources>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="ContextMenu"
+                                    Value="{StaticResource ExtendedDescriptionContextMenu}"/>
+                        </Style>
+                    </ListView.ItemContainerStyle>
                     <ListView.SelectedItem>
                         <Binding
                             Path="SelectedExtendedDescription"

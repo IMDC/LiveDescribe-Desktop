@@ -10,7 +10,7 @@ using System.Collections.ObjectModel;
 
 namespace LiveDescribe.ViewModel
 {
-    public class DescriptionViewModel : ViewModelBase
+    public class DescriptionCollectionViewModel : ViewModelBase
     {
         #region Logger
         private static readonly log4net.ILog Log = log4net.LogManager.GetLogger
@@ -27,7 +27,7 @@ namespace LiveDescribe.ViewModel
         private bool _recordingExtendedDescription;
 
         //this variable should be used as little as possible in this class
-        //most interactions between the  descriptionviewmodel and the MediaControlViewModel should be in the MainWindowViewModel
+        //most interactions between the  descriptioncollectionviewmodel and the MediaControlViewModel should be in the MainWindowViewModel
         private readonly MediaControlViewModel _mediaControlViewModel;
 
         private LiveDescribeVideoStates _previousVideoState; //used to restore the previous video state after it's finished recording
@@ -41,7 +41,7 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Constructors
-        public DescriptionViewModel(ILiveDescribePlayer mediaVideo, MediaControlViewModel mediaControlViewModel)
+        public DescriptionCollectionViewModel(ILiveDescribePlayer mediaVideo, MediaControlViewModel mediaControlViewModel)
         {
             _mediaVideo = mediaVideo;
             _mediaControlViewModel = mediaControlViewModel;
@@ -218,7 +218,7 @@ namespace LiveDescribe.ViewModel
         /// <summary>
         /// This function closes everything necessary to start fresh
         /// </summary>
-        public void CloseDescriptionViewModel()
+        public void CloseDescriptionCollectionViewModel()
         {
             AllDescriptions.Clear();
             ExtendedDescriptions.Clear();

@@ -61,11 +61,11 @@ namespace LiveDescribe.View
         private double _canvasWidth;
         private double _videoDuration = -1;
         private readonly MediaControlViewModel _mediaControlViewModel;
-        private readonly SpacesViewModel _spacesViewModel;
+        private readonly SpaceCollectionViewModel _spaceCollectionViewModel;
         /// <summary>
         /// used to format a timespan object which in this case in the videoMedia.Position
         /// </summary>
-        private readonly DescriptionViewModel _descriptionViewModel;
+        private readonly DescriptionCollectionViewModel _descriptionCollectionViewModel;
         private readonly DescriptionInfoTabViewModel _descriptionInfoTabViewModel;
         private readonly MainWindowViewModel _mainWindowViewModel;
         private readonly MillisecondsTimeConverterFormatter _millisecondsTimeConverter;
@@ -98,8 +98,8 @@ namespace LiveDescribe.View
             _mainWindowViewModel = mainWindowViewModel;
 
             _mediaControlViewModel = mainWindowViewModel.MediaControlViewModel;
-            _descriptionViewModel = mainWindowViewModel.DescriptionViewModel;
-            _spacesViewModel = mainWindowViewModel.SpacesViewModel;
+            _descriptionCollectionViewModel = mainWindowViewModel.DescriptionCollectionViewModel;
+            _spaceCollectionViewModel = mainWindowViewModel.SpaceCollectionViewModel;
             _descriptionInfoTabViewModel = mainWindowViewModel.DescriptionInfoTabViewModel;
 
 
@@ -137,7 +137,7 @@ namespace LiveDescribe.View
 
             #region Event Listeners For Main Control (Pause, Play, Mute)
             //These events are put inside the main control because they will also effect the list
-            //of audio descriptions an instance of DescriptionViewModel is inside the main control
+            //of audio descriptions an instance of DescriptionCollectionViewModel is inside the main control
             //and the main control will take care of synchronizing the video, and the descriptions
 
             //listens for PlayRequested Event
@@ -190,12 +190,12 @@ namespace LiveDescribe.View
                     
                     SetTimeline();
 
-                    foreach (var desc in _descriptionViewModel.AllDescriptions)
+                    foreach (var desc in _descriptionCollectionViewModel.AllDescriptions)
                     {
                         DrawDescription(desc);
                     }
 
-                    foreach (var space in _spacesViewModel.Spaces)
+                    foreach (var space in _spaceCollectionViewModel.Spaces)
                     {
                         SetSpaceLocation(space);
                     }
@@ -260,9 +260,9 @@ namespace LiveDescribe.View
 
             #endregion
 
-            #region Event Listeners for DescriptionViewModel
+            #region Event Listeners for DescriptionCollectionViewModel
 
-            _descriptionViewModel.RecordRequestedMicrophoneNotPluggedIn += (sender, e) =>
+            _descriptionCollectionViewModel.RecordRequestedMicrophoneNotPluggedIn += (sender, e) =>
                 {
                     //perhaps show a popup when the Record button is pressed and there is no microphone plugged in
                     MessageBoxFactory.ShowError("No Microphone Connected");
@@ -271,7 +271,7 @@ namespace LiveDescribe.View
 
             //When a description is added, attach an event to the StartInVideo and EndInVideo properties
             //so when those properties change it redraws them
-            _descriptionViewModel.AddDescriptionEvent += (sender, e) =>
+            _descriptionCollectionViewModel.AddDescriptionEvent += (sender, e) =>
                 {
                     /* Draw the description only if the video is loaded, because there is currently
                      * an issue with the video loading after the descriptions are added from an
@@ -287,9 +287,15 @@ namespace LiveDescribe.View
                         if (Mouse.LeftButton == MouseButtonState.Pressed)
                         {
                             if (e.Description.IsExtendedDescription)
+                            {
                                 _descriptionInfoTabViewModel.SelectedExtendedDescription = e.Description;
+                                SpaceAndDescriptionsTabControl.ExtendedDescriptionsListView.ScrollToCenterOfView(e.Description);
+                            }
                             else
+                            {
                                 _descriptionInfoTabViewModel.SelectedRegularDescription = e.Description;
+                                SpaceAndDescriptionsTabControl.DescriptionsListView.ScrollToCenterOfView(e.Description);
+                            }
 
                             _originalPositionForDraggingDescription = e2.GetPosition(_descriptionCanvas).X;
                             _descriptionBeingModified = e.Description;
@@ -312,12 +318,21 @@ namespace LiveDescribe.View
                             //change end in the wave file for resizing the end time
                         }
                     };
+
+                    e.Description.GoToThisDescriptionEvent += (sender1, e1) =>
+                    {
+                        UpdateMarkerPosition((e.Description.StartInVideo / _videoDuration) * (_audioCanvas.Width) - MarkerOffset);
+                        UpdateVideoPosition((int)e.Description.StartInVideo);
+                        //Scroll 1 second before the start in video of the space
+                        TimeLineScrollViewer.ScrollToHorizontalOffset((_audioCanvas.Width / _videoDuration) *
+                                                                      (e.Description.StartInVideo - 1000));
+                    };
                 };
             #endregion
 
-            #region Event Listeners for SpacesViewModel
+            #region Event Listeners for SpaceCollectionViewModel
 
-            _spacesViewModel.SpaceAddedEvent += (sender, e) =>
+            _spaceCollectionViewModel.SpaceAddedEvent += (sender, e) =>
             {
                 //Adding a space depends on where you right clicked so we create and add it in the view
                 Space space = e.Space;
@@ -331,6 +346,7 @@ namespace LiveDescribe.View
                     if (Mouse.LeftButton == MouseButtonState.Pressed)
                     {
                         _descriptionInfoTabViewModel.SelectedSpace = space;
+                        SpaceAndDescriptionsTabControl.SpacesListView.ScrollToCenterOfView(space);
                         double xPos = e1.GetPosition(_audioCanvas).X;
 
                         //prepare space for dragging
@@ -392,7 +408,7 @@ namespace LiveDescribe.View
                 };
             };
 
-            _spacesViewModel.RequestSpaceTime += (sender, args) =>
+            _spaceCollectionViewModel.RequestSpaceTime += (sender, args) =>
             {
                 var space = args.Space;
 
@@ -555,9 +571,9 @@ namespace LiveDescribe.View
             double lengthInMillisecondsNewWidth = (_videoDuration / _audioCanvas.Width) * newWidth;
 
             //bounds checking
-            if (lengthInMillisecondsNewWidth < SpacesViewModel.MinSpaceLengthInMSecs)
+            if (lengthInMillisecondsNewWidth < SpaceCollectionViewModel.MinSpaceLengthInMSecs)
             {
-                newWidth = (_audioCanvas.Width / _videoDuration) * SpacesViewModel.MinSpaceLengthInMSecs;
+                newWidth = (_audioCanvas.Width / _videoDuration) * SpaceCollectionViewModel.MinSpaceLengthInMSecs;
                 //temporary fix, have to make the cursor attached to the end of the space somehow
                 _audioCanvas.ReleaseMouseCapture();
             }
@@ -586,9 +602,9 @@ namespace LiveDescribe.View
                 //temporary fix, have to make the cursor attached to the end of the space somehow
                 _audioCanvas.ReleaseMouseCapture();
             }
-            else if ((_spaceBeingModified.EndInVideo - newPositionMilliseconds) < SpacesViewModel.MinSpaceLengthInMSecs)
+            else if ((_spaceBeingModified.EndInVideo - newPositionMilliseconds) < SpaceCollectionViewModel.MinSpaceLengthInMSecs)
             {
-                newPosition = (_audioCanvas.Width / _videoDuration) * (_spaceBeingModified.EndInVideo - SpacesViewModel.MinSpaceLengthInMSecs);
+                newPosition = (_audioCanvas.Width / _videoDuration) * (_spaceBeingModified.EndInVideo - SpaceCollectionViewModel.MinSpaceLengthInMSecs);
                 //temporary fix, have to make the cursor attached to the end of the space somehow
                 _audioCanvas.ReleaseMouseCapture();
             }
@@ -838,7 +854,7 @@ namespace LiveDescribe.View
         /// </summary>
         private void ResizeDescriptions()
         {
-            foreach (Description description in _descriptionViewModel.AllDescriptions)
+            foreach (var description in _descriptionCollectionViewModel.AllDescriptions)
                 description.Height = _descriptionCanvas.ActualHeight;
         }
 
@@ -847,7 +863,7 @@ namespace LiveDescribe.View
         /// </summary>
         private void ResizeSpaces()
         {
-            foreach (Space space in _spacesViewModel.Spaces)
+            foreach (var space in _spaceCollectionViewModel.Spaces)
                 space.Height = _audioCanvas.ActualHeight;
         }
 

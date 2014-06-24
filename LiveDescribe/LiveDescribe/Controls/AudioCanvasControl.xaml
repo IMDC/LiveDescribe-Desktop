@@ -23,7 +23,7 @@
                 <Canvas.ContextMenu>
                     <ContextMenu>
                         <MenuItem
-                            DataContext="{Binding SpacesViewModel}"
+                            DataContext="{Binding SpaceCollectionViewModel}"
                             Header="Add Space"
                             Command="{Binding GetNewSpaceTime}" />
                     </ContextMenu>

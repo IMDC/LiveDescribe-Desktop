@@ -124,6 +124,7 @@
     <Compile Include="Utilities\FileDeleter.cs" />
     <Compile Include="Utilities\FileReader.cs" />
     <Compile Include="Utilities\FileWriter.cs" />
+    <Compile Include="Utilities\ItemsControlExtensions.cs" />
     <Compile Include="Utilities\MessageBoxFactory.cs" />
     <Compile Include="Utilities\PositionalStringToken.cs" />
     <Compile Include="Utilities\PositionalStringTokenizer.cs" />
@@ -197,7 +198,7 @@
     <Compile Include="Model\Video.cs" />
     <Compile Include="Converters\TimeConverterFormatter.cs" />
     <Compile Include="Utilities\AudioUtility.cs" />
-    <Compile Include="ViewModel\DescriptionViewModel.cs" />
+    <Compile Include="ViewModel\DescriptionCollectionViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="ViewModel\PreferencesViewModel.cs" />
     <Compile Include="ViewModel\MediaControlViewModel.cs" />

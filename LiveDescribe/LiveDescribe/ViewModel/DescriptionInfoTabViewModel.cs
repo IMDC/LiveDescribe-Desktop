@@ -19,8 +19,8 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Instance Variables
-        private readonly DescriptionViewModel _descriptionViewModel;
-        private readonly SpacesViewModel _spacesViewModel;
+        private readonly DescriptionCollectionViewModel _descriptionCollectionViewModel;
+        private readonly SpaceCollectionViewModel _spaceCollectionViewModel;
         private Description _selectedRegularDescription;
         private Description _selectedExtendedDescription;
         private Space _selectedSpace;
@@ -28,10 +28,10 @@ namespace LiveDescribe.ViewModel
         private int _tabSelectedIndex;
         #endregion
 
-        public DescriptionInfoTabViewModel(DescriptionViewModel descriptionViewModel, SpacesViewModel spaceViewModel)
+        public DescriptionInfoTabViewModel(DescriptionCollectionViewModel descriptionCollectionViewModel, SpaceCollectionViewModel spaceViewModel)
         {
-            _descriptionViewModel = descriptionViewModel;
-            _spacesViewModel = spaceViewModel;
+            _descriptionCollectionViewModel = descriptionCollectionViewModel;
+            _spaceCollectionViewModel = spaceViewModel;
 
             SaveDescriptionTextCommand = new RelayCommand(SaveDescriptionText, SaveDescriptionTextStateCheck);
             ClearDescriptionTextCommand = new RelayCommand(ClearDescriptionText, () => true);
@@ -40,10 +40,10 @@ namespace LiveDescribe.ViewModel
                 canExecute: () => SelectedSpace != null,
                 execute: () =>
                 {
-                    var viewModel = DialogShower.SpawnSpaceRecordingView(SelectedSpace, _descriptionViewModel.Project);
+                    var viewModel = DialogShower.SpawnSpaceRecordingView(SelectedSpace, _descriptionCollectionViewModel.Project);
 
                     if (viewModel.DialogResult == true)
-                        _descriptionViewModel.AddDescription(viewModel.Description);
+                        _descriptionCollectionViewModel.AddDescription(viewModel.Description);
                 });
 
             SelectedRegularDescription = null;
@@ -253,7 +253,7 @@ namespace LiveDescribe.ViewModel
         {
             get
             {
-                return _descriptionViewModel.ExtendedDescriptions;
+                return _descriptionCollectionViewModel.ExtendedDescriptions;
             }
         }
 
@@ -265,7 +265,7 @@ namespace LiveDescribe.ViewModel
         {
             get
             {
-                return _descriptionViewModel.RegularDescriptions;
+                return _descriptionCollectionViewModel.RegularDescriptions;
             }
         }
 
@@ -276,7 +276,7 @@ namespace LiveDescribe.ViewModel
         {
             get
             {
-                return _spacesViewModel.Spaces;
+                return _spaceCollectionViewModel.Spaces;
             }
         }
 

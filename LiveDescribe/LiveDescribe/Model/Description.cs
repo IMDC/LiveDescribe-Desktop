@@ -37,6 +37,7 @@ namespace LiveDescribe.Model
         public event EventHandler DescriptionMouseDownEvent;
         public event EventHandler DescriptionMouseUpEvent;
         public event EventHandler DescriptionMouseMoveEvent;
+        public event EventHandler GoToThisDescriptionEvent;
         #endregion
 
         public Description(ProjectFile filepath, double startwavefiletime, double endwavefiletime,
@@ -64,10 +65,12 @@ namespace LiveDescribe.Model
         public Description()
         {
             DescriptionMouseDownCommand = new RelayCommand<MouseEventArgs>(DescriptionMouseDown, param => true);
+            GoToThisDescriptionCommand = new RelayCommand(GoTothisDescription, () => true);
             DescriptionMouseUpCommand = new RelayCommand(DescriptionMouseUp, () => true);
             DescriptionDeleteCommand = new RelayCommand(DescriptionDelete, () => true);
             //called when mouse moves over description
             DescriptionMouseMoveCommand = new RelayCommand<MouseEventArgs>(DescriptionMouseMove, param => true);
+            
         }
 
         #region Properties
@@ -279,6 +282,9 @@ namespace LiveDescribe.Model
         /// </summary>
         [JsonIgnore]
         public RelayCommand DescriptionDeleteCommand { get; private set; }
+
+        [JsonIgnore]
+        public RelayCommand GoToThisDescriptionCommand { get; private set; }
         #endregion
 
         #region Binding Functions
@@ -320,6 +326,12 @@ namespace LiveDescribe.Model
         {
             Log.Info("Description deleted");
             EventHandler handler = DescriptionDeleteEvent;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
+        public void GoTothisDescription()
+        {
+            EventHandler handler = GoToThisDescriptionEvent;
             if (handler != null) handler(this, EventArgs.Empty);
         }
         #endregion

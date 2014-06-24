@@ -9,7 +9,7 @@ using System.Windows.Input;
 
 namespace LiveDescribe.ViewModel
 {
-    public class SpacesViewModel : ViewModelBase
+    public class SpaceCollectionViewModel : ViewModelBase
     {
         public const double MinSpaceLengthInMSecs = 333;
 
@@ -29,7 +29,7 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Constructors
-        public SpacesViewModel(ILiveDescribePlayer videoPlayer)
+        public SpaceCollectionViewModel(ILiveDescribePlayer videoPlayer)
         {
             Spaces = new ObservableCollection<Space>();
             _videoPlayer = videoPlayer;
@@ -100,7 +100,7 @@ namespace LiveDescribe.ViewModel
             space.SpaceDeleteEvent += (sender, e) => Spaces.Remove(space);
         }
 
-        public void CloseSpacesViewModel()
+        public void CloseSpaceCollectionViewModel()
         {
             Spaces.Clear();
         }

@@ -9,7 +9,7 @@ namespace LiveDescribe.ViewModel
 {
     class AudioCanvasViewModel : ViewModelBase
     {
-        private readonly SpacesViewModel _spacesViewModel;
+        private readonly SpaceCollectionViewModel _spaceCollectionViewModel;
 
         #region Events
 
@@ -19,9 +19,9 @@ namespace LiveDescribe.ViewModel
         public EventHandler<MouseEventArgs> AudioCanvasMouseRightButtonDownEvent;
         #endregion
 
-        public AudioCanvasViewModel(SpacesViewModel spacesViewModel)
+        public AudioCanvasViewModel(SpaceCollectionViewModel spaceCollectionViewModel)
         {
-            _spacesViewModel = spacesViewModel;
+            _spaceCollectionViewModel = spaceCollectionViewModel;
 
             AudioCanvasMouseDownCommand = new RelayCommand<MouseEventArgs>(AudioCanvasMouseDown, param => true);
             AudioCanvasMouseUpCommand = new RelayCommand<MouseEventArgs>(AudioCanvasMouseUp, param => true);
@@ -39,7 +39,12 @@ namespace LiveDescribe.ViewModel
         #region Binding Properties
         public ObservableCollection<Space> Spaces
         {
-            get { return _spacesViewModel.Spaces; }
+            get { return _spaceCollectionViewModel.Spaces; }
+        }
+
+        public SpaceCollectionViewModel SpaceCollectionViewModel
+        {
+            get { return _spaceCollectionViewModel; }
         }
         #endregion
 
