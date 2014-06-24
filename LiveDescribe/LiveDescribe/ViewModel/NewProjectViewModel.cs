@@ -28,22 +28,6 @@ namespace LiveDescribe.ViewModel
         public Project Project { private set; get; }
         #endregion
 
-        #region CreateWindow
-        /// <summary>
-        /// Creates a NewProjectView and attaches an instance of NewProjectViewModel to it.
-        /// </summary>
-        /// <returns>The ViewModel of the Window.</returns>
-        public static NewProjectViewModel CreateWindow()
-        {
-            var viewModel = new NewProjectViewModel();
-            var view = new NewProjectView(viewModel);
-
-            viewModel.DialogResult = view.ShowDialog();
-
-            return viewModel;
-        }
-        #endregion
-
         #region Constructor
         public NewProjectViewModel()
         {

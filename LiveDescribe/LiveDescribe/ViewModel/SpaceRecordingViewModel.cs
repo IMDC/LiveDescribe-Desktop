@@ -114,6 +114,12 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Properties
+        /// <summary>
+        /// Determines whether or not the viewmodel was successful in its job. If true, a
+        /// description has been recorded and the user specified to add it to the project.
+        /// </summary>
+        public bool? DialogResult { set; get; }
+
         public PositionalStringTokenizer SpaceTextTokenizer { get { return _tokenizer; }}
 
         public double TimeLeft

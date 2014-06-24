@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Threading;
+using LiveDescribe.Factories;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
 using LiveDescribe.Utilities;
@@ -115,7 +116,7 @@ namespace LiveDescribe.ViewModel
 
             NewProject = new RelayCommand(() =>
             {
-                var viewModel = NewProjectViewModel.CreateWindow();
+                var viewModel = DialogShower.SpawnNewProjectView();
 
                 if (viewModel.DialogResult != true)
                     return;

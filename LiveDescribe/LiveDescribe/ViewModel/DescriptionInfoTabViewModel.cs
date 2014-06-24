@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using LiveDescribe.Factories;
 using LiveDescribe.Model;
 using LiveDescribe.View;
 using System;
@@ -39,12 +40,9 @@ namespace LiveDescribe.ViewModel
                 canExecute: () => SelectedSpace != null,
                 execute: () =>
                 {
-                    //TODO: Move this out of method
-                    var viewModel = new SpaceRecordingViewModel(SelectedSpace, _descriptionViewModel.Project);
-                    var view = new SpaceRecordingView(viewModel);
-                    bool? success = view.ShowDialog();
+                    var viewModel = DialogShower.SpawnSpaceRecordingView(SelectedSpace, _descriptionViewModel.Project);
 
-                    if (success == true)
+                    if (viewModel.DialogResult == true)
                         _descriptionViewModel.AddDescription(viewModel.Description);
                 });
 
