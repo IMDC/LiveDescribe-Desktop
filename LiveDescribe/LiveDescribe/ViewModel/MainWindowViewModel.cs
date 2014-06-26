@@ -640,8 +640,7 @@ namespace LiveDescribe.ViewModel
                 case "ActualLength":
                 case "StartInVideo":
                 case "EndInVideo":
-                case "DescriptionText":
-                case "SpaceText":
+                case "Text":
                 case "AudioData":
                 case "Header":
                     ProjectModified = true;

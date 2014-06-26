@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight.Command;
+using LiveDescribe.Interfaces;
 using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
@@ -7,7 +8,7 @@ using System.Windows.Input;
 
 namespace LiveDescribe.Model
 {
-    public class Space : INotifyPropertyChanged
+    public class Space : INotifyPropertyChanged, IDescribableInterval
     {
         #region Logger
         private static readonly log4net.ILog Log = log4net.LogManager.GetLogger
@@ -16,7 +17,7 @@ namespace LiveDescribe.Model
 
         #region Instance Variables
         private double _startInVideo;
-        private string _spaceText;
+        private string _text;
         private double _endInVideo;
         private double _length;
         private double _x;
@@ -89,16 +90,16 @@ namespace LiveDescribe.Model
         /// <summary>
         /// Sets the text for the space
         /// </summary>
-        public String SpaceText
+        public String Text
         {
             set
             {
-                _spaceText = value;
+                _text = value;
                 NotifyPropertyChanged();
             }
             get
             {
-                return _spaceText;
+                return _text;
             }
         }
 
