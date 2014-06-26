@@ -37,6 +37,15 @@
                     <MenuItem
                         Header="Close Project"
                         Command="{Binding CloseProject}" />
+                    
+                    <!--Exporting Options-->
+                    <MenuItem Header="Export" >
+                        <MenuItem
+                            Header="Export Video With Descriptions"
+                            Command="{Binding ExportWithDescriptions}"
+                        />
+                    </MenuItem>
+                    
                     <MenuItem
                         Name="Preferences"
                         Header="Preferences"
