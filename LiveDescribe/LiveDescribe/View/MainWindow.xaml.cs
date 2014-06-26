@@ -1,4 +1,5 @@
-﻿using LiveDescribe.Controls;
+﻿using GalaSoft.MvvmLight.Threading;
+using LiveDescribe.Controls;
 using LiveDescribe.Converters;
 using LiveDescribe.Model;
 using LiveDescribe.Utilities;
@@ -135,7 +136,7 @@ namespace LiveDescribe.View
                 };
             #endregion
 
-            #region Event Listeners For Main Control (Pause, Play, Mute)
+            #region Event Listeners For MainWindowViewModel (Pause, Play, Mute)
             //These events are put inside the main control because they will also effect the list
             //of audio descriptions an instance of DescriptionCollectionViewModel is inside the main control
             //and the main control will take care of synchronizing the video, and the descriptions
@@ -171,6 +172,24 @@ namespace LiveDescribe.View
             };
 
             mainWindowViewModel.GraphicsTick += Play_Tick;
+
+            mainWindowViewModel.OnPlayingDescription += (sender, args) =>
+            {
+                try
+                {
+                    if (args.Value.IsExtendedDescription)
+                        DispatcherHelper.UIDispatcher.Invoke(() =>
+                            SpaceAndDescriptionsTabControl.ExtendedDescriptionsListView.ScrollToCenterOfView(args.Value));
+                    else
+                        DispatcherHelper.UIDispatcher.Invoke(() =>
+                       SpaceAndDescriptionsTabControl.DescriptionsListView.ScrollToCenterOfView(args.Value));
+                }
+                catch (Exception exception)
+                {
+                    Log.Warn("Task Cancelled exception", exception);
+                }
+               
+            };
             #endregion
 
             #region Event Listeners For MediaControlViewModel
@@ -490,9 +509,9 @@ namespace LiveDescribe.View
                 //This method runs on a separate thread therefore all calls to get values or set
                 //values that are located on the UI thread must be gotten with Dispatcher.Invoke
                 double canvasLeft = 0;
-                Dispatcher.Invoke(delegate { canvasLeft = Canvas.GetLeft(_marker); });
+                DispatcherHelper.UIDispatcher.Invoke(() => { canvasLeft = Canvas.GetLeft(_marker); });
                 ScrollRightIfCan(canvasLeft);
-                Dispatcher.Invoke(delegate
+                DispatcherHelper.UIDispatcher.Invoke(() =>
                 {
                     double position = (_videoMedia.Position.TotalMilliseconds / _videoDuration) * (_audioCanvas.Width);
                     UpdateMarkerPosition(position - MarkerOffset);

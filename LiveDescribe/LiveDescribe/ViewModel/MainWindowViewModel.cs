@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Threading;
+using LiveDescribe.Events;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
 using LiveDescribe.Utilities;
@@ -58,6 +59,7 @@ namespace LiveDescribe.ViewModel
         public event EventHandler PauseRequested;
         public event EventHandler MuteRequested;
         public event EventHandler MediaEnded;
+        public event EventHandler<EventArgs<Description>> OnPlayingDescription;
         #endregion
 
         #region Constructors
@@ -447,6 +449,7 @@ namespace LiveDescribe.ViewModel
                     {
                         PrepareForDescription(description);
                         DescriptionPlayer.PlayInVideo(description, videoPosition);
+                        OnPlayingDescription(this, new EventArgs<Description>(description));
                     }
                 }
                 catch (Exception ex)
