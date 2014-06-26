@@ -6,9 +6,13 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:command="http://www.galasoft.ch/mvvmlight"
+    xmlns:converters="clr-namespace:LiveDescribe.Converters"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="300">
+    <UserControl.Resources>
+        <converters:VideoStateToBoolConverter x:Key="VideoStateToBoolConverter"/>
+    </UserControl.Resources>
     <Grid>
         <Border
             Name="AudioCanvasBorder"
@@ -18,7 +22,8 @@
                 Background="Transparent"
                 VirtualizingPanel.IsVirtualizing="True"
                 Name="AudioCanvas"
-                HorizontalAlignment="Left">
+                HorizontalAlignment="Left"
+                IsEnabled="{Binding Path=CurrentVideoState, Converter={StaticResource VideoStateToBoolConverter}}">
 
                 <Canvas.ContextMenu>
                     <ContextMenu>

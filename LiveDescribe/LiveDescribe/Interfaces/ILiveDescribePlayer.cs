@@ -1,8 +1,11 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
 
 namespace LiveDescribe.Interfaces
 {
-    public interface ILiveDescribePlayer
+    public interface ILiveDescribePlayer : INotifyPropertyChanged
     {
         TimeSpan Position { get; set; }
 

@@ -1,4 +1,6 @@
-﻿using LiveDescribe.Interfaces;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using LiveDescribe.Interfaces;
 using System;
 using System.Windows.Controls;
 
@@ -23,6 +25,7 @@ namespace LiveDescribe.Controls
             set
             {
                 _currentState = value;
+                OnPropertyChanged();
             }
         }
 
@@ -55,6 +58,14 @@ namespace LiveDescribe.Controls
             {
                 return _path;
             }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

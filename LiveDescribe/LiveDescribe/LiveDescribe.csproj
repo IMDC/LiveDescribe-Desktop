@@ -106,6 +106,7 @@
     <Compile Include="Converters\BoolToRecordingContentConverter.cs" />
     <Compile Include="Converters\MillisecondsTimeConverterFormatter.cs" />
     <Compile Include="Converters\MillisecondsToTimeLeftStringConverter.cs" />
+    <Compile Include="Converters\VideoStateToBoolConverter.cs" />
     <Compile Include="Events\AddDescriptionEventArgs.cs" />
     <Compile Include="Events\EventArgsT.cs" />
     <Compile Include="Events\SpaceEventArgs.cs" />
@@ -194,7 +195,6 @@
     <Compile Include="Controls\LiveDescribeMediaPlayer.cs" />
     <Compile Include="LiveDescribeStates.cs" />
     <Compile Include="Model\Description.cs" />
-    <Compile Include="Model\Video.cs" />
     <Compile Include="Converters\TimeConverterFormatter.cs" />
     <Compile Include="Utilities\AudioUtility.cs" />
     <Compile Include="ViewModel\DescriptionCollectionViewModel.cs" />

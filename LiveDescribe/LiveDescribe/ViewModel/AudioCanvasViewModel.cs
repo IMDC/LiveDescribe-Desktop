@@ -1,5 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using LiveDescribe.Controls;
+using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
 using System;
 using System.Collections.ObjectModel;
@@ -11,6 +13,8 @@ namespace LiveDescribe.ViewModel
     {
         private readonly SpaceCollectionViewModel _spaceCollectionViewModel;
 
+        private LiveDescribeVideoStates _currentState;
+
         #region Events
 
         public EventHandler<MouseEventArgs> AudioCanvasMouseDownEvent;
@@ -19,7 +23,7 @@ namespace LiveDescribe.ViewModel
         public EventHandler<MouseEventArgs> AudioCanvasMouseRightButtonDownEvent;
         #endregion
 
-        public AudioCanvasViewModel(SpaceCollectionViewModel spaceCollectionViewModel)
+        public AudioCanvasViewModel(SpaceCollectionViewModel spaceCollectionViewModel, ILiveDescribePlayer mediaPlayer)
         {
             _spaceCollectionViewModel = spaceCollectionViewModel;
 
@@ -27,6 +31,11 @@ namespace LiveDescribe.ViewModel
             AudioCanvasMouseUpCommand = new RelayCommand<MouseEventArgs>(AudioCanvasMouseUp, param => true);
             AudioCanvasMouseMoveCommand = new RelayCommand<MouseEventArgs>(AudioCanvasMouseMove, param => true);
             AudioCanvasMouseRightButtonDownCommand = new RelayCommand<MouseEventArgs>(AudioCanvasMouseRightButtonDown, param => true);
+            mediaPlayer.PropertyChanged += (sender, args) =>
+            {
+                if (args.PropertyName.Equals("CurrentState"))
+                    CurrentVideoState = mediaPlayer.CurrentState;
+            };
         }
 
         #region Commands
@@ -45,6 +54,16 @@ namespace LiveDescribe.ViewModel
         public SpaceCollectionViewModel SpaceCollectionViewModel
         {
             get { return _spaceCollectionViewModel; }
+        }
+
+        public LiveDescribeVideoStates CurrentVideoState
+        {
+            set
+            {
+                _currentState = value;
+                RaisePropertyChanged();
+            }
+            get { return _currentState; }
         }
         #endregion
 
