@@ -63,7 +63,7 @@
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <TextBlock
-                                            Text="{Binding SpaceText}" />
+                                            Text="{Binding Text}" />
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
@@ -128,7 +128,7 @@
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <TextBlock
-                                            Text="{Binding DescriptionText}" />
+                                            Text="{Binding Text}" />
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
@@ -193,7 +193,7 @@
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <TextBlock
-                                            Text="{Binding DescriptionText}" />
+                                            Text="{Binding Text}" />
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
@@ -232,8 +232,12 @@
             Grid.Column="0"
             Grid.Row="1"
             ScrollViewer.VerticalScrollBarVisibility="Auto"
-            TextWrapping="Wrap"
-            Text="{Binding DescriptionAndSpaceText}">
+            TextWrapping="Wrap">
+            <TextBox.Text>
+                <Binding
+                    Path="DescriptionAndSpaceText"
+                    UpdateSourceTrigger="PropertyChanged" />
+            </TextBox.Text>
         </TextBox>
 
         <!--Text Controls-->

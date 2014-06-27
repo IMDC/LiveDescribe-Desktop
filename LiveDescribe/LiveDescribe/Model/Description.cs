@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight.Command;
+using LiveDescribe.Interfaces;
 using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
@@ -8,7 +9,7 @@ using System.Windows.Input;
 
 namespace LiveDescribe.Model
 {
-    public class Description : INotifyPropertyChanged
+    public class Description : INotifyPropertyChanged, IDescribableInterval
     {
         #region Logger
         private static readonly log4net.ILog Log = log4net.LogManager.GetLogger
@@ -18,7 +19,7 @@ namespace LiveDescribe.Model
         //All units of time is in milliseconds
         #region Instance variables
         private ProjectFile _audioFile;
-        private string _descriptiontext;
+        private string _text;
         private bool _isextendeddescription;
         private double _startwavefiletime;
         private double _endwavefiletime;
@@ -46,7 +47,7 @@ namespace LiveDescribe.Model
         {
             AudioFile = filepath;
 
-            DescriptionText = Path.GetFileNameWithoutExtension(filepath);
+            Text = Path.GetFileNameWithoutExtension(filepath);
             IsExtendedDescription = extendedDescription;
 
             //I specifically use the instance variables rather than the properties
@@ -218,14 +219,14 @@ namespace LiveDescribe.Model
             get { return _isSelected; }
         }
 
-        public string DescriptionText
+        public string Text
         {
             set
             {
-                _descriptiontext = value;
+                _text = value;
                 NotifyPropertyChanged();
             }
-            get { return _descriptiontext; }
+            get { return _text; }
         }
 
         [JsonIgnore]
