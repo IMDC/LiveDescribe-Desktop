@@ -235,7 +235,7 @@
             TextWrapping="Wrap">
             <TextBox.Text>
                 <Binding
-                    Path="DescriptionAndSpaceText"
+                    Path="SelectedItem.Text"
                     UpdateSourceTrigger="PropertyChanged" />
             </TextBox.Text>
         </TextBox>
@@ -246,15 +246,11 @@
             Grid.Row="1">
             <Button
                 Margin="5"
-                Command="{Binding SaveDescriptionTextCommand}"
-                Content="Save Text" />
-            <Button
-                Margin="5"
                 Command="{Binding RecordInSpace}"
                 Content="Record" />
             <Button
                 Margin="5"
-                Command="{Binding ClearDescriptionTextCommand}"
+                Command="{Binding ClearSelectedItemText}"
                 Content="Clear" />
         </StackPanel>
     </Grid>

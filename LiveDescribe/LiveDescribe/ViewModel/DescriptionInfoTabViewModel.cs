@@ -3,7 +3,6 @@ using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Factories;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
-using LiveDescribe.View;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -25,8 +24,8 @@ namespace LiveDescribe.ViewModel
         private Description _selectedRegularDescription;
         private Description _selectedExtendedDescription;
         private Space _selectedSpace;
-        private String _descriptionAndSpaceText;
         private int _tabSelectedIndex;
+        private IDescribableInterval _selectedItem;
         #endregion
 
         public DescriptionInfoTabViewModel(DescriptionCollectionViewModel descriptionCollectionViewModel, SpaceCollectionViewModel spaceViewModel)
@@ -34,8 +33,19 @@ namespace LiveDescribe.ViewModel
             _descriptionCollectionViewModel = descriptionCollectionViewModel;
             _spaceCollectionViewModel = spaceViewModel;
 
-            SaveDescriptionTextCommand = new RelayCommand(SaveDescriptionText, SaveDescriptionTextStateCheck);
-            ClearDescriptionTextCommand = new RelayCommand(ClearDescriptionText, () => true);
+            InitCommands();
+
+            SelectedRegularDescription = null;
+            SelectedExtendedDescription = null;
+            SelectedSpace = null;
+            _selectedItem = null;
+        }
+
+        private void InitCommands()
+        {
+            ClearSelectedItemText = new RelayCommand(
+                canExecute: () => SelectedItem != null,
+                execute: () => SelectedItem.Text = "");
 
             RecordInSpace = new RelayCommand(
                 canExecute: () => SelectedSpace != null,
@@ -46,18 +56,11 @@ namespace LiveDescribe.ViewModel
                     if (viewModel.DialogResult == true)
                         _descriptionCollectionViewModel.AddDescription(viewModel.Description);
                 });
-
-            SelectedRegularDescription = null;
-            SelectedExtendedDescription = null;
-            SelectedSpace = null;
-            DescriptionAndSpaceText = null;
         }
 
         #region Commands
 
-        public RelayCommand SaveDescriptionTextCommand { private set; get; }
-
-        public RelayCommand ClearDescriptionTextCommand { private set; get; }
+        public ICommand ClearSelectedItemText { private set; get; }
 
         public ICommand RecordInSpace { private set; get; }
 
@@ -104,17 +107,14 @@ namespace LiveDescribe.ViewModel
             get { return _tabSelectedIndex; }
         }
 
-        /// <summary>
-        /// The description text to be saved to the selected description
-        /// </summary>
-        public string DescriptionAndSpaceText
+        public IDescribableInterval SelectedItem
         {
             set
             {
-                _descriptionAndSpaceText = value;
+                _selectedItem = value;
                 RaisePropertyChanged();
             }
-            get { return _descriptionAndSpaceText; }
+            get { return _selectedItem; }
         }
 
         /// <summary>
@@ -174,7 +174,6 @@ namespace LiveDescribe.ViewModel
         {
             description.IsSelected = true;
             //we don't want the text to appear in the textbox if a description is playing
-            DescriptionAndSpaceText = description.Text;
             description.PropertyChanged += DescriptionFinishedPlaying;
 
             if (description.IsExtendedDescription)
@@ -187,16 +186,16 @@ namespace LiveDescribe.ViewModel
                 _selectedRegularDescription = description;
                 TabSelectedIndex = RegularDescriptionTab;
             }
+
+            SelectedItem = description;
         }
 
         private void Select(ref Space space)
         {
             space.IsSelected = true;
-            DescriptionAndSpaceText = space.Text;
-            space.PropertyChanged += SelectedSpaceTextChanged;
-
             TabSelectedIndex = SpaceTab;
             _selectedSpace = space;
+            SelectedItem = space;
         }
 
         private void Unselect(ref Description description)
@@ -209,7 +208,6 @@ namespace LiveDescribe.ViewModel
         private void Unselect(ref Space space)
         {
             space.IsSelected = false;
-            space.PropertyChanged -= SelectedSpaceTextChanged;
             space = null;
         }
 
@@ -221,6 +219,8 @@ namespace LiveDescribe.ViewModel
                 Unselect(ref _selectedExtendedDescription);
             if (_selectedSpace != null)
                 Unselect(ref _selectedSpace);
+
+            SelectedItem = null;
         }
 
         private void UpdateProperties()
@@ -228,26 +228,7 @@ namespace LiveDescribe.ViewModel
             RaisePropertyChanged("SelectedRegularDescription");
             RaisePropertyChanged("SelectedExtendedDescription");
             RaisePropertyChanged("SelectedSpace");
-        }
-
-        /// <summary>
-        /// Clears the description text
-        /// </summary>
-        public void ClearDescriptionText()
-        {
-            DescriptionAndSpaceText = "";
-        }
-        /// <summary>
-        /// Depending on which tab is selected it will overwrite the appropriate description text
-        /// </summary>
-        public void SaveDescriptionText()
-        {
-            if (TabSelectedIndex == RegularDescriptionTab)
-                SelectedRegularDescription.Text = DescriptionAndSpaceText;
-            else if (TabSelectedIndex == ExtendedDescriptionTab)
-                SelectedExtendedDescription.Text = DescriptionAndSpaceText;
-            else if (TabSelectedIndex == SpaceTab)
-                SelectedSpace.Text = DescriptionAndSpaceText;
+            RaisePropertyChanged("SelectedItem");
         }
 
         public void DescriptionFinishedPlaying(object sender, PropertyChangedEventArgs args)
@@ -259,33 +240,9 @@ namespace LiveDescribe.ViewModel
                 {
                     description.IsSelected = false;
                     ClearSelection();
+                    CommandManager.InvalidateRequerySuggested();
                 }
             }
-        }
-
-        public void SelectedSpaceTextChanged(object sender, PropertyChangedEventArgs args)
-        {
-            if (args.PropertyName.Equals("Text"))
-            {
-                var space = (Space)sender;
-                DescriptionAndSpaceText = space.Text;
-            }
-        }
-
-        /// <summary>
-        /// Returns the state of whether the save text button can be shown or not
-        /// </summary>
-        /// <returns></returns>
-        public bool SaveDescriptionTextStateCheck()
-        {
-            if (SelectedExtendedDescription != null && TabSelectedIndex == ExtendedDescriptionTab)
-                return true;
-            if (SelectedRegularDescription != null && TabSelectedIndex == RegularDescriptionTab)
-                return true;
-            if (SelectedSpace != null && TabSelectedIndex == SpaceTab)
-                return true;
-
-            return false;
         }
 
         /// <summary>
