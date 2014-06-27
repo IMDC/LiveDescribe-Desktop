@@ -76,12 +76,6 @@
                 Width="100"
                 Margin="10,15,10,10" />
 
-            <RepeatButton
-                Command="{Binding RewindCommand}"
-                Style="{StaticResource ControlPanelStyle}"
-                Content="Rewind"
-                HorizontalAlignment="Center" />
-
             <Button
                 Name="PlayControl"
                 Style="{StaticResource ControlPanelStyle}"
@@ -94,12 +88,6 @@
                 Style="{StaticResource ControlPanelStyle}"
                 Command="{Binding PauseCommand}"
                 Content="Pause"
-                HorizontalAlignment="Center" />
-
-            <RepeatButton
-                Command="{Binding FastForwardCommand}"
-                Style="{StaticResource ControlPanelStyle}"
-                Content="Fast Forward"
                 HorizontalAlignment="Center" />
 
             <TextBlock

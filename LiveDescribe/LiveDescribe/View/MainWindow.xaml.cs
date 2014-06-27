@@ -279,12 +279,6 @@ namespace LiveDescribe.View
                     UpdateVideoPosition((int)newPositionInVideo);
                 };
 
-            mainWindowViewModel.MediaControlViewModel.FastForwardEvent += (sender, e) =>
-                    UpdateMarkerPosition(((_canvasWidth / _videoDuration) * _videoMedia.Position.TotalMilliseconds) - MarkerOffset);
-
-            mainWindowViewModel.MediaControlViewModel.RewindEvent += (sender, e) =>
-                    UpdateMarkerPosition(((_canvasWidth / _videoDuration) * _videoMedia.Position.TotalMilliseconds) - MarkerOffset);
-
             #endregion
 
             #region Event Listeners for DescriptionCollectionViewModel
