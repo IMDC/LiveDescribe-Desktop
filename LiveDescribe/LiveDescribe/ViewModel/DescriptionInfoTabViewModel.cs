@@ -69,49 +69,8 @@ namespace LiveDescribe.ViewModel
         /// </summary>
         public Description SelectedRegularDescription
         {
-            set
-            {
-                if (_selectedRegularDescription != null && value == null)
-                {
-                    _selectedRegularDescription.IsSelected = false;
-                    _selectedRegularDescription.PropertyChanged -= DescriptionFinishedPlaying;
-                }
-
-                // Unselect previous descriptions and spaces selected
-                if (_selectedRegularDescription != null)
-                {
-                    _selectedRegularDescription.IsSelected = false;
-                    _selectedRegularDescription = null;
-                }
-
-                if (SelectedExtendedDescription != null)
-                {
-                    SelectedExtendedDescription.IsSelected = false;
-                    SelectedExtendedDescription = null;
-                }
-
-                if (SelectedSpace != null)
-                {
-                    SelectedSpace.IsSelected = false;
-                    SelectedSpace = null;
-                }
-
-                _selectedRegularDescription = value;
-
-                if (_selectedRegularDescription != null)
-                {
-                    _selectedRegularDescription.IsSelected = true;
-                    TabSelectedIndex = RegularDescriptionTab;
-                    DescriptionAndSpaceText = _selectedRegularDescription.Text;
-                    _selectedRegularDescription.PropertyChanged += DescriptionFinishedPlaying;
-                }
-
-                RaisePropertyChanged();
-            }
-            get
-            {
-                return _selectedRegularDescription;
-            }
+            set { SetSelected(value); }
+            get { return _selectedRegularDescription; }
         }
 
         /// <summary>
@@ -119,50 +78,8 @@ namespace LiveDescribe.ViewModel
         /// </summary>
         public Description SelectedExtendedDescription
         {
-            set
-            {
-                if (_selectedExtendedDescription != null && value == null)
-                {
-                    _selectedExtendedDescription.IsSelected = false;
-                    _selectedExtendedDescription.PropertyChanged -= DescriptionFinishedPlaying;
-                }
-
-                // Unselect previous descriptions and spaces selected
-                if (SelectedRegularDescription != null)
-                {
-                    SelectedRegularDescription.IsSelected = false;
-                    SelectedRegularDescription = null;
-                }
-
-                if (_selectedExtendedDescription != null)
-                {
-                    _selectedExtendedDescription.IsSelected = false;
-                    _selectedExtendedDescription = null;
-                }
-
-                if (SelectedSpace != null)
-                {
-                    SelectedSpace.IsSelected = false;
-                    SelectedSpace = null;
-                }
-
-                _selectedExtendedDescription = value;
-
-                if (_selectedExtendedDescription != null)
-                {
-                    _selectedExtendedDescription.IsSelected = true;
-                    //we don't want the text to appear in the textbox if a description is playing
-                    DescriptionAndSpaceText = _selectedExtendedDescription.Text;
-                    TabSelectedIndex = ExtendedDescriptionTab;
-                    _selectedExtendedDescription.PropertyChanged += DescriptionFinishedPlaying;
-                }
-
-                RaisePropertyChanged();
-            }
-            get
-            {
-                return _selectedExtendedDescription;
-            }
+            set { SetSelected(value); }
+            get { return _selectedExtendedDescription; }
         }
 
         /// <summary>
@@ -170,48 +87,8 @@ namespace LiveDescribe.ViewModel
         /// </summary>
         public Space SelectedSpace
         {
-            set
-            {
-                if (_selectedSpace != null && value == null)
-                {
-                    _selectedSpace.IsSelected = false;
-                    _selectedSpace.PropertyChanged -= SelectedSpaceTextChanged;
-                }
-
-                // Unselect previous descriptions and spaces selected
-                if (SelectedRegularDescription != null)
-                {
-                    SelectedRegularDescription.IsSelected = false;
-                    SelectedRegularDescription = null;
-                }
-
-                if (SelectedExtendedDescription != null)
-                {
-                    SelectedExtendedDescription.IsSelected = false;
-                    SelectedExtendedDescription = null;
-                }
-
-                if (_selectedSpace != null)
-                {
-                    _selectedSpace.IsSelected = false;
-                    _selectedSpace = null;
-                }
-
-                _selectedSpace = value;
-
-                if (_selectedSpace != null)
-                {
-                    _selectedSpace.IsSelected = true;
-                    TabSelectedIndex = SpaceTab;
-                    DescriptionAndSpaceText = _selectedSpace.Text;
-                    _selectedSpace.PropertyChanged += SelectedSpaceTextChanged;
-                }
-                RaisePropertyChanged();
-            }
-            get
-            {
-                return _selectedSpace;
-            }
+            set { SetSelected(value); }
+            get { return _selectedSpace; }
         }
 
         /// <summary>
@@ -224,10 +101,7 @@ namespace LiveDescribe.ViewModel
                 _tabSelectedIndex = value;
                 RaisePropertyChanged();
             }
-            get
-            {
-                return _tabSelectedIndex;
-            }
+            get { return _tabSelectedIndex; }
         }
 
         /// <summary>
@@ -240,10 +114,7 @@ namespace LiveDescribe.ViewModel
                 _descriptionAndSpaceText = value;
                 RaisePropertyChanged();
             }
-            get
-            {
-                return _descriptionAndSpaceText;
-            }
+            get { return _descriptionAndSpaceText; }
         }
 
         /// <summary>
@@ -252,10 +123,7 @@ namespace LiveDescribe.ViewModel
         /// </summary>
         public ObservableCollection<Description> ExtendedDescriptions
         {
-            get
-            {
-                return _descriptionCollectionViewModel.ExtendedDescriptions;
-            }
+            get { return _descriptionCollectionViewModel.ExtendedDescriptions; }
         }
 
         /// <summary>
@@ -264,10 +132,7 @@ namespace LiveDescribe.ViewModel
         /// </summary>
         public ObservableCollection<Description> RegularDescriptions
         {
-            get
-            {
-                return _descriptionCollectionViewModel.RegularDescriptions;
-            }
+            get { return _descriptionCollectionViewModel.RegularDescriptions; }
         }
 
         /// <summary>
@@ -275,15 +140,95 @@ namespace LiveDescribe.ViewModel
         /// </summary>
         public ObservableCollection<Space> Spaces
         {
-            get
-            {
-                return _spaceCollectionViewModel.Spaces;
-            }
+            get { return _spaceCollectionViewModel.Spaces; }
         }
 
         #endregion
 
-        #region Binding Functions
+        #region Methods
+
+        private void SetSelected(IDescribableInterval value)
+        {
+            UnselectAll();
+
+            if (value != null)
+            {
+                if (value is Description)
+                {
+                    var d = (Description)value;
+                    Select(ref d);
+                }
+                else if (value is Space)
+                {
+                    var space = (Space)value;
+                    Select(ref space);
+                }
+                else
+                    throw new NotImplementedException("Value type not implemented");
+            }
+
+            UpdateProperties();
+        }
+
+        private void Select(ref Description description)
+        {
+            description.IsSelected = true;
+            //we don't want the text to appear in the textbox if a description is playing
+            DescriptionAndSpaceText = description.Text;
+            description.PropertyChanged += DescriptionFinishedPlaying;
+
+            if (description.IsExtendedDescription)
+            {
+                _selectedExtendedDescription = description;
+                TabSelectedIndex = ExtendedDescriptionTab;
+            }
+            else
+            {
+                _selectedRegularDescription = description;
+                TabSelectedIndex = RegularDescriptionTab;
+            }
+        }
+
+        private void Select(ref Space space)
+        {
+            space.IsSelected = true;
+            DescriptionAndSpaceText = space.Text;
+            space.PropertyChanged += SelectedSpaceTextChanged;
+
+            TabSelectedIndex = SpaceTab;
+            _selectedSpace = space;
+        }
+
+        private void Unselect(ref Description description)
+        {
+            description.IsSelected = false;
+            description.PropertyChanged -= DescriptionFinishedPlaying;
+            description = null;
+        }
+
+        private void Unselect(ref Space space)
+        {
+            space.IsSelected = false;
+            space.PropertyChanged -= SelectedSpaceTextChanged;
+            space = null;
+        }
+
+        private void UnselectAll()
+        {
+            if (_selectedRegularDescription != null)
+                Unselect(ref _selectedRegularDescription);
+            if (SelectedExtendedDescription != null)
+                Unselect(ref _selectedExtendedDescription);
+            if (_selectedSpace != null)
+                Unselect(ref _selectedSpace);
+        }
+
+        private void UpdateProperties()
+        {
+            RaisePropertyChanged("SelectedRegularDescription");
+            RaisePropertyChanged("SelectedExtendedDescription");
+            RaisePropertyChanged("SelectedSpace");
+        }
 
         /// <summary>
         /// Clears the description text
@@ -313,7 +258,7 @@ namespace LiveDescribe.ViewModel
                 if (!description.IsPlaying)
                 {
                     description.IsSelected = false;
-                    UnSelectDescriptionsAndSpaceSelectedInList();
+                    ClearSelection();
                 }
             }
         }
@@ -326,9 +271,7 @@ namespace LiveDescribe.ViewModel
                 DescriptionAndSpaceText = space.Text;
             }
         }
-        #endregion
 
-        #region State Checks
         /// <summary>
         /// Returns the state of whether the save text button can be shown or not
         /// </summary>
@@ -344,15 +287,14 @@ namespace LiveDescribe.ViewModel
 
             return false;
         }
-        #endregion
 
-        #region Helper Functions
-
-        public void UnSelectDescriptionsAndSpaceSelectedInList()
+        /// <summary>
+        /// Clears the selected item from the VM.
+        /// </summary>
+        public void ClearSelection()
         {
-            SelectedRegularDescription = null;
-            SelectedExtendedDescription = null;
-            SelectedSpace = null;
+            UnselectAll();
+            UpdateProperties();
         }
         #endregion
     }
