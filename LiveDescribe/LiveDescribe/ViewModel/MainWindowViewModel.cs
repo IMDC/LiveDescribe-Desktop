@@ -191,7 +191,7 @@ namespace LiveDescribe.ViewModel
                 canExecute: () => ProjectLoaded,
                 execute: () =>
                 {
-                    DescriptionExportUtility exporter = new DescriptionExportUtility(_mediaVideo.Path,  _descriptioncollectionviewmodel.RegularDescriptions.ToList());
+                    DescriptionExportUtility exporter = new DescriptionExportUtility(_mediaVideo.Path, _mediaVideo.DurationSeconds,  _descriptioncollectionviewmodel.RegularDescriptions.ToList());
                     exporter.exportVideoWithDescriptions();
                 });
 

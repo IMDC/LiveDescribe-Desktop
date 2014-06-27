@@ -15,13 +15,15 @@ namespace LiveDescribe.Utilities
 
         #region Instance Variables
         private string _videoFile;
+        private double _videoDurationSeconds;
         private List<Description> _descriptionList;
         #endregion
 
         #region Constructors
-        public DescriptionExportUtility(string videoFile, List<Description> descriptionList)
+        public DescriptionExportUtility(string videoFile, double videoDurationSeconds, List<Description> descriptionList)
         {
             _videoFile = videoFile;
+            _videoDurationSeconds = videoDurationSeconds;
             _descriptionList = descriptionList;
         }
         #endregion
