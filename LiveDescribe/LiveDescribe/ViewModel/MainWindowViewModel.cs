@@ -81,8 +81,17 @@ namespace LiveDescribe.ViewModel
 
             DescriptionPlayer = new DescriptionPlayer();
             DescriptionPlayer.DescriptionFinishedPlaying += (sender, e) =>
-                DispatcherHelper.UIDispatcher.Invoke(() =>
-                    _mediaControlViewModel.ResumeFromDescription(e.Value));
+            {
+                try
+                {
+                    DispatcherHelper.UIDispatcher.Invoke(() =>
+                        _mediaControlViewModel.ResumeFromDescription(e.Value));
+                }
+                catch (TaskCanceledException exception)
+                {
+                    Log.Warn("Task Canceled Exception", exception);
+                }
+            };
 
             #region Commands
             //Commands
