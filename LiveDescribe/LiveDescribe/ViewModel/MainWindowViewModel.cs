@@ -103,7 +103,7 @@ namespace LiveDescribe.ViewModel
                     }
 
                     Log.Info("Closed Project");
-
+                    FileDeleter.DeleteUnusedDescriptionFiles(_project);
                     _descriptioncollectionviewmodel.CloseDescriptionCollectionViewModel();
                     _mediaControlViewModel.CloseMediaControlViewModel();
                     _spacecollectionviewmodel.CloseSpaceCollectionViewModel();
