@@ -212,15 +212,15 @@ namespace LiveDescribe.Model
         /// current time.
         /// </summary>
         /// <returns></returns>
-        public string GenerateDescriptionFilePath()
+        public ProjectFile GenerateDescriptionFile()
         {
             //TODO: Move this functionality elsewhere
             string fileName = string.Format("{0}_desc_{1}.wav",
                 ProjectName, DateTime.Now.ToString("yyMMddHHmmssfff"));
 
-            string path = Path.Combine(Folders.Descriptions, fileName);
+            string absolutePath = Path.Combine(Folders.Descriptions, fileName);
 
-            return path;
+            return ProjectFile.FromAbsolutePath(absolutePath, Folders.Project);
         }
     }
 }

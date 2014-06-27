@@ -132,6 +132,7 @@
     <Compile Include="Converters\MillisecondsTimeConverterFormatter.cs" />
     <Compile Include="Converters\MillisecondsToTimeLeftStringConverter.cs" />
     <Compile Include="Converters\VideoStateToBoolConverter.cs" />
+    <Compile Include="Converters\VarNotNullToBoolConverter.cs" />
     <Compile Include="Events\AddDescriptionEventArgs.cs" />
     <Compile Include="Events\EventArgsT.cs" />
     <Compile Include="Events\SpaceEventArgs.cs" />

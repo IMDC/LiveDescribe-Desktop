@@ -180,8 +180,7 @@ namespace LiveDescribe.ViewModel
         #region Methods
         private void StartRecording()
         {
-            var pf = ProjectFile.FromAbsolutePath(Project.GenerateDescriptionFilePath(),
-                Project.Folders.Project);
+            var pf = Project.GenerateDescriptionFile();
             TokenizeSpaceText();
             CalculateWordTime();
             _wordTimeAccumulator = 0;
