@@ -97,6 +97,7 @@
                 </Grid.ColumnDefinitions>
 
                 <controls:DescriptionRecordingControl
+                    x:Name="DescriptionRecordingControl"
                     DataContext="{Binding DescriptionCollectionViewModel}"
                     Grid.Column="0"
                     Grid.Row="11"

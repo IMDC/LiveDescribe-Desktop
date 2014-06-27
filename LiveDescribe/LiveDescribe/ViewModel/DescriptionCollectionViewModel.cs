@@ -184,10 +184,16 @@ namespace LiveDescribe.ViewModel
 
         public void AddDescription(Description desc)
         {
+           
+#if ZAGGA
             if (desc.IsExtendedDescription)
-                ExtendedDescriptions.Add(desc);
-            else
+                return;
+#endif
+
+            if (!desc.IsExtendedDescription)
                 RegularDescriptions.Add(desc);
+            else
+                ExtendedDescriptions.Add(desc);
 
             SetupEventsOnDescription(desc);
 

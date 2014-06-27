@@ -89,7 +89,15 @@ namespace LiveDescribe.View
             var splashScreen = new SplashScreen("../Images/LiveDescribe-Splashscreen.png");
             splashScreen.Show(true);
             Thread.Sleep(2000);
+
+
+
             InitializeComponent();
+
+#if ZAGGA
+            DescriptionRecordingControl.ExtendedDescriptionCheckBox.Visibility = Visibility.Hidden;
+            SpaceAndDescriptionsTabControl.ExtendedDescriptionsTabItem.Visibility = Visibility.Hidden;
+#endif
 
             _videoMedia = MediaControl.VideoMedia;
 
@@ -188,7 +196,7 @@ namespace LiveDescribe.View
                 {
                     Log.Warn("Task Cancelled exception", exception);
                 }
-               
+
             };
             #endregion
 
@@ -206,7 +214,7 @@ namespace LiveDescribe.View
                     //Video gets played and paused so you can seek initially when the video gets loaded
                     _videoMedia.Play();
                     _videoMedia.Pause();
-                    
+
                     SetTimeline();
 
                     foreach (var desc in _descriptionCollectionViewModel.AllDescriptions)
@@ -422,7 +430,7 @@ namespace LiveDescribe.View
                     UpdateMarkerPosition((space.StartInVideo / _videoDuration) * (_audioCanvas.Width) - MarkerOffset);
                     UpdateVideoPosition((int)space.StartInVideo);
                     //Scroll 1 second before the start in video of the space
-                    TimeLineScrollViewer.ScrollToHorizontalOffset((_audioCanvas.Width/_videoDuration)*
+                    TimeLineScrollViewer.ScrollToHorizontalOffset((_audioCanvas.Width / _videoDuration) *
                                                                   (space.StartInVideo - 1000));
                 };
             };
