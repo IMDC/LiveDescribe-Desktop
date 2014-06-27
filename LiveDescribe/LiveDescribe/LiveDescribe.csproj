@@ -110,6 +110,8 @@
     <Compile Include="Events\AddDescriptionEventArgs.cs" />
     <Compile Include="Events\EventArgsT.cs" />
     <Compile Include="Events\SpaceEventArgs.cs" />
+    <Compile Include="Factories\DialogShower.cs" />
+    <Compile Include="Interfaces\IDescribableInterval.cs" />
     <Compile Include="LiveDescribeConstants.cs" />
     <Compile Include="Model\Project.cs" />
     <Compile Include="Model\ProjectFile.cs" />

@@ -28,7 +28,7 @@ namespace LiveDescribe.ViewModel
         /// <summary>Defines how long each word should be selected while recording a description.</summary>
         private double _timePerWordMsec;
         private double _wordTimeAccumulator;
-        /// <summary>Keeps track of SpaceText words during recording.</summary>
+        /// <summary>Keeps track of Space Text words during recording.</summary>
         private PositionalStringTokenizer _tokenizer;
         #endregion
 
@@ -101,7 +101,7 @@ namespace LiveDescribe.ViewModel
                 execute: () =>
                 {
                     //Give Space text to description before exiting
-                    _description.DescriptionText = _space.SpaceText;
+                    _description.Text = _space.Text;
                     OnCloseRequested();
                 });
         }
@@ -114,6 +114,12 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Properties
+        /// <summary>
+        /// Determines whether or not the viewmodel was successful in its job. If true, a
+        /// description has been recorded and the user specified to add it to the project.
+        /// </summary>
+        public bool? DialogResult { set; get; }
+
         public PositionalStringTokenizer SpaceTextTokenizer { get { return _tokenizer; }}
 
         public double TimeLeft
@@ -142,10 +148,10 @@ namespace LiveDescribe.ViewModel
         {
             set
             {
-                _space.SpaceText = value;
+                _space.Text = value;
                 RaisePropertyChanged();
             }
-            get { return _space.SpaceText; }
+            get { return _space.Text; }
         }
 
         public string TimeStamp { set; get; }
@@ -175,7 +181,7 @@ namespace LiveDescribe.ViewModel
         private void StartRecording()
         {
             var pf = ProjectFile.FromAbsolutePath(Project.GenerateDescriptionFilePath(),
-                Project.Folders.Descriptions);
+                Project.Folders.Project);
             TokenizeSpaceText();
             CalculateWordTime();
             _wordTimeAccumulator = 0;
@@ -187,13 +193,13 @@ namespace LiveDescribe.ViewModel
 
         private void TokenizeSpaceText()
         {
-            _tokenizer = new PositionalStringTokenizer(Space.SpaceText);
+            _tokenizer = new PositionalStringTokenizer(Space.Text);
             _tokenizer.Tokenize();
         }
 
         private void CalculateWordTime()
         {
-            _timePerWordMsec = (!string.IsNullOrWhiteSpace(Space.SpaceText))
+            _timePerWordMsec = (!string.IsNullOrWhiteSpace(Space.Text))
                 ? _timePerWordMsec = Space.Duration / _tokenizer.Tokens.Count
                 : 0;
         }

@@ -1,5 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using LiveDescribe.Factories;
+using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
 using LiveDescribe.View;
 using System;
@@ -39,12 +41,9 @@ namespace LiveDescribe.ViewModel
                 canExecute: () => SelectedSpace != null,
                 execute: () =>
                 {
-                    //TODO: Move this out of method
-                    var viewModel = new SpaceRecordingViewModel(SelectedSpace, _descriptionCollectionViewModel.Project);
-                    var view = new SpaceRecordingView(viewModel);
-                    bool? success = view.ShowDialog();
+                    var viewModel = DialogShower.SpawnSpaceRecordingView(SelectedSpace, _descriptionCollectionViewModel.Project);
 
-                    if (success == true)
+                    if (viewModel.DialogResult == true)
                         _descriptionCollectionViewModel.AddDescription(viewModel.Description);
                 });
 
@@ -103,7 +102,7 @@ namespace LiveDescribe.ViewModel
                 {
                     _selectedRegularDescription.IsSelected = true;
                     TabSelectedIndex = RegularDescriptionTab;
-                    DescriptionAndSpaceText = _selectedRegularDescription.DescriptionText;
+                    DescriptionAndSpaceText = _selectedRegularDescription.Text;
                     _selectedRegularDescription.PropertyChanged += DescriptionFinishedPlaying;
                 }
 
@@ -153,7 +152,7 @@ namespace LiveDescribe.ViewModel
                 {
                     _selectedExtendedDescription.IsSelected = true;
                     //we don't want the text to appear in the textbox if a description is playing
-                    DescriptionAndSpaceText = _selectedExtendedDescription.DescriptionText;
+                    DescriptionAndSpaceText = _selectedExtendedDescription.Text;
                     TabSelectedIndex = ExtendedDescriptionTab;
                     _selectedExtendedDescription.PropertyChanged += DescriptionFinishedPlaying;
                 }
@@ -204,7 +203,7 @@ namespace LiveDescribe.ViewModel
                 {
                     _selectedSpace.IsSelected = true;
                     TabSelectedIndex = SpaceTab;
-                    DescriptionAndSpaceText = _selectedSpace.SpaceText;
+                    DescriptionAndSpaceText = _selectedSpace.Text;
                     _selectedSpace.PropertyChanged += SelectedSpaceTextChanged;
                 }
                 RaisePropertyChanged();
@@ -299,11 +298,11 @@ namespace LiveDescribe.ViewModel
         public void SaveDescriptionText()
         {
             if (TabSelectedIndex == RegularDescriptionTab)
-                SelectedRegularDescription.DescriptionText = DescriptionAndSpaceText;
+                SelectedRegularDescription.Text = DescriptionAndSpaceText;
             else if (TabSelectedIndex == ExtendedDescriptionTab)
-                SelectedExtendedDescription.DescriptionText = DescriptionAndSpaceText;
+                SelectedExtendedDescription.Text = DescriptionAndSpaceText;
             else if (TabSelectedIndex == SpaceTab)
-                SelectedSpace.SpaceText = DescriptionAndSpaceText;
+                SelectedSpace.Text = DescriptionAndSpaceText;
         }
 
         public void DescriptionFinishedPlaying(object sender, PropertyChangedEventArgs args)
@@ -321,10 +320,10 @@ namespace LiveDescribe.ViewModel
 
         public void SelectedSpaceTextChanged(object sender, PropertyChangedEventArgs args)
         {
-            if (args.PropertyName.Equals("SpaceText"))
+            if (args.PropertyName.Equals("Text"))
             {
                 var space = (Space)sender;
-                DescriptionAndSpaceText = space.SpaceText;
+                DescriptionAndSpaceText = space.Text;
             }
         }
         #endregion

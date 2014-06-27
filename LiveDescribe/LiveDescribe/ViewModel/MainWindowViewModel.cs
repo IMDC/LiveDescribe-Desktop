@@ -2,6 +2,7 @@
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Threading;
 using LiveDescribe.Events;
+using LiveDescribe.Factories;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
 using LiveDescribe.Utilities;
@@ -117,7 +118,7 @@ namespace LiveDescribe.ViewModel
 
             NewProject = new RelayCommand(() =>
             {
-                var viewModel = NewProjectViewModel.CreateWindow();
+                var viewModel = DialogShower.SpawnNewProjectView();
 
                 if (viewModel.DialogResult != true)
                     return;
@@ -642,8 +643,7 @@ namespace LiveDescribe.ViewModel
                 case "ActualLength":
                 case "StartInVideo":
                 case "EndInVideo":
-                case "DescriptionText":
-                case "SpaceText":
+                case "Text":
                 case "AudioData":
                 case "Header":
                     ProjectModified = true;
