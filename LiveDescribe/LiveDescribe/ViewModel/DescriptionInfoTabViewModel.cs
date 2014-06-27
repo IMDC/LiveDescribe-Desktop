@@ -67,6 +67,12 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Binding Properties
+
+        public bool CanChangeText
+        {
+            get { return SelectedItem != null; }
+        }
+
         /// <summary>
         /// Sets or gets the regular description selected in the tab control
         /// </summary>
@@ -113,6 +119,7 @@ namespace LiveDescribe.ViewModel
             {
                 _selectedItem = value;
                 RaisePropertyChanged();
+                CommandManager.InvalidateRequerySuggested();
             }
             get { return _selectedItem; }
         }

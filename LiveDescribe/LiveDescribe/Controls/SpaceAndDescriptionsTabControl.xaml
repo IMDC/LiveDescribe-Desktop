@@ -11,6 +11,8 @@
     <UserControl.Resources>
         <converters:MillisecondsTimeConverterFormatter
             x:Key="MillisecondsTimeConverter" />
+        <converters:VarNotNullToBoolConverter
+            x:Key="VarNotNullToBoolConverter" />
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -45,15 +47,22 @@
                             Mode="TwoWay" />
                     </ListView.SelectedItem>
                     <ListView.Resources>
-                        <ContextMenu x:Key="SpaceItemContextMenu">
-                            <MenuItem Header="Go to Space" Command="{Binding GoToThisSpaceCommand}"/>
-                            <MenuItem Header="Delete Space" Command="{Binding DeleteSpaceCommand}"/>
+                        <ContextMenu
+                            x:Key="SpaceItemContextMenu">
+                            <MenuItem
+                                Header="Go to Space"
+                                Command="{Binding GoToThisSpaceCommand}" />
+                            <MenuItem
+                                Header="Delete Space"
+                                Command="{Binding DeleteSpaceCommand}" />
                         </ContextMenu>
                     </ListView.Resources>
                     <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="ContextMenu"
-                                    Value="{StaticResource SpaceItemContextMenu}"/>
+                        <Style
+                            TargetType="ListViewItem">
+                            <Setter
+                                Property="ContextMenu"
+                                Value="{StaticResource SpaceItemContextMenu}" />
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.View>
@@ -103,15 +112,22 @@
                     VirtualizingPanel.IsVirtualizing="True"
                     ItemsSource="{Binding RegularDescriptions}">
                     <ListView.Resources>
-                        <ContextMenu x:Key="RegularDescriptionContextMenu">
-                            <MenuItem Header="Go to Description" Command="{Binding GoToThisDescriptionCommand}"/>
-                            <MenuItem Header="Delete Description" Command="{Binding DescriptionDeleteCommand}"/>
+                        <ContextMenu
+                            x:Key="RegularDescriptionContextMenu">
+                            <MenuItem
+                                Header="Go to Description"
+                                Command="{Binding GoToThisDescriptionCommand}" />
+                            <MenuItem
+                                Header="Delete Description"
+                                Command="{Binding DescriptionDeleteCommand}" />
                         </ContextMenu>
                     </ListView.Resources>
                     <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="ContextMenu"
-                                    Value="{StaticResource RegularDescriptionContextMenu}"/>
+                        <Style
+                            TargetType="ListViewItem">
+                            <Setter
+                                Property="ContextMenu"
+                                Value="{StaticResource RegularDescriptionContextMenu}" />
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.SelectedItem>
@@ -119,7 +135,7 @@
                             Path="SelectedRegularDescription"
                             UpdateSourceTrigger="PropertyChanged"
                             ValidatesOnDataErrors="True"
-                            Mode="TwoWay"/>
+                            Mode="TwoWay" />
                     </ListView.SelectedItem>
                     <ListView.View>
                         <GridView>
@@ -168,15 +184,22 @@
                     VirtualizingPanel.IsVirtualizing="True"
                     ItemsSource="{Binding ExtendedDescriptions}">
                     <ListView.Resources>
-                        <ContextMenu x:Key="ExtendedDescriptionContextMenu">
-                            <MenuItem Header="Go to Description" Command="{Binding GoToThisDescriptionCommand}"/>
-                            <MenuItem Header="Delete Description" Command="{Binding DescriptionDeleteCommand}"/>
+                        <ContextMenu
+                            x:Key="ExtendedDescriptionContextMenu">
+                            <MenuItem
+                                Header="Go to Description"
+                                Command="{Binding GoToThisDescriptionCommand}" />
+                            <MenuItem
+                                Header="Delete Description"
+                                Command="{Binding DescriptionDeleteCommand}" />
                         </ContextMenu>
                     </ListView.Resources>
                     <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="ContextMenu"
-                                    Value="{StaticResource ExtendedDescriptionContextMenu}"/>
+                        <Style
+                            TargetType="ListViewItem">
+                            <Setter
+                                Property="ContextMenu"
+                                Value="{StaticResource ExtendedDescriptionContextMenu}" />
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.SelectedItem>
@@ -232,7 +255,8 @@
             Grid.Column="0"
             Grid.Row="1"
             ScrollViewer.VerticalScrollBarVisibility="Auto"
-            TextWrapping="Wrap">
+            TextWrapping="Wrap"
+            IsEnabled="{Binding Path=SelectedItem, Converter={StaticResource VarNotNullToBoolConverter}}">
             <TextBox.Text>
                 <Binding
                     Path="SelectedItem.Text"
