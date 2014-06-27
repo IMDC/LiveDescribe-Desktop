@@ -64,8 +64,7 @@ namespace LiveDescribe.ViewModel
                     {
                         try
                         {
-                            var pf = ProjectFile.FromAbsolutePath(Project.GenerateDescriptionFilePath(),
-                                Project.Folders.Project);
+                            var pf = Project.GenerateDescriptionFile();
                             _recorder.RecordDescription(pf, ExtendedIsChecked, _mediaVideo.Position.TotalMilliseconds);
                             //save the current state so when the button is pressed again you can restore it back to that state
                             _previousVideoState = _mediaVideo.CurrentState;
