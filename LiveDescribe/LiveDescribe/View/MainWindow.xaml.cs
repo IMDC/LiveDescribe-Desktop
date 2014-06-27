@@ -492,6 +492,7 @@ namespace LiveDescribe.View
 
             descriptionCanvasViewModel.DescriptionCanvasMouseUpEvent += DescriptionCanvas_MouseUp;
             descriptionCanvasViewModel.DescriptionCanvasMouseMoveEvent += DescriptionCanvas_MouseMove;
+            descriptionCanvasViewModel.DescriptionCanvasMouseDownEvent += DescriptionCanvas_MouseDown;
             #endregion
 
             #region Event Listeners For DescriptionInfoTabViewModel
@@ -696,6 +697,17 @@ namespace LiveDescribe.View
             {
                 if (_descriptionActionState == DescriptionsActionState.Dragging)
                     DragDescriptionBeingModified(e.GetPosition(_descriptionCanvas).X);
+            }
+        }
+
+        private void DescriptionCanvas_MouseDown(object sender, MouseEventArgs e)
+        {
+            Console.WriteLine("TEST");
+            Console.WriteLine(DescriptionCanvasControl.DescriptionCanvas.ActualWidth);
+            //if we aren't dragging a description or space, we want to unselect them out of the list
+            if (_spacesActionState == SpacesActionState.None && _descriptionActionState == DescriptionsActionState.None)
+            {
+                _descriptionInfoTabViewModel.ClearSelection();
             }
         }
 

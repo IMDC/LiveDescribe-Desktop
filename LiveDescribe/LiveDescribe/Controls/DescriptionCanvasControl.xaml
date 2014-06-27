@@ -21,6 +21,7 @@
             <Canvas
                 Name="DescriptionCanvas"
                 HorizontalAlignment="Left"
+                Background="Transparent"
                 IsEnabled="{Binding Path=CurrentVideoState, Converter={StaticResource VideoStateToBoolConverter}}">
                 <ItemsControl
                     ItemsSource="{Binding AllDescriptions}">
@@ -167,6 +168,12 @@
                         <command:EventToCommand
                             Command="{Binding DescriptionCanvasMouseMoveCommand, Mode=OneWay}"
                             PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                    <i:EventTrigger
+                        EventName="MouseDown">
+                        <command:EventToCommand
+                            Command="{Binding DescriptionCanvasMouseDownCommand, Mode=OneWay}"
+                            PassEventArgsToCommand="True"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Canvas>

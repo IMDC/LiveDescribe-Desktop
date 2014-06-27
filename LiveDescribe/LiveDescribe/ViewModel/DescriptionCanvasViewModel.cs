@@ -15,6 +15,7 @@ namespace LiveDescribe.ViewModel
         #region Events
         public EventHandler<MouseEventArgs> DescriptionCanvasMouseUpEvent;
         public EventHandler<MouseEventArgs> DescriptionCanvasMouseMoveEvent;
+        public EventHandler<MouseEventArgs> DescriptionCanvasMouseDownEvent;
         #endregion
 
         public DescriptionCanvasViewModel(DescriptionCollectionViewModel descriptionCollectionViewModel, ILiveDescribePlayer videoMedia)
@@ -22,6 +23,7 @@ namespace LiveDescribe.ViewModel
             _descriptionCollectionViewModel = descriptionCollectionViewModel;
             DescriptionCanvasMouseUpCommand = new RelayCommand<MouseEventArgs>(DescriptionCanvasMouseUp, param => true);
             DescriptionCanvasMouseMoveCommand = new RelayCommand<MouseEventArgs>(DescriptionCanvasMouseMove, param => true);
+            DescriptionCanvasMouseDownCommand = new RelayCommand<MouseEventArgs>(DescriptionCanvasMouseDown, param => true);
             videoMedia.PropertyChanged += (sender, args) =>
             {
                 if (args.PropertyName.Equals("CurrentState"))
@@ -32,6 +34,7 @@ namespace LiveDescribe.ViewModel
         #region Commands
         public RelayCommand<MouseEventArgs> DescriptionCanvasMouseUpCommand { private set; get; }
         public RelayCommand<MouseEventArgs> DescriptionCanvasMouseMoveCommand { private set; get; }
+        public RelayCommand<MouseEventArgs> DescriptionCanvasMouseDownCommand { private set; get; }
         #endregion
 
         #region Binding Properties
@@ -61,6 +64,12 @@ namespace LiveDescribe.ViewModel
         public void DescriptionCanvasMouseMove(MouseEventArgs e)
         {
             EventHandler<MouseEventArgs> handler = DescriptionCanvasMouseMoveEvent;
+            if (handler != null) handler(this, e);
+        }
+
+        public void DescriptionCanvasMouseDown(MouseEventArgs e)
+        {
+            EventHandler<MouseEventArgs> handler = DescriptionCanvasMouseDownEvent;
             if (handler != null) handler(this, e);
         }
         #endregion
