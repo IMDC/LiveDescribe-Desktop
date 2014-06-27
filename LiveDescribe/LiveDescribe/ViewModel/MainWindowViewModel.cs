@@ -581,6 +581,7 @@ namespace LiveDescribe.ViewModel
                 if (result == MessageBoxResult.No) //Exit but don't save
                 {
                     Log.Info("User has chosen exit program and not save project");
+                    FileDeleter.DeleteUnusedDescriptionFiles(_project);
                     return true;
                 }
                 Log.Info("User has chosen not to exit program");

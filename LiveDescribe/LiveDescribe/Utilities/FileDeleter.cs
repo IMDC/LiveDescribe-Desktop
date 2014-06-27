@@ -1,4 +1,5 @@
-﻿using LiveDescribe.Model;
+﻿using System.Collections.Generic;
+using LiveDescribe.Model;
 using System.IO;
 using System.Reflection;
 
@@ -55,6 +56,32 @@ namespace LiveDescribe.Utilities
 
                 //TODO delete .wav description files.
             }
+        }
+
+        public static void DeleteUnusedDescriptionFiles(Project project)
+        {
+            string[] descriptionPaths = Directory.GetFiles(project.Folders.Descriptions.AbsolutePath, "*.wav");
+            var descriptions = FileReader.ReadDescriptionsFile(project);
+
+            foreach (var path in descriptionPaths)
+            {
+                if (!PathExistsInDescriptionList(path, descriptions))
+                {
+                    File.Delete(path);
+                }
+            }
+        }
+
+        private static bool PathExistsInDescriptionList(string path, List<Description> descriptions)
+        {
+            foreach (var desc in descriptions)
+            {
+                if (path.Equals(desc.AudioFile.AbsolutePath))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
