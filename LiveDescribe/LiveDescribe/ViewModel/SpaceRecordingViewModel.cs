@@ -181,7 +181,7 @@ namespace LiveDescribe.ViewModel
         private void StartRecording()
         {
             var pf = ProjectFile.FromAbsolutePath(Project.GenerateDescriptionFilePath(),
-                Project.Folders.Descriptions);
+                Project.Folders.Project);
             TokenizeSpaceText();
             CalculateWordTime();
             _wordTimeAccumulator = 0;
