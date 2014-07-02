@@ -80,13 +80,20 @@
 
                 <!--Main Grid Column Definitions-->
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
+                    <ColumnDefinition
+                        Width="130" />
+                    <ColumnDefinition
+                        Width="130*" />
+                    <ColumnDefinition
+                        Width="130*" />
+                    <ColumnDefinition
+                        Width="130*" />
+                    <ColumnDefinition
+                        Width="130*" />
+                    <ColumnDefinition
+                        Width="130*" />
+                    <ColumnDefinition
+                        Width="130*" />
                 </Grid.ColumnDefinitions>
 
                 <controls:DescriptionRecordingControl
