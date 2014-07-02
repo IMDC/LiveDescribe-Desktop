@@ -201,6 +201,9 @@ namespace LiveDescribe.Model
             get { return _isSelected; }
         }
 
+        /// <summary>
+        /// Represents whether a description has been recorded in the duration of this space.
+        /// </summary>
         public bool IsRecordedOver
         {
             set

@@ -72,16 +72,38 @@
                                     <Style
                                         TargetType="Rectangle">
                                         <Style.Triggers>
-                                            <DataTrigger
-                                                Binding="{Binding IsSelected}"
-                                                Value="false">
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition
+                                                        Binding="{Binding IsSelected}"
+                                                        Value="false" />
+                                                    <Condition
+                                                        Binding="{Binding IsRecordedOver}"
+                                                        Value="true"/>
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter
+                                                    Property="Fill"
+                                                    Value="DimGray" />
+                                                <Setter
+                                                    Property="Opacity"
+                                                    Value="0.2" />
+                                            </MultiDataTrigger>
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition
+                                                        Binding="{Binding IsSelected}"
+                                                        Value="false" />
+                                                    <Condition
+                                                        Binding="{Binding IsRecordedOver}"
+                                                        Value="false" />
+                                                </MultiDataTrigger.Conditions>
                                                 <Setter
                                                     Property="Fill"
                                                     Value="Blue" />
                                                 <Setter
                                                     Property="Opacity"
-                                                    Value="0.2" />
-                                            </DataTrigger>
+                                                    Value="0.25" />
+                                            </MultiDataTrigger>
                                             <DataTrigger
                                                 Binding="{Binding IsSelected}"
                                                 Value="true">
