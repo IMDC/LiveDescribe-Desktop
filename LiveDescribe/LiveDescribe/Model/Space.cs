@@ -42,19 +42,11 @@ namespace LiveDescribe.Model
         #endregion
 
         #region Constructors
-        public Space(double starttime, double endtime)
+        public Space(double starttime, double endtime) : this()
         {
-            IsSelected = false;
             StartInVideo = starttime;
             EndInVideo = endtime;
             UpdateDuration();
-
-            DeleteSpaceCommand = new RelayCommand(DeleteSpace, () => true);
-
-
-            SpaceMouseUpCommand = new RelayCommand<MouseEventArgs>(SpaceMouseUp, param => true);
-            SpaceMouseDownCommand = new RelayCommand<MouseEventArgs>(SpaceMouseDown, param => true);
-            SpaceMouseMoveCommand = new RelayCommand<MouseEventArgs>(SpaceMouseMove, param => true);
         }
 
         public Space()
@@ -62,7 +54,6 @@ namespace LiveDescribe.Model
             IsSelected = false;
 
             DeleteSpaceCommand = new RelayCommand(DeleteSpace, () => true);
-            
             GoToThisSpaceCommand = new RelayCommand(GoToThisSpace, () => true);
 
             SpaceMouseUpCommand = new RelayCommand<MouseEventArgs>(SpaceMouseUp, param => true);
