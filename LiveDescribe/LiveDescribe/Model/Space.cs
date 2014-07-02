@@ -26,6 +26,7 @@ namespace LiveDescribe.Model
         private double _height;
         private double _width;
         private bool _isSelected;
+        private bool _isRecordedOver;
         #endregion
 
         #region Event Handlers
@@ -60,8 +61,6 @@ namespace LiveDescribe.Model
             SpaceMouseDownCommand = new RelayCommand<MouseEventArgs>(SpaceMouseDown, param => true);
             SpaceMouseMoveCommand = new RelayCommand<MouseEventArgs>(SpaceMouseMove, param => true);
         }
-
-
         #endregion
 
         #region Commands
@@ -200,6 +199,16 @@ namespace LiveDescribe.Model
                 NotifyPropertyChanged();
             }
             get { return _isSelected; }
+        }
+
+        public bool IsRecordedOver
+        {
+            set
+            {
+                _isRecordedOver = value;
+                NotifyPropertyChanged();
+            }
+            get { return _isRecordedOver; }
         }
 
         #endregion

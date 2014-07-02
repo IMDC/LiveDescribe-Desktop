@@ -114,6 +114,17 @@
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
+                            <GridViewColumn
+                                Header="Completed">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox
+                                            IsThreeState="False"
+                                            IsChecked="{Binding Path=IsRecordedOver,
+                                            Mode=TwoWay}" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
                         </GridView>
                     </ListView.View>
                 </ListView>
@@ -204,7 +215,7 @@
                     </ListView.View>
                 </ListView>
             </TabItem>
-            
+
             <!--Extended Description Tab-->
             <TabItem
                 Name="ExtendedDescriptionsTabItem"

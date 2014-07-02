@@ -656,6 +656,7 @@ namespace LiveDescribe.ViewModel
                 case "Text":
                 case "AudioData":
                 case "Header":
+                case "IsRecordedOver":
                     ProjectModified = true;
                     break;
             }
