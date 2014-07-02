@@ -32,6 +32,8 @@
             Grid.Column="0"
             Grid.ColumnSpan="2"
             SelectedIndex="{Binding TabSelectedIndex}">
+
+            <!--Space Tab-->
             <TabItem
                 Name="SpacesTabItem"
                 Header="Spaces">
@@ -100,10 +102,24 @@
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
+                            <GridViewColumn
+                                Header="Duration">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock
+                                            Text="{Binding Path=Duration,
+                                            Converter={StaticResource MillisecondsTimeConverter},
+                                            Mode=OneWay}"
+                                            FontWeight="Bold" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
                         </GridView>
                     </ListView.View>
                 </ListView>
             </TabItem>
+
+            <!--Description Tab-->
             <TabItem
                 Name="DescriptionsTabItem"
                 Header="Descriptions">
@@ -172,10 +188,24 @@
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
+                            <GridViewColumn
+                                Header="Duration">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock
+                                            Text="{Binding Path=Duration,
+                                            Converter={StaticResource MillisecondsTimeConverter},
+                                            Mode=OneWay}"
+                                            FontWeight="Bold" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
                         </GridView>
                     </ListView.View>
                 </ListView>
             </TabItem>
+            
+            <!--Extended Description Tab-->
             <TabItem
                 Name="ExtendedDescriptionsTabItem"
                 Header="Extended Descriptions">
@@ -238,6 +268,18 @@
                                     <DataTemplate>
                                         <TextBlock
                                             Text="{Binding Path=EndInVideo,
+                                            Converter={StaticResource MillisecondsTimeConverter},
+                                            Mode=OneWay}"
+                                            FontWeight="Bold" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn
+                                Header="Duration">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock
+                                            Text="{Binding Path=WaveFileDuration,
                                             Converter={StaticResource MillisecondsTimeConverter},
                                             Mode=OneWay}"
                                             FontWeight="Bold" />

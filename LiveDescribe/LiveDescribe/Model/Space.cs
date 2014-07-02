@@ -19,6 +19,7 @@ namespace LiveDescribe.Model
         private double _startInVideo;
         private string _text;
         private double _endInVideo;
+        private double _duration;
         private double _length;
         private double _x;
         private double _y;
@@ -46,6 +47,8 @@ namespace LiveDescribe.Model
             IsSelected = false;
             StartInVideo = starttime;
             EndInVideo = endtime;
+            UpdateDuration();
+
             DeleteSpaceCommand = new RelayCommand(DeleteSpace, () => true);
 
 
@@ -111,6 +114,7 @@ namespace LiveDescribe.Model
             set
             {
                 _startInVideo = value;
+                UpdateDuration();
                 NotifyPropertyChanged();
             }
             get { return _startInVideo; }
@@ -124,14 +128,21 @@ namespace LiveDescribe.Model
             set
             {
                 _endInVideo = value;
+                UpdateDuration();
                 NotifyPropertyChanged();
             }
             get { return _endInVideo; }
         }
 
+        [JsonIgnore]
         public double Duration
         {
-            get { return EndInVideo - StartInVideo; }
+            set
+            {
+                _duration = value;
+                NotifyPropertyChanged();
+            }
+            get { return _duration; }
         }
 
         [JsonIgnore]
@@ -202,7 +213,7 @@ namespace LiveDescribe.Model
 
         #endregion
 
-        #region BindingFunctions
+        #region Command Methods
 
         /// <summary>
         /// Called when a delete space command is executed
@@ -247,6 +258,14 @@ namespace LiveDescribe.Model
         {
             EventHandler handler = GoToThisSpaceEvent;
             if (handler != null) handler(this, EventArgs.Empty);
+        }
+        #endregion
+
+        #region Methods
+
+        private void UpdateDuration()
+        {
+            Duration = EndInVideo - StartInVideo;
         }
         #endregion
 
