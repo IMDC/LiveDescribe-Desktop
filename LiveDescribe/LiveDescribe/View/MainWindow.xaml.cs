@@ -702,8 +702,6 @@ namespace LiveDescribe.View
 
         private void DescriptionCanvas_MouseDown(object sender, MouseEventArgs e)
         {
-            Console.WriteLine("TEST");
-            Console.WriteLine(DescriptionCanvasControl.DescriptionCanvas.ActualWidth);
             //if we aren't dragging a description or space, we want to unselect them out of the list
             if (_spacesActionState == SpacesActionState.None && _descriptionActionState == DescriptionsActionState.None)
             {
