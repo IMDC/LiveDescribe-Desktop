@@ -255,7 +255,6 @@ namespace LiveDescribe.View
                         return;
                     }
 
-
                     var xPosition = Mouse.GetPosition(_audioCanvas).X;
                     var middleOfMarker = xPosition - MarkerOffset;
 
@@ -702,8 +701,6 @@ namespace LiveDescribe.View
 
         private void DescriptionCanvas_MouseDown(object sender, MouseEventArgs e)
         {
-            Console.WriteLine("TEST");
-            Console.WriteLine(DescriptionCanvasControl.DescriptionCanvas.ActualWidth);
             //if we aren't dragging a description or space, we want to unselect them out of the list
             if (_spacesActionState == SpacesActionState.None && _descriptionActionState == DescriptionsActionState.None)
             {
@@ -796,15 +793,14 @@ namespace LiveDescribe.View
             double singlePageWidth = 0;
             double scrolledAmount = 0;
 
-            Dispatcher.Invoke(delegate
+           DispatcherHelper.UIDispatcher.Invoke(() =>
             {
                 singlePageWidth = TimeLineScrollViewer.ActualWidth;
                 scrolledAmount = TimeLineScrollViewer.HorizontalOffset;
             });
             double scrollOffsetRight = PageScrollPercent * singlePageWidth;
-            if (!(xPos - scrolledAmount >= (scrollOffsetRight))) return false;
-
-            Dispatcher.Invoke(() => TimeLineScrollViewer.ScrollToHorizontalOffset(scrollOffsetRight + scrolledAmount));
+            if (!((xPos - scrolledAmount) >= scrollOffsetRight)) return false;
+            DispatcherHelper.UIDispatcher.Invoke(() => TimeLineScrollViewer.ScrollToHorizontalOffset(scrollOffsetRight + scrolledAmount));
             return true;
         }
 
