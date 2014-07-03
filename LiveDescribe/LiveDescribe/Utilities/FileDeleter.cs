@@ -60,6 +60,9 @@ namespace LiveDescribe.Utilities
 
         public static void DeleteUnusedDescriptionFiles(Project project)
         {
+            if (project == null)
+                return;
+
             string[] descriptionPaths = Directory.GetFiles(project.Folders.Descriptions.AbsolutePath, "*.wav");
             var descriptions = FileReader.ReadDescriptionsFile(project);
 
