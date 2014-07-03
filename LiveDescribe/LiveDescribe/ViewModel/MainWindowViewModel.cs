@@ -112,7 +112,7 @@ namespace LiveDescribe.ViewModel
                     }
 
                     Log.Info("Closed Project");
-                    FileDeleter.DeleteUnusedDescriptionFiles(_project);
+                    CleanUpUnusedDescriptions();
                     _descriptioncollectionviewmodel.CloseDescriptionCollectionViewModel();
                     _mediaControlViewModel.CloseMediaControlViewModel();
                     _spacecollectionviewmodel.CloseSpaceCollectionViewModel();
@@ -590,13 +590,35 @@ namespace LiveDescribe.ViewModel
                 if (result == MessageBoxResult.No) //Exit but don't save
                 {
                     Log.Info("User has chosen exit program and not save project");
-                    FileDeleter.DeleteUnusedDescriptionFiles(_project);
+                    CleanUpUnusedDescriptions();
                     return true;
                 }
                 Log.Info("User has chosen not to exit program");
                 return false;
             }
+            CleanUpUnusedDescriptions();
             return true;
+        }
+
+        /// <summary>
+        /// Attempt to delete all unused descriptions in the descriptions folder
+        /// </summary>
+        private void CleanUpUnusedDescriptions()
+        {
+            try
+            {
+                if (_descriptioncollectionviewmodel.Recorder.IsRecording)
+                    _descriptioncollectionviewmodel.Recorder.StopRecording();
+
+                _descriptiontimer.Stop();
+                DescriptionPlayer.Dispose();
+                FileDeleter.DeleteUnusedDescriptionFiles(_project);
+            }
+            catch (IOException e)
+            {
+                Log.Warn("File could not be deleted",e);
+            }
+            
         }
 
         #endregion

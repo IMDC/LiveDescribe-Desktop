@@ -161,6 +161,14 @@ namespace LiveDescribe.Utilities
                 OnDescriptionFinishedPlaying(_playingDescription);
             }
         }
+
+        public void Dispose()
+        {
+            if (_descriptionStream == null)
+                return;
+            _descriptionStream.Stop();
+            _descriptionStream.Dispose();
+        }
         #endregion
 
         #region Event Invokations
