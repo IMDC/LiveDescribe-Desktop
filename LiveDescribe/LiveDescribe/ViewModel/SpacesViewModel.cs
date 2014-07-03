@@ -1,4 +1,5 @@
-﻿using GalaSoft.MvvmLight;
+﻿using System.Collections.Specialized;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Events;
 using LiveDescribe.Interfaces;
@@ -32,6 +33,23 @@ namespace LiveDescribe.ViewModel
         public SpaceCollectionViewModel(ILiveDescribePlayer videoPlayer)
         {
             Spaces = new ObservableCollection<Space>();
+            Spaces.CollectionChanged += (sender, args) =>
+            {
+                switch (args.Action)
+                {
+                    case NotifyCollectionChangedAction.Add:
+                        EnumerateSpaces(args.NewStartingIndex);
+                        break;
+                    case NotifyCollectionChangedAction.Remove:
+                    case NotifyCollectionChangedAction.Move:
+                        EnumerateSpaces(args.OldStartingIndex);
+                        break;
+                    case NotifyCollectionChangedAction.Reset:
+                        EnumerateSpaces();
+                        break;
+                }
+            };
+
             _videoPlayer = videoPlayer;
 
             AddSpaceCommand = new RelayCommand(AddSpace, () => true);
@@ -89,7 +107,7 @@ namespace LiveDescribe.ViewModel
         }
         #endregion
 
-        #region Helper Methods
+        #region Methods
 
         /// <summary>
         /// Setup all the events on space that don't require any info from the UI
@@ -103,6 +121,19 @@ namespace LiveDescribe.ViewModel
         public void CloseSpaceCollectionViewModel()
         {
             Spaces.Clear();
+        }
+
+        /// <summary>
+        /// Sets the indices of all the spaces in this collection from the starting index. Indices
+        /// are 1-indexed.
+        /// </summary>
+        /// <param name="startingIndex"></param>
+        private void EnumerateSpaces(int startingIndex = 0)
+        {
+            for (int i = startingIndex; i < Spaces.Count; i++)
+            {
+                Spaces[i].Index = i + 1;
+            }
         }
         #endregion
 

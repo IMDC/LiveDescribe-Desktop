@@ -27,6 +27,7 @@ namespace LiveDescribe.Model
         private double _width;
         private bool _isSelected;
         private bool _isRecordedOver;
+        private int _index;
         #endregion
 
         #region Event Handlers
@@ -214,6 +215,19 @@ namespace LiveDescribe.Model
             get { return _isRecordedOver; }
         }
 
+        /// <summary>
+        /// The 1-based ndex of this space in a collection.
+        /// </summary>
+        [JsonIgnore]
+        public int Index
+        {
+            set
+            {
+                _index = value;
+                NotifyPropertyChanged();
+            }
+            get { return _index; }
+        }
         #endregion
 
         #region Command Methods
