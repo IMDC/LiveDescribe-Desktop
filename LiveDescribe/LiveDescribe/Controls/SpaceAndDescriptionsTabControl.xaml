@@ -13,6 +13,58 @@
             x:Key="MillisecondsTimeConverter" />
         <converters:VarNotNullToBoolConverter
             x:Key="VarNotNullToBoolConverter" />
+
+        <Style
+            x:Key="InfoTabTextBlockStyle"
+            TargetType="TextBlock">
+            <Setter
+                Property="FontWeight"
+                Value="Bold" />
+        </Style>
+
+        <DataTemplate
+            x:Key="ItemIndexTemplate">
+            <TextBlock
+                Style="{StaticResource InfoTabTextBlockStyle}"
+                Text="{Binding Path=Index}" 
+                Width="30"/>
+        </DataTemplate>
+        <DataTemplate
+            x:Key="StartInVideoTemplate">
+            <TextBlock
+                Style="{StaticResource InfoTabTextBlockStyle}"
+                Text="{Binding Path=StartInVideo,
+                    Converter={StaticResource MillisecondsTimeConverter},
+                    Mode=OneWay}" />
+        </DataTemplate>
+        <DataTemplate
+            x:Key="EndInVideoTemplate">
+            <TextBlock
+                Style="{StaticResource InfoTabTextBlockStyle}"
+                Text="{Binding Path=EndInVideo,
+                    Converter={StaticResource MillisecondsTimeConverter},
+                    Mode=OneWay}" />
+        </DataTemplate>
+        <DataTemplate
+            x:Key="DurationTemplate">
+            <TextBlock
+                Style="{StaticResource InfoTabTextBlockStyle}"
+                Text="{Binding Path=Duration,
+                    Converter={StaticResource MillisecondsTimeConverter},
+                    Mode=OneWay}" />
+        </DataTemplate>
+        <DataTemplate
+            x:Key="TextDataTemplate">
+            <TextBlock
+                Text="{Binding Text}" />
+        </DataTemplate>
+        <DataTemplate
+            x:Key="CompleteCheckboxTemplate">
+            <CheckBox
+                IsThreeState="False"
+                IsChecked="{Binding Path=IsRecordedOver,
+                    Mode=TwoWay}" />
+        </DataTemplate>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -71,71 +123,22 @@
                         <GridView>
                             <GridViewColumn
                                 Header="#"
-                                Width="40">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock
-                                            Text="{Binding Path=Index}"
-                                            FontWeight="Bold" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                                CellTemplate="{StaticResource ItemIndexTemplate}" />
                             <GridViewColumn
-                                Header="Space Text">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock
-                                            Text="{Binding Text}" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                                Header="Start In Video"
+                                CellTemplate="{StaticResource StartInVideoTemplate}" />
                             <GridViewColumn
-                                Header="Start In Video">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock
-                                            Text="{Binding Path=StartInVideo,
-                                            Converter={StaticResource MillisecondsTimeConverter},
-                                            Mode=OneWay}"
-                                            FontWeight="Bold" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                                Header="End In Video"
+                                CellTemplate="{StaticResource EndInVideoTemplate}" />
                             <GridViewColumn
-                                Header="End In Video">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock
-                                            Text="{Binding Path=EndInVideo,
-                                            Converter={StaticResource MillisecondsTimeConverter},
-                                            Mode=OneWay}"
-                                            FontWeight="Bold" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                                Header="Duration"
+                                CellTemplate="{StaticResource DurationTemplate}" />
                             <GridViewColumn
-                                Header="Duration">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock
-                                            Text="{Binding Path=Duration,
-                                            Converter={StaticResource MillisecondsTimeConverter},
-                                            Mode=OneWay}"
-                                            FontWeight="Bold" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                                Header="Space Text"
+                                CellTemplate="{StaticResource TextDataTemplate}" />
                             <GridViewColumn
-                                Header="Completed">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <CheckBox
-                                            IsThreeState="False"
-                                            IsChecked="{Binding Path=IsRecordedOver,
-                                            Mode=TwoWay}" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                                Header="Completed"
+                                CellTemplate="{StaticResource CompleteCheckboxTemplate}"/>
                         </GridView>
                     </ListView.View>
                 </ListView>
@@ -179,60 +182,19 @@
                         <GridView>
                             <GridViewColumn
                                 Header="#"
-                                Width="40">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock
-                                            Text="{Binding Path=Index}"
-                                            FontWeight="Bold" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                                CellTemplate="{StaticResource ItemIndexTemplate}" />
                             <GridViewColumn
-                                Header="Description Text">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock
-                                            Text="{Binding Text}" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                                Header="Start In Video"
+                                CellTemplate="{StaticResource StartInVideoTemplate}" />
                             <GridViewColumn
-                                Header="Start In Video">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock
-                                            Text="{Binding Path=StartInVideo,
-                                            Converter={StaticResource MillisecondsTimeConverter},
-                                            Mode=OneWay}"
-                                            FontWeight="Bold" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                                Header="End In Video"
+                                CellTemplate="{StaticResource EndInVideoTemplate}" />
                             <GridViewColumn
-                                Header="End In Video">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock
-                                            Text="{Binding Path=EndInVideo,
-                                            Converter={StaticResource MillisecondsTimeConverter},
-                                            Mode=OneWay}"
-                                            FontWeight="Bold" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                                Header="Duration"
+                                CellTemplate="{StaticResource DurationTemplate}" />
                             <GridViewColumn
-                                Header="Duration">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock
-                                            Text="{Binding Path=Duration,
-                                            Converter={StaticResource MillisecondsTimeConverter},
-                                            Mode=OneWay}"
-                                            FontWeight="Bold" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                                Header="Description Text"
+                                CellTemplate="{StaticResource TextDataTemplate}" />
                         </GridView>
                     </ListView.View>
                 </ListView>
@@ -276,60 +238,19 @@
                         <GridView>
                             <GridViewColumn
                                 Header="#"
-                                Width="40">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock
-                                            Text="{Binding Path=Index}"
-                                            FontWeight="Bold" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                                CellTemplate="{StaticResource ItemIndexTemplate}" />
                             <GridViewColumn
-                                Header="Description Text">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock
-                                            Text="{Binding Text}" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                                Header="Start In Video"
+                                CellTemplate="{StaticResource StartInVideoTemplate}" />
                             <GridViewColumn
-                                Header="Start In Video">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock
-                                            Text="{Binding Path=StartInVideo,
-                                            Converter={StaticResource MillisecondsTimeConverter},
-                                            Mode=OneWay}"
-                                            FontWeight="Bold" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                                Header="End In Video"
+                                CellTemplate="{StaticResource EndInVideoTemplate}" />
                             <GridViewColumn
-                                Header="End In Video">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock
-                                            Text="{Binding Path=EndInVideo,
-                                            Converter={StaticResource MillisecondsTimeConverter},
-                                            Mode=OneWay}"
-                                            FontWeight="Bold" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                                Header="Duration"
+                                CellTemplate="{StaticResource DurationTemplate}" />
                             <GridViewColumn
-                                Header="Duration">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock
-                                            Text="{Binding Path=WaveFileDuration,
-                                            Converter={StaticResource MillisecondsTimeConverter},
-                                            Mode=OneWay}"
-                                            FontWeight="Bold" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                                Header="Description Text"
+                                CellTemplate="{StaticResource TextDataTemplate}" />
                         </GridView>
                     </ListView.View>
                 </ListView>
