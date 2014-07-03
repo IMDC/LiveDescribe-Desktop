@@ -71,8 +71,14 @@
                         <GridView>
                             <GridViewColumn
                                 Header="#"
-                                Width="40"
-                                DisplayMemberBinding="{Binding Index}">
+                                Width="40">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock
+                                            Text="{Binding Path=Index}"
+                                            FontWeight="Bold" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
                             </GridViewColumn>
                             <GridViewColumn
                                 Header="Space Text">
@@ -172,6 +178,17 @@
                     <ListView.View>
                         <GridView>
                             <GridViewColumn
+                                Header="#"
+                                Width="40">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock
+                                            Text="{Binding Path=Index}"
+                                            FontWeight="Bold" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn
                                 Header="Description Text">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
@@ -257,6 +274,17 @@
                     </ListView.SelectedItem>
                     <ListView.View>
                         <GridView>
+                            <GridViewColumn
+                                Header="#"
+                                Width="40">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock
+                                            Text="{Binding Path=Index}"
+                                            FontWeight="Bold" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
                             <GridViewColumn
                                 Header="Description Text">
                                 <GridViewColumn.CellTemplate>

@@ -8,7 +8,7 @@ using System.Windows.Input;
 
 namespace LiveDescribe.Model
 {
-    public class Space : INotifyPropertyChanged, IDescribableInterval
+    public class Space : INotifyPropertyChanged, IDescribableInterval, IListIndexable
     {
         #region Logger
         private static readonly log4net.ILog Log = log4net.LogManager.GetLogger

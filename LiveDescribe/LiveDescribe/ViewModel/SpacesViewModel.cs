@@ -7,6 +7,7 @@ using LiveDescribe.Model;
 using System;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using LiveDescribe.Utilities;
 
 namespace LiveDescribe.ViewModel
 {
@@ -16,6 +17,7 @@ namespace LiveDescribe.ViewModel
 
         #region Instance Variables
         private ObservableCollection<Space> _spaces;
+        private ObservableCollectionIndexer<Space> _indexer; 
         private readonly ILiveDescribePlayer _videoPlayer;
         #endregion
 
@@ -33,22 +35,7 @@ namespace LiveDescribe.ViewModel
         public SpaceCollectionViewModel(ILiveDescribePlayer videoPlayer)
         {
             Spaces = new ObservableCollection<Space>();
-            Spaces.CollectionChanged += (sender, args) =>
-            {
-                switch (args.Action)
-                {
-                    case NotifyCollectionChangedAction.Add:
-                        EnumerateSpaces(args.NewStartingIndex);
-                        break;
-                    case NotifyCollectionChangedAction.Remove:
-                    case NotifyCollectionChangedAction.Move:
-                        EnumerateSpaces(args.OldStartingIndex);
-                        break;
-                    case NotifyCollectionChangedAction.Reset:
-                        EnumerateSpaces();
-                        break;
-                }
-            };
+            _indexer = new ObservableCollectionIndexer<Space>(Spaces);
 
             _videoPlayer = videoPlayer;
 
@@ -121,19 +108,6 @@ namespace LiveDescribe.ViewModel
         public void CloseSpaceCollectionViewModel()
         {
             Spaces.Clear();
-        }
-
-        /// <summary>
-        /// Sets the indices of all the spaces in this collection from the starting index. Indices
-        /// are 1-indexed.
-        /// </summary>
-        /// <param name="startingIndex"></param>
-        private void EnumerateSpaces(int startingIndex = 0)
-        {
-            for (int i = startingIndex; i < Spaces.Count; i++)
-            {
-                Spaces[i].Index = i + 1;
-            }
         }
         #endregion
 
