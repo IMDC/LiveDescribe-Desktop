@@ -104,6 +104,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\AudioCanvas.cs" />
     <Compile Include="Controls\AudioCanvasControl.xaml.cs">
       <DependentUpon>AudioCanvasControl.xaml</DependentUpon>
     </Compile>
@@ -151,6 +152,7 @@
     <Compile Include="Utilities\AudioAnalyzer.cs" />
     <Compile Include="Utilities\CommandExtensions.cs" />
     <Compile Include="Utilities\CopyFileProgressChangedEventArgs.cs" />
+    <Compile Include="Utilities\CustomCursors.cs" />
     <Compile Include="Utilities\DescriptionPlayer.cs" />
     <Compile Include="Utilities\DescriptionRecorder.cs" />
     <Compile Include="Utilities\FileDeleter.cs" />

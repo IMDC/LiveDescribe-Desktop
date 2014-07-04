@@ -19,21 +19,21 @@
             Name="AudioCanvasBorder"
             BorderBrush="Black"
             BorderThickness="1">
-            <Canvas
+            <controls:AudioCanvas
                 Background="Transparent"
                 VirtualizingPanel.IsVirtualizing="True"
-                Name="AudioCanvas"
+                x:Name="AudioCanvas"
                 HorizontalAlignment="Left"
                 IsEnabled="{Binding Path=CurrentVideoState, Converter={StaticResource VideoStateToBoolConverter}}">
 
-                <Canvas.ContextMenu>
+                <controls:AudioCanvas.ContextMenu>
                     <ContextMenu>
                         <MenuItem
                             DataContext="{Binding SpaceCollectionViewModel}"
                             Header="Add Space"
                             Command="{Binding GetNewSpaceTime}" />
                     </ContextMenu>
-                </Canvas.ContextMenu>
+                </controls:AudioCanvas.ContextMenu>
 
                 <ItemsControl
                     Name="SpacesItemControl"
@@ -61,7 +61,7 @@
                     </ItemsControl.ItemContainerStyle>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <controls:SpaceControl/>
+                            <controls:SpaceControl Container="{Binding ElementName=AudioCanvas}" Duration="{Binding Path=VideoDuration, ElementName=AudioCanvas}"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
@@ -94,7 +94,7 @@
                             PassEventArgsToCommand="True" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
-            </Canvas>
+            </controls:AudioCanvas>
         </Border>
     </Grid>
 </UserControl>

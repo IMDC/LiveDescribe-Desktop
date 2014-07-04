@@ -8,7 +8,12 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:command="http://www.galasoft.ch/mvvmlight">
     <Grid>
-        <Rectangle>
+        <Rectangle
+            Name="Space"
+            Loaded="Space_Loaded"
+            MouseDown="Space_MouseDown"
+            MouseUp="Space_MouseUp"
+            MouseMove="Space_MouseMove">
             <Rectangle.ContextMenu>
                 <ContextMenu>
                     <MenuItem
@@ -65,7 +70,7 @@
                     </Style.Triggers>
                 </Style>
             </Rectangle.Style>
-            <i:Interaction.Triggers>
+         <!--   <i:Interaction.Triggers>
                 <i:EventTrigger
                     EventName="MouseDown">
                     <command:EventToCommand
@@ -84,7 +89,7 @@
                         Command="{Binding SpaceMouseMoveCommand, Mode=OneWay}"
                         PassEventArgsToCommand="True" />
                 </i:EventTrigger>
-            </i:Interaction.Triggers>
+            </i:Interaction.Triggers> -->
         </Rectangle>
     </Grid>
 </UserControl>
