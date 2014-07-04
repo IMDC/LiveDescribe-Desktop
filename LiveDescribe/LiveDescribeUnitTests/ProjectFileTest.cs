@@ -1,4 +1,5 @@
-﻿using LiveDescribe.Model;
+﻿using System.IO;
+using LiveDescribe.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LiveDescribeUnitTests
@@ -157,6 +158,42 @@ namespace LiveDescribeUnitTests
             //Assert
             Assert.AreEqual(expectedRelativePath1, pf1.RelativePath);
             Assert.AreEqual(expectedRelativePath1, pf1a.RelativePath);
+        }
+
+        /// <summary>
+        /// Tests the creation of project files when the relative path has a space in it. URIs
+        /// will sanitize spaces by replacing them with a %20. This test ensures that all spaces
+        /// are left as spaces.
+        /// </summary>
+        [TestMethod]
+        public void ProjectFile_PathsWithSpacesTest()
+        {
+            //Arrange
+            const string projectName = "Space Test";
+            const string videoFile = "Wildlife.wmv";
+            const string projectPath = "C:\\Users\\imdc\\Desktop\\LiveDescribeTest";
+            const string expectedRelativePathStartingString = "descriptions/Space Test_desc_";
+
+            Project p;
+            ProjectFile descriptionFile1;
+            ProjectFile descriptionFile1a;
+            ProjectFile descriptionFile2;
+
+            //Act
+            p = new Project(projectName, videoFile, projectPath);
+            descriptionFile1 = p.GenerateDescriptionFile();
+            descriptionFile1a = ProjectFile.FromAbsolutePath(descriptionFile1.AbsolutePath, p.Folders.Project);
+            descriptionFile2 = ProjectFile.FromRelativePath(descriptionFile1.RelativePath, p.Folders.Project);
+
+            //Assert
+            Assert.IsTrue(descriptionFile1.RelativePath.StartsWith(expectedRelativePathStartingString));
+            Assert.IsFalse(descriptionFile1.RelativePath.Contains("%20"));
+
+            Assert.IsTrue(descriptionFile1a.RelativePath.StartsWith(expectedRelativePathStartingString));
+            Assert.IsFalse(descriptionFile1a.RelativePath.Contains("%20"));
+
+            Assert.IsTrue(descriptionFile2.RelativePath.StartsWith(expectedRelativePathStartingString));
+            Assert.IsFalse(descriptionFile2.RelativePath.Contains("%20"));
         }
 
         /// <summary>
