@@ -108,6 +108,7 @@
     <Compile Include="Controls\AudioCanvasControl.xaml.cs">
       <DependentUpon>AudioCanvasControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\DescriptionCanvas.cs" />
     <Compile Include="Controls\DescriptionCanvasControl.xaml.cs">
       <DependentUpon>DescriptionCanvasControl.xaml</DependentUpon>
     </Compile>

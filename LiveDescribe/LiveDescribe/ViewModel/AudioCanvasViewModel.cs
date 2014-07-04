@@ -16,7 +16,6 @@ namespace LiveDescribe.ViewModel
         private LiveDescribeVideoStates _currentState;
 
         #region Events
-
         public EventHandler<MouseEventArgs> AudioCanvasMouseDownEvent;
         public EventHandler<MouseEventArgs> AudioCanvasMouseRightButtonDownEvent;
         #endregion

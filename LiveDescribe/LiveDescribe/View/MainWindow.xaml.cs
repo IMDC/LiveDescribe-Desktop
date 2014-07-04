@@ -498,7 +498,7 @@ namespace LiveDescribe.View
         private void AudioCanvas_OnMouseDown(object sender, MouseEventArgs e)
         {
             //if we aren't dragging a description or space, we want to unselect them out of the list
-            if (_audioCanvas.CurrentSpaceActionState == AudioCanvas.SpacesActionState.None && _descriptionActionState == DescriptionsActionState.None)
+            if (_audioCanvas.CurrentActionState == AudioCanvas.ActionState.None && _descriptionActionState == DescriptionsActionState.None)
                 _descriptionInfoTabViewModel.ClearSelection();
         }
 
@@ -534,7 +534,7 @@ namespace LiveDescribe.View
         private void DescriptionCanvas_MouseDown(object sender, MouseEventArgs e)
         {
             //if we aren't dragging a description or space, we want to unselect them out of the list
-            if (_audioCanvas.CurrentSpaceActionState == AudioCanvas.SpacesActionState.None && _descriptionActionState == DescriptionsActionState.None)
+            if (_audioCanvas.CurrentActionState == AudioCanvas.ActionState.None && _descriptionActionState == DescriptionsActionState.None)
                 _descriptionInfoTabViewModel.ClearSelection();
 
         }

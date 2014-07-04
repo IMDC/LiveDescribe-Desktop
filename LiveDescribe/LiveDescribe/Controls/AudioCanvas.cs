@@ -11,7 +11,7 @@ namespace LiveDescribe.Controls
     public class AudioCanvas : Canvas
     {
 
-        public enum SpacesActionState { None, Dragging, ResizingEndOfSpace, ResizingBeginningOfSpace };
+        public enum ActionState { None, Dragging, ResizingEndOfItem, ResizingBeginningOfItem };
 
         public static readonly DependencyProperty VideoDurationProperty =
           DependencyProperty.Register("VideoDuration", typeof(double), typeof(SpaceControl));
@@ -24,6 +24,6 @@ namespace LiveDescribe.Controls
             set { SetValue(VideoDurationProperty, value); } 
         }
 
-        public SpacesActionState CurrentSpaceActionState { get; set; }
+        public ActionState CurrentActionState { get; set; }
     }
 }

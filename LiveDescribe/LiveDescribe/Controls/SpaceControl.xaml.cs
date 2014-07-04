@@ -56,7 +56,7 @@ namespace LiveDescribe.Controls
         private void Space_Loaded(object sender, RoutedEventArgs e)
         {
             _space = (Space)DataContext;
-            Container.CurrentSpaceActionState = AudioCanvas.SpacesActionState.None;
+            Container.CurrentActionState = AudioCanvas.ActionState.None;
         }
 
         private void Space_MouseDown(object sender, MouseButtonEventArgs e)
@@ -70,17 +70,17 @@ namespace LiveDescribe.Controls
                 if (xPos > (_space.X + _space.Width - ResizeSpaceOffset))
                 {
                     Container.Cursor = Cursors.SizeWE;
-                    Container.CurrentSpaceActionState = AudioCanvas.SpacesActionState.ResizingEndOfSpace;
+                    Container.CurrentActionState = AudioCanvas.ActionState.ResizingEndOfItem;
                 }
                 else if (xPos < (_space.X + ResizeSpaceOffset))
                 {
                     Container.Cursor = Cursors.SizeWE;
-                    Container.CurrentSpaceActionState = AudioCanvas.SpacesActionState.ResizingBeginningOfSpace;
+                    Container.CurrentActionState = AudioCanvas.ActionState.ResizingBeginningOfItem;
                 }
                 else
                 {
                     Container.Cursor = CustomCursors.GrabbingCursor;
-                    Container.CurrentSpaceActionState = AudioCanvas.SpacesActionState.Dragging;
+                    Container.CurrentActionState = AudioCanvas.ActionState.Dragging;
                 }
             } 
         }
@@ -89,7 +89,7 @@ namespace LiveDescribe.Controls
         {
             _space.SpaceMouseUpCommand.Execute(e);
             Space.ReleaseMouseCapture();
-            Container.CurrentSpaceActionState = AudioCanvas.SpacesActionState.None;
+            Container.CurrentActionState = AudioCanvas.ActionState.None;
             Container.Cursor = Cursors.Arrow;
         }
 
@@ -120,11 +120,11 @@ namespace LiveDescribe.Controls
 
         private void HandleSpaceMouseCapturedStates(double xPos)
         {
-            if (Container.CurrentSpaceActionState == AudioCanvas.SpacesActionState.ResizingEndOfSpace)
+            if (Container.CurrentActionState == AudioCanvas.ActionState.ResizingEndOfItem)
                 ResizeEndOfSpace(xPos);
-            else if (Container.CurrentSpaceActionState == AudioCanvas.SpacesActionState.ResizingBeginningOfSpace)
+            else if (Container.CurrentActionState == AudioCanvas.ActionState.ResizingBeginningOfItem)
                 ResizeBeginningOfSpace(xPos);
-            else if (Container.CurrentSpaceActionState == AudioCanvas.SpacesActionState.Dragging)
+            else if (Container.CurrentActionState == AudioCanvas.ActionState.Dragging)
                 DragSpace(xPos);
 
             SetAppropriateCursorUponMouseCaptured();
@@ -132,11 +132,11 @@ namespace LiveDescribe.Controls
 
         private void SetAppropriateCursorUponMouseCaptured()
         {
-            if (Container.Cursor != CustomCursors.GrabbingCursor && Container.CurrentSpaceActionState == AudioCanvas.SpacesActionState.Dragging)
+            if (Container.Cursor != CustomCursors.GrabbingCursor && Container.CurrentActionState == AudioCanvas.ActionState.Dragging)
                 Container.Cursor = CustomCursors.GrabbingCursor;
 
-            if (Container.Cursor != Cursors.SizeWE && (Container.CurrentSpaceActionState == AudioCanvas.SpacesActionState.ResizingBeginningOfSpace ||
-                Container.CurrentSpaceActionState == AudioCanvas.SpacesActionState.ResizingEndOfSpace))
+            if (Container.Cursor != Cursors.SizeWE && (Container.CurrentActionState == AudioCanvas.ActionState.ResizingBeginningOfItem ||
+                Container.CurrentActionState == AudioCanvas.ActionState.ResizingEndOfItem))
                 Container.Cursor = Cursors.SizeWE;
         }
 
@@ -152,7 +152,7 @@ namespace LiveDescribe.Controls
                 newWidth = (Container.Width / Duration) * MinSpaceLengthInMSecs;
                 //temporary fix, have to make the cursor attached to the end of the space somehow
                 Space.ReleaseMouseCapture();
-                Container.CurrentSpaceActionState = AudioCanvas.SpacesActionState.None;
+                Container.CurrentActionState = AudioCanvas.ActionState.None;
                 Container.Cursor = Cursors.Arrow;
             }
             else if ((_space.StartInVideo + lengthInMillisecondsNewWidth) > Duration)
@@ -160,7 +160,7 @@ namespace LiveDescribe.Controls
                 newWidth = (Container.Width / Duration) * (Duration - _space.StartInVideo);
                 //temporary fix, have to make the cursor attached to the end of the space somehow
                 Space.ReleaseMouseCapture();
-                Container.CurrentSpaceActionState = AudioCanvas.SpacesActionState.None;
+                Container.CurrentActionState = AudioCanvas.ActionState.None;
                 Container.Cursor = Cursors.Arrow;
             }
 
@@ -181,7 +181,7 @@ namespace LiveDescribe.Controls
                 newPosition = 0;
                 //temporary fix, have to make the cursor attached to the end of the space somehow
                 Space.ReleaseMouseCapture();
-                Container.CurrentSpaceActionState = AudioCanvas.SpacesActionState.None;
+                Container.CurrentActionState = AudioCanvas.ActionState.None;
                 Container.Cursor = Cursors.Arrow;
             }
             else if ((_space.EndInVideo - newPositionMilliseconds) < MinSpaceLengthInMSecs)
@@ -189,7 +189,7 @@ namespace LiveDescribe.Controls
                 newPosition = (Container.Width / Duration) * (_space.EndInVideo - MinSpaceLengthInMSecs);
                 //temporary fix, have to make the cursor attached to the end of the space somehow
                 Space.ReleaseMouseCapture();
-                Container.CurrentSpaceActionState = AudioCanvas.SpacesActionState.None;
+                Container.CurrentActionState = AudioCanvas.ActionState.None;
                 Container.Cursor = Cursors.Arrow;
             }
 
