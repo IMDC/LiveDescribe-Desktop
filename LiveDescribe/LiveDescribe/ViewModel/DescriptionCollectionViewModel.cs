@@ -5,6 +5,7 @@ using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
 using LiveDescribe.Utilities;
 using NAudio;
+using System.Collections.Generic;
 using System;
 using System.Collections.ObjectModel;
 
@@ -20,7 +21,9 @@ namespace LiveDescribe.ViewModel
         #region Instance Variables
         private ObservableCollection<Description> _alldescriptions;      //this list contains all the descriptions both regular and extended
         private ObservableCollection<Description> _extendedDescriptions; //this list only contains the extended description this list should be used to bind to the list view of extended descriptions
+        private ObservableCollectionIndexer<Description> _extendedDescriptionIndexer;
         private ObservableCollection<Description> _regularDescriptions;  //this list only contains all the regular descriptions this list should only be used to bind to the list of regular descriptions
+        private ObservableCollectionIndexer<Description> _regularDescriptionIndexer;
         private readonly ILiveDescribePlayer _mediaVideo;
         private DescriptionRecorder _recorder;
 
@@ -64,8 +67,7 @@ namespace LiveDescribe.ViewModel
                     {
                         try
                         {
-                            var pf = ProjectFile.FromAbsolutePath(Project.GenerateDescriptionFilePath(),
-                                Project.Folders.Project);
+                            var pf = Project.GenerateDescriptionFile();
                             _recorder.RecordDescription(pf, ExtendedIsChecked, _mediaVideo.Position.TotalMilliseconds);
                             //save the current state so when the button is pressed again you can restore it back to that state
                             _previousVideoState = _mediaVideo.CurrentState;
@@ -82,7 +84,9 @@ namespace LiveDescribe.ViewModel
 
             AllDescriptions = new ObservableCollection<Description>();
             RegularDescriptions = new ObservableCollection<Description>();
+            _regularDescriptionIndexer = new ObservableCollectionIndexer<Description>(RegularDescriptions);
             ExtendedDescriptions = new ObservableCollection<Description>();
+            _extendedDescriptionIndexer = new ObservableCollectionIndexer<Description>(ExtendedDescriptions);
         }
         #endregion
 
@@ -184,15 +188,27 @@ namespace LiveDescribe.ViewModel
 
         public void AddDescription(Description desc)
         {
+           
+#if ZAGGA
             if (desc.IsExtendedDescription)
-                ExtendedDescriptions.Add(desc);
-            else
+                return;
+#endif
+
+            if (!desc.IsExtendedDescription)
                 RegularDescriptions.Add(desc);
+            else
+                ExtendedDescriptions.Add(desc);
 
             SetupEventsOnDescription(desc);
 
             AllDescriptions.Add(desc);
             OnAddDescription(desc);
+        }
+
+        public void AddDescriptions(List<Description> descriptions)
+        {
+            foreach (var desc in descriptions)
+                AddDescription(desc);
         }
 
         /// <summary>

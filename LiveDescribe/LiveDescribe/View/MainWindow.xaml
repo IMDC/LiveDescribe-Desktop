@@ -92,20 +92,21 @@
                     <ColumnDefinition
                         Width="130" />
                     <ColumnDefinition
-                        Width="141*" />
+                        Width="130*" />
                     <ColumnDefinition
-                        Width="141*" />
+                        Width="130*" />
                     <ColumnDefinition
-                        Width="176*" />
+                        Width="130*" />
                     <ColumnDefinition
-                        Width="107*" />
+                        Width="130*" />
                     <ColumnDefinition
-                        Width="142*" />
+                        Width="130*" />
                     <ColumnDefinition
-                        Width="140*" />
+                        Width="130*" />
                 </Grid.ColumnDefinitions>
 
                 <controls:DescriptionRecordingControl
+                    x:Name="DescriptionRecordingControl"
                     DataContext="{Binding DescriptionCollectionViewModel}"
                     Grid.Column="0"
                     Grid.Row="11"
@@ -175,19 +176,19 @@
                                 x:Name="AudioCanvasControl"
                                 Grid.Row="1"
                                 Grid.RowSpan="2"
-                                DataContext="{Binding AudioCanvasViewModel}"/>
+                                DataContext="{Binding AudioCanvasViewModel}" />
 
                             <!--Description Canvas Constrol that holds all the descriptions-->
                             <controls:DescriptionCanvasControl
                                 x:Name="DescriptionCanvasControl"
                                 Grid.Row="3"
-                                DataContext="{Binding DescriptionCanvasViewModel}"/>
+                                DataContext="{Binding DescriptionCanvasViewModel}" />
 
                             <controls:MarkerControl
                                 x:Name="MarkerControl"
                                 Grid.Row="0"
                                 Grid.RowSpan="4"
-                                DataContext="{Binding MediaControlViewModel}"/>
+                                DataContext="{Binding MediaControlViewModel}" />
                         </Grid>
                     </ScrollViewer>
                 </Border>

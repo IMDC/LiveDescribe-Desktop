@@ -11,6 +11,60 @@
     <UserControl.Resources>
         <converters:MillisecondsTimeConverterFormatter
             x:Key="MillisecondsTimeConverter" />
+        <converters:VarNotNullToBoolConverter
+            x:Key="VarNotNullToBoolConverter" />
+
+        <Style
+            x:Key="InfoTabTextBlockStyle"
+            TargetType="TextBlock">
+            <Setter
+                Property="FontWeight"
+                Value="Bold" />
+        </Style>
+
+        <DataTemplate
+            x:Key="ItemIndexTemplate">
+            <TextBlock
+                Style="{StaticResource InfoTabTextBlockStyle}"
+                Text="{Binding Path=Index}" 
+                Width="30"/>
+        </DataTemplate>
+        <DataTemplate
+            x:Key="StartInVideoTemplate">
+            <TextBlock
+                Style="{StaticResource InfoTabTextBlockStyle}"
+                Text="{Binding Path=StartInVideo,
+                    Converter={StaticResource MillisecondsTimeConverter},
+                    Mode=OneWay}" />
+        </DataTemplate>
+        <DataTemplate
+            x:Key="EndInVideoTemplate">
+            <TextBlock
+                Style="{StaticResource InfoTabTextBlockStyle}"
+                Text="{Binding Path=EndInVideo,
+                    Converter={StaticResource MillisecondsTimeConverter},
+                    Mode=OneWay}" />
+        </DataTemplate>
+        <DataTemplate
+            x:Key="DurationTemplate">
+            <TextBlock
+                Style="{StaticResource InfoTabTextBlockStyle}"
+                Text="{Binding Path=Duration,
+                    Converter={StaticResource MillisecondsTimeConverter},
+                    Mode=OneWay}" />
+        </DataTemplate>
+        <DataTemplate
+            x:Key="TextDataTemplate">
+            <TextBlock
+                Text="{Binding Text}" />
+        </DataTemplate>
+        <DataTemplate
+            x:Key="CompleteCheckboxTemplate">
+            <CheckBox
+                IsThreeState="False"
+                IsChecked="{Binding Path=IsRecordedOver,
+                    Mode=TwoWay}" />
+        </DataTemplate>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -30,6 +84,8 @@
             Grid.Column="0"
             Grid.ColumnSpan="2"
             SelectedIndex="{Binding TabSelectedIndex}">
+
+            <!--Space Tab-->
             <TabItem
                 Name="SpacesTabItem"
                 Header="Spaces">
@@ -45,56 +101,50 @@
                             Mode="TwoWay" />
                     </ListView.SelectedItem>
                     <ListView.Resources>
-                        <ContextMenu x:Key="SpaceItemContextMenu">
-                            <MenuItem Header="Go to Space" Command="{Binding GoToThisSpaceCommand}"/>
-                            <MenuItem Header="Delete Space" Command="{Binding DeleteSpaceCommand}"/>
+                        <ContextMenu
+                            x:Key="SpaceItemContextMenu">
+                            <MenuItem
+                                Header="Go to Space"
+                                Command="{Binding GoToThisSpaceCommand}" />
+                            <MenuItem
+                                Header="Delete Space"
+                                Command="{Binding DeleteSpaceCommand}" />
                         </ContextMenu>
                     </ListView.Resources>
                     <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="ContextMenu"
-                                    Value="{StaticResource SpaceItemContextMenu}"/>
+                        <Style
+                            TargetType="ListViewItem">
+                            <Setter
+                                Property="ContextMenu"
+                                Value="{StaticResource SpaceItemContextMenu}" />
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.View>
                         <GridView>
                             <GridViewColumn
-                                Header="Space Text">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock
-                                            Text="{Binding Text}" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                                Header="#"
+                                CellTemplate="{StaticResource ItemIndexTemplate}" />
                             <GridViewColumn
-                                Header="Start In Video">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock
-                                            Text="{Binding Path=StartInVideo,
-                                            Converter={StaticResource MillisecondsTimeConverter},
-                                            Mode=OneWay}"
-                                            FontWeight="Bold" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                                Header="Start In Video"
+                                CellTemplate="{StaticResource StartInVideoTemplate}" />
                             <GridViewColumn
-                                Header="End In Video">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock
-                                            Text="{Binding Path=EndInVideo,
-                                            Converter={StaticResource MillisecondsTimeConverter},
-                                            Mode=OneWay}"
-                                            FontWeight="Bold" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                                Header="End In Video"
+                                CellTemplate="{StaticResource EndInVideoTemplate}" />
+                            <GridViewColumn
+                                Header="Duration"
+                                CellTemplate="{StaticResource DurationTemplate}" />
+                            <GridViewColumn
+                                Header="Space Text"
+                                CellTemplate="{StaticResource TextDataTemplate}" />
+                            <GridViewColumn
+                                Header="Completed"
+                                CellTemplate="{StaticResource CompleteCheckboxTemplate}"/>
                         </GridView>
                     </ListView.View>
                 </ListView>
             </TabItem>
+
+            <!--Description Tab-->
             <TabItem
                 Name="DescriptionsTabItem"
                 Header="Descriptions">
@@ -103,15 +153,22 @@
                     VirtualizingPanel.IsVirtualizing="True"
                     ItemsSource="{Binding RegularDescriptions}">
                     <ListView.Resources>
-                        <ContextMenu x:Key="RegularDescriptionContextMenu">
-                            <MenuItem Header="Go to Description" Command="{Binding GoToThisDescriptionCommand}"/>
-                            <MenuItem Header="Delete Description" Command="{Binding DescriptionDeleteCommand}"/>
+                        <ContextMenu
+                            x:Key="RegularDescriptionContextMenu">
+                            <MenuItem
+                                Header="Go to Description"
+                                Command="{Binding GoToThisDescriptionCommand}" />
+                            <MenuItem
+                                Header="Delete Description"
+                                Command="{Binding DescriptionDeleteCommand}" />
                         </ContextMenu>
                     </ListView.Resources>
                     <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="ContextMenu"
-                                    Value="{StaticResource RegularDescriptionContextMenu}"/>
+                        <Style
+                            TargetType="ListViewItem">
+                            <Setter
+                                Property="ContextMenu"
+                                Value="{StaticResource RegularDescriptionContextMenu}" />
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.SelectedItem>
@@ -119,47 +176,31 @@
                             Path="SelectedRegularDescription"
                             UpdateSourceTrigger="PropertyChanged"
                             ValidatesOnDataErrors="True"
-                            Mode="TwoWay"/>
+                            Mode="TwoWay" />
                     </ListView.SelectedItem>
                     <ListView.View>
                         <GridView>
                             <GridViewColumn
-                                Header="Description Text">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock
-                                            Text="{Binding Text}" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                                Header="#"
+                                CellTemplate="{StaticResource ItemIndexTemplate}" />
                             <GridViewColumn
-                                Header="Start In Video">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock
-                                            Text="{Binding Path=StartInVideo,
-                                            Converter={StaticResource MillisecondsTimeConverter},
-                                            Mode=OneWay}"
-                                            FontWeight="Bold" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                                Header="Start In Video"
+                                CellTemplate="{StaticResource StartInVideoTemplate}" />
                             <GridViewColumn
-                                Header="End In Video">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock
-                                            Text="{Binding Path=EndInVideo,
-                                            Converter={StaticResource MillisecondsTimeConverter},
-                                            Mode=OneWay}"
-                                            FontWeight="Bold" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                                Header="End In Video"
+                                CellTemplate="{StaticResource EndInVideoTemplate}" />
+                            <GridViewColumn
+                                Header="Duration"
+                                CellTemplate="{StaticResource DurationTemplate}" />
+                            <GridViewColumn
+                                Header="Description Text"
+                                CellTemplate="{StaticResource TextDataTemplate}" />
                         </GridView>
                     </ListView.View>
                 </ListView>
             </TabItem>
+
+            <!--Extended Description Tab-->
             <TabItem
                 Name="ExtendedDescriptionsTabItem"
                 Header="Extended Descriptions">
@@ -168,15 +209,22 @@
                     VirtualizingPanel.IsVirtualizing="True"
                     ItemsSource="{Binding ExtendedDescriptions}">
                     <ListView.Resources>
-                        <ContextMenu x:Key="ExtendedDescriptionContextMenu">
-                            <MenuItem Header="Go to Description" Command="{Binding GoToThisDescriptionCommand}"/>
-                            <MenuItem Header="Delete Description" Command="{Binding DescriptionDeleteCommand}"/>
+                        <ContextMenu
+                            x:Key="ExtendedDescriptionContextMenu">
+                            <MenuItem
+                                Header="Go to Description"
+                                Command="{Binding GoToThisDescriptionCommand}" />
+                            <MenuItem
+                                Header="Delete Description"
+                                Command="{Binding DescriptionDeleteCommand}" />
                         </ContextMenu>
                     </ListView.Resources>
                     <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="ContextMenu"
-                                    Value="{StaticResource ExtendedDescriptionContextMenu}"/>
+                        <Style
+                            TargetType="ListViewItem">
+                            <Setter
+                                Property="ContextMenu"
+                                Value="{StaticResource ExtendedDescriptionContextMenu}" />
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.SelectedItem>
@@ -189,38 +237,20 @@
                     <ListView.View>
                         <GridView>
                             <GridViewColumn
-                                Header="Description Text">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock
-                                            Text="{Binding Text}" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                                Header="#"
+                                CellTemplate="{StaticResource ItemIndexTemplate}" />
                             <GridViewColumn
-                                Header="Start In Video">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock
-                                            Text="{Binding Path=StartInVideo,
-                                            Converter={StaticResource MillisecondsTimeConverter},
-                                            Mode=OneWay}"
-                                            FontWeight="Bold" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                                Header="Start In Video"
+                                CellTemplate="{StaticResource StartInVideoTemplate}" />
                             <GridViewColumn
-                                Header="End In Video">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock
-                                            Text="{Binding Path=EndInVideo,
-                                            Converter={StaticResource MillisecondsTimeConverter},
-                                            Mode=OneWay}"
-                                            FontWeight="Bold" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                                Header="End In Video"
+                                CellTemplate="{StaticResource EndInVideoTemplate}" />
+                            <GridViewColumn
+                                Header="Duration"
+                                CellTemplate="{StaticResource DurationTemplate}" />
+                            <GridViewColumn
+                                Header="Description Text"
+                                CellTemplate="{StaticResource TextDataTemplate}" />
                         </GridView>
                     </ListView.View>
                 </ListView>
@@ -232,10 +262,11 @@
             Grid.Column="0"
             Grid.Row="1"
             ScrollViewer.VerticalScrollBarVisibility="Auto"
-            TextWrapping="Wrap">
+            TextWrapping="Wrap"
+            IsEnabled="{Binding Path=SelectedItem, Converter={StaticResource VarNotNullToBoolConverter}}">
             <TextBox.Text>
                 <Binding
-                    Path="DescriptionAndSpaceText"
+                    Path="SelectedItem.Text"
                     UpdateSourceTrigger="PropertyChanged" />
             </TextBox.Text>
         </TextBox>
@@ -246,15 +277,11 @@
             Grid.Row="1">
             <Button
                 Margin="5"
-                Command="{Binding SaveDescriptionTextCommand}"
-                Content="Save Text" />
-            <Button
-                Margin="5"
                 Command="{Binding RecordInSpace}"
                 Content="Record" />
             <Button
                 Margin="5"
-                Command="{Binding ClearDescriptionTextCommand}"
+                Command="{Binding ClearSelectedItemText}"
                 Content="Clear" />
         </StackPanel>
     </Grid>

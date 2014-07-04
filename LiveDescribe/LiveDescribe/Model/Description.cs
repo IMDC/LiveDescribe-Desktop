@@ -9,7 +9,7 @@ using System.Windows.Input;
 
 namespace LiveDescribe.Model
 {
-    public class Description : INotifyPropertyChanged, IDescribableInterval
+    public class Description : INotifyPropertyChanged, IDescribableInterval, IListIndexable
     {
         #region Logger
         private static readonly log4net.ILog Log = log4net.LogManager.GetLogger
@@ -31,6 +31,7 @@ namespace LiveDescribe.Model
         private double _height;
         private bool _isSelected;
         private bool _isPlaying;
+        private int _index;
         #endregion
 
         #region Events
@@ -71,7 +72,7 @@ namespace LiveDescribe.Model
             DescriptionDeleteCommand = new RelayCommand(DescriptionDelete, () => true);
             //called when mouse moves over description
             DescriptionMouseMoveCommand = new RelayCommand<MouseEventArgs>(DescriptionMouseMove, param => true);
-            
+
         }
 
         #region Properties
@@ -256,6 +257,17 @@ namespace LiveDescribe.Model
         public double WaveFileDuration
         {
             get { return _endwavefiletime - _startwavefiletime; }
+        }
+
+        [JsonIgnore]
+        public int Index
+        {
+            set
+            {
+                _index = value;
+                NotifyPropertyChanged();
+            }
+            get { return _index; }
         }
         #endregion
 

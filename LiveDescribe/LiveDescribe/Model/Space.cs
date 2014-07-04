@@ -8,7 +8,7 @@ using System.Windows.Input;
 
 namespace LiveDescribe.Model
 {
-    public class Space : INotifyPropertyChanged, IDescribableInterval
+    public class Space : INotifyPropertyChanged, IDescribableInterval, IListIndexable
     {
         #region Logger
         private static readonly log4net.ILog Log = log4net.LogManager.GetLogger
@@ -19,12 +19,15 @@ namespace LiveDescribe.Model
         private double _startInVideo;
         private string _text;
         private double _endInVideo;
+        private double _duration;
         private double _length;
         private double _x;
         private double _y;
         private double _height;
         private double _width;
         private bool _isSelected;
+        private bool _isRecordedOver;
+        private int _index;
         #endregion
 
         #region Event Handlers
@@ -41,17 +44,11 @@ namespace LiveDescribe.Model
         #endregion
 
         #region Constructors
-        public Space(double starttime, double endtime)
+        public Space(double starttime, double endtime) : this()
         {
-            IsSelected = false;
             StartInVideo = starttime;
             EndInVideo = endtime;
-            DeleteSpaceCommand = new RelayCommand(DeleteSpace, () => true);
-
-
-            SpaceMouseUpCommand = new RelayCommand<MouseEventArgs>(SpaceMouseUp, param => true);
-            SpaceMouseDownCommand = new RelayCommand<MouseEventArgs>(SpaceMouseDown, param => true);
-            SpaceMouseMoveCommand = new RelayCommand<MouseEventArgs>(SpaceMouseMove, param => true);
+            UpdateDuration();
         }
 
         public Space()
@@ -59,15 +56,12 @@ namespace LiveDescribe.Model
             IsSelected = false;
 
             DeleteSpaceCommand = new RelayCommand(DeleteSpace, () => true);
-            
             GoToThisSpaceCommand = new RelayCommand(GoToThisSpace, () => true);
 
             SpaceMouseUpCommand = new RelayCommand<MouseEventArgs>(SpaceMouseUp, param => true);
             SpaceMouseDownCommand = new RelayCommand<MouseEventArgs>(SpaceMouseDown, param => true);
             SpaceMouseMoveCommand = new RelayCommand<MouseEventArgs>(SpaceMouseMove, param => true);
         }
-
-
         #endregion
 
         #region Commands
@@ -111,6 +105,7 @@ namespace LiveDescribe.Model
             set
             {
                 _startInVideo = value;
+                UpdateDuration();
                 NotifyPropertyChanged();
             }
             get { return _startInVideo; }
@@ -124,14 +119,21 @@ namespace LiveDescribe.Model
             set
             {
                 _endInVideo = value;
+                UpdateDuration();
                 NotifyPropertyChanged();
             }
             get { return _endInVideo; }
         }
 
+        [JsonIgnore]
         public double Duration
         {
-            get { return EndInVideo - StartInVideo; }
+            set
+            {
+                _duration = value;
+                NotifyPropertyChanged();
+            }
+            get { return _duration; }
         }
 
         [JsonIgnore]
@@ -200,9 +202,35 @@ namespace LiveDescribe.Model
             get { return _isSelected; }
         }
 
+        /// <summary>
+        /// Represents whether a description has been recorded in the duration of this space.
+        /// </summary>
+        public bool IsRecordedOver
+        {
+            set
+            {
+                _isRecordedOver = value;
+                NotifyPropertyChanged();
+            }
+            get { return _isRecordedOver; }
+        }
+
+        /// <summary>
+        /// The 1-based ndex of this space in a collection.
+        /// </summary>
+        [JsonIgnore]
+        public int Index
+        {
+            set
+            {
+                _index = value;
+                NotifyPropertyChanged();
+            }
+            get { return _index; }
+        }
         #endregion
 
-        #region BindingFunctions
+        #region Command Methods
 
         /// <summary>
         /// Called when a delete space command is executed
@@ -247,6 +275,14 @@ namespace LiveDescribe.Model
         {
             EventHandler handler = GoToThisSpaceEvent;
             if (handler != null) handler(this, EventArgs.Empty);
+        }
+        #endregion
+
+        #region Methods
+
+        private void UpdateDuration()
+        {
+            Duration = EndInVideo - StartInVideo;
         }
         #endregion
 

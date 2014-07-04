@@ -6,9 +6,13 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:command="http://www.galasoft.ch/mvvmlight"
+    xmlns:converters="clr-namespace:LiveDescribe.Converters"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="300">
+    <UserControl.Resources>
+        <converters:VideoStateToBoolConverter x:Key="VideoStateToBoolConverter"/>
+    </UserControl.Resources>
     <Grid>
         <Border
             Name="AudioCanvasBorder"
@@ -18,7 +22,8 @@
                 Background="Transparent"
                 VirtualizingPanel.IsVirtualizing="True"
                 Name="AudioCanvas"
-                HorizontalAlignment="Left">
+                HorizontalAlignment="Left"
+                IsEnabled="{Binding Path=CurrentVideoState, Converter={StaticResource VideoStateToBoolConverter}}">
 
                 <Canvas.ContextMenu>
                     <ContextMenu>
@@ -67,16 +72,38 @@
                                     <Style
                                         TargetType="Rectangle">
                                         <Style.Triggers>
-                                            <DataTrigger
-                                                Binding="{Binding IsSelected}"
-                                                Value="false">
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition
+                                                        Binding="{Binding IsSelected}"
+                                                        Value="false" />
+                                                    <Condition
+                                                        Binding="{Binding IsRecordedOver}"
+                                                        Value="true"/>
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter
+                                                    Property="Fill"
+                                                    Value="DimGray" />
+                                                <Setter
+                                                    Property="Opacity"
+                                                    Value="0.2" />
+                                            </MultiDataTrigger>
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition
+                                                        Binding="{Binding IsSelected}"
+                                                        Value="false" />
+                                                    <Condition
+                                                        Binding="{Binding IsRecordedOver}"
+                                                        Value="false" />
+                                                </MultiDataTrigger.Conditions>
                                                 <Setter
                                                     Property="Fill"
                                                     Value="Blue" />
                                                 <Setter
                                                     Property="Opacity"
-                                                    Value="0.2" />
-                                            </DataTrigger>
+                                                    Value="0.25" />
+                                            </MultiDataTrigger>
                                             <DataTrigger
                                                 Binding="{Binding IsSelected}"
                                                 Value="true">

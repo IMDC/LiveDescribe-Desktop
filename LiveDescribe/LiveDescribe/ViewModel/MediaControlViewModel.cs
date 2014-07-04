@@ -42,8 +42,6 @@ namespace LiveDescribe.ViewModel
         public event EventHandler MediaFailedEvent;
         public event EventHandler MediaEndedEvent;
         public event EventHandler OnStrippingAudioCompleted;
-        public event EventHandler RewindEvent;
-        public event EventHandler FastForwardEvent;
 
         //Event handlers for the Marker on the timeline
         public event EventHandler OnMarkerMouseDownRequested;
@@ -59,8 +57,6 @@ namespace LiveDescribe.ViewModel
             PlayCommand = new RelayCommand(Play, PlayCheck);
             PauseCommand = new RelayCommand(Pause, PauseCheck);
             MuteCommand = new RelayCommand(Mute, () => true);
-            FastForwardCommand = new RelayCommand(FastForward, FastForwardCheck);
-            RewindCommand = new RelayCommand(Rewind, RewindCheck);
 
             //Marker commands {
             MarkerMouseDownCommand = new RelayCommand(OnMarkerMouseDown, () => true);
@@ -111,10 +107,6 @@ namespace LiveDescribe.ViewModel
         /// Setter and Getter for MuteCommand
         /// </summary>
         public RelayCommand MuteCommand { get; private set; }
-
-        public RelayCommand FastForwardCommand { get; private set; }
-
-        public RelayCommand RewindCommand { get; private set; }
 
         public RelayCommand VideoOpenedCommand { get; private set; }
 
@@ -178,36 +170,6 @@ namespace LiveDescribe.ViewModel
             EventHandler handler = PauseRequested;
             _mediaVideo.CurrentState = LiveDescribeVideoStates.PausedVideo;
 
-            if (handler == null) return;
-            handler(this, EventArgs.Empty);
-        }
-
-        /// <summary>
-        /// Fastforwards the video
-        /// </summary>
-        public void FastForward()
-        {
-            _mediaVideo.Position += TimeSpan.FromSeconds(5);
-            if (_mediaVideo.Position.TotalMilliseconds >= _mediaVideo.DurationMilliseconds)
-            {
-                _mediaVideo.Position -= TimeSpan.FromMilliseconds(100);
-            }
-            EventHandler handler = FastForwardEvent;
-            if (handler == null) return;
-            handler(this, EventArgs.Empty);
-        }
-
-        /// <summary>
-        /// Rewinds the video
-        /// </summary>
-        public void Rewind()
-        {
-            _mediaVideo.Position -= TimeSpan.FromSeconds(5);
-            if (_mediaVideo.Position.TotalMilliseconds <= 0)
-            {
-                _mediaVideo.Position += TimeSpan.FromMilliseconds(100);
-            }
-            EventHandler handler = RewindEvent;
             if (handler == null) return;
             handler(this, EventArgs.Empty);
         }

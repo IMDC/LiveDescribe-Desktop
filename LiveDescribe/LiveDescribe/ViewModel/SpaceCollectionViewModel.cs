@@ -1,11 +1,14 @@
-﻿using GalaSoft.MvvmLight;
+﻿using System.Collections.Specialized;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Events;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using LiveDescribe.Utilities;
 
 namespace LiveDescribe.ViewModel
 {
@@ -15,6 +18,7 @@ namespace LiveDescribe.ViewModel
 
         #region Instance Variables
         private ObservableCollection<Space> _spaces;
+        private ObservableCollectionIndexer<Space> _indexer; 
         private readonly ILiveDescribePlayer _videoPlayer;
         #endregion
 
@@ -32,6 +36,8 @@ namespace LiveDescribe.ViewModel
         public SpaceCollectionViewModel(ILiveDescribePlayer videoPlayer)
         {
             Spaces = new ObservableCollection<Space>();
+            _indexer = new ObservableCollectionIndexer<Space>(Spaces);
+
             _videoPlayer = videoPlayer;
 
             AddSpaceCommand = new RelayCommand(AddSpace, () => true);
@@ -89,7 +95,7 @@ namespace LiveDescribe.ViewModel
         }
         #endregion
 
-        #region Helper Methods
+        #region Methods
 
         /// <summary>
         /// Setup all the events on space that don't require any info from the UI
@@ -103,6 +109,12 @@ namespace LiveDescribe.ViewModel
         public void CloseSpaceCollectionViewModel()
         {
             Spaces.Clear();
+        }
+
+        public void AddSpaces(List<Space> spaces)
+        {
+            foreach (var space in spaces)
+                AddSpace(space);
         }
         #endregion
 

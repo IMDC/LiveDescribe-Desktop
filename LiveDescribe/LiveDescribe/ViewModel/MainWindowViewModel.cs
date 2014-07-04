@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Threading;
+using LiveDescribe.Events;
 using LiveDescribe.Factories;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
@@ -60,6 +61,7 @@ namespace LiveDescribe.ViewModel
         public event EventHandler PauseRequested;
         public event EventHandler MuteRequested;
         public event EventHandler MediaEnded;
+        public event EventHandler<EventArgs<Description>> OnPlayingDescription;
         #endregion
 
         #region Constructors
@@ -75,13 +77,22 @@ namespace LiveDescribe.ViewModel
             _descriptioncollectionviewmodel = new DescriptionCollectionViewModel(mediaVideo, _mediaControlViewModel);
             _descriptionInfoTabViewModel = new DescriptionInfoTabViewModel(_descriptioncollectionviewmodel, _spacecollectionviewmodel);
             _markingSpacesControlViewModel = new MarkingSpacesControlViewModel(_descriptionInfoTabViewModel, mediaVideo);
-            _audioCanvasViewModel = new AudioCanvasViewModel(_spacecollectionviewmodel);
-            _descriptionCanvasViewModel = new DescriptionCanvasViewModel(_descriptioncollectionviewmodel);
+            _audioCanvasViewModel = new AudioCanvasViewModel(_spacecollectionviewmodel, mediaVideo);
+            _descriptionCanvasViewModel = new DescriptionCanvasViewModel(_descriptioncollectionviewmodel, mediaVideo);
 
             DescriptionPlayer = new DescriptionPlayer();
             DescriptionPlayer.DescriptionFinishedPlaying += (sender, e) =>
-                DispatcherHelper.UIDispatcher.Invoke(() =>
-                    _mediaControlViewModel.ResumeFromDescription(e.Value));
+            {
+                try
+                {
+                    DispatcherHelper.UIDispatcher.Invoke(() =>
+                        _mediaControlViewModel.ResumeFromDescription(e.Value));
+                }
+                catch (TaskCanceledException exception)
+                {
+                    Log.Warn("Task Canceled Exception", exception);
+                }
+            };
 
             #region Commands
             //Commands
@@ -102,7 +113,7 @@ namespace LiveDescribe.ViewModel
                     }
 
                     Log.Info("Closed Project");
-
+                    TryToCleanUpUnusedDescriptionAudioFiles();
                     _descriptioncollectionviewmodel.CloseDescriptionCollectionViewModel();
                     _mediaControlViewModel.CloseMediaControlViewModel();
                     _spacecollectionviewmodel.CloseSpaceCollectionViewModel();
@@ -127,20 +138,20 @@ namespace LiveDescribe.ViewModel
                     LoadingViewModel.Visible = true;
 
                     //Copy video file in background while updating the LoadingBorder
-                    var worker = new BackgroundWorker
+                    var copyVideoWorker = new BackgroundWorker
                     {
                         WorkerReportsProgress = true,
                     };
                     var copier = new ProgressFileCopier();
-                    worker.DoWork += (sender, args) =>
+                    copyVideoWorker.DoWork += (sender, args) =>
                     {
-                        copier.ProgressChanged += (o, eventArgs) => worker.ReportProgress(eventArgs.ProgressPercentage);
+                        copier.ProgressChanged += (o, eventArgs) => copyVideoWorker.ReportProgress(eventArgs.ProgressPercentage);
                         copier.CopyFile(viewModel.VideoPath, viewModel.Project.Files.Video);
                     };
-                    worker.ProgressChanged += (sender, args) => LoadingViewModel.SetProgress("Copying Video File", args.ProgressPercentage);
-                    worker.RunWorkerCompleted += (sender, args) => SetProject(viewModel.Project);
+                    copyVideoWorker.ProgressChanged += (sender, args) => LoadingViewModel.SetProgress("Copying Video File", args.ProgressPercentage);
+                    copyVideoWorker.RunWorkerCompleted += (sender, args) => SetProject(viewModel.Project);
 
-                    worker.RunWorkerAsync();
+                    copyVideoWorker.RunWorkerAsync();
                 }
                 else
                     SetProject(viewModel.Project);
@@ -220,10 +231,7 @@ namespace LiveDescribe.ViewModel
                 execute: () =>
                 {
                     var spaces = AudioAnalyzer.FindSpaces(_mediaControlViewModel.Waveform);
-                    foreach (var space in spaces)
-                    {
-                        _spacecollectionviewmodel.AddSpace(space);
-                    }
+                    _spacecollectionviewmodel.AddSpaces(spaces);
                 }
             );
             #endregion
@@ -277,11 +285,7 @@ namespace LiveDescribe.ViewModel
 
             _mediaControlViewModel.OnStrippingAudioCompleted += (sender, args) =>
             {
-                foreach (var space in _mediaControlViewModel.Spaces)
-                {
-                    _spacecollectionviewmodel.AddSpace(space);
-                }
-
+                _spacecollectionviewmodel.AddSpaces(_mediaControlViewModel.Spaces);
                 SaveProject.Execute();
             };
             #endregion
@@ -462,6 +466,7 @@ namespace LiveDescribe.ViewModel
                     {
                         PrepareForDescription(description);
                         DescriptionPlayer.PlayInVideo(description, videoPosition);
+                        OnPlayingDescription(this, new EventArgs<Description>(description));
                     }
                 }
                 catch (Exception ex)
@@ -545,11 +550,7 @@ namespace LiveDescribe.ViewModel
                 if (File.Exists(_project.Files.Descriptions))
                 {
                     var descriptions = FileReader.ReadDescriptionsFile(_project);
-
-                    foreach (Description d in descriptions)
-                    {
-                        _descriptioncollectionviewmodel.AddDescription(d);
-                    }
+                    _descriptioncollectionviewmodel.AddDescriptions(descriptions);
                 }
             }
             else
@@ -560,10 +561,7 @@ namespace LiveDescribe.ViewModel
             if (File.Exists(_project.Files.Spaces))
             {
                 var spaces = FileReader.ReadSpacesFile(_project);
-                foreach (var s in spaces)
-                {
-                    _spacecollectionviewmodel.AddSpace(s);
-                }
+                _spacecollectionviewmodel.AddSpaces(spaces);
             }
 
             _mediaVideo.CurrentState = LiveDescribeVideoStates.PausedVideo;
@@ -580,24 +578,52 @@ namespace LiveDescribe.ViewModel
             if (ProjectModified)
             {
                 Log.Info("Program is attempting to exit with an unsaved project");
+
                 var text = string.Format("The LiveDescribe project \"{0}\" has been modified." +
                     " Do you want to save changes before closing?", _project.ProjectName);
+
                 var result = MessageBox.Show(text, "Warning", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
 
                 if (result == MessageBoxResult.Yes)
                 {
                     SaveProject.Execute();
+                    TryToCleanUpUnusedDescriptionAudioFiles();
                     return true;
                 }
-                if (result == MessageBoxResult.No) //Exit but don't save
+                else if (result == MessageBoxResult.No) //Exit but don't save
                 {
                     Log.Info("User has chosen exit program and not save project");
+                    TryToCleanUpUnusedDescriptionAudioFiles();
                     return true;
                 }
-                Log.Info("User has chosen not to exit program");
-                return false;
+                else
+                {
+                    Log.Info("User has chosen not to exit program");
+                    return false;
+                }
             }
             return true;
+        }
+
+        /// <summary>
+        /// Attempt to delete all unused descriptions in the descriptions folder
+        /// </summary>
+        private void TryToCleanUpUnusedDescriptionAudioFiles()
+        {
+            try
+            {
+                if (_descriptioncollectionviewmodel.Recorder.IsRecording)
+                    _descriptioncollectionviewmodel.Recorder.StopRecording();
+
+                _descriptiontimer.Stop();
+                DescriptionPlayer.Dispose();
+                FileDeleter.DeleteUnusedDescriptionFiles(_project);
+            }
+            catch (IOException e)
+            {
+                Log.Warn("File could not be deleted",e);
+            }
+            
         }
 
         #endregion
@@ -657,6 +683,7 @@ namespace LiveDescribe.ViewModel
                 case "Text":
                 case "AudioData":
                 case "Header":
+                case "IsRecordedOver":
                     ProjectModified = true;
                     break;
             }

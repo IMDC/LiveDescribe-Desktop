@@ -1,4 +1,5 @@
-﻿using LiveDescribe.Controls;
+﻿using GalaSoft.MvvmLight.Threading;
+using LiveDescribe.Controls;
 using LiveDescribe.Converters;
 using LiveDescribe.Model;
 using LiveDescribe.Utilities;
@@ -88,7 +89,15 @@ namespace LiveDescribe.View
             var splashScreen = new SplashScreen("../Images/LiveDescribe-Splashscreen.png");
             splashScreen.Show(true);
             Thread.Sleep(2000);
+
+
+
             InitializeComponent();
+
+#if ZAGGA
+            DescriptionRecordingControl.ExtendedDescriptionCheckBox.Visibility = Visibility.Hidden;
+            SpaceAndDescriptionsTabControl.ExtendedDescriptionsTabItem.Visibility = Visibility.Hidden;
+#endif
 
             _videoMedia = MediaControl.VideoMedia;
 
@@ -135,7 +144,7 @@ namespace LiveDescribe.View
                 };
             #endregion
 
-            #region Event Listeners For Main Control (Pause, Play, Mute)
+            #region Event Listeners For MainWindowViewModel (Pause, Play, Mute)
             //These events are put inside the main control because they will also effect the list
             //of audio descriptions an instance of DescriptionCollectionViewModel is inside the main control
             //and the main control will take care of synchronizing the video, and the descriptions
@@ -171,6 +180,24 @@ namespace LiveDescribe.View
             };
 
             mainWindowViewModel.GraphicsTick += Play_Tick;
+
+            mainWindowViewModel.OnPlayingDescription += (sender, args) =>
+            {
+                try
+                {
+                    if (args.Value.IsExtendedDescription)
+                        DispatcherHelper.UIDispatcher.Invoke(() =>
+                            SpaceAndDescriptionsTabControl.ExtendedDescriptionsListView.ScrollToCenterOfView(args.Value));
+                    else
+                        DispatcherHelper.UIDispatcher.Invoke(() =>
+                       SpaceAndDescriptionsTabControl.DescriptionsListView.ScrollToCenterOfView(args.Value));
+                }
+                catch (Exception exception)
+                {
+                    Log.Warn("Task Cancelled exception", exception);
+                }
+
+            };
             #endregion
 
             #region Event Listeners For MediaControlViewModel
@@ -187,18 +214,14 @@ namespace LiveDescribe.View
                     //Video gets played and paused so you can seek initially when the video gets loaded
                     _videoMedia.Play();
                     _videoMedia.Pause();
-                    
+
                     SetTimeline();
 
                     foreach (var desc in _descriptionCollectionViewModel.AllDescriptions)
-                    {
                         DrawDescription(desc);
-                    }
 
                     foreach (var space in _spaceCollectionViewModel.Spaces)
-                    {
                         SetSpaceLocation(space);
-                    }
                 };
 
             //listens for when the audio stripping is complete then draws the timeline and the wave form
@@ -228,7 +251,6 @@ namespace LiveDescribe.View
                         return;
                     }
 
-
                     var xPosition = Mouse.GetPosition(_audioCanvas).X;
                     var middleOfMarker = xPosition - MarkerOffset;
 
@@ -251,12 +273,6 @@ namespace LiveDescribe.View
                     Canvas.SetLeft(_marker, middleOfMarker);
                     UpdateVideoPosition((int)newPositionInVideo);
                 };
-
-            mainWindowViewModel.MediaControlViewModel.FastForwardEvent += (sender, e) =>
-                    UpdateMarkerPosition(((_canvasWidth / _videoDuration) * _videoMedia.Position.TotalMilliseconds) - MarkerOffset);
-
-            mainWindowViewModel.MediaControlViewModel.RewindEvent += (sender, e) =>
-                    UpdateMarkerPosition(((_canvasWidth / _videoDuration) * _videoMedia.Position.TotalMilliseconds) - MarkerOffset);
 
             #endregion
 
@@ -403,7 +419,7 @@ namespace LiveDescribe.View
                     UpdateMarkerPosition((space.StartInVideo / _videoDuration) * (_audioCanvas.Width) - MarkerOffset);
                     UpdateVideoPosition((int)space.StartInVideo);
                     //Scroll 1 second before the start in video of the space
-                    TimeLineScrollViewer.ScrollToHorizontalOffset((_audioCanvas.Width/_videoDuration)*
+                    TimeLineScrollViewer.ScrollToHorizontalOffset((_audioCanvas.Width / _videoDuration) *
                                                                   (space.StartInVideo - 1000));
                 };
             };
@@ -471,6 +487,7 @@ namespace LiveDescribe.View
 
             descriptionCanvasViewModel.DescriptionCanvasMouseUpEvent += DescriptionCanvas_MouseUp;
             descriptionCanvasViewModel.DescriptionCanvasMouseMoveEvent += DescriptionCanvas_MouseMove;
+            descriptionCanvasViewModel.DescriptionCanvasMouseDownEvent += DescriptionCanvas_MouseDown;
             #endregion
 
             #region Event Listeners For DescriptionInfoTabViewModel
@@ -490,9 +507,9 @@ namespace LiveDescribe.View
                 //This method runs on a separate thread therefore all calls to get values or set
                 //values that are located on the UI thread must be gotten with Dispatcher.Invoke
                 double canvasLeft = 0;
-                Dispatcher.Invoke(delegate { canvasLeft = Canvas.GetLeft(_marker); });
+                DispatcherHelper.UIDispatcher.Invoke(() => { canvasLeft = Canvas.GetLeft(_marker); });
                 ScrollRightIfCan(canvasLeft);
-                Dispatcher.Invoke(delegate
+                DispatcherHelper.UIDispatcher.Invoke(() =>
                 {
                     double position = (_videoMedia.Position.TotalMilliseconds / _videoDuration) * (_audioCanvas.Width);
                     UpdateMarkerPosition(position - MarkerOffset);
@@ -645,7 +662,7 @@ namespace LiveDescribe.View
             //if we aren't dragging a description or space, we want to unselect them out of the list
             if (_spacesActionState == SpacesActionState.None && _descriptionActionState == DescriptionsActionState.None)
             {
-                _descriptionInfoTabViewModel.UnSelectDescriptionsAndSpaceSelectedInList();
+                _descriptionInfoTabViewModel.ClearSelection();
             }
         }
 
@@ -675,6 +692,15 @@ namespace LiveDescribe.View
             {
                 if (_descriptionActionState == DescriptionsActionState.Dragging)
                     DragDescriptionBeingModified(e.GetPosition(_descriptionCanvas).X);
+            }
+        }
+
+        private void DescriptionCanvas_MouseDown(object sender, MouseEventArgs e)
+        {
+            //if we aren't dragging a description or space, we want to unselect them out of the list
+            if (_spacesActionState == SpacesActionState.None && _descriptionActionState == DescriptionsActionState.None)
+            {
+                _descriptionInfoTabViewModel.ClearSelection();
             }
         }
 
@@ -763,15 +789,14 @@ namespace LiveDescribe.View
             double singlePageWidth = 0;
             double scrolledAmount = 0;
 
-            Dispatcher.Invoke(delegate
+           DispatcherHelper.UIDispatcher.Invoke(() =>
             {
                 singlePageWidth = TimeLineScrollViewer.ActualWidth;
                 scrolledAmount = TimeLineScrollViewer.HorizontalOffset;
             });
             double scrollOffsetRight = PageScrollPercent * singlePageWidth;
-            if (!(xPos - scrolledAmount >= (scrollOffsetRight))) return false;
-
-            Dispatcher.Invoke(() => TimeLineScrollViewer.ScrollToHorizontalOffset(scrollOffsetRight + scrolledAmount));
+            if (!((xPos - scrolledAmount) >= scrollOffsetRight)) return false;
+            DispatcherHelper.UIDispatcher.Invoke(() => TimeLineScrollViewer.ScrollToHorizontalOffset(scrollOffsetRight + scrolledAmount));
             return true;
         }
 

@@ -6,9 +6,13 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
     xmlns:command="http://www.galasoft.ch/mvvmlight"
+    xmlns:converters="clr-namespace:LiveDescribe.Converters"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="300">
+    <UserControl.Resources>
+        <converters:VideoStateToBoolConverter x:Key="VideoStateToBoolConverter"/>
+    </UserControl.Resources>
     <Grid>
         <Border
             Name="DescriptionCanvasBorder"
@@ -16,7 +20,9 @@
             BorderThickness="0.75">
             <Canvas
                 Name="DescriptionCanvas"
-                HorizontalAlignment="Left">
+                HorizontalAlignment="Left"
+                Background="Transparent"
+                IsEnabled="{Binding Path=CurrentVideoState, Converter={StaticResource VideoStateToBoolConverter}}">
                 <ItemsControl
                     ItemsSource="{Binding AllDescriptions}">
                     <ItemsControl.ItemsPanel>
@@ -162,6 +168,12 @@
                         <command:EventToCommand
                             Command="{Binding DescriptionCanvasMouseMoveCommand, Mode=OneWay}"
                             PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                    <i:EventTrigger
+                        EventName="MouseDown">
+                        <command:EventToCommand
+                            Command="{Binding DescriptionCanvasMouseDownCommand, Mode=OneWay}"
+                            PassEventArgsToCommand="True"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Canvas>
