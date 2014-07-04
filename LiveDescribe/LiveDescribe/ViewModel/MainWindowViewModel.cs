@@ -112,7 +112,7 @@ namespace LiveDescribe.ViewModel
                     }
 
                     Log.Info("Closed Project");
-                    CleanUpUnusedDescriptions();
+                    TryToCleanUpUnusedDescriptionAudioFiles();
                     _descriptioncollectionviewmodel.CloseDescriptionCollectionViewModel();
                     _mediaControlViewModel.CloseMediaControlViewModel();
                     _spacecollectionviewmodel.CloseSpaceCollectionViewModel();
@@ -573,13 +573,13 @@ namespace LiveDescribe.ViewModel
                 if (result == MessageBoxResult.Yes)
                 {
                     SaveProject.Execute();
-                    CleanUpUnusedDescriptions();
+                    TryToCleanUpUnusedDescriptionAudioFiles();
                     return true;
                 }
                 else if (result == MessageBoxResult.No) //Exit but don't save
                 {
                     Log.Info("User has chosen exit program and not save project");
-                    CleanUpUnusedDescriptions();
+                    TryToCleanUpUnusedDescriptionAudioFiles();
                     return true;
                 }
                 else
@@ -594,7 +594,7 @@ namespace LiveDescribe.ViewModel
         /// <summary>
         /// Attempt to delete all unused descriptions in the descriptions folder
         /// </summary>
-        private void CleanUpUnusedDescriptions()
+        private void TryToCleanUpUnusedDescriptionAudioFiles()
         {
             try
             {
