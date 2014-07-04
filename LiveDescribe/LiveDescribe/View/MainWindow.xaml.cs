@@ -74,7 +74,7 @@ namespace LiveDescribe.View
         private DescriptionsActionState _descriptionActionState = DescriptionsActionState.None;
         private readonly LiveDescribeMediaPlayer _videoMedia;
 
-        private readonly AudioCanvas _audioCanvas;
+        private readonly ItemCanvas _audioCanvas;
         private readonly Canvas _descriptionCanvas;
         private readonly Polyline _marker;
         #endregion
@@ -498,7 +498,7 @@ namespace LiveDescribe.View
         private void AudioCanvas_OnMouseDown(object sender, MouseEventArgs e)
         {
             //if we aren't dragging a description or space, we want to unselect them out of the list
-            if (_audioCanvas.CurrentActionState == AudioCanvas.ActionState.None && _descriptionActionState == DescriptionsActionState.None)
+            if (_audioCanvas.CurrentActionState == ItemCanvas.ActionState.None && _descriptionActionState == DescriptionsActionState.None)
                 _descriptionInfoTabViewModel.ClearSelection();
         }
 
@@ -534,7 +534,7 @@ namespace LiveDescribe.View
         private void DescriptionCanvas_MouseDown(object sender, MouseEventArgs e)
         {
             //if we aren't dragging a description or space, we want to unselect them out of the list
-            if (_audioCanvas.CurrentActionState == AudioCanvas.ActionState.None && _descriptionActionState == DescriptionsActionState.None)
+            if (_audioCanvas.CurrentActionState == ItemCanvas.ActionState.None && _descriptionActionState == DescriptionsActionState.None)
                 _descriptionInfoTabViewModel.ClearSelection();
 
         }

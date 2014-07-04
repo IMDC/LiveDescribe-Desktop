@@ -8,7 +8,7 @@ using System.Windows.Controls;
 
 namespace LiveDescribe.Controls
 {
-    public class AudioCanvas : Canvas
+    public class ItemCanvas : Canvas
     {
 
         public enum ActionState { None, Dragging, ResizingEndOfItem, ResizingBeginningOfItem };
@@ -16,7 +16,7 @@ namespace LiveDescribe.Controls
         public static readonly DependencyProperty VideoDurationProperty =
           DependencyProperty.Register("VideoDuration", typeof(double), typeof(SpaceControl));
 
-        public AudioCanvas() { }
+        public ItemCanvas() { }
 
         public double VideoDuration
         {

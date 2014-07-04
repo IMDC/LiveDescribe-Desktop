@@ -19,7 +19,7 @@
             Name="DescriptionCanvasBorder"
             BorderBrush="Black"
             BorderThickness="0.75">
-            <controls:DescriptionCanvas
+            <controls:ItemCanvas
                 x:Name="DescriptionCanvas"
                 HorizontalAlignment="Left"
                 Background="Transparent"
@@ -177,7 +177,7 @@
                             PassEventArgsToCommand="True"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
-            </controls:DescriptionCanvas>
+            </controls:ItemCanvas>
         </Border>
     </Grid>
 </UserControl>
