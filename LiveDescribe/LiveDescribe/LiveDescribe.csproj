@@ -128,6 +128,9 @@
     <Compile Include="Controls\SpaceAndDescriptionsTabControl.xaml.cs">
       <DependentUpon>SpaceAndDescriptionsTabControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\SpaceControl.xaml.cs">
+      <DependentUpon>SpaceControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Converters\BoolToRecordingContentConverter.cs" />
     <Compile Include="Converters\MillisecondsTimeConverterFormatter.cs" />
     <Compile Include="Converters\MillisecondsToTimeLeftStringConverter.cs" />
@@ -205,6 +208,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\SpaceAndDescriptionsTabControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\SpaceControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
