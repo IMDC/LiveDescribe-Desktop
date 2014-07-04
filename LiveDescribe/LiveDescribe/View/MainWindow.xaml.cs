@@ -1,6 +1,8 @@
 ﻿using GalaSoft.MvvmLight.Threading;
 using LiveDescribe.Controls;
 using LiveDescribe.Converters;
+using LiveDescribe.Extensions;
+using LiveDescribe.Factories;
 using LiveDescribe.Model;
 using LiveDescribe.Utilities;
 using LiveDescribe.ViewModel;

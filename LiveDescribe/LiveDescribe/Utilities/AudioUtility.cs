@@ -1,4 +1,5 @@
-﻿using LiveDescribe.Model;
+﻿using LiveDescribe.Factories;
+using LiveDescribe.Model;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
