@@ -165,7 +165,7 @@
     <Compile Include="ViewModel\LoadingViewModel.cs" />
     <Compile Include="ViewModel\MarkingSpacesControlViewModel.cs" />
     <Compile Include="ViewModel\SpaceRecordingViewModel.cs" />
-    <Compile Include="ViewModel\SpacesViewModel.cs" />
+    <Compile Include="ViewModel\SpaceCollectionViewModel.cs" />
     <Compile Include="View\NewProjectView.xaml.cs">
       <DependentUpon>NewProjectView.xaml</DependentUpon>
     </Compile>

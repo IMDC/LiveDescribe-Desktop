@@ -5,6 +5,7 @@ using LiveDescribe.Events;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using LiveDescribe.Utilities;
@@ -108,6 +109,12 @@ namespace LiveDescribe.ViewModel
         public void CloseSpaceCollectionViewModel()
         {
             Spaces.Clear();
+        }
+
+        public void AddSpaces(List<Space> spaces)
+        {
+            foreach (var space in spaces)
+                AddSpace(space);
         }
         #endregion
 

@@ -5,6 +5,7 @@ using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
 using LiveDescribe.Utilities;
 using NAudio;
+using System.Collections.Generic;
 using System;
 using System.Collections.ObjectModel;
 
@@ -202,6 +203,12 @@ namespace LiveDescribe.ViewModel
 
             AllDescriptions.Add(desc);
             OnAddDescription(desc);
+        }
+
+        public void AddDescriptions(List<Description> descriptions)
+        {
+            foreach (var desc in descriptions)
+                AddDescription(desc);
         }
 
         /// <summary>
