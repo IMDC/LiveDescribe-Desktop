@@ -175,6 +175,11 @@ namespace LiveDescribe.ViewModel
             }
             get { return _space; }
         }
+
+        public DescriptionRecorder Recorder
+        {
+            get { return _recorder; }
+        }
         #endregion
 
         #region Methods
