@@ -86,14 +86,12 @@ namespace LiveDescribe.View
 
         public MainWindow()
         {
+#if !DEBUG
             var splashScreen = new SplashScreen("../Images/LiveDescribe-Splashscreen.png");
             splashScreen.Show(true);
             Thread.Sleep(2000);
-
-
-
+#endif
             InitializeComponent();
-
 #if ZAGGA
             DescriptionRecordingControl.ExtendedDescriptionCheckBox.Visibility = Visibility.Hidden;
             SpaceAndDescriptionsTabControl.ExtendedDescriptionsTabItem.Visibility = Visibility.Hidden;
