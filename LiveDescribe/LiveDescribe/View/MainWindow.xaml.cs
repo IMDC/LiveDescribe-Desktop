@@ -218,14 +218,10 @@ namespace LiveDescribe.View
                     SetTimeline();
 
                     foreach (var desc in _descriptionCollectionViewModel.AllDescriptions)
-                    {
                         DrawDescription(desc);
-                    }
 
                     foreach (var space in _spaceCollectionViewModel.Spaces)
-                    {
                         SetSpaceLocation(space);
-                    }
                 };
 
             //listens for when the audio stripping is complete then draws the timeline and the wave form
