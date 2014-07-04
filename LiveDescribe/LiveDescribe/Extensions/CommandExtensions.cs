@@ -1,6 +1,6 @@
 ﻿using System.Windows.Input;
 
-namespace LiveDescribe.Utilities
+namespace LiveDescribe.Extensions
 {
     public static class CommandExtensions
     {

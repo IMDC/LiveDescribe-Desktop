@@ -13,7 +13,7 @@ namespace LiveDescribe.ViewModel
     {
         #region Constants
 
-        public const double CountdownTimerIntervalMsec = 1000/40; //40 times a second
+        public const double CountdownTimerIntervalMsec = 1000 / 40; //40 times a second
         #endregion
 
         #region Fields
@@ -100,8 +100,8 @@ namespace LiveDescribe.ViewModel
                 canExecute: () => Description != null,
                 execute: () =>
                 {
-                    //Give Space text to description before exiting
-                    _description.Text = _space.Text;
+                    if (!string.IsNullOrWhiteSpace(_space.Text))
+                        _description.Text = _space.Text;
                     OnCloseRequested();
                 });
         }
@@ -120,7 +120,7 @@ namespace LiveDescribe.ViewModel
         /// </summary>
         public bool? DialogResult { set; get; }
 
-        public PositionalStringTokenizer SpaceTextTokenizer { get { return _tokenizer; }}
+        public PositionalStringTokenizer SpaceTextTokenizer { get { return _tokenizer; } }
 
         public double TimeLeft
         {
@@ -174,6 +174,11 @@ namespace LiveDescribe.ViewModel
                 RaisePropertyChanged();
             }
             get { return _space; }
+        }
+
+        public DescriptionRecorder Recorder
+        {
+            get { return _recorder; }
         }
         #endregion
 

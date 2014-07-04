@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace LiveDescribe.Utilities
+namespace LiveDescribe.Factories
 {
     /// <summary>
     /// Contains specific message boxes
