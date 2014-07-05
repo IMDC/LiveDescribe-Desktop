@@ -32,10 +32,6 @@ namespace LiveDescribe.Controls
             InitializeComponent();
         }
 
-        #region Properties
-
-        #endregion
-
         #region ViewListeners
         private void SpaceGraphic_Loaded(object sender, RoutedEventArgs e)
         {
@@ -97,7 +93,6 @@ namespace LiveDescribe.Controls
         private void HandleSpaceNonMouseCapturedStates(double xPos)
         {
             //Changes cursor if the mouse hovers over the end or the beginning of the space
-
             if (xPos > (_space.X + _space.Width - ResizeSpaceOffset)) //mouse is over right side of the space
                 Mouse.SetCursor(Cursors.SizeWE);
             else if (xPos < (_space.X + ResizeSpaceOffset)) //mouse is over left size of space
@@ -133,8 +128,7 @@ namespace LiveDescribe.Controls
             double newWidth = _space.Width + (mouseXPosition - _originalPositionForDraggingSpace);
             double lengthInMillisecondsNewWidth = (Duration / Container.Width) * newWidth;
 
-            //bounds checking
-            
+            //bounds checking            
             if (lengthInMillisecondsNewWidth < MinSpaceLengthInMSecs)
             {
                 newWidth = (Container.Width / Duration) * MinSpaceLengthInMSecs;

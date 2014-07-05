@@ -73,12 +73,10 @@ namespace LiveDescribe.View
             Thread.Sleep(2000);
 
             InitializeComponent();
-
 #if ZAGGA
             DescriptionRecordingControl.ExtendedDescriptionCheckBox.Visibility = Visibility.Hidden;
             SpaceAndDescriptionsTabControl.ExtendedDescriptionsTabItem.Visibility = Visibility.Hidden;
 #endif
-
             _videoMedia = MediaControl.VideoMedia;
 
             var mainWindowViewModel = new MainWindowViewModel(_videoMedia);
@@ -294,18 +292,6 @@ namespace LiveDescribe.View
                         }
                     };
 
-                    e.Description.PropertyChanged += (sender1, e1) =>
-                    {
-                        if (e1.PropertyName.Equals("StartWaveFileTime"))
-                        {
-                            //change start in the wave file for resizing the start time
-                        }
-                        else if (e1.PropertyName.Equals("EndWaveFileTime"))
-                        {
-                            //change end in the wave file for resizing the end time
-                        }
-                    };
-
                     e.Description.GoToThisDescriptionEvent += (sender1, e1) =>
                     {
                         UpdateMarkerPosition((e.Description.StartInVideo / _videoDuration) * (_audioCanvas.Width) - MarkerOffset);
@@ -458,9 +444,8 @@ namespace LiveDescribe.View
 
             //Video is loaded
             if (_videoMedia.CurrentState != LiveDescribeVideoStates.VideoNotLoaded)
-            {
                 SetTimeline();
-            }
+
             //update marker to fit the entire AudioCanvas even when there's no video loaded
             _marker.Points[4] = new Point(_marker.Points[4].X, TimeLineScrollViewer.ActualHeight);
         }
@@ -554,7 +539,7 @@ namespace LiveDescribe.View
             double singlePageWidth = 0;
             double scrolledAmount = 0;
 
-           DispatcherHelper.UIDispatcher.Invoke(() =>
+            DispatcherHelper.UIDispatcher.Invoke(() =>
             {
                 singlePageWidth = TimeLineScrollViewer.ActualWidth;
                 scrolledAmount = TimeLineScrollViewer.HorizontalOffset;
