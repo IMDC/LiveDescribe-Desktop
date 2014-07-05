@@ -81,6 +81,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Windows.Forms" />
@@ -114,6 +115,7 @@
     <Compile Include="Controls\DescriptionRecordingControl.xaml.cs">
       <DependentUpon>DescriptionRecordingControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ItemControl.cs" />
     <Compile Include="Controls\LoadingControl.xaml.cs">
       <DependentUpon>LoadingControl.xaml</DependentUpon>
     </Compile>

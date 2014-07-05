@@ -20,14 +20,8 @@ namespace LiveDescribe.Controls
     /// <summary>
     /// Interaction logic for SpaceControl.xaml
     /// </summary>
-    public partial class SpaceControl : UserControl
+    public partial class SpaceControl : ItemControl
     {
-        public static readonly DependencyProperty ContainerProperty =
-            DependencyProperty.Register("Container", typeof (ItemCanvas), typeof (SpaceControl));
-
-        public static readonly DependencyProperty DurationProperty =
-            DependencyProperty.Register("Duration", typeof(double), typeof(SpaceControl));
-
         public const double MinSpaceLengthInMSecs = 333;
         private const int ResizeSpaceOffset = 10;
         private double _originalPositionForDraggingSpace;
@@ -39,17 +33,7 @@ namespace LiveDescribe.Controls
         }
 
         #region Properties
-        public ItemCanvas Container
-        {
-            get { return (ItemCanvas)GetValue(ContainerProperty); }
-            set { SetValue(ContainerProperty, value); }
-        }
 
-        public double Duration
-        {
-            get { return (double)GetValue(DurationProperty); }
-            set { SetValue(DurationProperty, value); } 
-        }
         #endregion
 
         #region ViewListeners
