@@ -76,6 +76,10 @@ namespace LiveDescribe.Controls
 
         private void DragDescription(double xPos)
         {
+
+            if (!CanContinueDraggingDescription(xPos))
+                return;
+
             double newPosition = _description.X + (xPos - _originalPositionForDraggingDescription);
             double newPositionMilliseconds = (Duration / Container.Width) * newPosition;
             double lengthOfDescriptionMilliseconds = _description.EndInVideo - _description.StartInVideo;
@@ -90,6 +94,11 @@ namespace LiveDescribe.Controls
             _originalPositionForDraggingDescription = xPos;
             _description.StartInVideo = (Duration / Container.Width) * (_description.X);
             _description.EndInVideo = _description.StartInVideo + (_description.EndWaveFileTime - _description.StartWaveFileTime);
+        }
+
+        private bool CanContinueDraggingDescription(double xPos)
+        {
+            return (!(xPos < 0 || xPos >= Container.Width));
         }
 
 
