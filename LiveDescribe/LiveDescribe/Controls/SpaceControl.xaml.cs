@@ -37,20 +37,20 @@ namespace LiveDescribe.Controls
         #endregion
 
         #region ViewListeners
-        private void Space_Loaded(object sender, RoutedEventArgs e)
+        private void SpaceGraphic_Loaded(object sender, RoutedEventArgs e)
         {
             _space = (Space)DataContext;
             Container.CurrentActionState = ItemCanvas.ActionState.None;
         }
 
-        private void Space_MouseDown(object sender, MouseButtonEventArgs e)
+        private void SpaceGraphic_MouseDown(object sender, MouseButtonEventArgs e)
         {
             _space.SpaceMouseDownCommand.Execute(e);
             if (Mouse.LeftButton == MouseButtonState.Pressed)
             {
                 double xPos = e.GetPosition(Container).X;
                 _originalPositionForDraggingSpace = xPos;
-                Space.CaptureMouse();
+                SpaceGraphic.CaptureMouse();
                 if (xPos > (_space.X + _space.Width - ResizeSpaceOffset))
                 {
                     Container.Cursor = Cursors.SizeWE;
@@ -69,20 +69,17 @@ namespace LiveDescribe.Controls
             } 
         }
 
-        private void Space_MouseUp(object sender, MouseButtonEventArgs e)
+        private void SpaceGraphic_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            _space.SpaceMouseUpCommand.Execute(e);
-            Space.ReleaseMouseCapture();
-            Container.CurrentActionState = ItemCanvas.ActionState.None;
-            Container.Cursor = Cursors.Arrow;
+            FinishActionOnSpace();
         }
 
-        private void Space_MouseMove(object sender, MouseEventArgs e)
+        private void SpaceGraphic_MouseMove(object sender, MouseEventArgs e)
         {
             _space.SpaceMouseMoveCommand.Execute(e);
             double xPos = e.GetPosition(Container).X;
 
-            if (Space.IsMouseCaptured)
+            if (SpaceGraphic.IsMouseCaptured)
                 HandleSpaceMouseCapturedStates(xPos);
             else
                 HandleSpaceNonMouseCapturedStates(xPos);
@@ -90,6 +87,13 @@ namespace LiveDescribe.Controls
         #endregion
 
         #region HelperMethods
+        private void FinishActionOnSpace()
+        {
+            SpaceGraphic.ReleaseMouseCapture();
+            Container.CurrentActionState = ItemCanvas.ActionState.None;
+            Container.Cursor = Cursors.Arrow;
+        }
+
         private void HandleSpaceNonMouseCapturedStates(double xPos)
         {
             //Changes cursor if the mouse hovers over the end or the beginning of the space
@@ -135,17 +139,13 @@ namespace LiveDescribe.Controls
             {
                 newWidth = (Container.Width / Duration) * MinSpaceLengthInMSecs;
                 //temporary fix, have to make the cursor attached to the end of the space somehow
-                Space.ReleaseMouseCapture();
-                Container.CurrentActionState = ItemCanvas.ActionState.None;
-                Container.Cursor = Cursors.Arrow;
+                FinishActionOnSpace();
             }
             else if ((_space.StartInVideo + lengthInMillisecondsNewWidth) > Duration)
             {
                 newWidth = (Container.Width / Duration) * (Duration - _space.StartInVideo);
                 //temporary fix, have to make the cursor attached to the end of the space somehow
-                Space.ReleaseMouseCapture();
-                Container.CurrentActionState = ItemCanvas.ActionState.None;
-                Container.Cursor = Cursors.Arrow;
+                FinishActionOnSpace();
             }
 
             _space.Width = newWidth;
@@ -164,17 +164,13 @@ namespace LiveDescribe.Controls
             {
                 newPosition = 0;
                 //temporary fix, have to make the cursor attached to the end of the space somehow
-                Space.ReleaseMouseCapture();
-                Container.CurrentActionState = ItemCanvas.ActionState.None;
-                Container.Cursor = Cursors.Arrow;
+                FinishActionOnSpace();
             }
             else if ((_space.EndInVideo - newPositionMilliseconds) < MinSpaceLengthInMSecs)
             {
                 newPosition = (Container.Width / Duration) * (_space.EndInVideo - MinSpaceLengthInMSecs);
                 //temporary fix, have to make the cursor attached to the end of the space somehow
-                Space.ReleaseMouseCapture();
-                Container.CurrentActionState = ItemCanvas.ActionState.None;
-                Container.Cursor = Cursors.Arrow;
+                FinishActionOnSpace();
             }
 
             _space.X = newPosition;

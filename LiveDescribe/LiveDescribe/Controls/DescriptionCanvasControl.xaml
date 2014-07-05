@@ -74,86 +74,9 @@
 
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Rectangle>
-                                <Rectangle.ContextMenu>
-                                    <ContextMenu>
-                                        <MenuItem
-                                            Header="Delete Description"
-                                            Command="{Binding DescriptionDeleteCommand}" />
-                                    </ContextMenu>
-                                </Rectangle.ContextMenu>
-                                <Rectangle.Style>
-                                    <Style
-                                        TargetType="Rectangle">
-                                        <Style.Triggers>
-                                            <MultiDataTrigger>
-                                                <MultiDataTrigger.Conditions>
-                                                    <Condition
-                                                        Binding="{Binding IsExtendedDescription}"
-                                                        Value="true" />
-                                                    <Condition
-                                                        Binding="{Binding IsSelected}"
-                                                        Value="false" />
-                                                </MultiDataTrigger.Conditions>
-                                                <Setter
-                                                    Property="Fill"
-                                                    Value="Red" />
-                                                <Setter
-                                                    Property="Opacity"
-                                                    Value="0.25" />
-                                            </MultiDataTrigger>
-
-                                            <MultiDataTrigger>
-                                                <MultiDataTrigger.Conditions>
-                                                    <Condition
-                                                        Binding="{Binding IsExtendedDescription}"
-                                                        Value="false" />
-                                                    <Condition
-                                                        Binding="{Binding IsSelected}"
-                                                        Value="false" />
-                                                </MultiDataTrigger.Conditions>
-                                                <Setter
-                                                    Property="Fill"
-                                                    Value="Green" />
-                                                <Setter
-                                                    Property="Opacity"
-                                                    Value="0.25" />
-                                            </MultiDataTrigger>
-                                            <DataTrigger
-                                                Binding="{Binding IsSelected}"
-                                                Value="true">
-                                                <Setter
-                                                    Property="Fill"
-                                                    Value="Yellow" />
-                                                <Setter
-                                                    Property="Opacity"
-                                                    Value="0.25" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Rectangle.Style>
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger
-                                        EventName="MouseDown">
-                                        <!--   <i:InvokeCommandAction Command="{Binding DescriptionMouseDownCommand}" /> -->
-                                        <command:EventToCommand
-                                            Command="{Binding DescriptionMouseDownCommand, Mode=OneWay}"
-                                            PassEventArgsToCommand="True" />
-                                    </i:EventTrigger>
-                                    <i:EventTrigger
-                                        EventName="MouseUp">
-                                        <i:InvokeCommandAction
-                                            Command="{Binding DescriptionMouseUpCommand}" />
-                                    </i:EventTrigger>
-                                    <i:EventTrigger
-                                        EventName="MouseMove">
-                                        <!-- <i:InvokeCommandAction Command="{Binding DescriptionMouseMoveCommand}" />-->
-                                        <command:EventToCommand
-                                            Command="{Binding DescriptionMouseMoveCommand, Mode=OneWay}"
-                                            PassEventArgsToCommand="True" />
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
-                            </Rectangle>
+                            <controls:DescriptionControl
+                                Container="{Binding ElementName=DescriptionCanvas}"
+                                Duration="{Binding VideoDuration, ElementName=DescriptionCanvas}"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

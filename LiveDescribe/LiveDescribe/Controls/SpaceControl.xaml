@@ -10,11 +10,11 @@
              xmlns:controls="clr-namespace:LiveDescribe.Controls">
     <Grid>
         <Rectangle
-            Name="Space"
-            Loaded="Space_Loaded"
-            MouseDown="Space_MouseDown"
-            MouseUp="Space_MouseUp"
-            MouseMove="Space_MouseMove">
+            Name="SpaceGraphic"
+            Loaded="SpaceGraphic_Loaded"
+            MouseDown="SpaceGraphic_MouseDown"
+            MouseUp="SpaceGraphic_MouseUp"
+            MouseMove="SpaceGraphic_MouseMove">
             <Rectangle.ContextMenu>
                 <ContextMenu>
                     <MenuItem
@@ -71,26 +71,6 @@
                     </Style.Triggers>
                 </Style>
             </Rectangle.Style>
-         <!--   <i:Interaction.Triggers>
-                <i:EventTrigger
-                    EventName="MouseDown">
-                    <command:EventToCommand
-                        Command="{Binding SpaceMouseDownCommand, Mode=OneWay}"
-                        PassEventArgsToCommand="True" />
-                </i:EventTrigger>
-                <i:EventTrigger
-                    EventName="MouseUp">
-                    <command:EventToCommand
-                        Command="{Binding SpaceMouseUpCommand, Mode=OneWay}"
-                        PassEventArgsToCommand="True" />
-                </i:EventTrigger>
-                <i:EventTrigger
-                    EventName="MouseMove">
-                    <command:EventToCommand
-                        Command="{Binding SpaceMouseMoveCommand, Mode=OneWay}"
-                        PassEventArgsToCommand="True" />
-                </i:EventTrigger>
-            </i:Interaction.Triggers> -->
         </Rectangle>
     </Grid>
 </controls:ItemControl>

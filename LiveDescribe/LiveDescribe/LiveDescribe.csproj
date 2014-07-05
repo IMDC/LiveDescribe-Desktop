@@ -105,6 +105,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\DescriptionControl.xaml.cs">
+      <DependentUpon>DescriptionControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ItemCanvas.cs" />
     <Compile Include="Controls\AudioCanvasControl.xaml.cs">
       <DependentUpon>AudioCanvasControl.xaml</DependentUpon>
@@ -188,6 +191,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\DescriptionCanvasControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\DescriptionControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
