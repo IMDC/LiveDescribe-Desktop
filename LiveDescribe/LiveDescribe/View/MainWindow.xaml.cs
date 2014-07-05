@@ -51,9 +51,6 @@ namespace LiveDescribe.View
         private double _videoDuration = -1;
         private readonly MediaControlViewModel _mediaControlViewModel;
         private readonly SpaceCollectionViewModel _spaceCollectionViewModel;
-        /// <summary>
-        /// used to format a timespan object which in this case in the videoMedia.Position
-        /// </summary>
         private readonly DescriptionCollectionViewModel _descriptionCollectionViewModel;
         private readonly DescriptionInfoTabViewModel _descriptionInfoTabViewModel;
         private readonly MainWindowViewModel _mainWindowViewModel;
@@ -88,7 +85,6 @@ namespace LiveDescribe.View
             _descriptionCollectionViewModel = mainWindowViewModel.DescriptionCollectionViewModel;
             _spaceCollectionViewModel = mainWindowViewModel.SpaceCollectionViewModel;
             _descriptionInfoTabViewModel = mainWindowViewModel.DescriptionInfoTabViewModel;
-
 
             _audioCanvas = AudioCanvasControl.AudioCanvas;
             _descriptionCanvas = DescriptionCanvasControl.DescriptionCanvas;
@@ -503,7 +499,6 @@ namespace LiveDescribe.View
         #endregion
 
         #region Helper Functions
-
         /// <summary>
         /// Updates the Marker Position in the timeline and sets the corresponding time in the timelabel
         /// </summary>

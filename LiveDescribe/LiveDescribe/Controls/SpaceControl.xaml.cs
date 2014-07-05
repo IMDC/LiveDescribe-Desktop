@@ -32,7 +32,6 @@ namespace LiveDescribe.Controls
             InitializeComponent();
         }
 
-        #region ViewListeners
         private void SpaceGraphic_Loaded(object sender, RoutedEventArgs e)
         {
             _space = (Space)DataContext;
@@ -47,27 +46,39 @@ namespace LiveDescribe.Controls
                 double xPos = e.GetPosition(Container).X;
                 _originalPositionForDraggingSpace = xPos;
                 SpaceGraphic.CaptureMouse();
-                if (xPos > (_space.X + _space.Width - ResizeSpaceOffset))
-                {
-                    Container.Cursor = Cursors.SizeWE;
-                    Container.CurrentActionState = ItemCanvas.ActionState.ResizingEndOfItem;
-                }
-                else if (xPos < (_space.X + ResizeSpaceOffset))
-                {
-                    Container.Cursor = Cursors.SizeWE;
-                    Container.CurrentActionState = ItemCanvas.ActionState.ResizingBeginningOfItem;
-                }
-                else
-                {
-                    Container.Cursor = CustomCursors.GrabbingCursor;
-                    Container.CurrentActionState = ItemCanvas.ActionState.Dragging;
-                }
+                SetCursorUponMouseDown(xPos);
             } 
+        }
+
+        private void SetCursorUponMouseDown(double xPos)
+        {
+            if (xPos > (_space.X + _space.Width - ResizeSpaceOffset))
+            {
+                Container.Cursor = Cursors.SizeWE;
+                Container.CurrentActionState = ItemCanvas.ActionState.ResizingEndOfItem;
+            }
+            else if (xPos < (_space.X + ResizeSpaceOffset))
+            {
+                Container.Cursor = Cursors.SizeWE;
+                Container.CurrentActionState = ItemCanvas.ActionState.ResizingBeginningOfItem;
+            }
+            else
+            {
+                Container.Cursor = CustomCursors.GrabbingCursor;
+                Container.CurrentActionState = ItemCanvas.ActionState.Dragging;
+            }
         }
 
         private void SpaceGraphic_MouseUp(object sender, MouseButtonEventArgs e)
         {
             FinishActionOnSpace();
+        }
+
+        private void FinishActionOnSpace()
+        {
+            SpaceGraphic.ReleaseMouseCapture();
+            Container.CurrentActionState = ItemCanvas.ActionState.None;
+            Container.Cursor = Cursors.Arrow;
         }
 
         private void SpaceGraphic_MouseMove(object sender, MouseEventArgs e)
@@ -79,26 +90,6 @@ namespace LiveDescribe.Controls
                 HandleSpaceMouseCapturedStates(xPos);
             else
                 HandleSpaceNonMouseCapturedStates(xPos);
-        }
-        #endregion
-
-        #region HelperMethods
-        private void FinishActionOnSpace()
-        {
-            SpaceGraphic.ReleaseMouseCapture();
-            Container.CurrentActionState = ItemCanvas.ActionState.None;
-            Container.Cursor = Cursors.Arrow;
-        }
-
-        private void HandleSpaceNonMouseCapturedStates(double xPos)
-        {
-            //Changes cursor if the mouse hovers over the end or the beginning of the space
-            if (xPos > (_space.X + _space.Width - ResizeSpaceOffset)) //mouse is over right side of the space
-                Mouse.SetCursor(Cursors.SizeWE);
-            else if (xPos < (_space.X + ResizeSpaceOffset)) //mouse is over left size of space
-                Mouse.SetCursor(Cursors.SizeWE);
-            else
-                Mouse.SetCursor(CustomCursors.GrabCursor);
         }
 
         private void HandleSpaceMouseCapturedStates(double xPos)
@@ -113,14 +104,15 @@ namespace LiveDescribe.Controls
             SetAppropriateCursorUponMouseCaptured();
         }
 
-        private void SetAppropriateCursorUponMouseCaptured()
+        private void HandleSpaceNonMouseCapturedStates(double xPos)
         {
-            if (Container.Cursor != CustomCursors.GrabbingCursor && Container.CurrentActionState == ItemCanvas.ActionState.Dragging)
-                Container.Cursor = CustomCursors.GrabbingCursor;
-
-            if (Container.Cursor != Cursors.SizeWE && (Container.CurrentActionState == ItemCanvas.ActionState.ResizingBeginningOfItem ||
-                Container.CurrentActionState == ItemCanvas.ActionState.ResizingEndOfItem))
-                Container.Cursor = Cursors.SizeWE;
+            //Changes cursor if the mouse hovers over the end or the beginning of the space
+            if (xPos > (_space.X + _space.Width - ResizeSpaceOffset)) //mouse is over right side of the space
+                Mouse.SetCursor(Cursors.SizeWE);
+            else if (xPos < (_space.X + ResizeSpaceOffset)) //mouse is over left size of space
+                Mouse.SetCursor(Cursors.SizeWE);
+            else
+                Mouse.SetCursor(CustomCursors.GrabCursor);
         }
 
         private void ResizeEndOfSpace(double mouseXPosition)
@@ -192,6 +184,15 @@ namespace LiveDescribe.Controls
             _space.StartInVideo = (Duration / Container.Width) * (_space.X);
             _space.EndInVideo = _space.StartInVideo + (Duration / Container.Width) * size;
         }
-        #endregion
+
+        private void SetAppropriateCursorUponMouseCaptured()
+        {
+            if (Container.Cursor != CustomCursors.GrabbingCursor && Container.CurrentActionState == ItemCanvas.ActionState.Dragging)
+                Container.Cursor = CustomCursors.GrabbingCursor;
+
+            if (Container.Cursor != Cursors.SizeWE && (Container.CurrentActionState == ItemCanvas.ActionState.ResizingBeginningOfItem ||
+                Container.CurrentActionState == ItemCanvas.ActionState.ResizingEndOfItem))
+                Container.Cursor = Cursors.SizeWE;
+        }
     }
 }
