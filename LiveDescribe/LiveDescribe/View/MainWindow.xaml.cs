@@ -38,9 +38,6 @@ namespace LiveDescribe.View
         private const double PageTimeBeforeCanvasScrolls = 30;
         private const double LineTime = 1; //each line in the NumberTimeline appears every 1 second
         private const int LongLineTime = 5; // every 5 LineTimes, you get a Longer Line
-        // resizing the space only happens at ResizeSpaceOffset amount of pixels away from the
-        // beginning and ending of a space
-        private const int ResizeSpaceOffset = 10;
         #endregion
 
         #region Instance Variables
