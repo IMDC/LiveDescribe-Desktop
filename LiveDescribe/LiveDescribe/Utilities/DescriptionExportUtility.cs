@@ -44,30 +44,37 @@ namespace LiveDescribe.Utilities
         #endregion
 
         /// <summary>
-        /// 
+        /// Exports the recorded descriptions and adds them to the video associated with 
+        /// the project. This method is called from a Relay Command(ExportWithDescriptions) 
+        /// in MainWindowViewModel.cs
         /// </summary>
         public void exportVideoWithDescriptions()
         {
-            createDescriptionTrack();
-            //createblankaudio(33);
-            //foreach (var description in _descriptionlist)
-            //{
-            //    console.writeline("{0}", description.audiofile);
-            //    console.writeline("{0}", appendsilence(description.audiofile, 60));
-            //}
+            if (_descriptionList.Count > 0)
+            {
+                string audioTrack = createDescriptionTrack();
+                mixAudioVideo(audioTrack, _videoFile);
+            }
+            else
+            {
+                Log.Warn("No descriptions to be exported");
+            }
         }
 
         /// <summary>
-        /// 
+        /// Creates a single file that contains all description tracks
         /// </summary>
-        private void createDescriptionTrack()
+        /// <returns>Absolute path to the file created</returns>
+        private string createDescriptionTrack()
         {
             Log.Info("Preparing to Create Description Audio");
             List<string> concat_list = new List<string>();
             List<Description> descriptions = new List<Description>(_descriptionList);
-            
+            string outFileName =  _project.Folders.Project + "\\descriptions\\combined_description_track.wav";
+           
             descriptions.Sort((x, y) => x.StartInVideo.CompareTo(y.StartInVideo));
-            string init_silence = createBlankAudio(descriptions[0].StartInVideo); //create silence track for the begining of the description track
+            string init_silence = createBlankAudio(descriptions[0].StartInVideo / 1000); //create silence track for the begining of the description track
+            concat_list.Add(init_silence);
 
             for ( int i = 0; i < descriptions.Count; i++ )
             {
@@ -75,11 +82,11 @@ namespace LiveDescribe.Utilities
 
                 if (i != descriptions.Count - 1) //not the last item
                 {
-                    delta = descriptions[i + 1].StartInVideo - descriptions[i].StartInVideo;
+                    delta = descriptions[i + 1].StartInVideo - (descriptions[i].StartInVideo / 1000);
                 }
                 else
                 {
-                    delta = _videoDurationSeconds - descriptions[i].StartInVideo;
+                    delta = _videoDurationSeconds - (descriptions[i].StartInVideo / 1000);
                 }
                 concat_list.Add(appendSilence(descriptions[i].AudioFile, delta));
             }
@@ -91,8 +98,8 @@ namespace LiveDescribe.Utilities
                 command +=  " -i \"" + file + "\"";
             }
 
-            command += " -filter_complex concat=n=" + concat_list.Count + ":v=0:a=1 " + "\""
-                        + _project.Folders.Project + "\\descriptions\\combined_description_track.wav\"";
+            command += " -filter_complex concat=n=" + concat_list.Count + ":v=0:a=1 -y " + "\""
+                        + outFileName + "\"";
             ffmpegCommand(command);
 
             #region Delete temp files
@@ -111,13 +118,14 @@ namespace LiveDescribe.Utilities
             }
             #endregion
 
+            return outFileName;
         }
 
         /// <summary>
-        /// 
+        /// Creates a silent audio file
         /// </summary>
-        /// <param name="duration"></param>
-        /// <returns></returns>
+        /// <param name="duration">The length, in seconds, to make the audio file</param>
+        /// <returns>Absolute path to the file created</returns>
         private string createBlankAudio(double duration)
         {
             Log.Info("Creating blank audio file");
@@ -130,13 +138,14 @@ namespace LiveDescribe.Utilities
         }
 
         /// <summary>
-        /// 
+        /// Appends silence to an existing audio file
         /// </summary>
-        /// <param name="audioFile"></param>
-        /// <param name="duration"></param>
-        /// <returns></returns>
+        /// <param name="audioFile">Path to the audio file</param>
+        /// <param name="duration">Seconds of silence to be appended</param>
+        /// <returns>Absolute path to the file created</returns>
         private string appendSilence(string audioFile, double duration)
         {
+            Log.Info("Appending " + duration + " seconds of silence to " + audioFile);
             string[] separator = new string[] {"\\"};
             string[] filePathSplit;
             string outFileName;
@@ -148,16 +157,73 @@ namespace LiveDescribe.Utilities
 
 
             string command = " -i \"" + audioFile + "\" -filter_complex aevalsrc=0::d=" + duration 
-                            + "[silence];[0:a][silence]concat=n=2:v=0:a=1[out] -map [out] \"" + outFileName +"\"";
+                            + "[silence];[0:a][silence]concat=n=2:v=0:a=1[out] -map [out] -y \"" 
+                            + outFileName +"\"";
             ffmpegCommand(command);
 
             return outFileName;
         }
 
         /// <summary>
+        /// Mixes an audio track with a video file
+        /// </summary>
+        /// <param name="audioPath"></param>
+        /// <param name="videoPath"></param>
+        /// <returns>Absolute path to the file created</returns>
+        private string mixAudioVideo(string audioPath, string videoPath)
+        {
+            Log.Info("Mixing " + audioPath + " with " + videoPath);
+            string[] separator = new string[] {"\\"};
+            string[] filePathSplit;
+            string outFileName;
+
+            //rename the file 
+            filePathSplit = videoPath.Split(separator, StringSplitOptions.None);
+            filePathSplit[filePathSplit.Length - 1] = "export_" + filePathSplit[filePathSplit.Length - 1];
+            outFileName = String.Join("\\", filePathSplit);
+
+            string command = " -i \"" + videoPath + "\" -i \"" + audioPath + "\" -c copy -map 0:0 -map 0:1 -map 1:0 -y \"" + outFileName + "\"";
+            ffmpegCommand(command);
+
+            return outFileName;
+        }
+
+        /// <summary>
+        ///             NOT YET IMPLEMENTED!
+        /// </summary>
+        /// <param name="videoPath"></param>
+        /// <returns></returns>
+        private string stripVideoAudio(string videoPath)
+        {
+            string[] separator = new string[] { "\\" };
+            string[] filePathSplit;
+            string outFileName;
+
+            //rename the file 
+            filePathSplit = videoPath.Split(separator, StringSplitOptions.None);
+            filePathSplit[filePathSplit.Length - 1] = "export_stripped_video.wav";
+            outFileName = String.Join("\\", filePathSplit);
+
+
+
+            return outFileName;
+        }
+
+
+        /// <summary>
         /// 
         /// </summary>
-        /// <param name="command"></param>
+        /// <param name="audioPath"></param>
+        /// <param name="volume"></param>
+        private void changeAudioVolume(string audioPath, double volume)
+        { 
+
+        }
+
+        /// <summary>
+        /// Executes an ffmpeg command
+        /// </summary>
+        /// <param name="command">String representation of an ffmpeg command</param>
         private void ffmpegCommand(string command)
         {
             var ffmpeg = new Process
