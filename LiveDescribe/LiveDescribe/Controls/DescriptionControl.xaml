@@ -1,0 +1,98 @@
+﻿<controls:ItemControl x:Class="LiveDescribe.Controls.DescriptionControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:controls="clr-namespace:LiveDescribe.Controls"
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+             xmlns:command="http://www.galasoft.ch/mvvmlight"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Rectangle
+            x:Name="DescriptionGraphic"
+            Loaded="DescriptionGraphic_Loaded"
+            MouseDown="DescriptionGraphic_MouseDown"
+            MouseMove="DescriptionGraphic_MouseMove"
+            MouseUp="DescriptionGraphic_MouseUp">
+            <Rectangle.ContextMenu>
+                <ContextMenu>
+                    <MenuItem
+                        Header="Delete Description"
+                        Command="{Binding DescriptionDeleteCommand}" />
+                </ContextMenu>
+            </Rectangle.ContextMenu>
+            <Rectangle.Style>
+                <Style
+                    TargetType="Rectangle">
+                    <Style.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition
+                                    Binding="{Binding IsExtendedDescription}"
+                                    Value="true" />
+                                <Condition
+                                    Binding="{Binding IsSelected}"
+                                    Value="false" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter
+                                Property="Fill"
+                                Value="Red" />
+                            <Setter
+                                Property="Opacity"
+                                Value="0.25" />
+                        </MultiDataTrigger>
+
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition
+                                    Binding="{Binding IsExtendedDescription}"
+                                    Value="false" />
+                                <Condition
+                                    Binding="{Binding IsSelected}"
+                                    Value="false" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter
+                                Property="Fill"
+                                Value="Green" />
+                            <Setter
+                                Property="Opacity"
+                                Value="0.25" />
+                        </MultiDataTrigger>
+                        <DataTrigger
+                            Binding="{Binding IsSelected}"
+                            Value="true">
+                            <Setter
+                                Property="Fill"
+                                Value="Yellow" />
+                            <Setter
+                                Property="Opacity"
+                                Value="0.25" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Rectangle.Style>
+            <i:Interaction.Triggers>
+                <i:EventTrigger
+                    EventName="MouseDown">
+                    <!--   <i:InvokeCommandAction Command="{Binding DescriptionMouseDownCommand}" /> -->
+                    <command:EventToCommand
+                        Command="{Binding DescriptionMouseDownCommand, Mode=OneWay}"
+                            PassEventArgsToCommand="True" />
+                </i:EventTrigger>
+                <i:EventTrigger
+                    EventName="MouseUp">
+                    <i:InvokeCommandAction
+                        Command="{Binding DescriptionMouseUpCommand}" />
+                </i:EventTrigger>
+                <i:EventTrigger
+                        EventName="MouseMove">
+                    <!-- <i:InvokeCommandAction Command="{Binding DescriptionMouseMoveCommand}" />-->
+                    <command:EventToCommand
+                        Command="{Binding DescriptionMouseMoveCommand, Mode=OneWay}"
+                        PassEventArgsToCommand="True" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </Rectangle>
+    </Grid>
+</controls:ItemControl>

@@ -7,6 +7,7 @@
     xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
     xmlns:command="http://www.galasoft.ch/mvvmlight"
     xmlns:converters="clr-namespace:LiveDescribe.Converters"
+    xmlns:controls="clr-namespace:LiveDescribe.Controls"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="300">
@@ -18,8 +19,8 @@
             Name="DescriptionCanvasBorder"
             BorderBrush="Black"
             BorderThickness="0.75">
-            <Canvas
-                Name="DescriptionCanvas"
+            <controls:ItemCanvas
+                x:Name="DescriptionCanvas"
                 HorizontalAlignment="Left"
                 Background="Transparent"
                 IsEnabled="{Binding Path=CurrentVideoState, Converter={StaticResource VideoStateToBoolConverter}}">
@@ -73,86 +74,8 @@
 
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Rectangle>
-                                <Rectangle.ContextMenu>
-                                    <ContextMenu>
-                                        <MenuItem
-                                            Header="Delete Description"
-                                            Command="{Binding DescriptionDeleteCommand}" />
-                                    </ContextMenu>
-                                </Rectangle.ContextMenu>
-                                <Rectangle.Style>
-                                    <Style
-                                        TargetType="Rectangle">
-                                        <Style.Triggers>
-                                            <MultiDataTrigger>
-                                                <MultiDataTrigger.Conditions>
-                                                    <Condition
-                                                        Binding="{Binding IsExtendedDescription}"
-                                                        Value="true" />
-                                                    <Condition
-                                                        Binding="{Binding IsSelected}"
-                                                        Value="false" />
-                                                </MultiDataTrigger.Conditions>
-                                                <Setter
-                                                    Property="Fill"
-                                                    Value="Red" />
-                                                <Setter
-                                                    Property="Opacity"
-                                                    Value="0.25" />
-                                            </MultiDataTrigger>
-
-                                            <MultiDataTrigger>
-                                                <MultiDataTrigger.Conditions>
-                                                    <Condition
-                                                        Binding="{Binding IsExtendedDescription}"
-                                                        Value="false" />
-                                                    <Condition
-                                                        Binding="{Binding IsSelected}"
-                                                        Value="false" />
-                                                </MultiDataTrigger.Conditions>
-                                                <Setter
-                                                    Property="Fill"
-                                                    Value="Green" />
-                                                <Setter
-                                                    Property="Opacity"
-                                                    Value="0.25" />
-                                            </MultiDataTrigger>
-                                            <DataTrigger
-                                                Binding="{Binding IsSelected}"
-                                                Value="true">
-                                                <Setter
-                                                    Property="Fill"
-                                                    Value="Yellow" />
-                                                <Setter
-                                                    Property="Opacity"
-                                                    Value="0.25" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Rectangle.Style>
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger
-                                        EventName="MouseDown">
-                                        <!--   <i:InvokeCommandAction Command="{Binding DescriptionMouseDownCommand}" /> -->
-                                        <command:EventToCommand
-                                            Command="{Binding DescriptionMouseDownCommand, Mode=OneWay}"
-                                            PassEventArgsToCommand="True" />
-                                    </i:EventTrigger>
-                                    <i:EventTrigger
-                                        EventName="MouseUp">
-                                        <i:InvokeCommandAction
-                                            Command="{Binding DescriptionMouseUpCommand}" />
-                                    </i:EventTrigger>
-                                    <i:EventTrigger
-                                        EventName="MouseMove">
-                                        <!-- <i:InvokeCommandAction Command="{Binding DescriptionMouseMoveCommand}" />-->
-                                        <command:EventToCommand
-                                            Command="{Binding DescriptionMouseMoveCommand, Mode=OneWay}"
-                                            PassEventArgsToCommand="True" />
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
-                            </Rectangle>
+                            <controls:DescriptionControl
+                                Container="{Binding ElementName=DescriptionCanvas}"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
@@ -176,7 +99,7 @@
                             PassEventArgsToCommand="True"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
-            </Canvas>
+            </controls:ItemCanvas>
         </Border>
     </Grid>
 </UserControl>

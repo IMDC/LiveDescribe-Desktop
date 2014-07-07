@@ -39,7 +39,6 @@ namespace LiveDescribe.Model
         {
             var pf = new ProjectFile { AbsolutePath = absolutePath };
             pf.MakeRelativeTo(basePath);
-
             return pf;
         }
         #endregion
@@ -111,7 +110,7 @@ namespace LiveDescribe.Model
 
             var relativeUri = baseUri.MakeRelativeUri(absoluteUri);
 
-            RelativePath = relativeUri.ToString();
+            RelativePath = relativeUri.ToString().Replace("%20", " ");
         }
 
         /// <summary>

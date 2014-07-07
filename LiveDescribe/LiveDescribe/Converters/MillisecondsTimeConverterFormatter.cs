@@ -8,6 +8,9 @@ namespace LiveDescribe.Converters
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
+            if (double.IsNaN((double)value))
+                return 0;
+
             return TimeSpan.FromMilliseconds((double)value).ToString("h\\:mm\\:ss\\.fff");
         }
 
