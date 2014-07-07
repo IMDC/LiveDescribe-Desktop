@@ -236,44 +236,51 @@ namespace LiveDescribe.ViewModel
             _descriptiontimer.AutoReset = true;
 
             _preferences.ApplyRequested += (sender, e) =>
-                {
-                    _descriptioncollectionviewmodel.Recorder.MicrophoneDeviceNumber = Properties.Settings.Default.Microphone.DeviceNumber;
-                    Log.Info("Product Name of Apply Requested Microphone: " +
-                        NAudio.Wave.WaveIn.GetCapabilities(_descriptioncollectionviewmodel.Recorder.MicrophoneDeviceNumber).ProductName);
-                };
+            {
+                _descriptioncollectionviewmodel.Recorder.MicrophoneDeviceNumber = Properties.Settings.Default.Microphone.DeviceNumber;
+                Log.Info("Product Name of Apply Requested Microphone: " +
+                    NAudio.Wave.WaveIn.GetCapabilities(_descriptioncollectionviewmodel.Recorder.MicrophoneDeviceNumber).ProductName);
+            };
 
             #region MediaControlViewModel Events
             _mediaControlViewModel.PlayRequested += (sender, e) =>
-                {
-                    _mediaVideo.Play();
-                    _descriptiontimer.Start();
-                    //this Handler should be attached to the view to update the graphics
-                    OnPlayRequested(sender, e);
-                };
+            {
+                _mediaVideo.Play();
+                _descriptiontimer.Start();
+                //this Handler should be attached to the view to update the graphics
+                OnPlayRequested(sender, e);
+            };
 
             _mediaControlViewModel.PauseRequested += (sender, e) =>
-                {
-                    _mediaVideo.Pause();
-                    _descriptiontimer.Stop();
-                    if (_lastRegularDescriptionPlayed != null && _lastRegularDescriptionPlayed.IsPlaying)
-                        DescriptionPlayer.Stop();
-                    //this Handler should be attached to the view to update the graphics
-                    OnPauseRequested(sender, e);
-                };
+            {
+                _mediaVideo.Pause();
+                _descriptiontimer.Stop();
+                if (_lastRegularDescriptionPlayed != null && _lastRegularDescriptionPlayed.IsPlaying)
+                    DescriptionPlayer.Stop();
+                //this Handler should be attached to the view to update the graphics
+                OnPauseRequested(sender, e);
+            };
+
+            _mediaControlViewModel.OnPausedForExtendedDescription += (sender, e) =>
+            {
+                _mediaVideo.Pause();
+                _descriptiontimer.Stop();
+                CommandManager.InvalidateRequerySuggested();
+            };
 
             _mediaControlViewModel.MuteRequested += (sender, e) =>
-                {
-                    //this Handler should be attached to the view to update the graphics
-                    _mediaVideo.IsMuted = !_mediaVideo.IsMuted;
-                    OnMuteRequested(sender, e);
-                };
+            {
+                //this Handler should be attached to the view to update the graphics
+                _mediaVideo.IsMuted = !_mediaVideo.IsMuted;
+                OnMuteRequested(sender, e);
+            };
 
             _mediaControlViewModel.MediaEndedEvent += (sender, e) =>
-                {
-                    _descriptiontimer.Stop();
-                    _mediaVideo.Stop();
-                    OnMediaEnded(sender, e);
-                };
+            {
+                _descriptiontimer.Stop();
+                _mediaVideo.Stop();
+                OnMediaEnded(sender, e);
+            };
 
             _mediaControlViewModel.OnStrippingAudioCompleted += (sender, args) =>
             {
@@ -475,7 +482,8 @@ namespace LiveDescribe.ViewModel
             {
                 DispatcherHelper.UIDispatcher.Invoke(() =>
                 {
-                    _mediaControlViewModel.PauseCommand.Execute(this);
+                   // _mediaControlViewModel.PauseCommand.Execute(this);
+                    _mediaControlViewModel.PauseForExtendedDescriptionCommand.Execute(this);
                     Log.Info("Playing Extended Description");
                 });
 

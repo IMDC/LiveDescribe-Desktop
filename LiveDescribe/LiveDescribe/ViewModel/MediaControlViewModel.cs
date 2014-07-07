@@ -1,4 +1,6 @@
-﻿using GalaSoft.MvvmLight;
+﻿using System.Runtime.InteropServices;
+using System.Windows.Input;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Extensions;
 using LiveDescribe.Interfaces;
@@ -43,6 +45,7 @@ namespace LiveDescribe.ViewModel
         public event EventHandler MediaFailedEvent;
         public event EventHandler MediaEndedEvent;
         public event EventHandler OnStrippingAudioCompleted;
+        public event EventHandler OnPausedForExtendedDescription;
 
         //Event handlers for the Marker on the timeline
         public event EventHandler OnMarkerMouseDownRequested;
@@ -58,6 +61,7 @@ namespace LiveDescribe.ViewModel
             PlayCommand = new RelayCommand(Play, PlayCheck);
             PauseCommand = new RelayCommand(Pause, PauseCheck);
             MuteCommand = new RelayCommand(Mute, () => true);
+            PauseForExtendedDescriptionCommand = new RelayCommand(PauseForExtendedDescription, () => true);
 
             //Marker commands {
             MarkerMouseDownCommand = new RelayCommand(OnMarkerMouseDown, () => true);
@@ -74,6 +78,9 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Commands
+
+        public RelayCommand PauseForExtendedDescriptionCommand { get; private set; }
+
         /// <summary>
         /// Setter and getter for MediaEndedCommand
         /// </summary>
@@ -226,6 +233,14 @@ namespace LiveDescribe.ViewModel
             if (handler == null) return;
             handler(this, EventArgs.Empty);
         }
+
+        public void PauseForExtendedDescription()
+        {
+            _mediaVideo.CurrentState = LiveDescribeVideoStates.PlayingExtendedDescription;
+            EventHandler handler = OnPausedForExtendedDescription;
+            if (handler == null) return;
+            handler(this, EventArgs.Empty);
+        }
         #endregion
 
         #region State Checks
@@ -250,7 +265,8 @@ namespace LiveDescribe.ViewModel
         public bool PauseCheck()
         {
             if (_mediaVideo.CurrentState == LiveDescribeVideoStates.PausedVideo || _mediaVideo.CurrentState == LiveDescribeVideoStates.VideoNotLoaded
-                || _mediaVideo.CurrentState == LiveDescribeVideoStates.VideoLoaded || _mediaVideo.CurrentState == LiveDescribeVideoStates.RecordingDescription)
+                || _mediaVideo.CurrentState == LiveDescribeVideoStates.VideoLoaded || _mediaVideo.CurrentState == LiveDescribeVideoStates.RecordingDescription
+                || _mediaVideo.CurrentState == LiveDescribeVideoStates.PlayingExtendedDescription)
                 return false;
             return true;
         }
