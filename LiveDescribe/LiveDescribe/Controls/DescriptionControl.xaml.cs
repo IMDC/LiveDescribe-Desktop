@@ -101,7 +101,6 @@ namespace LiveDescribe.Controls
             return (!(xPos < 0 || xPos >= Container.Width));
         }
 
-
         private void OnFinishDescriptionActionState()
         {
             DescriptionGraphic.ReleaseMouseCapture();

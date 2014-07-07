@@ -168,6 +168,10 @@ namespace LiveDescribe.Controls
 
         private void DragSpace(double mouseXPosition)
         {
+
+            if (!CanContinueDraggingSpace(mouseXPosition))
+                return;
+
             double newPosition = _space.X + (mouseXPosition - _originalPositionForDraggingSpace);
             double newPositionMilliseconds = (Container.VideoDuration / Container.Width) * newPosition;
             double lengthOfSpaceMilliseconds = _space.EndInVideo - _space.StartInVideo;
@@ -183,6 +187,11 @@ namespace LiveDescribe.Controls
             _originalPositionForDraggingSpace = mouseXPosition;
             _space.StartInVideo = (Container.VideoDuration / Container.Width) * (_space.X);
             _space.EndInVideo = _space.StartInVideo + (Container.VideoDuration / Container.Width) * size;
+        }
+
+        private bool CanContinueDraggingSpace(double xPos)
+        {
+            return (!(xPos < 0 || xPos >= Container.Width));
         }
 
         private void SetAppropriateCursorUponMouseCaptured()
