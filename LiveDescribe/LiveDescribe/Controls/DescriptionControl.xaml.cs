@@ -33,6 +33,7 @@ namespace LiveDescribe.Controls
 
         private void DescriptionGraphic_Loaded(object sender, RoutedEventArgs e)
         {
+            if (sender is Description)
             _description = (Description)DataContext;
         }
 

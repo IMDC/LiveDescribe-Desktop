@@ -34,7 +34,8 @@ namespace LiveDescribe.Controls
 
         private void SpaceGraphic_Loaded(object sender, RoutedEventArgs e)
         {
-            _space = (Space)DataContext;
+            if (sender is Space)
+                _space = (Space)DataContext;
             Container.CurrentActionState = ItemCanvas.ActionState.None;
         }
 
