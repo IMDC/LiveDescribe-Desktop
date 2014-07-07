@@ -256,30 +256,6 @@ namespace LiveDescribe.ViewModel
         }
 
         /// <summary>
-        /// Used for the RelayCommand "RewindCommand" to check whether the rewind button can be
-        /// pressed or not
-        /// </summary>
-        /// <returns>true if the button can be enabled</returns>
-        public bool RewindCheck()
-        {
-            if (_mediaVideo.CurrentState == LiveDescribeVideoStates.VideoNotLoaded || _mediaVideo.CurrentState == LiveDescribeVideoStates.RecordingDescription)
-                return false;
-            return true;
-        }
-
-        /// <summary>
-        /// Used for the RelayCommand "FastForwardCommand" to check whether the fastforward button
-        /// can be pressed or not
-        /// </summary>
-        /// <returns></returns>
-        public bool FastForwardCheck()
-        {
-            if (_mediaVideo.CurrentState == LiveDescribeVideoStates.VideoNotLoaded || _mediaVideo.CurrentState == LiveDescribeVideoStates.RecordingDescription)
-                return false;
-            return true;
-        }
-
-        /// <summary>
         /// Used for the RelayCommand "RecordCommand" to check whether the record button can be
         /// pressed or not
         /// </summary>
