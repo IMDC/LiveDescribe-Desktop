@@ -15,7 +15,8 @@ namespace LiveDescribe.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var currentState = (LiveDescribeVideoStates)value;
-            return currentState != LiveDescribeVideoStates.PlayingVideo;
+            return (currentState != LiveDescribeVideoStates.PlayingVideo
+                && currentState != LiveDescribeVideoStates.PlayingExtendedDescription);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

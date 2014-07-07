@@ -26,5 +26,10 @@
         /// In this state right when the video file is loaded
         /// </summary>
         VideoLoaded,
+
+        /// <summary>
+        /// In this state when playing an extended description
+        /// </summary>
+        PlayingExtendedDescription,
     }
 }

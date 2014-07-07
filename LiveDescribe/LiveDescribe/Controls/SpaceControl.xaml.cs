@@ -22,6 +22,11 @@ namespace LiveDescribe.Controls
     /// </summary>
     public partial class SpaceControl : ItemControl
     {
+        #region Logger
+        private static readonly log4net.ILog Log = log4net.LogManager.GetLogger
+            (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        #endregion
+
         public const double MinSpaceLengthInMSecs = 333;
         private const int ResizeSpaceOffset = 10;
         private double _originalPositionForDraggingSpace;
@@ -34,7 +39,11 @@ namespace LiveDescribe.Controls
 
         private void SpaceGraphic_Loaded(object sender, RoutedEventArgs e)
         {
-            _space = (Space)DataContext;
+            if (DataContext != null)
+                _space = (Space)DataContext;
+            else
+                Log.Warn("SpaceControl DataContext is null");
+
             Container.CurrentActionState = ItemCanvas.ActionState.None;
         }
 
