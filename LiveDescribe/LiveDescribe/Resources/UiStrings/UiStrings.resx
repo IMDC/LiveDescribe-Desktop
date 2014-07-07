@@ -245,6 +245,9 @@
   <data name="Label_ProjectName" xml:space="preserve">
     <value>Project Name</value>
   </data>
+  <data name="Label_TimeLeft" xml:space="preserve">
+    <value>Time Left:</value>
+  </data>
   <data name="Label_Video" xml:space="preserve">
     <value>Video</value>
   </data>

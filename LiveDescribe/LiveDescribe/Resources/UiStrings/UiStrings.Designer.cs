@@ -412,6 +412,15 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Time Left:.
+        /// </summary>
+        public static string Label_TimeLeft {
+            get {
+                return ResourceManager.GetString("Label_TimeLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Video.
         /// </summary>
         public static string Label_Video {

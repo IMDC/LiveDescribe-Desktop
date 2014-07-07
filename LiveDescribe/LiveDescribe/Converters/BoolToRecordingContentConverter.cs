@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Data;
+using LiveDescribe.Resources.UiStrings;
 
 namespace LiveDescribe.Converters
 {
@@ -10,7 +11,7 @@ namespace LiveDescribe.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var v = (bool)value;
-            return v ? "Stop Recording" : "Record";
+            return v ? UiStrings.Command_StopRecord : UiStrings.Command_Record;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

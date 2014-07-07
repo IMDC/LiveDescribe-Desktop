@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
+using LiveDescribe.Resources.UiStrings;
 
 namespace LiveDescribe.Converters
 {
@@ -15,7 +16,8 @@ namespace LiveDescribe.Converters
         {
             double d = (double) value;
 
-            return string.Format("Time Left: {0}", TimeSpan.FromMilliseconds(d).ToString("h\\:mm\\:ss\\.fff"));
+            return string.Format("{0} {1}", UiStrings.Label_TimeLeft,
+                TimeSpan.FromMilliseconds(d).ToString("h\\:mm\\:ss\\.fff"));
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
