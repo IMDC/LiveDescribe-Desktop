@@ -7,7 +7,8 @@
     mc:Ignorable="d"
     d:DesignHeight="400"
     d:DesignWidth="300"
-    xmlns:converters="clr-namespace:LiveDescribe.Converters">
+    xmlns:converters="clr-namespace:LiveDescribe.Converters"
+    xmlns:s="clr-namespace:LiveDescribe.Resources.UiStrings">
     <UserControl.Resources>
         <converters:MillisecondsTimeConverterFormatter
             x:Key="MillisecondsTimeConverter" />
@@ -88,7 +89,7 @@
             <!--Space Tab-->
             <TabItem
                 Name="SpacesTabItem"
-                Header="Spaces">
+                Header="{x:Static s:UiStrings.Header_Spaces}">
                 <ListView
                     Name="SpacesListView"
                     VirtualizingPanel.IsVirtualizing="True"
@@ -104,10 +105,10 @@
                         <ContextMenu
                             x:Key="SpaceItemContextMenu">
                             <MenuItem
-                                Header="Go to Space"
+                                Header="{x:Static s:UiStrings.Command_GoToSpace}"
                                 Command="{Binding GoToThisSpaceCommand}" />
                             <MenuItem
-                                Header="Delete Space"
+                                Header="{x:Static s:UiStrings.Command_DeleteSpace}"
                                 Command="{Binding DeleteSpaceCommand}" />
                         </ContextMenu>
                     </ListView.Resources>
@@ -122,22 +123,22 @@
                     <ListView.View>
                         <GridView>
                             <GridViewColumn
-                                Header="#"
+                                Header="{x:Static s:UiStrings.Header_NumberColumn}"
                                 CellTemplate="{StaticResource ItemIndexTemplate}" />
                             <GridViewColumn
-                                Header="Start In Video"
+                                Header="{x:Static s:UiStrings.Header_StartTime}"
                                 CellTemplate="{StaticResource StartInVideoTemplate}" />
                             <GridViewColumn
-                                Header="End In Video"
+                                Header="{x:Static s:UiStrings.Header_EndTime}"
                                 CellTemplate="{StaticResource EndInVideoTemplate}" />
                             <GridViewColumn
-                                Header="Duration"
+                                Header="{x:Static s:UiStrings.Header_Duration}"
                                 CellTemplate="{StaticResource DurationTemplate}" />
                             <GridViewColumn
-                                Header="Space Text"
+                                Header="{x:Static s:UiStrings.Header_SpaceText}"
                                 CellTemplate="{StaticResource TextDataTemplate}" />
                             <GridViewColumn
-                                Header="Completed"
+                                Header="{x:Static s:UiStrings.Header_SpaceCompleted}"
                                 CellTemplate="{StaticResource CompleteCheckboxTemplate}"/>
                         </GridView>
                     </ListView.View>
@@ -147,7 +148,7 @@
             <!--Description Tab-->
             <TabItem
                 Name="DescriptionsTabItem"
-                Header="Descriptions">
+                Header="{x:Static s:UiStrings.Header_RegularDescriptions}">
                 <ListView
                     Name="DescriptionsListView"
                     VirtualizingPanel.IsVirtualizing="True"
@@ -156,10 +157,10 @@
                         <ContextMenu
                             x:Key="RegularDescriptionContextMenu">
                             <MenuItem
-                                Header="Go to Description"
+                                Header="{x:Static s:UiStrings.Command_GoToDescription}"
                                 Command="{Binding GoToThisDescriptionCommand}" />
                             <MenuItem
-                                Header="Delete Description"
+                                Header="{x:Static s:UiStrings.Command_DeleteDescription}"
                                 Command="{Binding DescriptionDeleteCommand}" />
                         </ContextMenu>
                     </ListView.Resources>
@@ -181,19 +182,19 @@
                     <ListView.View>
                         <GridView>
                             <GridViewColumn
-                                Header="#"
+                                Header="{x:Static s:UiStrings.Header_NumberColumn}"
                                 CellTemplate="{StaticResource ItemIndexTemplate}" />
                             <GridViewColumn
-                                Header="Start In Video"
+                                Header="{x:Static s:UiStrings.Header_StartTime}"
                                 CellTemplate="{StaticResource StartInVideoTemplate}" />
                             <GridViewColumn
-                                Header="End In Video"
+                                Header="{x:Static s:UiStrings.Header_EndTime}"
                                 CellTemplate="{StaticResource EndInVideoTemplate}" />
                             <GridViewColumn
-                                Header="Duration"
+                                Header="{x:Static s:UiStrings.Header_Duration}"
                                 CellTemplate="{StaticResource DurationTemplate}" />
                             <GridViewColumn
-                                Header="Description Text"
+                                Header="{x:Static s:UiStrings.Header_DescriptionText}"
                                 CellTemplate="{StaticResource TextDataTemplate}" />
                         </GridView>
                     </ListView.View>
@@ -203,7 +204,7 @@
             <!--Extended Description Tab-->
             <TabItem
                 Name="ExtendedDescriptionsTabItem"
-                Header="Extended Descriptions">
+                Header="{x:Static s:UiStrings.Header_ExtendedDescriptions}">
                 <ListView
                     Name="ExtendedDescriptionsListView"
                     VirtualizingPanel.IsVirtualizing="True"
@@ -212,10 +213,10 @@
                         <ContextMenu
                             x:Key="ExtendedDescriptionContextMenu">
                             <MenuItem
-                                Header="Go to Description"
+                                Header="{x:Static s:UiStrings.Command_GoToDescription}"
                                 Command="{Binding GoToThisDescriptionCommand}" />
                             <MenuItem
-                                Header="Delete Description"
+                                Header="{x:Static s:UiStrings.Command_DeleteDescription}"
                                 Command="{Binding DescriptionDeleteCommand}" />
                         </ContextMenu>
                     </ListView.Resources>
@@ -237,19 +238,16 @@
                     <ListView.View>
                         <GridView>
                             <GridViewColumn
-                                Header="#"
+                                Header="{x:Static s:UiStrings.Header_NumberColumn}"
                                 CellTemplate="{StaticResource ItemIndexTemplate}" />
                             <GridViewColumn
-                                Header="Start In Video"
+                                Header="{x:Static s:UiStrings.Header_StartTime}"
                                 CellTemplate="{StaticResource StartInVideoTemplate}" />
                             <GridViewColumn
-                                Header="End In Video"
-                                CellTemplate="{StaticResource EndInVideoTemplate}" />
-                            <GridViewColumn
-                                Header="Duration"
+                                Header="{x:Static s:UiStrings.Header_Duration}"
                                 CellTemplate="{StaticResource DurationTemplate}" />
                             <GridViewColumn
-                                Header="Description Text"
+                                Header="{x:Static s:UiStrings.Header_DescriptionText}"
                                 CellTemplate="{StaticResource TextDataTemplate}" />
                         </GridView>
                     </ListView.View>
@@ -278,11 +276,11 @@
             <Button
                 Margin="5"
                 Command="{Binding RecordInSpace}"
-                Content="Record" />
+                Content="{x:Static s:UiStrings.Command_Record}" />
             <Button
                 Margin="5"
                 Command="{Binding ClearSelectedItemText}"
-                Content="Clear" />
+                Content="{x:Static s:UiStrings.Command_Clear}" />
         </StackPanel>
     </Grid>
 </UserControl>

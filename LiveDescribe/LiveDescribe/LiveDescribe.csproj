@@ -157,6 +157,11 @@
     <Compile Include="Model\Space.cs" />
     <Compile Include="Model\Header.cs" />
     <Compile Include="Model\Waveform.cs" />
+    <Compile Include="Resources\UiStrings\UiStrings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>UiStrings.resx</DependentUpon>
+    </Compile>
     <Compile Include="Utilities\AudioAnalyzer.cs" />
     <Compile Include="Utilities\CustomCursors.cs" />
     <Compile Include="Utilities\DescriptionPlayer.cs" />
@@ -287,6 +292,10 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\UiStrings\UiStrings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>UiStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="Log4Net.config">
       <SubType>Designer</SubType>
