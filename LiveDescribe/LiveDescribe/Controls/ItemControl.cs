@@ -13,9 +13,6 @@ namespace LiveDescribe.Controls
         public static readonly DependencyProperty ContainerProperty =
            DependencyProperty.Register("Container", typeof(ItemCanvas), typeof(ItemControl));
 
-        public static readonly DependencyProperty DurationProperty =
-            DependencyProperty.Register("Duration", typeof(double), typeof(ItemControl));
-
         public ItemCanvas Container
         {
             get { return (ItemCanvas)GetValue(ContainerProperty); }
