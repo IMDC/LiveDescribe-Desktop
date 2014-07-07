@@ -23,6 +23,11 @@ namespace LiveDescribe.Controls
     public partial class DescriptionControl : ItemControl
     {
 
+        #region Logger
+        private static readonly log4net.ILog Log = log4net.LogManager.GetLogger
+            (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        #endregion
+
         private Description _description;
         private double _originalPositionForDraggingDescription;
 
@@ -33,8 +38,10 @@ namespace LiveDescribe.Controls
 
         private void DescriptionGraphic_Loaded(object sender, RoutedEventArgs e)
         {
-            if (sender is Description)
-            _description = (Description)DataContext;
+            if (DataContext != null)
+                _description = (Description)DataContext;
+            else
+                Log.Warn("DescriptionControl DataContext is null");
         }
 
         private void DescriptionGraphic_MouseDown(object sender, MouseButtonEventArgs e)
