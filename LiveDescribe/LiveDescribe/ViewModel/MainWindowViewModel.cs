@@ -461,6 +461,8 @@ namespace LiveDescribe.ViewModel
                     if (ex is FileNotFoundException ||
                         ex is DirectoryNotFoundException)
                         DescriptionFileNotFound(description);
+                    else if (ex is TaskCanceledException)
+                        Log.Warn("Task Canceled Exception", ex);
                     else
                         throw;
                 }
