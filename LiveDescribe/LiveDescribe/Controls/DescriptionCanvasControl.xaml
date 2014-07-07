@@ -75,8 +75,7 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <controls:DescriptionControl
-                                Container="{Binding ElementName=DescriptionCanvas}"
-                                Duration="{Binding VideoDuration, ElementName=DescriptionCanvas}"/>
+                                Container="{Binding ElementName=DescriptionCanvas}"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

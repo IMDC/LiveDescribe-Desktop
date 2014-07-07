@@ -62,8 +62,7 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <controls:SpaceControl 
-                                Container="{Binding ElementName=AudioCanvas}" 
-                                Duration="{Binding Path=VideoDuration, ElementName=AudioCanvas}"/>
+                                Container="{Binding ElementName=AudioCanvas}"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

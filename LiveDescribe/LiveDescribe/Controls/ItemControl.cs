@@ -21,11 +21,5 @@ namespace LiveDescribe.Controls
             get { return (ItemCanvas)GetValue(ContainerProperty); }
             set { SetValue(ContainerProperty, value); }
         }
-
-        public double Duration
-        {
-            get { return (double)GetValue(DurationProperty); }
-            set { SetValue(DurationProperty, value); }
-        }
     }
 }

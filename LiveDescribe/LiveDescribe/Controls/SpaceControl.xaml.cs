@@ -118,32 +118,32 @@ namespace LiveDescribe.Controls
         private void ResizeEndOfSpace(double mouseXPosition)
         {
             double newWidth = _space.Width + (mouseXPosition - _originalPositionForDraggingSpace);
-            double lengthInMillisecondsNewWidth = (Duration / Container.Width) * newWidth;
+            double lengthInMillisecondsNewWidth = (Container.VideoDuration / Container.Width) * newWidth;
 
             //bounds checking            
             if (lengthInMillisecondsNewWidth < MinSpaceLengthInMSecs)
             {
-                newWidth = (Container.Width / Duration) * MinSpaceLengthInMSecs;
+                newWidth = (Container.Width / Container.VideoDuration) * MinSpaceLengthInMSecs;
                 //temporary fix, have to make the cursor attached to the end of the space somehow
                 FinishActionOnSpace();
             }
-            else if ((_space.StartInVideo + lengthInMillisecondsNewWidth) > Duration)
+            else if ((_space.StartInVideo + lengthInMillisecondsNewWidth) > Container.VideoDuration)
             {
-                newWidth = (Container.Width / Duration) * (Duration - _space.StartInVideo);
+                newWidth = (Container.Width / Container.VideoDuration) * (Container.VideoDuration - _space.StartInVideo);
                 //temporary fix, have to make the cursor attached to the end of the space somehow
                 FinishActionOnSpace();
             }
 
             _space.Width = newWidth;
             _originalPositionForDraggingSpace = mouseXPosition;
-            _space.EndInVideo = _space.StartInVideo + (Duration / Container.Width) * _space.Width;
+            _space.EndInVideo = _space.StartInVideo + (Container.VideoDuration / Container.Width) * _space.Width;
         }
 
         private void ResizeBeginningOfSpace(double mouseXPosition)
         {
             //left side of space
             double newPosition = _space.X + (mouseXPosition - _originalPositionForDraggingSpace);
-            double newPositionMilliseconds = (Duration / Container.Width) * newPosition;
+            double newPositionMilliseconds = (Container.VideoDuration / Container.Width) * newPosition;
 
             //bounds checking
             if (newPositionMilliseconds < 0)
@@ -154,14 +154,14 @@ namespace LiveDescribe.Controls
             }
             else if ((_space.EndInVideo - newPositionMilliseconds) < MinSpaceLengthInMSecs)
             {
-                newPosition = (Container.Width / Duration) * (_space.EndInVideo - MinSpaceLengthInMSecs);
+                newPosition = (Container.Width / Container.VideoDuration) * (_space.EndInVideo - MinSpaceLengthInMSecs);
                 //temporary fix, have to make the cursor attached to the end of the space somehow
                 FinishActionOnSpace();
             }
 
             _space.X = newPosition;
-            _space.StartInVideo = (Duration / Container.Width) * newPosition;
-            _space.Width = (Container.Width / Duration) * (_space.EndInVideo - _space.StartInVideo);
+            _space.StartInVideo = (Container.VideoDuration / Container.Width) * newPosition;
+            _space.Width = (Container.Width / Container.VideoDuration) * (_space.EndInVideo - _space.StartInVideo);
 
             _originalPositionForDraggingSpace = mouseXPosition;
         }
@@ -169,20 +169,20 @@ namespace LiveDescribe.Controls
         private void DragSpace(double mouseXPosition)
         {
             double newPosition = _space.X + (mouseXPosition - _originalPositionForDraggingSpace);
-            double newPositionMilliseconds = (Duration / Container.Width) * newPosition;
+            double newPositionMilliseconds = (Container.VideoDuration / Container.Width) * newPosition;
             double lengthOfSpaceMilliseconds = _space.EndInVideo - _space.StartInVideo;
             //size in pixels of the space
-            double size = (Container.Width / Duration) * lengthOfSpaceMilliseconds;
+            double size = (Container.Width / Container.VideoDuration) * lengthOfSpaceMilliseconds;
 
             if (newPositionMilliseconds < 0)
                 newPosition = 0;
-            else if ((newPositionMilliseconds + lengthOfSpaceMilliseconds) > Duration)
-                newPosition = (Container.Width / Duration) * (Duration - lengthOfSpaceMilliseconds);
+            else if ((newPositionMilliseconds + lengthOfSpaceMilliseconds) > Container.VideoDuration)
+                newPosition = (Container.Width / Container.VideoDuration) * (Container.VideoDuration - lengthOfSpaceMilliseconds);
 
             _space.X = newPosition;
             _originalPositionForDraggingSpace = mouseXPosition;
-            _space.StartInVideo = (Duration / Container.Width) * (_space.X);
-            _space.EndInVideo = _space.StartInVideo + (Duration / Container.Width) * size;
+            _space.StartInVideo = (Container.VideoDuration / Container.Width) * (_space.X);
+            _space.EndInVideo = _space.StartInVideo + (Container.VideoDuration / Container.Width) * size;
         }
 
         private void SetAppropriateCursorUponMouseCaptured()

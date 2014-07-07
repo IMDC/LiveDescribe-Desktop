@@ -81,18 +81,18 @@ namespace LiveDescribe.Controls
                 return;
 
             double newPosition = _description.X + (xPos - _originalPositionForDraggingDescription);
-            double newPositionMilliseconds = (Duration / Container.Width) * newPosition;
+            double newPositionMilliseconds = (Container.VideoDuration / Container.Width) * newPosition;
             double lengthOfDescriptionMilliseconds = _description.EndInVideo - _description.StartInVideo;
 
             //bounds checking when dragging the description
             if (newPositionMilliseconds < 0)
                 newPosition = 0;
-            else if ((newPositionMilliseconds + lengthOfDescriptionMilliseconds) > Duration)
-                newPosition = (Container.Width / Duration) * (Duration - lengthOfDescriptionMilliseconds);
+            else if ((newPositionMilliseconds + lengthOfDescriptionMilliseconds) > Container.VideoDuration)
+                newPosition = (Container.Width / Container.VideoDuration) * (Container.VideoDuration - lengthOfDescriptionMilliseconds);
 
             _description.X = newPosition;
             _originalPositionForDraggingDescription = xPos;
-            _description.StartInVideo = (Duration / Container.Width) * (_description.X);
+            _description.StartInVideo = (Container.VideoDuration / Container.Width) * (_description.X);
             _description.EndInVideo = _description.StartInVideo + (_description.EndWaveFileTime - _description.StartWaveFileTime);
         }
 
