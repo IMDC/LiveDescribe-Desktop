@@ -8,6 +8,7 @@
     xmlns:command="http://www.galasoft.ch/mvvmlight"
     xmlns:converters="clr-namespace:LiveDescribe.Converters"
     xmlns:controls="clr-namespace:LiveDescribe.Controls"
+    xmlns:s="clr-namespace:LiveDescribe.Resources.UiStrings"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="300">
@@ -30,7 +31,7 @@
                     <ContextMenu>
                         <MenuItem
                             DataContext="{Binding SpaceCollectionViewModel}"
-                            Header="Add Space"
+                            Header="{x:Static s:UiStrings.Command_AddSpace}"
                             Command="{Binding GetNewSpaceTime}" />
                     </ContextMenu>
                 </controls:ItemCanvas.ContextMenu>

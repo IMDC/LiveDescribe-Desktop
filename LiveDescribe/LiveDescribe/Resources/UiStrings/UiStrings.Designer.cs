@@ -61,11 +61,56 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Accept.
+        /// </summary>
+        public static string Command_Accept {
+            get {
+                return ResourceManager.GetString("Command_Accept", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add space.
+        /// </summary>
+        public static string Command_AddSpace {
+            get {
+                return ResourceManager.GetString("Command_AddSpace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        public static string Command_Cancel {
+            get {
+                return ResourceManager.GetString("Command_Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Clear.
         /// </summary>
         public static string Command_Clear {
             get {
                 return ResourceManager.GetString("Command_Clear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        public static string Command_Close {
+            get {
+                return ResourceManager.GetString("Command_Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create Project.
+        /// </summary>
+        public static string Command_CreateProject {
+            get {
+                return ResourceManager.GetString("Command_CreateProject", resourceCulture);
             }
         }
         
@@ -106,6 +151,42 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Mute.
+        /// </summary>
+        public static string Command_Mute {
+            get {
+                return ResourceManager.GetString("Command_Mute", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ....
+        /// </summary>
+        public static string Command_OpenBrowserDialog {
+            get {
+                return ResourceManager.GetString("Command_OpenBrowserDialog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pause.
+        /// </summary>
+        public static string Command_Pause {
+            get {
+                return ResourceManager.GetString("Command_Pause", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Play.
+        /// </summary>
+        public static string Command_Play {
+            get {
+                return ResourceManager.GetString("Command_Play", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Record.
         /// </summary>
         public static string Command_Record {
@@ -115,11 +196,65 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Save.
+        /// </summary>
+        public static string Command_Save {
+            get {
+                return ResourceManager.GetString("Command_Save", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {.
+        /// </summary>
+        public static string Command_SetBeginTime {
+            get {
+                return ResourceManager.GetString("Command_SetBeginTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to }.
+        /// </summary>
+        public static string Command_SetEndTime {
+            get {
+                return ResourceManager.GetString("Command_SetEndTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Stop Recording.
         /// </summary>
         public static string Command_StopRecord {
             get {
                 return ResourceManager.GetString("Command_StopRecord", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Record Extended Description.
+        /// </summary>
+        public static string Command_ToggleRecordExtended {
+            get {
+                return ResourceManager.GetString("Command_ToggleRecordExtended", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to AudioSource.
+        /// </summary>
+        public static string Header_AudioSource {
+            get {
+                return ResourceManager.GetString("Header_AudioSource", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Channels.
+        /// </summary>
+        public static string Header_Channels {
+            get {
+                return ResourceManager.GetString("Header_Channels", resourceCulture);
             }
         }
         
@@ -156,6 +291,15 @@ namespace LiveDescribe.Resources.UiStrings {
         public static string Header_ExtendedDescriptions {
             get {
                 return ResourceManager.GetString("Header_ExtendedDescriptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name.
+        /// </summary>
+        public static string Header_Name {
+            get {
+                return ResourceManager.GetString("Header_Name", resourceCulture);
             }
         }
         
@@ -210,6 +354,78 @@ namespace LiveDescribe.Resources.UiStrings {
         public static string Header_StartTime {
             get {
                 return ResourceManager.GetString("Header_StartTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Begin.
+        /// </summary>
+        public static string Label_Begin {
+            get {
+                return ResourceManager.GetString("Label_Begin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to End.
+        /// </summary>
+        public static string Label_End {
+            get {
+                return ResourceManager.GetString("Label_End", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Make a copy of video?.
+        /// </summary>
+        public static string Label_MakeCopy {
+            get {
+                return ResourceManager.GetString("Label_MakeCopy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No.
+        /// </summary>
+        public static string Label_No {
+            get {
+                return ResourceManager.GetString("Label_No", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Project Location.
+        /// </summary>
+        public static string Label_ProjectLocation {
+            get {
+                return ResourceManager.GetString("Label_ProjectLocation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Project Name.
+        /// </summary>
+        public static string Label_ProjectName {
+            get {
+                return ResourceManager.GetString("Label_ProjectName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Video.
+        /// </summary>
+        public static string Label_Video {
+            get {
+                return ResourceManager.GetString("Label_Video", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Yes.
+        /// </summary>
+        public static string Label_Yes {
+            get {
+                return ResourceManager.GetString("Label_Yes", resourceCulture);
             }
         }
         
@@ -327,6 +543,96 @@ namespace LiveDescribe.Resources.UiStrings {
         public static string MenuItem_ShowHelpWindow {
             get {
                 return ResourceManager.GetString("MenuItem_ShowHelpWindow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copyright © 2014.
+        /// </summary>
+        public static string Program_Copyright {
+            get {
+                return ResourceManager.GetString("Program_Copyright", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LiveDescribe.
+        /// </summary>
+        public static string Program_Name {
+            get {
+                return ResourceManager.GetString("Program_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Inclusive Media and Design Centre.
+        /// </summary>
+        public static string Program_OrganizationName {
+            get {
+                return ResourceManager.GetString("Program_OrganizationName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ryerson University.
+        /// </summary>
+        public static string Program_OrganizationName2 {
+            get {
+                return ResourceManager.GetString("Program_OrganizationName2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 0.0.1.
+        /// </summary>
+        public static string Program_VersionNumber {
+            get {
+                return ResourceManager.GetString("Program_VersionNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Version 0.0.1.
+        /// </summary>
+        public static string Program_VersionString {
+            get {
+                return ResourceManager.GetString("Program_VersionString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to About.
+        /// </summary>
+        public static string Window_AboutTitle {
+            get {
+                return ResourceManager.GetString("Window_AboutTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create a new LiveDescribe Project.
+        /// </summary>
+        public static string Window_NewProjectTitle {
+            get {
+                return ResourceManager.GetString("Window_NewProjectTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Preferences.
+        /// </summary>
+        public static string Window_PreferencesTitle {
+            get {
+                return ResourceManager.GetString("Window_PreferencesTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Record a Description.
+        /// </summary>
+        public static string Window_SpaceRecordingTitle {
+            get {
+                return ResourceManager.GetString("Window_SpaceRecordingTitle", resourceCulture);
             }
         }
     }

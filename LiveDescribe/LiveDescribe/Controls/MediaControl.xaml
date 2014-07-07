@@ -9,7 +9,8 @@
     d:DesignWidth="550"
     xmlns:controls="clr-namespace:LiveDescribe.Controls"
     xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-    xmlns:converters="clr-namespace:LiveDescribe.Converters">
+    xmlns:converters="clr-namespace:LiveDescribe.Converters"
+    xmlns:s="clr-namespace:LiveDescribe.Resources.UiStrings">
 
     <UserControl.Resources>
         <Style
@@ -64,7 +65,7 @@
             <Button
                 Style="{StaticResource ControlPanelStyle}"
                 Command="{Binding MuteCommand}"
-                Content="Mute"
+                Content="{x:Static s:UiStrings.Command_Mute}"
                 HorizontalAlignment="Center" />
 
             <Slider
@@ -80,14 +81,14 @@
                 Name="PlayControl"
                 Style="{StaticResource ControlPanelStyle}"
                 Command="{Binding PlayCommand}"
-                Content="Play"
+                Content="{x:Static s:UiStrings.Command_Play}"
                 HorizontalAlignment="Center" />
 
             <Button
                 Name="PauseControl"
                 Style="{StaticResource ControlPanelStyle}"
                 Command="{Binding PauseCommand}"
-                Content="Pause"
+                Content="{x:Static s:UiStrings.Command_Pause}"
                 HorizontalAlignment="Center" />
 
             <TextBlock

@@ -117,8 +117,23 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Command_Accept" xml:space="preserve">
+    <value>Accept</value>
+  </data>
+  <data name="Command_AddSpace" xml:space="preserve">
+    <value>Add space</value>
+  </data>
+  <data name="Command_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
   <data name="Command_Clear" xml:space="preserve">
     <value>Clear</value>
+  </data>
+  <data name="Command_Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="Command_CreateProject" xml:space="preserve">
+    <value>Create Project</value>
   </data>
   <data name="Command_DeleteDescription" xml:space="preserve">
     <value>Delete description</value>
@@ -132,12 +147,44 @@
   <data name="Command_GoToSpace" xml:space="preserve">
     <value>Go to space</value>
   </data>
+  <data name="Command_Mute" xml:space="preserve">
+    <value>Mute</value>
+  </data>
+  <data name="Command_OpenBrowserDialog" xml:space="preserve">
+    <value>...</value>
+  </data>
+  <data name="Command_Pause" xml:space="preserve">
+    <value>Pause</value>
+  </data>
+  <data name="Command_Play" xml:space="preserve">
+    <value>Play</value>
+  </data>
   <data name="Command_Record" xml:space="preserve">
     <value>Record</value>
     <comment>For record buttons</comment>
   </data>
+  <data name="Command_Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Command_SetBeginTime" xml:space="preserve">
+    <value>{</value>
+  </data>
+  <data name="Command_SetEndTime" xml:space="preserve">
+    <value>}</value>
+  </data>
   <data name="Command_StopRecord" xml:space="preserve">
     <value>Stop Recording</value>
+  </data>
+  <data name="Command_ToggleRecordExtended" xml:space="preserve">
+    <value>Record Extended Description</value>
+    <comment>Description Recording control</comment>
+  </data>
+  <data name="Header_AudioSource" xml:space="preserve">
+    <value>AudioSource</value>
+    <comment>Prefences Window</comment>
+  </data>
+  <data name="Header_Channels" xml:space="preserve">
+    <value>Channels</value>
   </data>
   <data name="Header_DescriptionText" xml:space="preserve">
     <value>Description Text</value>
@@ -154,6 +201,9 @@
   <data name="Header_ExtendedDescriptions" xml:space="preserve">
     <value>Extended Descriptions</value>
     <comment>InfoTab Header</comment>
+  </data>
+  <data name="Header_Name" xml:space="preserve">
+    <value>Name</value>
   </data>
   <data name="Header_NumberColumn" xml:space="preserve">
     <value>#</value>
@@ -176,6 +226,30 @@
   <data name="Header_StartTime" xml:space="preserve">
     <value>Start In Video</value>
     <comment>InfoTab Header</comment>
+  </data>
+  <data name="Label_Begin" xml:space="preserve">
+    <value>Begin</value>
+  </data>
+  <data name="Label_End" xml:space="preserve">
+    <value>End</value>
+  </data>
+  <data name="Label_MakeCopy" xml:space="preserve">
+    <value>Make a copy of video?</value>
+  </data>
+  <data name="Label_No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="Label_ProjectLocation" xml:space="preserve">
+    <value>Project Location</value>
+  </data>
+  <data name="Label_ProjectName" xml:space="preserve">
+    <value>Project Name</value>
+  </data>
+  <data name="Label_Video" xml:space="preserve">
+    <value>Video</value>
+  </data>
+  <data name="Label_Yes" xml:space="preserve">
+    <value>Yes</value>
   </data>
   <data name="MenuItem_About" xml:space="preserve">
     <value>About</value>
@@ -216,5 +290,37 @@
   </data>
   <data name="MenuItem_ShowHelpWindow" xml:space="preserve">
     <value>View LiveDescribe help</value>
+  </data>
+  <data name="Program_Copyright" xml:space="preserve">
+    <value>Copyright © 2014</value>
+  </data>
+  <data name="Program_Name" xml:space="preserve">
+    <value>LiveDescribe</value>
+  </data>
+  <data name="Program_OrganizationName" xml:space="preserve">
+    <value>Inclusive Media and Design Centre</value>
+    <comment>IMDC</comment>
+  </data>
+  <data name="Program_OrganizationName2" xml:space="preserve">
+    <value>Ryerson University</value>
+    <comment>Ryerson</comment>
+  </data>
+  <data name="Program_VersionNumber" xml:space="preserve">
+    <value>0.0.1</value>
+  </data>
+  <data name="Program_VersionString" xml:space="preserve">
+    <value>Version 0.0.1</value>
+  </data>
+  <data name="Window_AboutTitle" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="Window_NewProjectTitle" xml:space="preserve">
+    <value>Create a new LiveDescribe Project</value>
+  </data>
+  <data name="Window_PreferencesTitle" xml:space="preserve">
+    <value>Preferences</value>
+  </data>
+  <data name="Window_SpaceRecordingTitle" xml:space="preserve">
+    <value>Record a Description</value>
   </data>
 </root>

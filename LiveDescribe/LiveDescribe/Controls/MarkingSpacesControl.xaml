@@ -5,6 +5,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:converters="clr-namespace:LiveDescribe.Converters"
+    xmlns:s="clr-namespace:LiveDescribe.Resources.UiStrings"
     mc:Ignorable="d"
     d:DesignWidth="300">
     <UserControl.Resources>
@@ -43,14 +44,14 @@
         <TextBlock
             Grid.Row="0"
             Grid.ColumnSpan="3"
-            Text="Begin"
+            Text="{x:Static s:UiStrings.Label_Begin}"
             VerticalAlignment="Center"
             HorizontalAlignment="Center" />
 
         <Button
             Grid.Row="0"
             Grid.Column="3"
-            Content="{}{"
+            Content="{x:Static s:UiStrings.Command_SetBeginTime}"
             Command="{Binding SetBeginToMarker}" />
 
         <TextBox
@@ -68,14 +69,14 @@
             Grid.Row="2"
             Grid.Column="0"
             Grid.ColumnSpan="3"
-            Text="End"
+            Text="{x:Static s:UiStrings.Label_End}"
             VerticalAlignment="Center"
             HorizontalAlignment="Center" />
 
         <Button
             Grid.Row="2"
             Grid.Column="3"
-            Content="{}}"
+            Content="{x:Static s:UiStrings.Command_SetEndTime}"
             Command="{Binding SetEndToMarker}" />
 
         <TextBox

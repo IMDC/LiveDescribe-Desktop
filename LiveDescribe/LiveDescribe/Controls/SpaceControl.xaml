@@ -1,13 +1,14 @@
-﻿<controls:ItemControl x:Class="LiveDescribe.Controls.SpaceControl"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             xmlns:command="http://www.galasoft.ch/mvvmlight"
-             xmlns:controls="clr-namespace:LiveDescribe.Controls">
+﻿<controls:ItemControl
+    x:Class="LiveDescribe.Controls.SpaceControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:s="clr-namespace:LiveDescribe.Resources.UiStrings"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="300"
+    xmlns:controls="clr-namespace:LiveDescribe.Controls">
     <Grid>
         <Rectangle
             Name="SpaceGraphic"
@@ -18,7 +19,7 @@
             <Rectangle.ContextMenu>
                 <ContextMenu>
                     <MenuItem
-                        Header="Delete Space"
+                        Header="{x:Static s:UiStrings.Command_DeleteSpace}"
                         Command="{Binding DeleteSpaceCommand}" />
                 </ContextMenu>
             </Rectangle.ContextMenu>
@@ -33,7 +34,7 @@
                                     Value="false" />
                                 <Condition
                                     Binding="{Binding IsRecordedOver}"
-                                    Value="true"/>
+                                    Value="true" />
                             </MultiDataTrigger.Conditions>
                             <Setter
                                 Property="Fill"
@@ -59,8 +60,8 @@
                                 Value="0.25" />
                         </MultiDataTrigger>
                         <DataTrigger
-                                Binding="{Binding IsSelected}"
-                                Value="true">
+                            Binding="{Binding IsSelected}"
+                            Value="true">
                             <Setter
                                 Property="Fill"
                                 Value="Yellow" />

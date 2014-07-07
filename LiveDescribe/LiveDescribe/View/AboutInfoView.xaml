@@ -2,22 +2,25 @@
     x:Class="LiveDescribe.View.AboutInfoView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="AboutInfoView"
+    xmlns:s="clr-namespace:LiveDescribe.Resources.UiStrings"
+    Title="{x:Static s:UiStrings.Window_AboutTitle}"
     SizeToContent="Height"
     Width="300"
     ResizeMode="NoResize">
     <Grid>
         <StackPanel>
             <TextBlock
-                Text="Live Describe"/>
+                Text="{x:Static s:UiStrings.Program_Name}"/>
             <TextBlock
-                Text="Version X.X.X"/>
+                Text="{x:Static s:UiStrings.Program_VersionString}"/>
             <TextBlock
-                Text="Inclusive Media and Design Centre"/>
+                Text="{x:Static s:UiStrings.Program_Copyright}"/>
             <TextBlock
-                Text="Copyright 2014"/>
+                Text="{x:Static s:UiStrings.Program_OrganizationName}"/>
+            <TextBlock
+                Text="{x:Static s:UiStrings.Program_OrganizationName2}" />
             <Button
-                Content="Close"
+                Content="{x:Static s:UiStrings.Command_Close}"
                 Click="Close_Click"
                 HorizontalAlignment="Right"/>
         </StackPanel>

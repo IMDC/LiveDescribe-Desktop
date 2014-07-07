@@ -2,7 +2,8 @@
     x:Class="LiveDescribe.View.NewProjectView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="Create a new LiveDescribe Project"
+    xmlns:s="clr-namespace:LiveDescribe.Resources.UiStrings"
+    Title="{x:Static s:UiStrings.Window_NewProjectTitle}"
     SizeToContent="Height"
     MinWidth="500"
     Width="500"
@@ -36,7 +37,7 @@
             TargetType="Button">
             <Setter
                 Property="Content"
-                Value="..." />
+                Value="{x:Static s:UiStrings.Command_OpenBrowserDialog}" />
             <Setter
                 Property="Grid.Column"
                 Value="2" />
@@ -92,7 +93,7 @@
 
         <!--Controls for Project Name-->
         <TextBlock
-            Text="Project Name"
+            Text="{x:Static s:UiStrings.Label_ProjectName}"
             Grid.Row="0"
             Style="{StaticResource LabelStyle}" />
         <TextBox
@@ -108,7 +109,7 @@
 
         <!--Controls for video-->
         <TextBlock
-            Text="Video"
+            Text="{x:Static s:UiStrings.Label_Video}"
             Grid.Row="1"
             Style="{StaticResource LabelStyle}" />
         <TextBox
@@ -128,7 +129,7 @@
 
         <!--Controls for Copy Confirmation-->
         <TextBlock
-            Text="Make a copy of video?"
+            Text="{x:Static s:UiStrings.Label_MakeCopy}"
             Grid.Row="2"
             Style="{StaticResource LabelStyle}" />
         <StackPanel
@@ -139,14 +140,14 @@
             <RadioButton
                 x:Name="YesCopyButton"
                 GroupName="CopyVideo"
-                Content=" Yes"
+                Content="{x:Static s:UiStrings.Label_Yes}"
                 IsChecked="True"
                 Checked="CopyVideo_OnChecked"
                 Style="{StaticResource RadioButtonStyle}" />
             <RadioButton
                 x:Name="NoCopyButton"
                 GroupName="CopyVideo"
-                Content="No"
+                Content="{x:Static s:UiStrings.Label_No}"
                 IsChecked="False"
                 Checked="CopyVideo_OnChecked"
                 Style="{StaticResource RadioButtonStyle}" />
@@ -154,7 +155,7 @@
 
         <!--Controls for Project Folder-->
         <TextBlock
-            Text="Project Location"
+            Text="{x:Static s:UiStrings.Label_ProjectLocation}"
             Grid.Row="3"
             Style="{StaticResource LabelStyle}" />
         <TextBox
@@ -181,11 +182,11 @@
             HorizontalAlignment="Right">
             <Button
                 Style="{StaticResource ButtonStyle}"
-                Content="Create Project"
+                Content="{x:Static s:UiStrings.Command_CreateProject}"
                 Command="{Binding CreateProjectCommand}" />
             <Button
                 Style="{StaticResource ButtonStyle}"
-                Content="Cancel"
+                Content="{x:Static s:UiStrings.Command_Cancel}"
                 Click="Cancel_OnClick" />
         </StackPanel>
     </Grid>
