@@ -143,9 +143,12 @@
     <Compile Include="Converters\VideoStateToBoolConverter.cs" />
     <Compile Include="Converters\VarNotNullToBoolConverter.cs" />
     <Compile Include="Events\AddDescriptionEventArgs.cs" />
+    <Compile Include="Events\CopyFileProgressChangedEventArgs.cs" />
     <Compile Include="Events\EventArgsT.cs" />
     <Compile Include="Events\SpaceEventArgs.cs" />
+    <Compile Include="Extensions\CommandExtensions.cs" />
     <Compile Include="Factories\DialogShower.cs" />
+    <Compile Include="Factories\MessageBoxFactory.cs" />
     <Compile Include="Interfaces\IDescribableInterval.cs" />
     <Compile Include="Interfaces\IListIndexable.cs" />
     <Compile Include="LiveDescribeConstants.cs" />
@@ -155,8 +158,6 @@
     <Compile Include="Model\Header.cs" />
     <Compile Include="Model\Waveform.cs" />
     <Compile Include="Utilities\AudioAnalyzer.cs" />
-    <Compile Include="Utilities\CommandExtensions.cs" />
-    <Compile Include="Utilities\CopyFileProgressChangedEventArgs.cs" />
     <Compile Include="Utilities\CustomCursors.cs" />
     <Compile Include="Utilities\DescriptionPlayer.cs" />
     <Compile Include="Utilities\DescriptionRecorder.cs" />
@@ -164,7 +165,6 @@
     <Compile Include="Utilities\FileReader.cs" />
     <Compile Include="Utilities\FileWriter.cs" />
     <Compile Include="Utilities\ItemsControlExtensions.cs" />
-    <Compile Include="Utilities\MessageBoxFactory.cs" />
     <Compile Include="Utilities\ObservableCollectionIndexer.cs" />
     <Compile Include="Utilities\PositionalStringToken.cs" />
     <Compile Include="Utilities\PositionalStringTokenizer.cs" />
