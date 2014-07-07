@@ -177,4 +177,44 @@
     <value>Start In Video</value>
     <comment>InfoTab Header</comment>
   </data>
+  <data name="MenuItem_About" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="MenuItem_ClearCache" xml:space="preserve">
+    <value>Refresh project cache</value>
+    <comment>Refresh the project's cache</comment>
+  </data>
+  <data name="MenuItem_CloseProject" xml:space="preserve">
+    <value>Close Project</value>
+  </data>
+  <data name="MenuItem_Exit" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="MenuItem_File" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="MenuItem_FindSpaces" xml:space="preserve">
+    <value>Find spaces in video</value>
+  </data>
+  <data name="MenuItem_Help" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="MenuItem_NewProject" xml:space="preserve">
+    <value>New Project</value>
+  </data>
+  <data name="MenuItem_OpenProject" xml:space="preserve">
+    <value>Open Project</value>
+  </data>
+  <data name="MenuItem_Preferences" xml:space="preserve">
+    <value>Preferences</value>
+  </data>
+  <data name="MenuItem_Project" xml:space="preserve">
+    <value>Project</value>
+  </data>
+  <data name="MenuItem_SaveProject" xml:space="preserve">
+    <value>Save Project</value>
+  </data>
+  <data name="MenuItem_ShowHelpWindow" xml:space="preserve">
+    <value>View LiveDescribe help</value>
+  </data>
 </root>

@@ -212,5 +212,122 @@ namespace LiveDescribe.Resources.UiStrings {
                 return ResourceManager.GetString("Header_StartTime", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to About.
+        /// </summary>
+        public static string MenuItem_About {
+            get {
+                return ResourceManager.GetString("MenuItem_About", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Refresh project cache.
+        /// </summary>
+        public static string MenuItem_ClearCache {
+            get {
+                return ResourceManager.GetString("MenuItem_ClearCache", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close Project.
+        /// </summary>
+        public static string MenuItem_CloseProject {
+            get {
+                return ResourceManager.GetString("MenuItem_CloseProject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exit.
+        /// </summary>
+        public static string MenuItem_Exit {
+            get {
+                return ResourceManager.GetString("MenuItem_Exit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File.
+        /// </summary>
+        public static string MenuItem_File {
+            get {
+                return ResourceManager.GetString("MenuItem_File", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Find spaces in video.
+        /// </summary>
+        public static string MenuItem_FindSpaces {
+            get {
+                return ResourceManager.GetString("MenuItem_FindSpaces", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Help.
+        /// </summary>
+        public static string MenuItem_Help {
+            get {
+                return ResourceManager.GetString("MenuItem_Help", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New Project.
+        /// </summary>
+        public static string MenuItem_NewProject {
+            get {
+                return ResourceManager.GetString("MenuItem_NewProject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open Project.
+        /// </summary>
+        public static string MenuItem_OpenProject {
+            get {
+                return ResourceManager.GetString("MenuItem_OpenProject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Preferences.
+        /// </summary>
+        public static string MenuItem_Preferences {
+            get {
+                return ResourceManager.GetString("MenuItem_Preferences", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Project.
+        /// </summary>
+        public static string MenuItem_Project {
+            get {
+                return ResourceManager.GetString("MenuItem_Project", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save Project.
+        /// </summary>
+        public static string MenuItem_SaveProject {
+            get {
+                return ResourceManager.GetString("MenuItem_SaveProject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to View LiveDescribe help.
+        /// </summary>
+        public static string MenuItem_ShowHelpWindow {
+            get {
+                return ResourceManager.GetString("MenuItem_ShowHelpWindow", resourceCulture);
+            }
+        }
     }
 }
