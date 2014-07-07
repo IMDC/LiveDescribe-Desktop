@@ -64,9 +64,9 @@ namespace LiveDescribe.View
 
         public MainWindow()
         {
-#if !DEBUG
             var splashScreen = new SplashScreen("../Images/LiveDescribe-Splashscreen.png");
             splashScreen.Show(true);
+#if !DEBUG
             Thread.Sleep(2000);
 #endif
             InitializeComponent();

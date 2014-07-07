@@ -169,6 +169,7 @@
     <Compile Include="Utilities\PositionalStringToken.cs" />
     <Compile Include="Utilities\PositionalStringTokenizer.cs" />
     <Compile Include="Utilities\ProgressFileCopier.cs" />
+    <Compile Include="ViewModel\AboutInfoViewModel.cs" />
     <Compile Include="ViewModel\AudioCanvasViewModel.cs" />
     <Compile Include="ViewModel\DescriptionCanvasViewModel.cs" />
     <Compile Include="ViewModel\DescriptionInfoTabViewModel.cs" />
@@ -176,6 +177,9 @@
     <Compile Include="ViewModel\MarkingSpacesControlViewModel.cs" />
     <Compile Include="ViewModel\SpaceRecordingViewModel.cs" />
     <Compile Include="ViewModel\SpaceCollectionViewModel.cs" />
+    <Compile Include="View\AboutInfoView.xaml.cs">
+      <DependentUpon>AboutInfoView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\NewProjectView.xaml.cs">
       <DependentUpon>NewProjectView.xaml</DependentUpon>
     </Compile>
@@ -223,6 +227,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\SpaceControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\AboutInfoView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

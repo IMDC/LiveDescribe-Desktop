@@ -1,0 +1,25 @@
+﻿<Window
+    x:Class="LiveDescribe.View.AboutInfoView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="AboutInfoView"
+    SizeToContent="Height"
+    Width="300"
+    ResizeMode="NoResize">
+    <Grid>
+        <StackPanel>
+            <TextBlock
+                Text="Live Describe"/>
+            <TextBlock
+                Text="Version X.X.X"/>
+            <TextBlock
+                Text="Inclusive Media and Design Centre"/>
+            <TextBlock
+                Text="Copyright 2014"/>
+            <Button
+                Content="Close"
+                Click="Close_Click"
+                HorizontalAlignment="Right"/>
+        </StackPanel>
+    </Grid>
+</Window>

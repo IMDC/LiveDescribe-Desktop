@@ -226,6 +226,8 @@ namespace LiveDescribe.ViewModel
                     _spacecollectionviewmodel.AddSpaces(spaces);
                 }
             );
+
+            ShowAboutInfo = new RelayCommand(DialogShower.SpawnAboutInfoView);
             #endregion
 
             _mediaVideo = mediaVideo;
@@ -339,6 +341,11 @@ namespace LiveDescribe.ViewModel
         /// Finds spaces for the current project
         /// </summary>
         public ICommand FindSpaces { private set; get; }
+
+        /// <summary>
+        /// Opens the About window.
+        /// </summary>
+        public ICommand ShowAboutInfo { private set; get; }
         #endregion
 
         #region Properties

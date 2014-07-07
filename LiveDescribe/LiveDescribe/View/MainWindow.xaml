@@ -54,6 +54,14 @@
                         Header="Refresh Project Cache"
                         Command="{Binding ClearCache}" />
                 </MenuItem>
+                <MenuItem
+                    Header="Help">
+                    <MenuItem
+                        Header="View Help"/>
+                    <MenuItem
+                        Header="About LiveDescribe"
+                        Command="{Binding ShowAboutInfo}"/>
+                </MenuItem>
             </Menu>
 
             <!--Main Grid -->
