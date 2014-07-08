@@ -52,7 +52,7 @@ namespace LiveDescribe.Utilities
         {
             if (_descriptionList.Count > 0)
             {
-                string audioTrack = createDescriptionTrack();
+                string audioTrack = convertAudioToMP3(createDescriptionTrack());
                 mixAudioVideo(audioTrack, _videoFile);
             }
             else
@@ -211,13 +211,44 @@ namespace LiveDescribe.Utilities
 
 
         /// <summary>
-        /// 
+        ///              NOT YET IMPLEMENTED!
         /// </summary>
         /// <param name="audioPath"></param>
         /// <param name="volume"></param>
         private void changeAudioVolume(string audioPath, double volume)
         { 
 
+        }
+
+        /// <summary>
+        /// Converts audio files to MP3 format, removes old file.
+        /// </summary>
+        /// <param name="audioPath"></param>
+        /// <returns>Absolute path to the file created</returns>
+        private string convertAudioToMP3(string audioPath)
+        {
+            string[] separator = new string[] { "\\" };
+            string[] filePathSplit;
+            string outFileName;
+
+            //rename the file 
+            filePathSplit = audioPath.Split(separator, StringSplitOptions.None);
+            filePathSplit[filePathSplit.Length - 1] = filePathSplit[filePathSplit.Length - 1].Split(new string[] { "." }, StringSplitOptions.None)[0] + ".mp3";
+            outFileName = String.Join("\\", filePathSplit);
+
+            string command = string.Format(" -i \"{0}\" -f mp3 {1}", audioPath, outFileName);
+            ffmpegCommand(command);
+
+            try
+            {
+               File.Delete(audioPath); 
+            }
+            catch (DirectoryNotFoundException ex)
+            {
+                Log.Error("Error removing files: " + ex);
+            }
+
+            return outFileName;
         }
 
         /// <summary>
