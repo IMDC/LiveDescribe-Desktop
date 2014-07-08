@@ -3,7 +3,6 @@ using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Factories;
 using LiveDescribe.Model;
 using LiveDescribe.Utilities;
-using LiveDescribe.View;
 using System;
 using System.IO;
 using System.Windows;

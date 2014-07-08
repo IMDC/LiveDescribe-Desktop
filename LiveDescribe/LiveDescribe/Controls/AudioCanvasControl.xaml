@@ -13,7 +13,8 @@
     d:DesignHeight="300"
     d:DesignWidth="300">
     <UserControl.Resources>
-        <converters:VideoStateToBoolConverter x:Key="VideoStateToBoolConverter"/>
+        <converters:VideoStateToBoolConverter
+            x:Key="VideoStateToBoolConverter" />
     </UserControl.Resources>
     <Grid>
         <Border
@@ -62,8 +63,8 @@
                     </ItemsControl.ItemContainerStyle>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <controls:SpaceControl 
-                                Container="{Binding ElementName=AudioCanvas}"/>
+                            <controls:SpaceControl
+                                Container="{Binding ElementName=AudioCanvas}" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

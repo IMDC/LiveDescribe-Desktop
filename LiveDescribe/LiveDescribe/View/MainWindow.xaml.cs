@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -167,7 +166,6 @@ namespace LiveDescribe.View
                 {
                     Log.Warn("Task Cancelled exception", exception);
                 }
-
             };
             #endregion
 
@@ -394,10 +392,6 @@ namespace LiveDescribe.View
             DescriptionCanvasViewModel descriptionCanvasViewModel = mainWindowViewModel.DescriptionCanvasViewModel;
             descriptionCanvasViewModel.DescriptionCanvasMouseDownEvent += DescriptionCanvas_MouseDown;
             #endregion
-
-            #region Event Listeners For DescriptionInfoTabViewModel
-
-            #endregion
         }
 
         /// <summary>
@@ -465,7 +459,6 @@ namespace LiveDescribe.View
             if (_audioCanvas.CurrentActionState == ItemCanvas.ActionState.None &&
                 _descriptionCanvas.CurrentActionState == ItemCanvas.ActionState.None)
                 _descriptionInfoTabViewModel.ClearSelection();
-
         }
 
         private void AudioCanvas_RecordRightClickPosition(object sender, EventArgs e)

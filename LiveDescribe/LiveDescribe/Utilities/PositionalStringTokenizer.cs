@@ -20,7 +20,7 @@ namespace LiveDescribe.Utilities
         /// </summary>
         public void Tokenize()
         {
-            if(string.IsNullOrWhiteSpace(SourceString))
+            if (string.IsNullOrWhiteSpace(SourceString))
                 return;
 
             var tokens = SourceString.Split();

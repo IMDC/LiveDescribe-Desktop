@@ -39,12 +39,13 @@ namespace LiveDescribe.Model
         public EventHandler<MouseEventArgs> SpaceMouseDownEvent;
         [JsonIgnore]
         public EventHandler<MouseEventArgs> SpaceMouseMoveEvent;
-        [JsonIgnore] 
+        [JsonIgnore]
         public EventHandler GoToThisSpaceEvent;
         #endregion
 
         #region Constructors
-        public Space(double starttime, double endtime) : this()
+        public Space(double starttime, double endtime)
+            : this()
         {
             StartInVideo = starttime;
             EndInVideo = endtime;

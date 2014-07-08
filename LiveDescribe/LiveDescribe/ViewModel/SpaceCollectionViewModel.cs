@@ -1,14 +1,13 @@
-﻿using System.Collections.Specialized;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Events;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
+using LiveDescribe.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
-using LiveDescribe.Utilities;
 
 namespace LiveDescribe.ViewModel
 {
@@ -18,7 +17,7 @@ namespace LiveDescribe.ViewModel
 
         #region Instance Variables
         private ObservableCollection<Space> _spaces;
-        private ObservableCollectionIndexer<Space> _indexer; 
+        private ObservableCollectionIndexer<Space> _indexer;
         private readonly ILiveDescribePlayer _videoPlayer;
         #endregion
 

@@ -12,7 +12,7 @@
         <converters:MillisecondsToTimeLeftStringConverter
             x:Key="MillisecondsToTimeLeftStringConverter" />
         <converters:BoolToRecordingContentConverter
-            x:Key="BoolToRecordingContentConverter"/>
+            x:Key="BoolToRecordingContentConverter" />
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>

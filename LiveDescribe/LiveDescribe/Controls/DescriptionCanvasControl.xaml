@@ -12,7 +12,8 @@
     d:DesignHeight="300"
     d:DesignWidth="300">
     <UserControl.Resources>
-        <converters:VideoStateToBoolConverter x:Key="VideoStateToBoolConverter"/>
+        <converters:VideoStateToBoolConverter
+            x:Key="VideoStateToBoolConverter" />
     </UserControl.Resources>
     <Grid>
         <Border
@@ -75,7 +76,7 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <controls:DescriptionControl
-                                Container="{Binding ElementName=DescriptionCanvas}"/>
+                                Container="{Binding ElementName=DescriptionCanvas}" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
@@ -96,7 +97,7 @@
                         EventName="MouseDown">
                         <command:EventToCommand
                             Command="{Binding DescriptionCanvasMouseDownCommand, Mode=OneWay}"
-                            PassEventArgsToCommand="True"/>
+                            PassEventArgsToCommand="True" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </controls:ItemCanvas>

@@ -55,10 +55,10 @@
                 <MenuItem
                     Header="{x:Static s:UiStrings.MenuItem_Help}">
                     <MenuItem
-                        Header="{x:Static s:UiStrings.MenuItem_ShowHelpWindow}"/>
+                        Header="{x:Static s:UiStrings.MenuItem_ShowHelpWindow}" />
                     <MenuItem
                         Header="{x:Static s:UiStrings.MenuItem_About}"
-                        Command="{Binding ShowAboutInfo}"/>
+                        Command="{Binding ShowAboutInfo}" />
                 </MenuItem>
             </Menu>
 

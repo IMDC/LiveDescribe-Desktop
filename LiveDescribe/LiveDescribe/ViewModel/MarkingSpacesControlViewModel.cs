@@ -142,8 +142,5 @@ namespace LiveDescribe.ViewModel
         }
 
         #endregion
-
-        #region Binding Functions
-        #endregion
     }
 }

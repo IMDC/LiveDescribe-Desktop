@@ -72,7 +72,6 @@ namespace LiveDescribe.Model
             DescriptionDeleteCommand = new RelayCommand(DescriptionDelete, () => true);
             //called when mouse moves over description
             DescriptionMouseMoveCommand = new RelayCommand<MouseEventArgs>(DescriptionMouseMove, param => true);
-
         }
 
         #region Properties

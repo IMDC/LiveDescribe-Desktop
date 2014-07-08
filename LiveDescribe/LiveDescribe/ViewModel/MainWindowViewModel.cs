@@ -489,7 +489,7 @@ namespace LiveDescribe.ViewModel
             {
                 DispatcherHelper.UIDispatcher.Invoke(() =>
                 {
-                   // _mediaControlViewModel.PauseCommand.Execute(this);
+                    // _mediaControlViewModel.PauseCommand.Execute(this);
                     _mediaControlViewModel.PauseForExtendedDescriptionCommand.Execute(this);
                     Log.Info("Playing Extended Description");
                 });
@@ -625,9 +625,8 @@ namespace LiveDescribe.ViewModel
             }
             catch (IOException e)
             {
-                Log.Warn("File could not be deleted",e);
+                Log.Warn("File could not be deleted", e);
             }
-            
         }
 
         #endregion

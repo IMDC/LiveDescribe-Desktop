@@ -1,7 +1,7 @@
-﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using LiveDescribe.Interfaces;
+﻿using LiveDescribe.Interfaces;
 using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows.Controls;
 
 namespace LiveDescribe.Controls

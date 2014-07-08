@@ -5,8 +5,8 @@ using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
 using LiveDescribe.Utilities;
 using NAudio;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace LiveDescribe.ViewModel
@@ -188,7 +188,6 @@ namespace LiveDescribe.ViewModel
 
         public void AddDescription(Description desc)
         {
-           
 #if ZAGGA
             if (desc.IsExtendedDescription)
                 return;

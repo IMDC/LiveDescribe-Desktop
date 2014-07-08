@@ -1,11 +1,11 @@
-﻿using System.Diagnostics;
-using System.Windows.Threading;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Model;
 using LiveDescribe.Utilities;
 using System;
+using System.Diagnostics;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace LiveDescribe.ViewModel
 {

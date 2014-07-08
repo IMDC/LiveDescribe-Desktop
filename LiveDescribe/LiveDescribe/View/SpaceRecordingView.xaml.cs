@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows.Documents;
-using LiveDescribe.Utilities;
+﻿using LiveDescribe.Utilities;
 using LiveDescribe.ViewModel;
+using System.Collections.Generic;
 using System.Windows;
 
 namespace LiveDescribe.View
@@ -45,7 +43,7 @@ namespace LiveDescribe.View
                 if (_enumerator.MoveNext())
                 {
                     var token = _enumerator.Current;
-                    SpaceTextBox.Select(token.StartIndex,token.Length);
+                    SpaceTextBox.Select(token.StartIndex, token.Length);
                 }
             };
 

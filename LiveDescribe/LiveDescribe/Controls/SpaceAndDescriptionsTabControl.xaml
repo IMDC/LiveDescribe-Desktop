@@ -27,8 +27,8 @@
             x:Key="ItemIndexTemplate">
             <TextBlock
                 Style="{StaticResource InfoTabTextBlockStyle}"
-                Text="{Binding Path=Index}" 
-                Width="30"/>
+                Text="{Binding Path=Index}"
+                Width="30" />
         </DataTemplate>
         <DataTemplate
             x:Key="StartInVideoTemplate">
@@ -139,7 +139,7 @@
                                 CellTemplate="{StaticResource TextDataTemplate}" />
                             <GridViewColumn
                                 Header="{x:Static s:UiStrings.Header_SpaceCompleted}"
-                                CellTemplate="{StaticResource CompleteCheckboxTemplate}"/>
+                                CellTemplate="{StaticResource CompleteCheckboxTemplate}" />
                         </GridView>
                     </ListView.View>
                 </ListView>
