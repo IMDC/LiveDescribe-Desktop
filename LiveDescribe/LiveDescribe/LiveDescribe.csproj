@@ -51,8 +51,22 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Zagga|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\Zagga\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;ZAGGA</DefineConstants>
+    <DefineConstants>TRACE;ZAGGA</DefineConstants>
     <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Zagga Debug|AnyCPU'">
+    <OutputPath>bin\Zagga Debug\</OutputPath>
+    <DefineConstants>DEBUG;ZAGGA</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Zagga Release|AnyCPU'">
+    <OutputPath>bin\Zagga Release\</OutputPath>
+    <DefineConstants>TRACE;ZAGGA</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
