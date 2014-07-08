@@ -376,6 +376,15 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Time Left: {0}.
+        /// </summary>
+        public static string Label_Format_TimeLeft {
+            get {
+                return ResourceManager.GetString("Label_Format_TimeLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Make a copy of video?.
         /// </summary>
         public static string Label_MakeCopy {
@@ -408,15 +417,6 @@ namespace LiveDescribe.Resources.UiStrings {
         public static string Label_ProjectName {
             get {
                 return ResourceManager.GetString("Label_ProjectName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Time Left:.
-        /// </summary>
-        public static string Label_TimeLeft {
-            get {
-                return ResourceManager.GetString("Label_TimeLeft", resourceCulture);
             }
         }
         

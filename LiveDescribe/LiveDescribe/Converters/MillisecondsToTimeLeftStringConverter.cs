@@ -16,7 +16,7 @@ namespace LiveDescribe.Converters
         {
             double d = (double) value;
 
-            return string.Format("{0} {1}", UiStrings.Label_TimeLeft,
+            return string.Format(UiStrings.Label_Format_TimeLeft,
                 TimeSpan.FromMilliseconds(d).ToString("h\\:mm\\:ss\\.fff"));
         }
 
