@@ -3,7 +3,7 @@ using System.Windows.Controls;
 
 namespace LiveDescribe.Controls
 {
-    public partial class ItemControl : UserControl
+    public class ItemControl : UserControl
     {
         public static readonly DependencyProperty ContainerProperty =
            DependencyProperty.Register("Container", typeof(ItemCanvas), typeof(ItemControl));

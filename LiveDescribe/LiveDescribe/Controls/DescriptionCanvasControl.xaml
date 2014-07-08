@@ -8,9 +8,12 @@
     xmlns:command="http://www.galasoft.ch/mvvmlight"
     xmlns:converters="clr-namespace:LiveDescribe.Converters"
     xmlns:controls="clr-namespace:LiveDescribe.Controls"
+    xmlns:viewModel="clr-namespace:LiveDescribe.ViewModel"
+    xmlns:model="clr-namespace:LiveDescribe.Model"
     mc:Ignorable="d"
     d:DesignHeight="300"
-    d:DesignWidth="300">
+    d:DesignWidth="300"
+    d:DataContext="{d:DesignInstance viewModel:DescriptionCollectionViewModel}">
     <UserControl.Resources>
         <converters:VideoStateToBoolConverter
             x:Key="VideoStateToBoolConverter" />
@@ -33,7 +36,8 @@
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemContainerStyle>
-                        <Style>
+                        <Style
+                            d:DataContext="{d:DesignInstance model:Description}">
                             <Style.Triggers>
                                 <!--This controls the size and position of each rectangle element representing a description If it is not an extended description-->
                                 <DataTrigger

@@ -79,9 +79,6 @@ namespace LiveDescribe.Model
             /// </summary>
             [JsonProperty(Required = Required.Always)]
             public ProjectFile WaveForm { set; get; }
-
-            public ProjectFiles()
-            { }
         }
 
         /// <summary>
@@ -106,9 +103,6 @@ namespace LiveDescribe.Model
             /// </summary>
             [JsonProperty(Required = Required.Always)]
             public ProjectFile Descriptions { set; get; }
-
-            public ProjectFolders()
-            { }
         }
         #endregion
 
@@ -219,6 +213,8 @@ namespace LiveDescribe.Model
                 ProjectName, DateTime.Now.ToString("yyMMddHHmmssfff"));
 
             string absolutePath = Path.Combine(Folders.Descriptions, fileName);
+
+            Log.InfoFormat("Description file created with path {0}", absolutePath);
 
             return ProjectFile.FromAbsolutePath(absolutePath, Folders.Project);
         }

@@ -44,7 +44,7 @@ namespace LiveDescribe.ViewModel
                     return false;
 
                 var info = obj as AudioSourceInfo;
-                if ((System.Object)info == null)
+                if (info == null)
                     return false;
 
                 return (Name == info.Name)

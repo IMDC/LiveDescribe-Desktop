@@ -10,8 +10,6 @@ namespace LiveDescribe.Controls
         public static readonly DependencyProperty VideoDurationProperty =
           DependencyProperty.Register("VideoDuration", typeof(double), typeof(SpaceControl));
 
-        public ItemCanvas() { }
-
         public double VideoDuration
         {
             get { return (double)GetValue(VideoDurationProperty); }
