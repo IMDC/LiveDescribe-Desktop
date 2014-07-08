@@ -17,16 +17,16 @@ Global
 		{F7368581-B728-4BF5-AAB9-8818F5645EE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F7368581-B728-4BF5-AAB9-8818F5645EE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F7368581-B728-4BF5-AAB9-8818F5645EE8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F7368581-B728-4BF5-AAB9-8818F5645EE8}.Zagga Debug|Any CPU.ActiveCfg = Zagga Debug|Any CPU
-		{F7368581-B728-4BF5-AAB9-8818F5645EE8}.Zagga Debug|Any CPU.Build.0 = Zagga Debug|Any CPU
+		{F7368581-B728-4BF5-AAB9-8818F5645EE8}.Zagga Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7368581-B728-4BF5-AAB9-8818F5645EE8}.Zagga Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F7368581-B728-4BF5-AAB9-8818F5645EE8}.Zagga Release|Any CPU.ActiveCfg = Zagga Release|Any CPU
 		{F7368581-B728-4BF5-AAB9-8818F5645EE8}.Zagga Release|Any CPU.Build.0 = Zagga Release|Any CPU
 		{28E6D7A9-21E8-404B-823A-B54490958951}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{28E6D7A9-21E8-404B-823A-B54490958951}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28E6D7A9-21E8-404B-823A-B54490958951}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28E6D7A9-21E8-404B-823A-B54490958951}.Release|Any CPU.Build.0 = Release|Any CPU
-		{28E6D7A9-21E8-404B-823A-B54490958951}.Zagga Debug|Any CPU.ActiveCfg = Zagga Debug|Any CPU
-		{28E6D7A9-21E8-404B-823A-B54490958951}.Zagga Debug|Any CPU.Build.0 = Zagga Debug|Any CPU
+		{28E6D7A9-21E8-404B-823A-B54490958951}.Zagga Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28E6D7A9-21E8-404B-823A-B54490958951}.Zagga Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28E6D7A9-21E8-404B-823A-B54490958951}.Zagga Release|Any CPU.ActiveCfg = Zagga Release|Any CPU
 		{28E6D7A9-21E8-404B-823A-B54490958951}.Zagga Release|Any CPU.Build.0 = Zagga Release|Any CPU
 	EndGlobalSection
