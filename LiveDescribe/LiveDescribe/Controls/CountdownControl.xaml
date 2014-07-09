@@ -27,7 +27,7 @@
                 FontSize="72"
                 FontWeight="Bold"
                 Foreground="White"
-                Text="{Binding CountdownTimeMsec}" />
+                Text="{Binding CountdownTimeSeconds}" />
         </Border>
     </Grid>
 </UserControl>

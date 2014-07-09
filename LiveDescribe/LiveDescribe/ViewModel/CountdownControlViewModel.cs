@@ -7,12 +7,12 @@ namespace LiveDescribe.ViewModel
     public class CountdownControlViewModel : ViewModelBase
     {
         #region Fields
-        public const int CountdownStartingNumberMilliseconds = 3000;
-        public const int TimerIntervalMilliseconds = 1000;
+        public const int CountdownStartingNumberSeconds = 3;
+        public const int TimerIntervalSeconds = 1;
 
         private bool _visible;
         private bool _isCountingDown;
-        private int _countdownTimeMsec;
+        private int _countdownTimeSeconds;
         private readonly DispatcherTimer _timer;
         #endregion
 
@@ -26,13 +26,13 @@ namespace LiveDescribe.ViewModel
             Visible = false;
             IsCountingDown = false;
 
-            _timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(TimerIntervalMilliseconds) };
+            _timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(TimerIntervalSeconds) };
             _timer.Tick += (sender, args) =>
             {
-                CountdownTimeMsec -= TimerIntervalMilliseconds;
+                CountdownTimeSeconds -= TimerIntervalSeconds;
 
                 //If there is no check to see if the time is equal to 0, then it will show the 0.
-                if (CountdownTimeMsec < 0)
+                if (CountdownTimeSeconds < 0)
                     StopCountdown();
             };
         }
@@ -59,21 +59,21 @@ namespace LiveDescribe.ViewModel
             get { return _isCountingDown; }
         }
 
-        public int CountdownTimeMsec
+        public int CountdownTimeSeconds
         {
             private set
             {
-                _countdownTimeMsec = value;
+                _countdownTimeSeconds = value;
                 RaisePropertyChanged();
             }
-            get { return _countdownTimeMsec; }
+            get { return _countdownTimeSeconds; }
         }
         #endregion
 
         #region Methods
         public void StartCountdown()
         {
-            CountdownTimeMsec = CountdownStartingNumberMilliseconds;
+            CountdownTimeSeconds = CountdownStartingNumberSeconds;
             Visible = true;
             _timer.Start();
             IsCountingDown = true;
