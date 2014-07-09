@@ -15,7 +15,7 @@ namespace LiveDescribe.Controls
         {
             InitializeComponent();
 
-            DataContextChanged += CountdownControl_DataContextChanged;
+            DataContextChanged += OnDataContextChanged;
         }
 
         /// <summary>
@@ -23,7 +23,7 @@ namespace LiveDescribe.Controls
         /// </summary>
         /// <param name="sender">Sender</param>
         /// <param name="e">Args</param>
-        void CountdownControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             var viewModel = e.NewValue as CountdownControlViewModel;
             if (viewModel != null)

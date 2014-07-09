@@ -366,22 +366,6 @@ namespace LiveDescribe.View
             };
             #endregion
 
-            #region Event Listeners for LoadingViewModel
-            mainWindowViewModel.LoadingViewModel.PropertyChanged += (sender, e) =>
-            {
-                /* Set LoadingBorder to appear in front of everything when visible, otherwise put
-                 * it behind everything. This allows it to sit behind in the XAML viewer.
-                 */
-                if (e.PropertyName.Equals("Visible"))
-                {
-                    if (mainWindowViewModel.LoadingViewModel.Visible)
-                        Panel.SetZIndex(LoadingControl, 2);
-                    else
-                        Panel.SetZIndex(LoadingControl, -1);
-                }
-            };
-            #endregion
-
             #region Event Listeners For AudioCanvasViewModel
             AudioCanvasViewModel audioCanvasViewModel = mainWindowViewModel.AudioCanvasViewModel;
             audioCanvasViewModel.AudioCanvasMouseDownEvent += AudioCanvas_OnMouseDown;
