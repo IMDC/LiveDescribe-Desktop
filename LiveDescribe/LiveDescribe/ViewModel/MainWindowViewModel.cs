@@ -489,7 +489,7 @@ namespace LiveDescribe.ViewModel
             {
                 DispatcherHelper.UIDispatcher.Invoke(() =>
                 {
-                   // _mediaControlViewModel.PauseCommand.Execute(this);
+                    // _mediaControlViewModel.PauseCommand.Execute(this);
                     _mediaControlViewModel.PauseForExtendedDescriptionCommand.Execute(this);
                     Log.Info("Playing Extended Description");
                 });
@@ -594,17 +594,15 @@ namespace LiveDescribe.ViewModel
                     TryToCleanUpUnusedDescriptionAudioFiles();
                     return true;
                 }
-                else if (result == MessageBoxResult.No) //Exit but don't save
+                if (result == MessageBoxResult.No) //Exit but don't save
                 {
                     Log.Info("User has chosen exit program and not save project");
                     TryToCleanUpUnusedDescriptionAudioFiles();
                     return true;
                 }
-                else
-                {
-                    Log.Info("User has chosen not to exit program");
-                    return false;
-                }
+
+                Log.Info("User has chosen not to exit program");
+                return false;
             }
             return true;
         }
@@ -625,9 +623,8 @@ namespace LiveDescribe.ViewModel
             }
             catch (IOException e)
             {
-                Log.Warn("File could not be deleted",e);
+                Log.Warn("File could not be deleted", e);
             }
-            
         }
 
         #endregion

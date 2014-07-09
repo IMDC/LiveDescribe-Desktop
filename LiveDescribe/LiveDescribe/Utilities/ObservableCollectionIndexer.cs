@@ -16,7 +16,7 @@ namespace LiveDescribe.Utilities
 
         public ObservableCollectionIndexer(ObservableCollection<T> collection)
         {
-            if(IsInvalidType())
+            if (IsInvalidType())
                 throw new ArgumentException("Collection does not implement IListIndexible");
 
             Collection = collection;
@@ -47,7 +47,7 @@ namespace LiveDescribe.Utilities
 
         private static bool IsInvalidType()
         {
-            return !typeof (IListIndexable).IsAssignableFrom(typeof(T));
+            return !typeof(IListIndexable).IsAssignableFrom(typeof(T));
         }
 
         public void CollectionChangedListener(object sender, NotifyCollectionChangedEventArgs args)
@@ -76,7 +76,7 @@ namespace LiveDescribe.Utilities
         {
             for (int i = startingIndex; i < _collection.Count; i++)
             {
-                var item = (IListIndexable) _collection[i];
+                var item = (IListIndexable)_collection[i];
                 item.Index = i + 1;
             }
         }

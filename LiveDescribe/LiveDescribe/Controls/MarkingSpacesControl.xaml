@@ -91,7 +91,7 @@
             Grid.ColumnSpan="5"
             IsEnabled="{Binding EditingEnabled}"
             Text="{Binding Path=SelectedSpace_EndInVideo, Converter={StaticResource MillisecondsTimeConverter}, UpdateSourceTrigger=LostFocus}"
-            KeyDown="Textbox_KeyDown"/>
+            KeyDown="Textbox_KeyDown" />
 
     </Grid>
 </UserControl>

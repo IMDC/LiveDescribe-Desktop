@@ -69,15 +69,6 @@ namespace LiveDescribe.Model
         public string AbsolutePath { get; set; }
         #endregion
 
-        #region Constructor
-        /// <summary>
-        /// Empty Constructor to allow for JSON serialization. The static factory constructor
-        /// methods should be favoured over this method.
-        /// </summary>
-        public ProjectFile()
-        { }
-        #endregion
-
         #region Methods
         /// <summary>
         /// Sets the absolute path of the project file based on the combination of the project

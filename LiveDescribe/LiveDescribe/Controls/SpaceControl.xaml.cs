@@ -1,19 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using LiveDescribe.Model;
+﻿using LiveDescribe.Model;
 using LiveDescribe.Utilities;
+using System.Windows;
+using System.Windows.Input;
 
 namespace LiveDescribe.Controls
 {
@@ -56,7 +44,7 @@ namespace LiveDescribe.Controls
                 _originalPositionForDraggingSpace = xPos;
                 SpaceGraphic.CaptureMouse();
                 SetCursorUponMouseDown(xPos);
-            } 
+            }
         }
 
         private void SetCursorUponMouseDown(double xPos)
@@ -129,7 +117,7 @@ namespace LiveDescribe.Controls
             double newWidth = _space.Width + (mouseXPosition - _originalPositionForDraggingSpace);
             double lengthInMillisecondsNewWidth = (Container.VideoDuration / Container.Width) * newWidth;
 
-            //bounds checking            
+            //bounds checking
             if (lengthInMillisecondsNewWidth < MinSpaceLengthInMSecs)
             {
                 newWidth = (Container.Width / Container.VideoDuration) * MinSpaceLengthInMSecs;
@@ -177,7 +165,6 @@ namespace LiveDescribe.Controls
 
         private void DragSpace(double mouseXPosition)
         {
-
             if (!CanContinueDraggingSpace(mouseXPosition))
                 return;
 

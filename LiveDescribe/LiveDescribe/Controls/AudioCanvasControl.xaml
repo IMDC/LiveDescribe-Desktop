@@ -9,11 +9,15 @@
     xmlns:converters="clr-namespace:LiveDescribe.Converters"
     xmlns:controls="clr-namespace:LiveDescribe.Controls"
     xmlns:s="clr-namespace:LiveDescribe.Resources.UiStrings"
+    xmlns:viewModel="clr-namespace:LiveDescribe.ViewModel"
+    xmlns:model="clr-namespace:LiveDescribe.Model"
     mc:Ignorable="d"
     d:DesignHeight="300"
-    d:DesignWidth="300">
+    d:DesignWidth="300"
+    d:DataContext="{d:DesignInstance viewModel:AudioCanvasViewModel}">
     <UserControl.Resources>
-        <converters:VideoStateToBoolConverter x:Key="VideoStateToBoolConverter"/>
+        <converters:VideoStateToBoolConverter
+            x:Key="VideoStateToBoolConverter" />
     </UserControl.Resources>
     <Grid>
         <Border
@@ -45,7 +49,8 @@
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemContainerStyle>
-                        <Style>
+                        <Style
+                            d:DataContext="{d:DesignInstance model:Space}">
                             <Setter
                                 Property="Canvas.Left"
                                 Value="{Binding X}" />
@@ -62,8 +67,8 @@
                     </ItemsControl.ItemContainerStyle>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <controls:SpaceControl 
-                                Container="{Binding ElementName=AudioCanvas}"/>
+                            <controls:SpaceControl
+                                Container="{Binding ElementName=AudioCanvas}" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

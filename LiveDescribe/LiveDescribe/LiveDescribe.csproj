@@ -119,6 +119,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\CountdownControl.xaml.cs">
+      <DependentUpon>CountdownControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\DescriptionControl.xaml.cs">
       <DependentUpon>DescriptionControl.xaml</DependentUpon>
     </Compile>
@@ -154,6 +157,7 @@
     <Compile Include="Converters\BoolToRecordingContentConverter.cs" />
     <Compile Include="Converters\MillisecondsTimeConverterFormatter.cs" />
     <Compile Include="Converters\MillisecondsToTimeLeftStringConverter.cs" />
+    <Compile Include="Converters\RecordingAndCountdownConverter.cs" />
     <Compile Include="Converters\VideoStateToBoolConverter.cs" />
     <Compile Include="Converters\VarNotNullToBoolConverter.cs" />
     <Compile Include="Events\AddDescriptionEventArgs.cs" />
@@ -190,6 +194,7 @@
     <Compile Include="Utilities\ProgressFileCopier.cs" />
     <Compile Include="ViewModel\AboutInfoViewModel.cs" />
     <Compile Include="ViewModel\AudioCanvasViewModel.cs" />
+    <Compile Include="ViewModel\CountdownControlViewModel.cs" />
     <Compile Include="ViewModel\DescriptionCanvasViewModel.cs" />
     <Compile Include="ViewModel\DescriptionInfoTabViewModel.cs" />
     <Compile Include="ViewModel\LoadingViewModel.cs" />
@@ -210,6 +215,10 @@
       <DependentUpon>SpaceRecordingView.xaml</DependentUpon>
     </Compile>
     <Page Include="Controls\AudioCanvasControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\CountdownControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

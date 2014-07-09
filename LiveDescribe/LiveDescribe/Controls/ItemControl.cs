@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 
 namespace LiveDescribe.Controls
 {
-    public partial class ItemControl : UserControl
+    public class ItemControl : UserControl
     {
         public static readonly DependencyProperty ContainerProperty =
            DependencyProperty.Register("Container", typeof(ItemCanvas), typeof(ItemControl));

@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -167,7 +166,6 @@ namespace LiveDescribe.View
                 {
                     Log.Warn("Task Cancelled exception", exception);
                 }
-
             };
             #endregion
 
@@ -368,22 +366,6 @@ namespace LiveDescribe.View
             };
             #endregion
 
-            #region Event Listeners for LoadingViewModel
-            mainWindowViewModel.LoadingViewModel.PropertyChanged += (sender, e) =>
-            {
-                /* Set LoadingBorder to appear in front of everything when visible, otherwise put
-                 * it behind everything. This allows it to sit behind in the XAML viewer.
-                 */
-                if (e.PropertyName.Equals("Visible"))
-                {
-                    if (mainWindowViewModel.LoadingViewModel.Visible)
-                        Panel.SetZIndex(LoadingControl, 2);
-                    else
-                        Panel.SetZIndex(LoadingControl, -1);
-                }
-            };
-            #endregion
-
             #region Event Listeners For AudioCanvasViewModel
             AudioCanvasViewModel audioCanvasViewModel = mainWindowViewModel.AudioCanvasViewModel;
             audioCanvasViewModel.AudioCanvasMouseDownEvent += AudioCanvas_OnMouseDown;
@@ -393,10 +375,6 @@ namespace LiveDescribe.View
             #region Event Listeners For DescriptionCanvasViewModel
             DescriptionCanvasViewModel descriptionCanvasViewModel = mainWindowViewModel.DescriptionCanvasViewModel;
             descriptionCanvasViewModel.DescriptionCanvasMouseDownEvent += DescriptionCanvas_MouseDown;
-            #endregion
-
-            #region Event Listeners For DescriptionInfoTabViewModel
-
             #endregion
         }
 
@@ -465,7 +443,6 @@ namespace LiveDescribe.View
             if (_audioCanvas.CurrentActionState == ItemCanvas.ActionState.None &&
                 _descriptionCanvas.CurrentActionState == ItemCanvas.ActionState.None)
                 _descriptionInfoTabViewModel.ClearSelection();
-
         }
 
         private void AudioCanvas_RecordRightClickPosition(object sender, EventArgs e)

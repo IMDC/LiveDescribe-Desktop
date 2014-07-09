@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
@@ -10,7 +6,6 @@ namespace LiveDescribe.Utilities
 {
     public static class CustomCursors
     {
-
         public static void CreateCustomCursors()
         {
             var cursfile = Application.GetResourceStream(new Uri("pack://application:,,,/Resources/Cursors/grab.cur"));

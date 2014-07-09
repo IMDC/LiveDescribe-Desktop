@@ -18,7 +18,7 @@ namespace LiveDescribe.Controls
         {
             if (e.Key == Key.Return)
             {
-                var textBox = (TextBox) sender;
+                var textBox = (TextBox)sender;
                 BindingExpression be = textBox.GetBindingExpression(TextBox.TextProperty);
                 if (be != null)
                     be.UpdateSource();

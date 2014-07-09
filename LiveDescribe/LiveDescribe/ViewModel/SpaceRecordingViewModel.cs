@@ -1,11 +1,11 @@
-﻿using System.Diagnostics;
-using System.Windows.Threading;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Model;
 using LiveDescribe.Utilities;
 using System;
+using System.Diagnostics;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace LiveDescribe.ViewModel
 {
@@ -73,6 +73,9 @@ namespace LiveDescribe.ViewModel
             };
 
             _stopwatch = new Stopwatch();
+
+            CountdownControlViewModel = new CountdownControlViewModel();
+            CountdownControlViewModel.CountdownFinished += (sender, args) => StartRecording();
         }
 
         public void InitCommands()
@@ -86,8 +89,10 @@ namespace LiveDescribe.ViewModel
                 {
                     if (_recorder.IsRecording)
                         StopRecording();
+                    else if (CountdownControlViewModel.IsCountingDown)
+                        CancelCountdown();
                     else
-                        StartRecording();
+                        StartCountdown();
                 });
 
             PlayRecordedDescription = new RelayCommand(
@@ -182,6 +187,8 @@ namespace LiveDescribe.ViewModel
         {
             get { return _recorder; }
         }
+
+        public CountdownControlViewModel CountdownControlViewModel { private set; get; }
         #endregion
 
         #region Methods
@@ -229,6 +236,16 @@ namespace LiveDescribe.ViewModel
         private void ResetTimeLeft()
         {
             TimeLeft = Space.Duration;
+        }
+
+        private void StartCountdown()
+        {
+            CountdownControlViewModel.StartCountdown();
+        }
+
+        private void CancelCountdown()
+        {
+            CountdownControlViewModel.CancelCountdown();
         }
         #endregion
 

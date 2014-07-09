@@ -1,5 +1,4 @@
-﻿using System.IO;
-using LiveDescribe.Model;
+﻿using LiveDescribe.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LiveDescribeUnitTests

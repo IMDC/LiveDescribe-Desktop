@@ -1,7 +1,7 @@
-﻿using System;
+﻿using LiveDescribe.Resources.UiStrings;
+using System;
 using System.Globalization;
 using System.Windows.Data;
-using LiveDescribe.Resources.UiStrings;
 
 namespace LiveDescribe.Converters
 {

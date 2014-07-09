@@ -1,6 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using LiveDescribe.Controls;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
 using System;
