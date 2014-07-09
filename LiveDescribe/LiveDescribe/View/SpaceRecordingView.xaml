@@ -17,8 +17,8 @@
     <Window.Resources>
         <converters:MillisecondsToTimeLeftStringConverter
             x:Key="MillisecondsToTimeLeftStringConverter" />
-        <converters:BoolToRecordingContentConverter
-            x:Key="BoolToRecordingContentConverter" />
+        <converters:RecordingAndCountdownConverter
+            x:Key="RecordingAndCountdownConverter" />
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -94,8 +94,18 @@
             Grid.Row="6"
             Grid.Column="1"
             Grid.ColumnSpan="3"
-            Content="{Binding Path=Recorder.IsRecording, Converter={StaticResource BoolToRecordingContentConverter}}"
-            Command="{Binding RecordDescription}" />
+            Command="{Binding RecordDescription}">
+            <Button.Content>
+                <MultiBinding
+                    Converter="{StaticResource RecordingAndCountdownConverter}">
+                    <!--NOTE: IsRecording must be the first binding given for the converter to work properly-->
+                    <Binding
+                        Path="Recorder.IsRecording" />
+                    <Binding
+                        Path="CountdownControlViewModel.IsCountingDown" />
+                </MultiBinding>
+            </Button.Content>
+        </Button>
 
         <Button
             Grid.Row="6"

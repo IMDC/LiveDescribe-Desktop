@@ -89,6 +89,8 @@ namespace LiveDescribe.ViewModel
                 {
                     if (_recorder.IsRecording)
                         StopRecording();
+                    else if (CountdownControlViewModel.IsCountingDown)
+                        CancelCountdown();
                     else
                         StartCountdown();
                 });
@@ -237,6 +239,11 @@ namespace LiveDescribe.ViewModel
         private void StartCountdown()
         {
             CountdownControlViewModel.StartCountdown();
+        }
+
+        private void CancelCountdown()
+        {
+            CountdownControlViewModel.CancelCountdown();
         }
         #endregion
 

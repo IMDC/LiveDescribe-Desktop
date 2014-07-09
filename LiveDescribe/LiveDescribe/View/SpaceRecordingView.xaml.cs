@@ -1,8 +1,12 @@
-﻿using LiveDescribe.Utilities;
+﻿using LiveDescribe.Resources.UiStrings;
+using LiveDescribe.Utilities;
 using LiveDescribe.ViewModel;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace LiveDescribe.View
 {
