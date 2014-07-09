@@ -107,6 +107,8 @@ namespace LiveDescribe.ViewModel
                 {
                     if (!string.IsNullOrWhiteSpace(_space.Text))
                         _description.Text = _space.Text;
+
+                    _space.IsRecordedOver = true;
                     OnCloseRequested();
                 });
         }
