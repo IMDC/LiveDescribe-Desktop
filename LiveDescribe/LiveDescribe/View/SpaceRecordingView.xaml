@@ -10,7 +10,7 @@
     xmlns:viewModel="clr-namespace:LiveDescribe.ViewModel"
     mc:Ignorable="d"
     Title="{x:Static s:UiStrings.Window_SpaceRecordingTitle}"
-    Height="400"
+    Height="500"
     Width="400"
     ResizeMode="NoResize"
     d:DataContext="{d:DesignInstance viewModel:SpaceRecordingViewModel}">
@@ -22,6 +22,7 @@
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition />
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
@@ -45,7 +46,7 @@
             DataContext="{Binding CountdownControlViewModel}"
             Grid.ZIndex="-1"
             Grid.ColumnSpan="5"
-            Grid.RowSpan="6" />
+            Grid.RowSpan="7" />
 
         <TextBox
             x:Name="SpaceTextBox"
@@ -77,8 +78,35 @@
             Text="{Binding Path=TimeLeft, Converter={StaticResource MillisecondsToTimeLeftStringConverter}}"
             Margin="13,0,12,0" />
 
-        <ProgressBar
+        <Slider
             Grid.Row="5"
+            Grid.ColumnSpan="3"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Minimum="0"
+            Maximum="1"
+            Width="200" />
+
+        <StackPanel
+            Orientation="Vertical"
+            Grid.Row="5"
+            Grid.Column="3"
+            Grid.ColumnSpan="2">
+            <TextBlock
+                VerticalAlignment="Center">
+                <Run
+                    Text="Words Per Minute: XXX" />
+                <LineBreak />
+                <Run
+                    Text="Time to record: XX:XX:XX.XXX" />
+            </TextBlock>
+            <CheckBox
+                Content="Stop Early"
+                VerticalAlignment="Center" />
+        </StackPanel>
+
+        <ProgressBar
+            Grid.Row="6"
             Grid.Column="0"
             Grid.ColumnSpan="5"
             Minimum="0"
@@ -86,12 +114,12 @@
             Value="{Binding ElapsedTime}" />
 
         <Button
-            Grid.Row="6"
+            Grid.Row="7"
             Content="{x:Static s:UiStrings.Command_Play}"
             Command="{Binding PlayRecordedDescription}" />
 
         <Button
-            Grid.Row="6"
+            Grid.Row="7"
             Grid.Column="1"
             Grid.ColumnSpan="3"
             Command="{Binding RecordDescription}">
@@ -108,7 +136,7 @@
         </Button>
 
         <Button
-            Grid.Row="6"
+            Grid.Row="7"
             Grid.Column="4"
             Content="{x:Static s:UiStrings.Command_Save}"
             Command="{Binding SaveDescription}" />
