@@ -17,6 +17,9 @@
             <Setter
                 Property="Margin"
                 Value="5" />
+            <Setter
+                Property="ToolTip"
+                Value="{x:Static s:UiStrings.ToolTip_MarkSpace}" />
         </Style>
     </UserControl.Resources>
     <Grid>
@@ -51,6 +54,7 @@
         <Button
             Grid.Row="0"
             Grid.Column="3"
+            ToolTip="{x:Static s:UiStrings.ToolTip_MarkBeginning}"
             Content="{x:Static s:UiStrings.Command_SetBeginTime}"
             Command="{Binding SetBeginToMarker}" />
 
@@ -62,7 +66,6 @@
             IsEnabled="{Binding EditingEnabled}"
             Text="{Binding Path=SelectedSpace_StartInVideo, Converter={StaticResource MillisecondsTimeConverter}, UpdateSourceTrigger=LostFocus}"
             KeyDown="Textbox_KeyDown"/>
-
         <!-- End -->
         <TextBlock
             Name="StartInVideoTextBox"
@@ -76,6 +79,7 @@
         <Button
             Grid.Row="2"
             Grid.Column="3"
+            ToolTip="{x:Static s:UiStrings.ToolTip_MarkEnd}"
             Content="{x:Static s:UiStrings.Command_SetEndTime}"
             Command="{Binding SetEndToMarker}" />
 
