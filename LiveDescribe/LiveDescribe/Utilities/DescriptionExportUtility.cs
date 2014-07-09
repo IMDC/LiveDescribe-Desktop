@@ -7,6 +7,7 @@ using LiveDescribe.Model;
 using System.IO;
 using System.Reflection;
 using System.Diagnostics;
+using System.ComponentModel;
 namespace LiveDescribe.Utilities
 {
     class DescriptionExportUtility
@@ -48,12 +49,26 @@ namespace LiveDescribe.Utilities
         /// the project. This method is called from a Relay Command(ExportWithDescriptions) 
         /// in MainWindowViewModel.cs
         /// </summary>
-        public void exportVideoWithDescriptions()
+        public void exportVideoWithDescriptions(BackgroundWorker progress, bool compressAudio, string exportName, string exportPath)
         {
             if (_descriptionList.Count > 0)
             {
-                string audioTrack = convertAudioToMP3(createDescriptionTrack());
-                mixAudioVideo(audioTrack, _videoFile);
+                string audioTrack = createDescriptionTrack();
+                if (compressAudio)
+                    audioTrack = convertAudioToMP3(audioTrack);
+
+                mixAudioVideo(audioTrack, _videoFile, exportName, exportPath);
+
+                #region Remove Temp Files
+                try
+                {
+                    File.Delete(audioTrack);
+                }
+                catch (DirectoryNotFoundException ex)
+                {
+                    Log.Error("Error removing files: " + ex);
+                }
+                #endregion
             }
             else
             {
@@ -170,7 +185,7 @@ namespace LiveDescribe.Utilities
         /// <param name="audioPath"></param>
         /// <param name="videoPath"></param>
         /// <returns>Absolute path to the file created</returns>
-        private string mixAudioVideo(string audioPath, string videoPath)
+        private string mixAudioVideo(string audioPath, string videoPath, string exportName, string exportPath)
         {
             Log.Info("Mixing " + audioPath + " with " + videoPath);
             string[] separator = new string[] {"\\"};
@@ -179,9 +194,12 @@ namespace LiveDescribe.Utilities
 
             //rename the file 
             filePathSplit = videoPath.Split(separator, StringSplitOptions.None);
-            filePathSplit[filePathSplit.Length - 1] = "export_" + filePathSplit[filePathSplit.Length - 1];
-            outFileName = String.Join("\\", filePathSplit);
+            string ext = filePathSplit[filePathSplit.Length - 1].Split(new string[] {"."}, StringSplitOptions.None).Last<string>();
+            filePathSplit[filePathSplit.Length - 1] = string.Format("{0}.{1}", exportName, ext);
 
+            //outFileName = String.Join("\\", filePathSplit);
+            outFileName = string.Format("{0}\\{1}.{2}", exportPath, exportName, ext);
+ 
             string command = " -i \"" + videoPath + "\" -i \"" + audioPath + "\" -c copy -map 0:0 -map 0:1 -map 1:0 -y \"" + outFileName + "\"";
             ffmpegCommand(command);
 

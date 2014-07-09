@@ -203,8 +203,17 @@ namespace LiveDescribe.ViewModel
                 canExecute: () => ProjectLoaded,
                 execute: () =>
                 {
-                    DescriptionExportUtility exporter = new DescriptionExportUtility(_project,_mediaVideo.Path, _mediaVideo.DurationSeconds,  _descriptioncollectionviewmodel.RegularDescriptions.ToList());
-                    exporter.exportVideoWithDescriptions();
+                    var viewModel = DialogShower.SpawnExportWindowView(_project, _mediaVideo.Path,
+                                        _mediaVideo.DurationSeconds, 
+                                        _descriptioncollectionviewmodel.RegularDescriptions.ToList(),
+                                        _loadingViewModel);
+
+                    if (viewModel.DialogResult != true)
+                        return;
+
+
+                   // DescriptionExportUtility exporter = new DescriptionExportUtility(_project,_mediaVideo.Path, _mediaVideo.DurationSeconds,  _descriptioncollectionviewmodel.RegularDescriptions.ToList());
+                   // exporter.exportVideoWithDescriptions();
                 });
 
             ClearCache = new RelayCommand(

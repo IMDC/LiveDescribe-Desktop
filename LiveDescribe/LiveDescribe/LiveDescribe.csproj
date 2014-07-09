@@ -173,10 +173,14 @@
     <Compile Include="ViewModel\AudioCanvasViewModel.cs" />
     <Compile Include="ViewModel\DescriptionCanvasViewModel.cs" />
     <Compile Include="ViewModel\DescriptionInfoTabViewModel.cs" />
+    <Compile Include="ViewModel\ExportWindowViewModel.cs" />
     <Compile Include="ViewModel\LoadingViewModel.cs" />
     <Compile Include="ViewModel\MarkingSpacesControlViewModel.cs" />
     <Compile Include="ViewModel\SpaceRecordingViewModel.cs" />
     <Compile Include="ViewModel\SpaceCollectionViewModel.cs" />
+    <Compile Include="View\ExportWindow.xaml.cs">
+      <DependentUpon>ExportWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\NewProjectView.xaml.cs">
       <DependentUpon>NewProjectView.xaml</DependentUpon>
     </Compile>
@@ -224,6 +228,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\SpaceControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ExportWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

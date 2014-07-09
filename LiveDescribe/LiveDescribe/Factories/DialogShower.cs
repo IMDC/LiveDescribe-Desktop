@@ -32,5 +32,18 @@ namespace LiveDescribe.Factories
 
             return viewModel;
         }
+
+        /// <summary>
+        /// Creates a ExportWindowView and attaches an instance of ExportWindowViewModel to it.
+        /// </summary>
+        /// <returns>The ViewModel of the Window.</returns>
+        public static ExportWindowViewModel SpawnExportWindowView(Project project, String videoPath, double durationSeconds,  List<Description> descriptionList, LoadingViewModel loadingViewModel)
+        {
+            var viewModel = new ExportWindowViewModel(project, videoPath, durationSeconds, descriptionList, loadingViewModel);
+            var view = new ExportWindow(viewModel);
+            viewModel.DialogResult = view.ShowDialog();
+
+            return viewModel;
+        }
     }
 }
