@@ -41,7 +41,7 @@
                                 Value="DimGray" />
                             <Setter
                                 Property="Opacity"
-                                Value="0.2" />
+                                Value="0.15" />
                         </MultiDataTrigger>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
@@ -57,7 +57,7 @@
                                 Value="Blue" />
                             <Setter
                                 Property="Opacity"
-                                Value="0.25" />
+                                Value="0.3" />
                         </MultiDataTrigger>
                         <DataTrigger
                             Binding="{Binding IsSelected}"
