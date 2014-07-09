@@ -2,6 +2,7 @@
 using LiveDescribe.ViewModel;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace LiveDescribe.View
 {

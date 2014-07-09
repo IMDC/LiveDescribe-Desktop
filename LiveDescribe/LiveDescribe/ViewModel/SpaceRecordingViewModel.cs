@@ -73,6 +73,9 @@ namespace LiveDescribe.ViewModel
             };
 
             _stopwatch = new Stopwatch();
+
+            CountdownControlViewModel = new CountdownControlViewModel();
+            CountdownControlViewModel.CountdownFinished += (sender, args) => StartRecording();
         }
 
         public void InitCommands()
@@ -87,7 +90,7 @@ namespace LiveDescribe.ViewModel
                     if (_recorder.IsRecording)
                         StopRecording();
                     else
-                        StartRecording();
+                        StartCountdown();
                 });
 
             PlayRecordedDescription = new RelayCommand(
@@ -180,6 +183,8 @@ namespace LiveDescribe.ViewModel
         {
             get { return _recorder; }
         }
+
+        public CountdownControlViewModel CountdownControlViewModel { private set; get; }
         #endregion
 
         #region Methods
@@ -227,6 +232,11 @@ namespace LiveDescribe.ViewModel
         private void ResetTimeLeft()
         {
             TimeLeft = Space.Duration;
+        }
+
+        private void StartCountdown()
+        {
+            CountdownControlViewModel.StartCountdown();
         }
         #endregion
 
