@@ -1,12 +1,7 @@
-﻿using LiveDescribe.Resources.UiStrings;
-using LiveDescribe.Utilities;
+﻿using LiveDescribe.Utilities;
 using LiveDescribe.ViewModel;
-using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
 
 namespace LiveDescribe.View
 {
@@ -49,6 +44,10 @@ namespace LiveDescribe.View
                 {
                     var token = _enumerator.Current;
                     SpaceTextBox.Select(token.StartIndex, token.Length);
+                }
+                else
+                {
+                    SpaceTextBox.Select(SpaceTextBox.Text.Length - 1, 0);
                 }
             };
 

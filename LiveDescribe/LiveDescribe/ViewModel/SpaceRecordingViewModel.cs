@@ -251,7 +251,6 @@ namespace LiveDescribe.ViewModel
         private void StartRecording()
         {
             var pf = Project.GenerateDescriptionFile();
-            TokenizeSpaceText();
             CalculateWordTime();
             _wordTimeAccumulator = 0;
             _initialTimeLeft = TimeLeft;
@@ -286,12 +285,9 @@ namespace LiveDescribe.ViewModel
 
         private void CalculateWordTime()
         {
-            if (string.IsNullOrWhiteSpace(Space.Text))
-                _timePerWordMsec = 0;
-            else if (SetDurationBasedOnWpm)
-                _timePerWordMsec = WpmDuration / _tokenizer.Tokens.Count;
-            else
-                _timePerWordMsec = Space.Duration / _tokenizer.Tokens.Count;
+            _timePerWordMsec = (!string.IsNullOrWhiteSpace(Space.Text))
+                ? WpmDuration / _tokenizer.Tokens.Count
+                : 0;
         }
 
         private void CalculateWpmDuration()
