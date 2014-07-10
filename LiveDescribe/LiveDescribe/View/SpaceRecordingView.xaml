@@ -31,8 +31,7 @@
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
-            <RowDefinition
-                Height="80" />
+            <RowDefinition />
             <RowDefinition />
             <RowDefinition />
         </Grid.RowDefinitions>
@@ -82,32 +81,33 @@
             Text="{Binding Path=TimeLeft, Converter={StaticResource MillisecondsToTimeLeftStringConverter}}"
             Margin="13,0,12,0" />
 
-        <Slider
-            Grid.Row="5"
-            Grid.ColumnSpan="3"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Minimum="{Binding MinWordsPerMinute}"
-            Maximum="{Binding MaxWordsPerMinute}"
-            Value="{Binding WordsPerMinute, Mode=TwoWay}"
-            Width="220"
-            IsEnabled="{Binding Recorder.IsRecording, Converter={StaticResource InvertBoolConverter}}" />
-
         <StackPanel
             Orientation="Vertical"
             Grid.Row="5"
-            Grid.Column="3"
-            Grid.ColumnSpan="2"
-            IsEnabled="{Binding Recorder.IsRecording, Converter={StaticResource InvertBoolConverter}}">
-            <DockPanel>
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
+            IsEnabled="{Binding Recorder.IsRecording, Converter={StaticResource InvertBoolConverter}}"
+            VerticalAlignment="Center">
 
+            <Slider
+                HorizontalAlignment="Center"
+                Minimum="{Binding MinWordsPerMinute}"
+                Maximum="{Binding MaxWordsPerMinute}"
+                Value="{Binding WordsPerMinute, Mode=TwoWay}"
+                Width="220"
+                Margin="0,5,0,0"
+                IsEnabled="{Binding Recorder.IsRecording, Converter={StaticResource InvertBoolConverter}}" />
+
+            <StackPanel
+                Orientation="Horizontal"
+                HorizontalAlignment="Center">
                 <TextBlock
                     Text="{x:Static s:UiStrings.Label_WordsPerMinute}"
-                    VerticalAlignment="Center"
                     Margin="5" />
 
                 <TextBox
-                    VerticalAlignment="Center">
+                    VerticalAlignment="Center"
+                    Width="60">
                     <TextBox.Text>
                         <Binding
                             Path="WordsPerMinute"
@@ -115,7 +115,16 @@
                             UpdateSourceTrigger="PropertyChanged" />
                     </TextBox.Text>
                 </TextBox>
-            </DockPanel>
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel
+            Orientation="Vertical"
+            VerticalAlignment="Center"
+            Grid.Row="5"
+            Grid.Column="3"
+            Grid.ColumnSpan="2"
+            IsEnabled="{Binding Recorder.IsRecording, Converter={StaticResource InvertBoolConverter}}">
 
             <TextBlock
                 VerticalAlignment="Center"
@@ -130,7 +139,9 @@
                 Content="{x:Static s:UiStrings.Label_UseWpm}"
                 VerticalAlignment="Center"
                 Margin="5"
-                IsChecked="{Binding SetDurationBasedOnWpm, Mode=TwoWay}" />
+                IsChecked="{Binding SetDurationBasedOnWpm, Mode=TwoWay}"
+                HorizontalAlignment="Left"
+                FlowDirection="RightToLeft" />
         </StackPanel>
 
         <ProgressBar
@@ -143,6 +154,7 @@
 
         <Button
             Grid.Row="7"
+            Grid.Column="0"
             Content="{x:Static s:UiStrings.Command_Play}"
             Command="{Binding PlayRecordedDescription}" />
 
