@@ -421,11 +421,38 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to WPM Record Time.
+        /// </summary>
+        public static string Label_TimeToRecord {
+            get {
+                return ResourceManager.GetString("Label_TimeToRecord", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use WPM Record Time.
+        /// </summary>
+        public static string Label_UseWpm {
+            get {
+                return ResourceManager.GetString("Label_UseWpm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Video.
         /// </summary>
         public static string Label_Video {
             get {
                 return ResourceManager.GetString("Label_Video", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Words Per Minute.
+        /// </summary>
+        public static string Label_WordsPerMinute {
+            get {
+                return ResourceManager.GetString("Label_WordsPerMinute", resourceCulture);
             }
         }
         

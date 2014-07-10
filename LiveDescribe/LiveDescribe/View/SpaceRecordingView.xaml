@@ -17,6 +17,8 @@
     <Window.Resources>
         <converters:MillisecondsToTimeLeftStringConverter
             x:Key="MillisecondsToTimeLeftStringConverter" />
+        <converters:MillisecondsTimeConverterFormatter
+            x:Key="MillisecondsTimeFormatter" />
         <converters:RecordingAndCountdownConverter
             x:Key="RecordingAndCountdownConverter" />
         <converters:InvertBoolConverter
@@ -88,7 +90,7 @@
             Minimum="{Binding MinWordsPerMinute}"
             Maximum="{Binding MaxWordsPerMinute}"
             Value="{Binding WordsPerMinute, Mode=TwoWay}"
-            Width="200"
+            Width="220"
             IsEnabled="{Binding Recorder.IsRecording, Converter={StaticResource InvertBoolConverter}}" />
 
         <StackPanel
@@ -100,7 +102,7 @@
             <DockPanel>
 
                 <TextBlock
-                    Text="Words per Minute"
+                    Text="{x:Static s:UiStrings.Label_WordsPerMinute}"
                     VerticalAlignment="Center"
                     Margin="5" />
 
@@ -118,14 +120,14 @@
             <TextBlock
                 VerticalAlignment="Center"
                 Margin="5">
-                <!--<Run
-                    Text="Time To Record: " />-->
                 <Run
-                    Text="{Binding WpmDuration, Converter={StaticResource MillisecondsToTimeLeftStringConverter}}" />
+                    Text="{x:Static s:UiStrings.Label_TimeToRecord}" />
+                <Run
+                    Text="{Binding WpmDuration, Converter={StaticResource MillisecondsTimeFormatter}}" />
             </TextBlock>
 
             <CheckBox
-                Content="Stop Early"
+                Content="{x:Static s:UiStrings.Label_UseWpm}"
                 VerticalAlignment="Center"
                 Margin="5"
                 IsChecked="{Binding SetDurationBasedOnWpm, Mode=TwoWay}" />

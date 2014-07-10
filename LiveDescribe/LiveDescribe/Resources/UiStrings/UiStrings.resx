@@ -327,4 +327,13 @@
   <data name="Window_SpaceRecordingTitle" xml:space="preserve">
     <value>Record a Description</value>
   </data>
+  <data name="Label_TimeToRecord" xml:space="preserve">
+    <value>WPM Record Time</value>
+  </data>
+  <data name="Label_UseWpm" xml:space="preserve">
+    <value>Use WPM Record Time</value>
+  </data>
+  <data name="Label_WordsPerMinute" xml:space="preserve">
+    <value>Words Per Minute</value>
+  </data>
 </root>
