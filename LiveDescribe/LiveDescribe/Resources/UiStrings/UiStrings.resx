@@ -247,6 +247,7 @@
   </data>
   <data name="Label_Format_TimeLeft" xml:space="preserve">
     <value>Time Left: {0}</value>
+    <comment>{0}: A timestamp</comment>
   </data>
   <data name="Label_Video" xml:space="preserve">
     <value>Video</value>

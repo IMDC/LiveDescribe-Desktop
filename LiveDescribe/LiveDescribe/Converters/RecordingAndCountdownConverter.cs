@@ -16,7 +16,7 @@ namespace LiveDescribe.Converters
                 return UiStrings.Command_StopRecord;
 
             if (countingDown)
-                return UiStrings.Command_StopRecord;
+                return UiStrings.Command_Cancel;
 
             return UiStrings.Command_Record;
         }
