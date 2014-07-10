@@ -26,6 +26,7 @@ namespace LiveDescribe.ViewModel
         private ObservableCollectionIndexer<Description> _regularDescriptionIndexer;
         private readonly ILiveDescribePlayer _mediaVideo;
         private DescriptionRecorder _recorder;
+        private RelayCommand _recordButtonClickCommand;
 
         private bool _recordingExtendedDescription;
 
@@ -59,28 +60,32 @@ namespace LiveDescribe.ViewModel
                     && _recorder.CanRecord(),
                 execute: () =>
                 {
-                    if (_recorder.IsRecording)
+                    try
+                    {
+                        var pf = Project.GenerateDescriptionFile();
+                        _recorder.RecordDescription(pf, ExtendedIsChecked, _mediaVideo.Position.TotalMilliseconds);
+                        //save the current state so when the button is pressed again you can restore it back to that state
+                        _previousVideoState = _mediaVideo.CurrentState;
+                    }
+                    catch (MmException e)
+                    {
+                        HandleNoMicrophoneException(e);
+                    }
+                    _mediaVideo.CurrentState = LiveDescribeVideoStates.RecordingDescription;
+                    RecordButtonClickCommand = StopRecordingCommand;
+                });
+
+            StopRecordingCommand = new RelayCommand(
+                canExecute: () =>
+                    Project != null
+                    && _mediaVideo.CurrentState != LiveDescribeVideoStates.VideoNotLoaded
+                    && _recorder.IsRecording,
+                execute: () =>
                     {
                         _recorder.StopRecording();
-                    }
-                    else
-                    {
-                        try
-                        {
-                            var pf = Project.GenerateDescriptionFile();
-                            _recorder.RecordDescription(pf, ExtendedIsChecked, _mediaVideo.Position.TotalMilliseconds);
-                            //save the current state so when the button is pressed again you can restore it back to that state
-                            _previousVideoState = _mediaVideo.CurrentState;
-                        }
-                        catch (MmException e)
-                        {
-                            HandleNoMicrophoneException(e);
-                        }
-                    }
-                    _mediaVideo.CurrentState = _recorder.IsRecording
-                        ? LiveDescribeVideoStates.RecordingDescription
-                        : _previousVideoState;
-                });
+                        _mediaVideo.CurrentState = _previousVideoState;
+                        RecordButtonClickCommand = RecordCommand;
+                    });
 
             AllDescriptions = new ObservableCollection<Description>();
             RegularDescriptions = new ObservableCollection<Description>();
@@ -94,7 +99,18 @@ namespace LiveDescribe.ViewModel
         /// <summary>
         /// Setter and getter for RecordCommand gets bound to the record button
         /// </summary>
-        public RelayCommand RecordCommand { private set; get; }
+        private RelayCommand RecordCommand { set; get; }
+        private RelayCommand StopRecordingCommand { set; get; }
+
+        public RelayCommand RecordButtonClickCommand
+        {
+            get { return _recordButtonClickCommand ?? (_recordButtonClickCommand = RecordCommand); }
+            set
+            {
+                _recordButtonClickCommand = value;
+                RaisePropertyChanged();
+            }
+        }
         #endregion
 
         #region Properties
