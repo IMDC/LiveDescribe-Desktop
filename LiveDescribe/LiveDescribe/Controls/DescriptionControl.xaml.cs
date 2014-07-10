@@ -15,7 +15,9 @@ namespace LiveDescribe.Controls
             (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         #endregion
 
-        private Description _description;
+        public static DependencyProperty DescriptionProperty =
+            DependencyProperty.Register("Description", typeof (Description), typeof (DescriptionControl));
+
         private double _originalPositionForDraggingDescription;
 
         public DescriptionControl()
@@ -23,17 +25,20 @@ namespace LiveDescribe.Controls
             InitializeComponent();
         }
 
+        public Description Description
+        {
+            get { return (Description)GetValue(DescriptionProperty); }
+            set { SetValue(DescriptionProperty, value); }
+        }
+
         private void DescriptionGraphic_Loaded(object sender, RoutedEventArgs e)
         {
-            if (DataContext != null)
-                _description = (Description)DataContext;
-            else
-                Log.Warn("DescriptionControl DataContext is null");
+            Container.CurrentActionState = ItemCanvas.ActionState.None;
         }
 
         private void DescriptionGraphic_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            _description.DescriptionMouseDownCommand.Execute(e);
+            Description.DescriptionMouseDownCommand.Execute(e);
             if (Mouse.LeftButton == MouseButtonState.Pressed)
             {
                 _originalPositionForDraggingDescription = e.GetPosition(Container).X;
@@ -45,7 +50,7 @@ namespace LiveDescribe.Controls
 
         private void DescriptionGraphic_MouseMove(object sender, MouseEventArgs e)
         {
-            _description.DescriptionMouseMoveCommand.Execute(e);
+            Description.DescriptionMouseMoveCommand.Execute(e);
             double xPos = e.GetPosition(Container).X;
             if (DescriptionGraphic.IsMouseCaptured)
                 HandleDescriptionMouseCapturedState(xPos);
@@ -74,9 +79,9 @@ namespace LiveDescribe.Controls
             if (!CanContinueDraggingDescription(xPos))
                 return;
 
-            double newPosition = _description.X + (xPos - _originalPositionForDraggingDescription);
+            double newPosition = Description.X + (xPos - _originalPositionForDraggingDescription);
             double newPositionMilliseconds = (Container.VideoDuration / Container.Width) * newPosition;
-            double lengthOfDescriptionMilliseconds = _description.EndInVideo - _description.StartInVideo;
+            double lengthOfDescriptionMilliseconds = Description.EndInVideo - Description.StartInVideo;
 
             //bounds checking when dragging the description
             if (newPositionMilliseconds < 0)
@@ -84,10 +89,10 @@ namespace LiveDescribe.Controls
             else if ((newPositionMilliseconds + lengthOfDescriptionMilliseconds) > Container.VideoDuration)
                 newPosition = (Container.Width / Container.VideoDuration) * (Container.VideoDuration - lengthOfDescriptionMilliseconds);
 
-            _description.X = newPosition;
+            Description.X = newPosition;
             _originalPositionForDraggingDescription = xPos;
-            _description.StartInVideo = (Container.VideoDuration / Container.Width) * (_description.X);
-            _description.EndInVideo = _description.StartInVideo + (_description.EndWaveFileTime - _description.StartWaveFileTime);
+            Description.StartInVideo = (Container.VideoDuration / Container.Width) * (Description.X);
+            Description.EndInVideo = Description.StartInVideo + (Description.EndWaveFileTime - Description.StartWaveFileTime);
         }
 
         private bool CanContinueDraggingDescription(double xPos)
