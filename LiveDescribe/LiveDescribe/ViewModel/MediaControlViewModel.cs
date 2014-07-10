@@ -31,6 +31,7 @@ namespace LiveDescribe.ViewModel
         private TimeSpan _positionTimeLabel;
         private double _originalVolume;
         private Waveform _waveform;
+        private RelayCommand _playPauseButtonClickCommand;
 
         public Project Project { get; set; }
         #endregion
@@ -72,6 +73,14 @@ namespace LiveDescribe.ViewModel
             MediaFailedCommand = new RelayCommand(MediaFailed, () => true);
 
             MediaEndedCommand = new RelayCommand(MediaEnded, () => true);
+            _mediaVideo.PropertyChanged += (sender, e) =>
+            {
+                if (e.PropertyName.Equals("CurrentState"))
+                {
+                    VideoState = _mediaVideo.CurrentState;
+                    RaisePropertyChanged("VideoState");
+                }
+            };
         }
         #endregion
 
@@ -102,12 +111,12 @@ namespace LiveDescribe.ViewModel
         /// <summary>
         /// Setter and Getter for PlayCommand
         /// </summary>
-        public RelayCommand PlayCommand { get; private set; }
+        public RelayCommand PlayCommand { get; set; }
 
         /// <summary>
         /// Setter and Getter for PauseCommand
         /// </summary>
-        public RelayCommand PauseCommand { get; private set; }
+        public RelayCommand PauseCommand { get; set; }
 
         /// <summary>
         /// Setter and Getter for MuteCommand
@@ -117,6 +126,16 @@ namespace LiveDescribe.ViewModel
         public RelayCommand VideoOpenedCommand { get; private set; }
 
         public RelayCommand MediaFailedCommand { get; private set; }
+
+        public RelayCommand PlayPauseButtonClickCommand
+        {
+            get { return _playPauseButtonClickCommand ?? (_playPauseButtonClickCommand = PlayCommand); }
+            set
+            {
+                _playPauseButtonClickCommand = value;
+                RaisePropertyChanged();
+            }
+        }
         #endregion
 
         #region Binding Functions
@@ -160,10 +179,9 @@ namespace LiveDescribe.ViewModel
 
             EventHandler handler = PlayRequested;
             _mediaVideo.CurrentState = LiveDescribeVideoStates.PlayingVideo;
-            if (handler != null)
-            {
-                handler(this, EventArgs.Empty);
-            }
+            
+            if (handler != null) handler(this, EventArgs.Empty);
+            PlayPauseButtonClickCommand = PauseCommand;
         }
 
         /// <summary>
@@ -172,12 +190,11 @@ namespace LiveDescribe.ViewModel
         public void Pause()
         {
             Log.Info("Pause video");
-
             EventHandler handler = PauseRequested;
             _mediaVideo.CurrentState = LiveDescribeVideoStates.PausedVideo;
 
-            if (handler == null) return;
-            handler(this, EventArgs.Empty);
+            if (handler != null) handler(this, EventArgs.Empty);
+            PlayPauseButtonClickCommand = PlayCommand;
         }
 
         /// <summary>
@@ -224,12 +241,14 @@ namespace LiveDescribe.ViewModel
         /// </summary>
         public void MediaEnded()
         {
-            EventHandler handler = MediaEndedEvent;
+           
             Log.Info("Video has ended");
             //Changing state back to video loaded because it is starting from the beginning
             _mediaVideo.CurrentState = LiveDescribeVideoStates.VideoLoaded;
+            EventHandler handler = MediaEndedEvent;
             if (handler == null) return;
             handler(this, EventArgs.Empty);
+            PlayPauseButtonClickCommand = PlayCommand;
         }
 
         public void PauseForExtendedDescription()
@@ -308,6 +327,8 @@ namespace LiveDescribe.ViewModel
             }
             get { return _positionTimeLabel; }
         }
+
+        public LiveDescribeVideoStates VideoState { get; set; }
         #endregion
 
         #region Accessors

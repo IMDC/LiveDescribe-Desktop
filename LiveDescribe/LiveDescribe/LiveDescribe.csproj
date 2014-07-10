@@ -155,6 +155,7 @@
       <DependentUpon>SpaceControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\BoolToRecordingContentConverter.cs" />
+    <Compile Include="Converters\LiveDescribeVideoStateToContent.cs" />
     <Compile Include="Converters\MillisecondsTimeConverterFormatter.cs" />
     <Compile Include="Converters\MillisecondsToTimeLeftStringConverter.cs" />
     <Compile Include="Converters\RecordingAndCountdownConverter.cs" />

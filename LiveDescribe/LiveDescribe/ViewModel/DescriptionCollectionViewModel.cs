@@ -99,8 +99,8 @@ namespace LiveDescribe.ViewModel
         /// <summary>
         /// Setter and getter for RecordCommand gets bound to the record button
         /// </summary>
-        private RelayCommand RecordCommand { set; get; }
-        private RelayCommand StopRecordingCommand { set; get; }
+        private RelayCommand RecordCommand { get; set; }
+        private RelayCommand StopRecordingCommand { get; set; }
 
         public RelayCommand RecordButtonClickCommand
         {

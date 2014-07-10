@@ -124,9 +124,6 @@ namespace LiveDescribe.View
                 {
                     //this is to recheck all the graphics states
                     CommandManager.InvalidateRequerySuggested();
-
-                    double position = (_videoMedia.Position.TotalMilliseconds / _videoDuration) * (_audioCanvas.Width);
-                    UpdateMarkerPosition(position - MarkerOffset);
                 };
 
             //listens for PauseRequested Event
