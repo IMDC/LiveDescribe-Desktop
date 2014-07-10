@@ -19,6 +19,8 @@
             x:Key="MillisecondsToTimeLeftStringConverter" />
         <converters:RecordingAndCountdownConverter
             x:Key="RecordingAndCountdownConverter" />
+        <converters:InvertBoolConverter
+            x:Key="InvertBoolConverter" />
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -86,13 +88,15 @@
             Minimum="{Binding MinWordsPerMinute}"
             Maximum="{Binding MaxWordsPerMinute}"
             Value="{Binding WordsPerMinute, Mode=TwoWay}"
-            Width="200" />
+            Width="200"
+            IsEnabled="{Binding Recorder.IsRecording, Converter={StaticResource InvertBoolConverter}}" />
 
         <StackPanel
             Orientation="Vertical"
             Grid.Row="5"
             Grid.Column="3"
-            Grid.ColumnSpan="2">
+            Grid.ColumnSpan="2"
+            IsEnabled="{Binding Recorder.IsRecording, Converter={StaticResource InvertBoolConverter}}">
             <DockPanel>
 
                 <TextBlock
