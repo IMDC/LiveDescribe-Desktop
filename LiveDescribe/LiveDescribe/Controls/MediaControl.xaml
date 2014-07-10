@@ -61,6 +61,9 @@
             <StackPanel.Resources>
                 <converters:TimeConverterFormatter
                     x:Key="TimeConverterFormatter" />
+                
+                <converters:LivedescribeVideoStateToContent
+                    x:Key="LivedescribeVideoStateToContent" />
             </StackPanel.Resources>
             <Button
                 Style="{StaticResource ControlPanelStyle}"
@@ -79,16 +82,10 @@
 
             <Button
                 Name="PlayControl"
+                Width="50"
                 Style="{StaticResource ControlPanelStyle}"
-                Command="{Binding PlayCommand}"
-                Content="{x:Static s:UiStrings.Command_Play}"
-                HorizontalAlignment="Center" />
-
-            <Button
-                Name="PauseControl"
-                Style="{StaticResource ControlPanelStyle}"
-                Command="{Binding PauseCommand}"
-                Content="{x:Static s:UiStrings.Command_Pause}"
+                Command="{Binding PlayPauseButtonClickCommand}"
+                Content="{Binding Path=VideoState, Converter={StaticResource LivedescribeVideoStateToContent}}"
                 HorizontalAlignment="Center" />
 
             <TextBlock

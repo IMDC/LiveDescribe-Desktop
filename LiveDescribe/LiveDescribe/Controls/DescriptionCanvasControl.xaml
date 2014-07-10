@@ -80,7 +80,8 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <controls:DescriptionControl
-                                Container="{Binding ElementName=DescriptionCanvas}" />
+                                Container="{Binding ElementName=DescriptionCanvas}"
+                                Description="{Binding}" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

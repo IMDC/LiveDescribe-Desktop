@@ -336,4 +336,14 @@
   <data name="Label_WordsPerMinute" xml:space="preserve">
     <value>Words Per Minute</value>
   </data>
+  <data name="ToolTip_MarkBeginning" xml:space="preserve">
+    <value>Mark beginning of selected space</value>
+  </data>
+  <data name="ToolTip_MarkEnd" xml:space="preserve">
+    <value>Mark end of selected space</value>
+  </data>
+  <data name="ToolTip_MarkSpace" xml:space="preserve">
+    <value>Hours : Minutes : Seconds . Milliseconds</value>
+    <comment>MarkingSpacesControl  textboxes</comment>
+  </data>
 </root>

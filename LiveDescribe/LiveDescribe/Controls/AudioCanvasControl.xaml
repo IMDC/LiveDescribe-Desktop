@@ -68,7 +68,8 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <controls:SpaceControl
-                                Container="{Binding ElementName=AudioCanvas}" />
+                                Container="{Binding ElementName=AudioCanvas}"
+                                Space="{Binding}"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
