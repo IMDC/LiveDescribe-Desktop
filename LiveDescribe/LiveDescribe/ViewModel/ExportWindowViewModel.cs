@@ -66,6 +66,18 @@ namespace LiveDescribe.ViewModel
             if (handler != null) handler(this, EventArgs.Empty);
         }
 
+        /// <summary>
+        /// Event is raised when project is finished exporting
+        /// </summary>
+        public event EventHandler ExportProjectCompleted;
+        
+        protected virtual void OnExportProjectCompleted()
+        {
+            EventHandler handler = ExportProjectCompleted;
+            if (handler != null) handler(this, EventArgs.Empty);
+            _loadingViewModel.Visible = false;
+        }
+
         #endregion
 
         #region Accessors
@@ -131,6 +143,14 @@ namespace LiveDescribe.ViewModel
         /// </summary>
         private void ExportProject()
         {
+            //Ensure that path is absolute
+            if (!Path.IsPathRooted(_exportPath))
+            {
+                MessageBoxFactory.ShowError("Project location must be a root path.");
+                Log.Warn("Given project path is not rooted");
+                return;
+            }
+
             Log.Info("Project Exported");
 
             var worker = new BackgroundWorker { WorkerReportsProgress = true, };
@@ -138,18 +158,16 @@ namespace LiveDescribe.ViewModel
             //Strip the audio from the given project video
             worker.DoWork += (sender, args) =>
             {
-                var exportOperator = new DescriptionExportUtility(_project, _videoPath, _durationSeconds, _descriptionList);
-                exportOperator.exportVideoWithDescriptions(worker, _compressAudio, _exportName, _exportPath);
+                var exportOperator = new DescriptionExportUtility(worker, _project, _videoPath, _durationSeconds, _descriptionList);
+                exportOperator.exportVideoWithDescriptions(_compressAudio, _exportName, _exportPath);
             };
 
             //Notify subscribers of stripping completion
-            worker.RunWorkerCompleted += (sender, args) =>
+            worker.RunWorkerCompleted += (sender, args) => 
             {
-                //EventHandler handler = OnStrippingAudioCompleted;
-                //if (handler == null) return;
-                //handler(this, EventArgs.Empty);
+                OnExportProjectCompleted();
             };
-
+           
             worker.ProgressChanged += (sender, args) => _loadingViewModel.SetProgress("Exporting Project", args.ProgressPercentage);
 
             _loadingViewModel.SetProgress("Exporting Project", 0);

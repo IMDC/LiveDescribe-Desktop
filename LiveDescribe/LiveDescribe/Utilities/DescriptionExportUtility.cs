@@ -8,6 +8,7 @@ using System.IO;
 using System.Reflection;
 using System.Diagnostics;
 using System.ComponentModel;
+using LiveDescribe.Factories;
 namespace LiveDescribe.Utilities
 {
     class DescriptionExportUtility
@@ -23,15 +24,19 @@ namespace LiveDescribe.Utilities
         private List<Description> _descriptionList;
         private string _ffmpegPath;
         private Project _project;
+        private BackgroundWorker _progressWorker;
+        private int _operations;
+        private double _progress;
         #endregion
 
         #region Constructors
-        public DescriptionExportUtility(Project project, string videoFile, double videoDurationSeconds, List<Description> descriptionList)
+        public DescriptionExportUtility(BackgroundWorker progressWorker, Project project, string videoFile, double videoDurationSeconds, List<Description> descriptionList)
         {
             _project = project;
             _videoFile = videoFile;
             _videoDurationSeconds = videoDurationSeconds;
             _descriptionList = descriptionList;
+            _progressWorker = progressWorker;
             //gets the path of the ffmpeg.exe file within the LiveDescribe solution
             var appDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             _ffmpegPath = Path.Combine(appDirectory, "Utilities/ffmpeg.exe");
@@ -49,13 +54,19 @@ namespace LiveDescribe.Utilities
         /// the project. This method is called from a Relay Command(ExportWithDescriptions) 
         /// in MainWindowViewModel.cs
         /// </summary>
-        public void exportVideoWithDescriptions(BackgroundWorker progress, bool compressAudio, string exportName, string exportPath)
+        public void exportVideoWithDescriptions(bool compressAudio, string exportName, string exportPath)
         {
             if (_descriptionList.Count > 0)
             {
+                _operations = compressAudio == true ? 4 : 3;
+                _progress = 0;
+
                 string audioTrack = createDescriptionTrack();
+               
                 if (compressAudio)
-                    audioTrack = convertAudioToMP3(audioTrack);
+                {   
+                    audioTrack = convertAudioToMP3(audioTrack);   
+                }
 
                 mixAudioVideo(audioTrack, _videoFile, exportName, exportPath);
 
@@ -104,7 +115,15 @@ namespace LiveDescribe.Utilities
                     delta = _videoDurationSeconds - (descriptions[i].StartInVideo / 1000);
                 }
                 concat_list.Add(appendSilence(descriptions[i].AudioFile, delta));
+
+                #region progress update
+                double local_progress = (( (i + 1) * 100 )/ descriptions.Count) / _operations;
+                _progressWorker.ReportProgress((int)Math.Round(_progress + local_progress));
+                //Console.WriteLine((int)Math.Round(_progress + local_progress));
+                #endregion
             }
+
+            _progress += (100 / _operations);
 
             string command = "";
 
@@ -115,7 +134,7 @@ namespace LiveDescribe.Utilities
 
             command += " -filter_complex concat=n=" + concat_list.Count + ":v=0:a=1 -y " + "\""
                         + outFileName + "\"";
-            ffmpegCommand(command);
+            ffmpegCommand(command, true);
 
             #region Delete temp files
             try
@@ -146,7 +165,7 @@ namespace LiveDescribe.Utilities
             Log.Info("Creating blank audio file");
             string command = " -f lavfi -i aevalsrc=0:0::duration=" + duration +
                              " -ab 320k -y \"" + _project.Folders.Project + "\\descriptions\\init_silence.wav\"";
-            ffmpegCommand(command);
+            ffmpegCommand(command, false);
 
             Log.Info("Blank audio file created");
             return _project.Folders.Project + "\\descriptions\\init_silence.wav";
@@ -174,7 +193,7 @@ namespace LiveDescribe.Utilities
             string command = " -i \"" + audioFile + "\" -filter_complex aevalsrc=0::d=" + duration 
                             + "[silence];[0:a][silence]concat=n=2:v=0:a=1[out] -map [out] -y \"" 
                             + outFileName +"\"";
-            ffmpegCommand(command);
+            ffmpegCommand(command, false);
 
             return outFileName;
         }
@@ -201,7 +220,7 @@ namespace LiveDescribe.Utilities
             outFileName = string.Format("{0}\\{1}.{2}", exportPath, exportName, ext);
  
             string command = " -i \"" + videoPath + "\" -i \"" + audioPath + "\" -c copy -map 0:0 -map 0:1 -map 1:0 -y \"" + outFileName + "\"";
-            ffmpegCommand(command);
+            ffmpegCommand(command, true);
 
             return outFileName;
         }
@@ -255,7 +274,7 @@ namespace LiveDescribe.Utilities
             outFileName = String.Join("\\", filePathSplit);
 
             string command = string.Format(" -i \"{0}\" -f mp3 {1}", audioPath, outFileName);
-            ffmpegCommand(command);
+            ffmpegCommand(command, true);
 
             try
             {
@@ -273,7 +292,7 @@ namespace LiveDescribe.Utilities
         /// Executes an ffmpeg command
         /// </summary>
         /// <param name="command">String representation of an ffmpeg command</param>
-        private void ffmpegCommand(string command)
+        private void ffmpegCommand(string command, bool reportProgress)
         {
             var ffmpeg = new Process
             {
@@ -290,23 +309,101 @@ namespace LiveDescribe.Utilities
             ffmpeg.Start();
 
             #region FFMPEG Output
-            StreamReader input = ffmpeg.StandardError;
-
-            try
+            if (reportProgress)
             {
-                while (!input.EndOfStream)
+                double totalTime = 0;
+                double currentTime = 0;
+
+                //stream reader used to parse the output of the ffmpeg process
+                StreamReader input = ffmpeg.StandardError;
+
+                Log.Info("Attempting to parse ffmpeg output");
+                /* Parsing the output of ffmpeg to obtain the total time and the current time
+                 to  calculate a percentage whose value is used to update the progress bar*/
+                try
                 {
-                    string text = input.ReadLine();
-                    Console.WriteLine(text);
+                    while (!input.EndOfStream)
+                    {
+                        string text = input.ReadLine();
+                        string word = "";
+                        for (int i = 0; i < text.Length; i++)
+                        {
+                            word += text[i];
+                            if (text[i] == ' ')
+                            {
+                                if (word.Equals("Duration: "))
+                                {
+                                    int currentIndex = i + 1;
+                                    string time = "";
+
+                                    for (int j = currentIndex; j < currentIndex + 11; j++)
+                                    {
+                                        time += text[j];
+                                    }
+
+                                    totalTime = GetTime(time);
+                                }
+                                word = "";
+                            }
+
+                            if (text[i] == '=')
+                            {
+                                if (word.Equals("time="))
+                                {
+                                    int currentIndex = i + 1;
+                                    string time = "";
+
+                                    for (int j = currentIndex; j < currentIndex + 11; j++)
+                                    {
+                                        time += text[j];
+                                    }
+
+                                    currentTime = GetTime(time);
+                                }
+                            }
+                        }
+
+                        //updates the progress bar given that the total time is not zero
+                        if (totalTime != 0)
+                        {
+                            int percentComplete = Convert.ToInt32((currentTime / totalTime) * 100);
+                            if (percentComplete <= 100)
+                            {
+                                #region progress update
+                                double local_progress = percentComplete / _operations;
+                                _progressWorker.ReportProgress((int)Math.Round(_progress + local_progress));
+                                //Console.WriteLine((int)Math.Round(_progress + local_progress));
+                                #endregion
+                            }
+                        }
+                    }
+                    _progress += (100 / _operations);
+                }
+                catch (Exception ex)
+                {
+                    MessageBoxFactory.ShowError(ex.Message);
+                    Log.Error("An error occured during ffmpeg Exporting", ex);
                 }
             }
-            catch (Exception ex)
-            {
-                Log.Error("An error occured during ffmpeg execution", ex);
-            }
+           
             #endregion
 
             ffmpeg.WaitForExit();
+        }
+
+
+        /// <summary>
+        /// Convert from ffmpeg time to seconds
+        /// </summary>
+        /// <param name="time">the time in ffmpeg format HH:MM:SS</param>
+        /// <returns></returns>
+        private double GetTime(string time)
+        {
+            double hours = Convert.ToDouble(time.Substring(0, 2)) * 60 * 60;
+            double minutes = Convert.ToDouble(time.Substring(3, 2)) * 60;
+            double seconds = Convert.ToDouble(time.Substring(6, 2));
+
+            return hours + minutes + seconds;
         }
     }
 }

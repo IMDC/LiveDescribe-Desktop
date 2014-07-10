@@ -74,6 +74,7 @@ namespace LiveDescribe.Utilities
 
             ffmpeg.Start();
 
+            #region parse ffmpeg
             double totalTime = 0;
             double currentTime = 0;
             //stream reader used to parse the output of the ffmpeg process
@@ -141,6 +142,7 @@ namespace LiveDescribe.Utilities
                 MessageBoxFactory.ShowError(ex.Message);
                 Log.Error("An error occured during ffmpeg audio stripping", ex);
             }
+            #endregion
 
             ffmpeg.WaitForExit();
 
