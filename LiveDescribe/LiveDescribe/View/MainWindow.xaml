@@ -10,6 +10,14 @@
     MinHeight="600"
     MinWidth="960"
     Closing="MainWindow_OnClosing">
+    
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding OpenProject}" Key="O" Modifiers="Control" />
+        <KeyBinding Command="{Binding SaveProject}" Key="S" Modifiers="Control" />
+        <KeyBinding Command="{Binding NewProject}"  Key="N" Modifiers="Control" />
+        <KeyBinding Command="{Binding ShowPreferences}" Key="P" Modifiers="Control" />
+    </Window.InputBindings>
+    
     <Grid>
         <controls:LoadingControl
             x:Name="LoadingControl"
@@ -24,21 +32,25 @@
                 <MenuItem
                     Header="{x:Static s:UiStrings.MenuItem_File}">
                     <MenuItem
-                        Header="{x:Static s:UiStrings.MenuItem_NewProject}"
-                        Command="{Binding NewProject}" />
+                        Header="{x:Static s:UiStrings.MenuItem_NewProject}"                        
+                        Command="{Binding NewProject}"
+                        InputGestureText="Ctrl+N" />
                     <MenuItem
                         Header="{x:Static s:UiStrings.MenuItem_OpenProject}"
-                        Command="{Binding OpenProject}" />
+                        Command="{Binding OpenProject}"
+                        InputGestureText="Ctrl+O" />
                     <MenuItem
                         Header="{x:Static s:UiStrings.MenuItem_SaveProject}"
-                        Command="{Binding SaveProject}" />
+                        Command="{Binding SaveProject}"
+                        InputGestureText="Ctrl+S" />
                     <MenuItem
                         Header="{x:Static s:UiStrings.MenuItem_CloseProject}"
                         Command="{Binding CloseProject}" />
                     <MenuItem
                         Name="Preferences"
                         Header="{x:Static s:UiStrings.MenuItem_Preferences}"
-                        Command="{Binding ShowPreferences}" />
+                        Command="{Binding ShowPreferences}"
+                        InputGestureText="Ctrl+P" />
                     <MenuItem
                         Header="{x:Static s:UiStrings.MenuItem_Exit}"
                         Click="MenuItemExit_Click" />
