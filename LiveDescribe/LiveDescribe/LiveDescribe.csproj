@@ -192,6 +192,7 @@
     <Compile Include="Utilities\PositionalStringToken.cs" />
     <Compile Include="Utilities\PositionalStringTokenizer.cs" />
     <Compile Include="Utilities\ProgressFileCopier.cs" />
+    <Compile Include="Utilities\Time.cs" />
     <Compile Include="ViewModel\AboutInfoViewModel.cs" />
     <Compile Include="ViewModel\AudioCanvasViewModel.cs" />
     <Compile Include="ViewModel\CountdownControlViewModel.cs" />
@@ -319,6 +320,7 @@
     <EmbeddedResource Include="Resources\UiStrings\UiStrings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>UiStrings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="Log4Net.config">
       <SubType>Designer</SubType>

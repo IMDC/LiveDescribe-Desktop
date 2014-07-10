@@ -126,6 +126,9 @@ namespace LiveDescribe.Model
             get { return _endInVideo; }
         }
 
+        /// <summary>
+        /// Duration of Space in Milliseconds
+        /// </summary>
         [JsonIgnore]
         public double Duration
         {

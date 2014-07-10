@@ -11,7 +11,7 @@
     mc:Ignorable="d"
     Title="{x:Static s:UiStrings.Window_SpaceRecordingTitle}"
     Height="500"
-    Width="400"
+    Width="450"
     ResizeMode="NoResize"
     d:DataContext="{d:DesignInstance viewModel:SpaceRecordingViewModel}">
     <Window.Resources>
@@ -27,12 +27,12 @@
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
             <RowDefinition
-                Height="Auto" />
+                Height="80" />
+            <RowDefinition />
+            <RowDefinition />
         </Grid.RowDefinitions>
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
             <ColumnDefinition />
@@ -83,8 +83,9 @@
             Grid.ColumnSpan="3"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            Minimum="0"
-            Maximum="1"
+            Minimum="{Binding MinWordsPerMinute}"
+            Maximum="{Binding MaxWordsPerMinute}"
+            Value="{Binding WordsPerMinute, Mode=TwoWay}"
             Width="200" />
 
         <StackPanel
@@ -92,17 +93,38 @@
             Grid.Row="5"
             Grid.Column="3"
             Grid.ColumnSpan="2">
+            <DockPanel>
+
+                <TextBlock
+                    Text="Words per Minute"
+                    VerticalAlignment="Center"
+                    Margin="5" />
+
+                <TextBox
+                    VerticalAlignment="Center">
+                    <TextBox.Text>
+                        <Binding
+                            Path="WordsPerMinute"
+                            Mode="TwoWay"
+                            UpdateSourceTrigger="PropertyChanged" />
+                    </TextBox.Text>
+                </TextBox>
+            </DockPanel>
+
             <TextBlock
-                VerticalAlignment="Center">
+                VerticalAlignment="Center"
+                Margin="5">
+                <!--<Run
+                    Text="Time To Record: " />-->
                 <Run
-                    Text="Words Per Minute: XXX" />
-                <LineBreak />
-                <Run
-                    Text="Time to record: XX:XX:XX.XXX" />
+                    Text="{Binding WpmDuration, Converter={StaticResource MillisecondsToTimeLeftStringConverter}}" />
             </TextBlock>
+
             <CheckBox
                 Content="Stop Early"
-                VerticalAlignment="Center" />
+                VerticalAlignment="Center"
+                Margin="5"
+                IsChecked="{Binding SetDurationBasedOnWpm, Mode=TwoWay}" />
         </StackPanel>
 
         <ProgressBar

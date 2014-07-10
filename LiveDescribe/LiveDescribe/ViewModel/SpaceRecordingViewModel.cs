@@ -4,6 +4,7 @@ using LiveDescribe.Model;
 using LiveDescribe.Utilities;
 using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using System.Windows.Threading;
 
@@ -14,11 +15,16 @@ namespace LiveDescribe.ViewModel
         #region Constants
 
         public const double CountdownTimerIntervalMsec = 1000 / 40; //40 times a second
+        public const double DefaultMaxWordsPerMinute = 400;
+        public const double DefaultMinWordsPerMinute = 0;
         #endregion
 
         #region Fields
+
+        private bool _setDurationBasedOnWpm;
         private double _timeLeft;
         private double _elapsedTime;
+        private double _initialTimeLeft;
         private Description _description;
         private Space _space;
         private readonly DescriptionRecorder _recorder;
@@ -27,6 +33,10 @@ namespace LiveDescribe.ViewModel
         private readonly Stopwatch _stopwatch;
         /// <summary>Defines how long each word should be selected while recording a description.</summary>
         private double _timePerWordMsec;
+        private double _wpmDuration;
+        private double _wordsPerMinute;
+        private double _maxWordsPerMinute;
+        private double _minWordsPerMinute;
         private double _wordTimeAccumulator;
         /// <summary>Keeps track of Space Text words during recording.</summary>
         private PositionalStringTokenizer _tokenizer;
@@ -44,11 +54,14 @@ namespace LiveDescribe.ViewModel
         {
             InitCommands();
 
+            _setDurationBasedOnWpm = false;
             _description = null;
             Space = space;
             Project = project;
             ResetElapsedTime();
-            ResetTimeLeft();
+            SetTimeLeft();
+            MaxWordsPerMinute = DefaultMaxWordsPerMinute;
+            MinWordsPerMinute = DefaultMinWordsPerMinute;
 
             _recorder = new DescriptionRecorder();
             _recorder.DescriptionRecorded += (sender, args) => Description = args.Value;
@@ -57,25 +70,14 @@ namespace LiveDescribe.ViewModel
             _player.DescriptionFinishedPlaying += (sender, args) => CommandManager.InvalidateRequerySuggested();
 
             _recordingTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(CountdownTimerIntervalMsec) };
-            _recordingTimer.Tick += (sender, args) =>
-            {
-                ElapsedTime = _stopwatch.ElapsedMilliseconds;
-                TimeLeft = Space.Duration - ElapsedTime;
-
-                if (_timePerWordMsec != 0 && _wordTimeAccumulator < ElapsedTime)
-                {
-                    _wordTimeAccumulator += _timePerWordMsec;
-                    OnNextWordSelected();
-                }
-
-                if (Space.Duration < ElapsedTime && _recorder.IsRecording)
-                    StopRecording();
-            };
+            _recordingTimer.Tick += RecordingTimerOnTick;
 
             _stopwatch = new Stopwatch();
 
             CountdownControlViewModel = new CountdownControlViewModel();
             CountdownControlViewModel.CountdownFinished += (sender, args) => StartRecording();
+
+            SetWpmValuesBasedOnSpaceText();
         }
 
         public void InitCommands()
@@ -129,6 +131,20 @@ namespace LiveDescribe.ViewModel
 
         public PositionalStringTokenizer SpaceTextTokenizer { get { return _tokenizer; } }
 
+        /// <summary>
+        /// If set to true, this boolean will make the view model record for as much time as the
+        /// wpm will allow for as opposed to the duration of the space.
+        /// </summary>
+        public bool SetDurationBasedOnWpm
+        {
+            set
+            {
+                _setDurationBasedOnWpm = value;
+                RaisePropertyChanged();
+            }
+            get { return _setDurationBasedOnWpm; }
+        }
+
         public double TimeLeft
         {
             set
@@ -147,6 +163,46 @@ namespace LiveDescribe.ViewModel
                 RaisePropertyChanged();
             }
             get { return _elapsedTime; }
+        }
+
+        public double WordsPerMinute
+        {
+            set
+            {
+                _wordsPerMinute = value;
+                RaisePropertyChanged();
+            }
+            get { return _wordsPerMinute; }
+        }
+
+        public double MaxWordsPerMinute
+        {
+            set
+            {
+                _maxWordsPerMinute = value;
+                RaisePropertyChanged();
+            }
+            get { return _maxWordsPerMinute; }
+        }
+
+        public double MinWordsPerMinute
+        {
+            set
+            {
+                _minWordsPerMinute = value;
+                RaisePropertyChanged();
+            }
+            get { return _minWordsPerMinute; }
+        }
+
+        public double WpmDuration
+        {
+            set
+            {
+                _wpmDuration = value;
+                RaisePropertyChanged();
+            }
+            get { return _wpmDuration; }
         }
 
         public Project Project { set; get; }
@@ -198,10 +254,19 @@ namespace LiveDescribe.ViewModel
             TokenizeSpaceText();
             CalculateWordTime();
             _wordTimeAccumulator = 0;
+            _initialTimeLeft = TimeLeft;
             _recorder.RecordDescription(pf, false, Space.StartInVideo);
             _recordingTimer.Start();
             _stopwatch.Start();
             OnRecordingStarted();
+        }
+
+        private void SetWpmValuesBasedOnSpaceText()
+        {
+            TokenizeSpaceText();
+            CalculateMinWordsPerMinute();
+            WordsPerMinute = MinWordsPerMinute;
+            CalculateWordTime();
         }
 
         private void TokenizeSpaceText()
@@ -210,11 +275,28 @@ namespace LiveDescribe.ViewModel
             _tokenizer.Tokenize();
         }
 
+        private void CalculateMinWordsPerMinute()
+        {
+            if (string.IsNullOrWhiteSpace(Space.Text))
+                MinWordsPerMinute = 0;
+            else
+                MinWordsPerMinute = Math.Min(MaxWordsPerMinute - 1,
+                    (_tokenizer.Tokens.Count / (Space.Duration / Milliseconds.PerSecond)) * Seconds.PerMinute);
+        }
+
         private void CalculateWordTime()
         {
-            _timePerWordMsec = (!string.IsNullOrWhiteSpace(Space.Text))
-                ? _timePerWordMsec = Space.Duration / _tokenizer.Tokens.Count
-                : 0;
+            if (string.IsNullOrWhiteSpace(Space.Text))
+                _timePerWordMsec = 0;
+            else if (SetDurationBasedOnWpm)
+                _timePerWordMsec = WpmDuration / _tokenizer.Tokens.Count;
+            else
+                _timePerWordMsec = Space.Duration / _tokenizer.Tokens.Count;
+        }
+
+        private void CalculateWpmDuration()
+        {
+            WpmDuration = (_tokenizer.Tokens.Count / WordsPerMinute) * Milliseconds.PerMinute;
         }
 
         private void StopRecording()
@@ -223,7 +305,7 @@ namespace LiveDescribe.ViewModel
             _recordingTimer.Stop();
             _stopwatch.Reset();
             ResetElapsedTime();
-            ResetTimeLeft();
+            SetTimeLeft();
             OnRecordingEnded();
             CommandManager.InvalidateRequerySuggested();
         }
@@ -233,9 +315,11 @@ namespace LiveDescribe.ViewModel
             ElapsedTime = 0;
         }
 
-        private void ResetTimeLeft()
+        private void SetTimeLeft()
         {
-            TimeLeft = Space.Duration;
+            TimeLeft = (SetDurationBasedOnWpm)
+                ? WpmDuration
+                : Space.Duration;
         }
 
         private void StartCountdown()
@@ -247,6 +331,44 @@ namespace LiveDescribe.ViewModel
         {
             CountdownControlViewModel.CancelCountdown();
         }
+
+        protected override void RaisePropertyChanged([CallerMemberName]string propertyName = null)
+        {
+            // ReSharper disable once ExplicitCallerInfoArgument
+            base.RaisePropertyChanged(propertyName);
+
+            switch (propertyName)
+            {
+                case "Text":
+                    SetWpmValuesBasedOnSpaceText();
+                    break;
+                case "WordsPerMinute":
+                    CalculateWpmDuration();
+                    break;
+                case "WpmDuration":
+                    SetTimeLeft();
+                    break;
+                case "SetDurationBasedOnWpm":
+                    SetTimeLeft();
+                    break;
+            }
+        }
+
+        private void RecordingTimerOnTick(object sender, EventArgs eventArgs)
+        {
+            ElapsedTime = _stopwatch.ElapsedMilliseconds;
+            TimeLeft = _initialTimeLeft - ElapsedTime;
+
+            if (_timePerWordMsec != 0 && _wordTimeAccumulator < ElapsedTime)
+            {
+                _wordTimeAccumulator += _timePerWordMsec;
+                OnNextWordSelected();
+            }
+
+            if (TimeLeft <= 0 && _recorder.IsRecording)
+                StopRecording();
+        }
+
         #endregion
 
         #region Event Invokations
