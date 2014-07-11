@@ -267,6 +267,11 @@ namespace LiveDescribe.ViewModel
             get { return _recorder; }
         }
 
+        public DescriptionPlayer Player
+        {
+            get { return _player; }
+        }
+
         public CountdownControlViewModel CountdownControlViewModel { private set; get; }
         #endregion
 
@@ -409,6 +414,17 @@ namespace LiveDescribe.ViewModel
                 StopRecording();
         }
 
+        public void StopEverything()
+        {
+            if (CountdownControlViewModel.IsCountingDown)
+                CountdownControlViewModel.CancelCountdown();
+
+            if (Recorder.IsRecording)
+                Recorder.StopRecording();
+
+            if (Player.IsPlaying)
+                Player.Stop();
+        }
         #endregion
 
         #region Event Invokations

@@ -1,6 +1,7 @@
 ﻿using LiveDescribe.Utilities;
 using LiveDescribe.ViewModel;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows;
 
 namespace LiveDescribe.View
@@ -62,6 +63,17 @@ namespace LiveDescribe.View
              */
             if (_viewModel.Recorder.IsRecording)
                 e.Handled = true;
+        }
+
+        private void Cancel_OnClick(object sender, RoutedEventArgs e)
+        {
+            DialogResult = false;
+            Close();
+        }
+
+        private void SpaceRecordingView_OnClosing(object sender, CancelEventArgs e)
+        {
+            _viewModel.StopEverything();
         }
     }
 }
