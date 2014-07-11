@@ -250,7 +250,7 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Export Description Text File.
+        ///   Looks up a localized string similar to Export Description Text To File.
         /// </summary>
         public static string Export_DescriptionSrtTitle {
             get {
