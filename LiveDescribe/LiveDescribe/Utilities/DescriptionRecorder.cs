@@ -31,7 +31,7 @@ namespace LiveDescribe.Utilities
         /// Controls access to the recording methods, so that IsRecording accurately reflects
         /// whether or not the Recorder is recording.
         /// </summary>
-        private object _recordingAccessLock = new object();
+        private readonly object _recordingAccessLock = new object();
         #endregion
 
         #region Events

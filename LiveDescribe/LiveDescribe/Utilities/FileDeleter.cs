@@ -1,4 +1,5 @@
-﻿using LiveDescribe.Model;
+﻿using System.Linq;
+using LiveDescribe.Model;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -75,16 +76,9 @@ namespace LiveDescribe.Utilities
             }
         }
 
-        private static bool PathExistsInDescriptionList(string path, List<Description> descriptions)
+        private static bool PathExistsInDescriptionList(string path, IEnumerable<Description> descriptions)
         {
-            foreach (var desc in descriptions)
-            {
-                if (path.Equals(desc.AudioFile.AbsolutePath))
-                {
-                    return true;
-                }
-            }
-            return false;
+            return descriptions.Any(desc => path.Equals(desc.AudioFile.AbsolutePath));
         }
     }
 }

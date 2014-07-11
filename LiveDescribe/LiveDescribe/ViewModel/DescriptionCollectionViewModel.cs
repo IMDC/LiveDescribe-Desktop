@@ -72,6 +72,7 @@ namespace LiveDescribe.ViewModel
                     catch (MmException e)
                     {
                         MessageBoxFactory.ShowError("No Microphone Connected");
+                        Log.Warn("No Microphone Connected", e);
                     }
                     _mediaVideo.CurrentState = LiveDescribeVideoStates.RecordingDescription;
                     RecordButtonClickCommand = StopRecordingCommand;

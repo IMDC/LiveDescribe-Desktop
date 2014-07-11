@@ -346,4 +346,10 @@
     <value>Hours : Minutes : Seconds . Milliseconds</value>
     <comment>MarkingSpacesControl  textboxes</comment>
   </data>
+  <data name="Export_DescriptionSrtTitle" xml:space="preserve">
+    <value>Export Description Text File</value>
+  </data>
+  <data name="Export_SpaceSrtTitle" xml:space="preserve">
+    <value>Export Space Text To File</value>
+  </data>
 </root>

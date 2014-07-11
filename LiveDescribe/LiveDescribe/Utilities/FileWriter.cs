@@ -1,4 +1,6 @@
-﻿using LiveDescribe.Model;
+﻿using System;
+using System.Globalization;
+using LiveDescribe.Model;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -82,6 +84,46 @@ namespace LiveDescribe.Utilities
                 json.Serialize(sw, spaces.ToList());
             }
             Log.Info("Spaces file saved successfully");
+        }
+
+        public static void WriteDescriptionsTextToSrtFile(string path, ObservableCollection<Description> descriptions)
+        {
+            Log.Info("Writing descriptions text to srt file");
+            var sortedList = descriptions.OrderBy(x => x.StartInVideo).ToList();
+            int srtNum = 1;
+            using (var sw = new StreamWriter(path))
+            {
+                foreach (var desc in sortedList)
+                {
+                    var output = String.Format("{0}{1}{2} --> {3}{1}{4}{1}{1}",
+                         srtNum.ToString(CultureInfo.InvariantCulture), Environment.NewLine, TimeSpan.FromMilliseconds(desc.StartInVideo).ToString("hh\\:mm\\:ss\\,fff"),
+                         TimeSpan.FromMilliseconds(desc.EndInVideo).ToString("hh\\:mm\\:ss\\,fff"), desc.Text);
+
+                    sw.Write(output);
+                    srtNum++;
+                }
+            }
+            Log.Info("Descriptions text srt file successfully created");
+        }
+
+        public static void WriteSpacesTextToSrtFile(string path, ObservableCollection<Space> spaces)
+        {
+            Log.Info("Writing descriptions text to srt file");
+            var sortedList = spaces.OrderBy(x => x.StartInVideo).ToList();
+            int srtNum = 1;
+            using (var sw = new StreamWriter(path))
+            {
+                foreach (var space in sortedList)
+                {
+                    var output = String.Format("{0}{1}{2} --> {3}{1}{4}{1}{1}",
+                        srtNum.ToString(CultureInfo.InvariantCulture), Environment.NewLine, TimeSpan.FromMilliseconds(space.StartInVideo).ToString("hh\\:mm\\:ss\\,fff"),
+                        TimeSpan.FromMilliseconds(space.EndInVideo).ToString("hh\\:mm\\:ss\\,fff"), space.Text);
+
+                    sw.Write(output);
+                    srtNum++;
+                }
+            }
+            Log.Info("Descriptions text srt file successfully created");
         }
     }
 }
