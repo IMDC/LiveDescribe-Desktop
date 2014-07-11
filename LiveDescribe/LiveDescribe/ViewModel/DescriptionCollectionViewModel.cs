@@ -1,6 +1,8 @@
-﻿using GalaSoft.MvvmLight;
+﻿using System.Windows;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Events;
+using LiveDescribe.Factories;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
 using LiveDescribe.Utilities;
@@ -69,7 +71,7 @@ namespace LiveDescribe.ViewModel
                     }
                     catch (MmException e)
                     {
-                        HandleNoMicrophoneException(e);
+                        MessageBoxFactory.ShowError("No Microphone Connected");
                     }
                     _mediaVideo.CurrentState = LiveDescribeVideoStates.RecordingDescription;
                     RecordButtonClickCommand = StopRecordingCommand;
