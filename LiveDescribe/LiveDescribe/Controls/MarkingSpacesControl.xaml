@@ -20,6 +20,10 @@
             <Setter
                 Property="ToolTip"
                 Value="{x:Static s:UiStrings.ToolTip_MarkSpace}" />
+            
+            <Setter
+                Property="ToolTipService.ShowOnDisabled"
+                Value="True" />
         </Style>
     </UserControl.Resources>
     <Grid>
@@ -54,6 +58,7 @@
         <Button
             Grid.Row="0"
             Grid.Column="3"
+            ToolTipService.ShowOnDisabled="True"
             ToolTip="{x:Static s:UiStrings.ToolTip_MarkBeginning}"
             Content="{x:Static s:UiStrings.Command_SetBeginTime}"
             Command="{Binding SetBeginToMarker}" />
@@ -79,6 +84,7 @@
         <Button
             Grid.Row="2"
             Grid.Column="3"
+            ToolTipService.ShowOnDisabled="True"
             ToolTip="{x:Static s:UiStrings.ToolTip_MarkEnd}"
             Content="{x:Static s:UiStrings.Command_SetEndTime}"
             Command="{Binding SetEndToMarker}" />
