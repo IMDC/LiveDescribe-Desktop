@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using LiveDescribe.Factories;
 using LiveDescribe.Model;
 using LiveDescribe.Utilities;
 using System;
@@ -7,11 +8,17 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using System.Windows.Threading;
+using NAudio;
 
 namespace LiveDescribe.ViewModel
 {
     public class SpaceRecordingViewModel : ViewModelBase
     {
+        #region Logger
+        private static readonly log4net.ILog Log = log4net.LogManager.GetLogger
+            (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        #endregion
+
         #region Constants
 
         public const double CountdownTimerIntervalMsec = 1000 / 40; //40 times a second
@@ -266,14 +273,22 @@ namespace LiveDescribe.ViewModel
         #region Methods
         private void StartRecording()
         {
-            var pf = Project.GenerateDescriptionFile();
-            CalculateWordTime();
-            _wordTimeAccumulator = 0;
-            _initialTimeLeft = TimeLeft;
-            _recorder.RecordDescription(pf, false, Space.StartInVideo);
-            _recordingTimer.Start();
-            _stopwatch.Start();
-            OnRecordingStarted();
+            try
+            {
+                var pf = Project.GenerateDescriptionFile();
+                CalculateWordTime();
+                _wordTimeAccumulator = 0;
+                _initialTimeLeft = TimeLeft;
+                _recorder.RecordDescription(pf, false, Space.StartInVideo);
+                _recordingTimer.Start();
+                _stopwatch.Start();
+                OnRecordingStarted();
+            }
+            catch (MmException e)
+            {
+                MessageBoxFactory.ShowError("No Microphone Connected");
+                Log.Warn("No Microphone Connected");
+            }
         }
 
         private void SetWpmValuesBasedOnSpaceText()
