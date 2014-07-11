@@ -246,14 +246,6 @@ namespace LiveDescribe.View
             #endregion
 
             #region Event Listeners for DescriptionCollectionViewModel
-
-            _descriptionCollectionViewModel.RecordRequestedMicrophoneNotPluggedIn += (sender, e) =>
-                {
-                    //perhaps show a popup when the Record button is pressed and there is no microphone plugged in
-                    MessageBoxFactory.ShowError("No Microphone Connected");
-                    Log.Warn("No microphone connected");
-                };
-
             //When a description is added, attach an event to the StartInVideo and EndInVideo properties
             //so when those properties change it redraws them
             _descriptionCollectionViewModel.AddDescriptionEvent += (sender, e) =>

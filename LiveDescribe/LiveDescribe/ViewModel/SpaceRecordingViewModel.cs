@@ -14,6 +14,11 @@ namespace LiveDescribe.ViewModel
 {
     public class SpaceRecordingViewModel : ViewModelBase
     {
+        #region Logger
+        private static readonly log4net.ILog Log = log4net.LogManager.GetLogger
+            (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        #endregion
+
         #region Constants
 
         public const double CountdownTimerIntervalMsec = 1000 / 40; //40 times a second
@@ -271,6 +276,7 @@ namespace LiveDescribe.ViewModel
             catch (MmException e)
             {
                 MessageBoxFactory.ShowError("No Microphone Connected");
+                Log.Warn("No Microphone Connected");
             }
         }
 
