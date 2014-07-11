@@ -60,7 +60,8 @@ namespace LiveDescribe.View
              * a description. When focus is lost, the highlighted text will be coloured grey,
              * making it difficult to see.
              */
-            e.Handled = true;
+            if (_viewModel.Recorder.IsRecording)
+                e.Handled = true;
         }
     }
 }
