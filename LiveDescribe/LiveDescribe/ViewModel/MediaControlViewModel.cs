@@ -80,6 +80,11 @@ namespace LiveDescribe.ViewModel
                     VideoState = _mediaVideo.CurrentState;
                     RaisePropertyChanged("VideoState");
                 }
+                else if (e.PropertyName.Equals("IsMuted"))
+                {
+                    IsMuted = _mediaVideo.IsMuted;
+                    RaisePropertyChanged("IsMuted");
+                }
             };
         }
         #endregion
@@ -215,8 +220,9 @@ namespace LiveDescribe.ViewModel
         /// </summary>
         public void Mute()
         {
-            Log.Info("Video muted");
+            Log.Info(_mediaVideo.IsMuted ? "Video UnMuted" : "Video Muted");
 
+            _mediaVideo.IsMuted = !_mediaVideo.IsMuted;
             EventHandler handler = MuteRequested;
 
             if (handler == null) return;
@@ -329,6 +335,8 @@ namespace LiveDescribe.ViewModel
         }
 
         public LiveDescribeVideoStates VideoState { get; set; }
+
+        public bool IsMuted { get; set; }
         #endregion
 
         #region Accessors

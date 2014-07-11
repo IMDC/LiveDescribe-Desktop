@@ -241,6 +241,15 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to UnMute.
+        /// </summary>
+        public static string Command_UnMute {
+            get {
+                return ResourceManager.GetString("Command_UnMute", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Export Description Text File.
         /// </summary>
         public static string Export_DescriptionSrtTitle {

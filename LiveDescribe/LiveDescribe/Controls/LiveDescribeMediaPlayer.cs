@@ -29,6 +29,19 @@ namespace LiveDescribe.Controls
             }
         }
 
+        public new bool IsMuted
+        {
+            get
+            {
+                return base.IsMuted;
+            } 
+            set 
+            { 
+                base.IsMuted = value;
+                OnPropertyChanged();
+            }
+        }
+
         /// <summary>
         /// Keep Track of the Duration in Seconds of the current video playing
         /// </summary>

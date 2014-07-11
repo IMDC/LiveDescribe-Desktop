@@ -352,4 +352,7 @@
   <data name="Export_SpaceSrtTitle" xml:space="preserve">
     <value>Export Space Text To File</value>
   </data>
+  <data name="Command_UnMute" xml:space="preserve">
+    <value>UnMute</value>
+  </data>
 </root>

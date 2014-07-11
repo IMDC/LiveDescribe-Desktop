@@ -300,12 +300,7 @@ namespace LiveDescribe.ViewModel
                 CommandManager.InvalidateRequerySuggested();
             };
 
-            _mediaControlViewModel.MuteRequested += (sender, e) =>
-            {
-                //this Handler should be attached to the view to update the graphics
-                _mediaVideo.IsMuted = !_mediaVideo.IsMuted;
-                OnMuteRequested(sender, e);
-            };
+            _mediaControlViewModel.MuteRequested += OnMuteRequested;
 
             _mediaControlViewModel.MediaEndedEvent += (sender, e) =>
             {

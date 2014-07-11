@@ -64,11 +64,16 @@
                 
                 <converters:LivedescribeVideoStateToContent
                     x:Key="LivedescribeVideoStateToContent" />
+                
+                <converters:BoolToMutedContentConverter
+                    x:Key="BoolToMutedContentConverter"/>
+                
             </StackPanel.Resources>
             <Button
                 Style="{StaticResource ControlPanelStyle}"
+                Width="50"
                 Command="{Binding MuteCommand}"
-                Content="{x:Static s:UiStrings.Command_Mute}"
+                Content="{Binding Path=IsMuted, Converter={StaticResource BoolToMutedContentConverter}}"
                 HorizontalAlignment="Center" />
 
             <Slider

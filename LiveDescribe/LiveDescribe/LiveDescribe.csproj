@@ -154,6 +154,7 @@
     <Compile Include="Controls\SpaceControl.xaml.cs">
       <DependentUpon>SpaceControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\BoolToMutedContentConverter.cs" />
     <Compile Include="Converters\BoolToRecordingContentConverter.cs" />
     <Compile Include="Converters\InvertBoolConverter.cs" />
     <Compile Include="Converters\LiveDescribeVideoStateToContent.cs" />
