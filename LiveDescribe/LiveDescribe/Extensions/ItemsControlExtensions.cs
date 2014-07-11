@@ -5,7 +5,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Threading;
 
-namespace LiveDescribe.Utilities
+namespace LiveDescribe.Extensions
 {
     public static class ItemsControlExtensions
     {

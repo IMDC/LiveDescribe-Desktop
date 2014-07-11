@@ -167,6 +167,7 @@
     <Compile Include="Events\EventArgsT.cs" />
     <Compile Include="Events\SpaceEventArgs.cs" />
     <Compile Include="Extensions\CommandExtensions.cs" />
+    <Compile Include="Extensions\ItemsControlExtensions.cs" />
     <Compile Include="Factories\DialogShower.cs" />
     <Compile Include="Factories\MessageBoxFactory.cs" />
     <Compile Include="Interfaces\IDescribableInterval.cs" />
@@ -189,7 +190,6 @@
     <Compile Include="Utilities\FileDeleter.cs" />
     <Compile Include="Utilities\FileReader.cs" />
     <Compile Include="Utilities\FileWriter.cs" />
-    <Compile Include="Utilities\ItemsControlExtensions.cs" />
     <Compile Include="Utilities\ObservableCollectionIndexer.cs" />
     <Compile Include="Utilities\PositionalStringToken.cs" />
     <Compile Include="Utilities\PositionalStringTokenizer.cs" />
