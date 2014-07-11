@@ -16,10 +16,7 @@ namespace LiveDescribe.Utilities
             {
                 // Otherwise wait until everything is loaded, then scroll
                 if (itemsControl is ListBox) ((ListBox)itemsControl).ScrollIntoView(item);
-                itemsControl.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() =>
-                {
-                    itemsControl.TryScrollToCenterOfView(item);
-                }));
+                itemsControl.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() => itemsControl.TryScrollToCenterOfView(item)));
             }
         }
 

@@ -182,11 +182,6 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Methods
-        private void HandleNoMicrophoneException(MmException e)
-        {
-            Log.Error("No microphone", e);
-            OnRecordRequestedMicrophoneNotPluggedIn();
-        }
 
         /// <summary>
         /// Method to add a description to the list and throw an event, whenever you are adding a

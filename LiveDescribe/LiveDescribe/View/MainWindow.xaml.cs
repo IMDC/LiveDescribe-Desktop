@@ -120,11 +120,7 @@ namespace LiveDescribe.View
             //and the main control will take care of synchronizing the video, and the descriptions
 
             //listens for PlayRequested Event
-            mainWindowViewModel.PlayRequested += (sender, e) =>
-                {
-                    //this is to recheck all the graphics states
-                    CommandManager.InvalidateRequerySuggested();
-                };
+            mainWindowViewModel.PlayRequested += (sender, e) => CommandManager.InvalidateRequerySuggested();
 
             //listens for PauseRequested Event
             mainWindowViewModel.PauseRequested += (sender, e) => CommandManager.InvalidateRequerySuggested();
