@@ -120,7 +120,9 @@
                         <Binding
                             Path="WordsPerMinute"
                             Mode="TwoWay"
-                            UpdateSourceTrigger="PropertyChanged" />
+                            UpdateSourceTrigger="PropertyChanged"
+                            StringFormat="{}{0:#.##}">
+                        </Binding>
                     </TextBox.Text>
                 </TextBox>
             </StackPanel>
