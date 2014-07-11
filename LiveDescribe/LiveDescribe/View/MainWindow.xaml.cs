@@ -1,4 +1,5 @@
-﻿using GalaSoft.MvvmLight.Threading;
+﻿using System.Threading;
+using GalaSoft.MvvmLight.Threading;
 using LiveDescribe.Controls;
 using LiveDescribe.Converters;
 using LiveDescribe.Extensions;
