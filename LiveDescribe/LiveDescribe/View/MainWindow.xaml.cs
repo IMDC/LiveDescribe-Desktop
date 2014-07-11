@@ -210,10 +210,7 @@ namespace LiveDescribe.View
                     if (!_marker.IsMouseCaptured) return;
 
                     if (ScrollRightIfCan(Canvas.GetLeft(_marker)))
-                    {
-                        _marker.ReleaseMouseCapture();
                         return;
-                    }
 
                     var xPosition = Mouse.GetPosition(_audioCanvas).X;
                     var middleOfMarker = xPosition - MarkerOffset;
