@@ -250,6 +250,33 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to UnMute.
+        /// </summary>
+        public static string Command_UnMute {
+            get {
+                return ResourceManager.GetString("Command_UnMute", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Export Description Text To File.
+        /// </summary>
+        public static string Export_DescriptionSrtTitle {
+            get {
+                return ResourceManager.GetString("Export_DescriptionSrtTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Export Space Text To File.
+        /// </summary>
+        public static string Export_SpaceSrtTitle {
+            get {
+                return ResourceManager.GetString("Export_SpaceSrtTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to AudioSource.
         /// </summary>
         public static string Header_AudioSource {

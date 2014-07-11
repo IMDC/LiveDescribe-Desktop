@@ -63,6 +63,14 @@
                     <MenuItem
                         Header="{x:Static s:UiStrings.MenuItem_ClearCache}"
                         Command="{Binding ClearCache}" />
+                    
+                    <MenuItem
+                        Header="{x:Static s:UiStrings.Export_DescriptionSrtTitle}"
+                        Command="{Binding ExportDescriptionsTextToSrt}"/>
+                    
+                    <MenuItem 
+                        Header="{x:Static s:UiStrings.Export_SpaceSrtTitle}"
+                        Command="{Binding ExportSpacesTextToSrt}"/>
                 </MenuItem>
                 <MenuItem
                     Header="{x:Static s:UiStrings.MenuItem_Help}">

@@ -227,6 +227,36 @@ namespace LiveDescribe.ViewModel
                 }
             );
 
+            ExportDescriptionsTextToSrt = new RelayCommand(
+                canExecute: () => ProjectLoaded,
+                execute: () =>
+                {
+                    var saveFileDialog = new SaveFileDialog
+                    {
+                        FileName = Path.GetFileNameWithoutExtension(_mediaControlViewModel.Path),
+                        Filter = "SubRip Files (*.srt)|*.srt"
+                    };
+
+                    saveFileDialog.ShowDialog();
+                    FileWriter.WriteDescriptionsTextToSrtFile(saveFileDialog.FileName, _descriptioncollectionviewmodel.AllDescriptions);
+                }
+            );
+
+            ExportSpacesTextToSrt = new RelayCommand(
+                canExecute: () => ProjectLoaded,
+                execute: () =>
+                {
+                    var saveFileDialog = new SaveFileDialog
+                    {
+                        FileName = Path.GetFileNameWithoutExtension(_mediaControlViewModel.Path),
+                        Filter = "SubRip Files (*.srt)|*.srt"
+                    };
+
+                    saveFileDialog.ShowDialog();
+                    FileWriter.WriteSpacesTextToSrtFile(saveFileDialog.FileName, _spacecollectionviewmodel.Spaces);
+                }
+            );
+
             ShowAboutInfo = new RelayCommand(DialogShower.SpawnAboutInfoView);
             #endregion
 
@@ -270,12 +300,7 @@ namespace LiveDescribe.ViewModel
                 CommandManager.InvalidateRequerySuggested();
             };
 
-            _mediaControlViewModel.MuteRequested += (sender, e) =>
-            {
-                //this Handler should be attached to the view to update the graphics
-                _mediaVideo.IsMuted = !_mediaVideo.IsMuted;
-                OnMuteRequested(sender, e);
-            };
+            _mediaControlViewModel.MuteRequested += OnMuteRequested;
 
             _mediaControlViewModel.MediaEndedEvent += (sender, e) =>
             {
@@ -353,6 +378,16 @@ namespace LiveDescribe.ViewModel
         /// Opens the About window.
         /// </summary>
         public ICommand ShowAboutInfo { private set; get; }
+
+        /// <summary>
+        /// Exports the text in all the descriptions to an SRT file
+        /// </summary>
+        public ICommand ExportDescriptionsTextToSrt { private set; get; }
+
+        /// <summary>
+        /// Exports the text in all the spaces to an srt file
+        /// </summary>
+        public ICommand ExportSpacesTextToSrt { private set; get; }
         #endregion
 
         #region Properties

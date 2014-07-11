@@ -3,7 +3,6 @@ using GalaSoft.MvvmLight.Threading;
 using LiveDescribe.Controls;
 using LiveDescribe.Converters;
 using LiveDescribe.Extensions;
-using LiveDescribe.Factories;
 using LiveDescribe.Model;
 using LiveDescribe.Utilities;
 using LiveDescribe.ViewModel;
@@ -64,7 +63,7 @@ namespace LiveDescribe.View
 
         public MainWindow()
         {
-            var splashScreen = new SplashScreen("../Images/LiveDescribe-Splashscreen.png");
+            var splashScreen = new SplashScreen("../Resources/Images/LiveDescribe-Splashscreen.png");
             splashScreen.Show(true);
 #if !DEBUG
             Thread.Sleep(2000);
@@ -121,11 +120,7 @@ namespace LiveDescribe.View
             //and the main control will take care of synchronizing the video, and the descriptions
 
             //listens for PlayRequested Event
-            mainWindowViewModel.PlayRequested += (sender, e) =>
-                {
-                    //this is to recheck all the graphics states
-                    CommandManager.InvalidateRequerySuggested();
-                };
+            mainWindowViewModel.PlayRequested += (sender, e) => CommandManager.InvalidateRequerySuggested();
 
             //listens for PauseRequested Event
             mainWindowViewModel.PauseRequested += (sender, e) => CommandManager.InvalidateRequerySuggested();
@@ -215,10 +210,7 @@ namespace LiveDescribe.View
                     if (!_marker.IsMouseCaptured) return;
 
                     if (ScrollRightIfCan(Canvas.GetLeft(_marker)))
-                    {
-                        _marker.ReleaseMouseCapture();
                         return;
-                    }
 
                     var xPosition = Mouse.GetPosition(_audioCanvas).X;
                     var middleOfMarker = xPosition - MarkerOffset;
@@ -283,6 +275,17 @@ namespace LiveDescribe.View
                         //Scroll 1 second before the start in video of the space
                         TimeLineScrollViewer.ScrollToHorizontalOffset((_audioCanvas.Width / _videoDuration) *
                                                                       (e.Description.StartInVideo - 1000));
+
+                        if (e.Description.IsExtendedDescription)
+                        {
+                            _descriptionInfoTabViewModel.SelectedExtendedDescription = e.Description;
+                            SpaceAndDescriptionsTabControl.ExtendedDescriptionsListView.ScrollToCenterOfView(e.Description);
+                        }
+                        else
+                        {
+                            _descriptionInfoTabViewModel.SelectedRegularDescription = e.Description;
+                            SpaceAndDescriptionsTabControl.DescriptionsListView.ScrollToCenterOfView(e.Description);
+                        }
                     };
                 };
             #endregion
@@ -320,6 +323,9 @@ namespace LiveDescribe.View
                     //Scroll 1 second before the start in video of the space
                     TimeLineScrollViewer.ScrollToHorizontalOffset((_audioCanvas.Width / _videoDuration) *
                                                                   (space.StartInVideo - 1000));
+
+                    _descriptionInfoTabViewModel.SelectedSpace = space;
+                    SpaceAndDescriptionsTabControl.SpacesListView.ScrollToCenterOfView(space);
                 };
             };
 

@@ -349,4 +349,13 @@
   <data name="Command_CancelRecording" xml:space="preserve">
     <value>Cancel Recording</value>
   </data>
+  <data name="Export_DescriptionSrtTitle" xml:space="preserve">
+    <value>Export Description Text To File</value>
+  </data>
+  <data name="Export_SpaceSrtTitle" xml:space="preserve">
+    <value>Export Space Text To File</value>
+  </data>
+  <data name="Command_UnMute" xml:space="preserve">
+    <value>UnMute</value>
+  </data>
 </root>

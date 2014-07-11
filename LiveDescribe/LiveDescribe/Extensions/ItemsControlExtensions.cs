@@ -5,7 +5,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Threading;
 
-namespace LiveDescribe.Utilities
+namespace LiveDescribe.Extensions
 {
     public static class ItemsControlExtensions
     {
@@ -16,10 +16,7 @@ namespace LiveDescribe.Utilities
             {
                 // Otherwise wait until everything is loaded, then scroll
                 if (itemsControl is ListBox) ((ListBox)itemsControl).ScrollIntoView(item);
-                itemsControl.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() =>
-                {
-                    itemsControl.TryScrollToCenterOfView(item);
-                }));
+                itemsControl.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() => itemsControl.TryScrollToCenterOfView(item)));
             }
         }
 
@@ -62,7 +59,8 @@ namespace LiveDescribe.Utilities
 
             // Scroll the center of the container to the center of the viewport
             if (scrollInfo.CanVerticallyScroll) scrollInfo.SetVerticalOffset(CenteringOffset(center.Y, scrollInfo.ViewportHeight, scrollInfo.ExtentHeight));
-            if (scrollInfo.CanHorizontallyScroll) scrollInfo.SetHorizontalOffset(CenteringOffset(center.X, scrollInfo.ViewportWidth, scrollInfo.ExtentWidth));
+            //we don't want to scroll horizontally so this is uncomment to scroll horizontally
+            //if (scrollInfo.CanHorizontallyScroll) scrollInfo.SetHorizontalOffset(CenteringOffset(center.X, scrollInfo.ViewportWidth, scrollInfo.ExtentWidth));
             return true;
         }
 

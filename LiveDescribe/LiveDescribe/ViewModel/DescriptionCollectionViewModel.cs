@@ -1,5 +1,4 @@
-﻿using System.Windows;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Events;
 using LiveDescribe.Factories;
@@ -72,6 +71,7 @@ namespace LiveDescribe.ViewModel
                     catch (MmException e)
                     {
                         MessageBoxFactory.ShowError("No Microphone Connected");
+                        Log.Warn("No Microphone Connected", e);
                     }
                     _mediaVideo.CurrentState = LiveDescribeVideoStates.RecordingDescription;
                     RecordButtonClickCommand = StopRecordingCommand;
@@ -182,11 +182,6 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Methods
-        private void HandleNoMicrophoneException(MmException e)
-        {
-            Log.Error("No microphone", e);
-            OnRecordRequestedMicrophoneNotPluggedIn();
-        }
 
         /// <summary>
         /// Method to add a description to the list and throw an event, whenever you are adding a
