@@ -3,12 +3,12 @@ using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Factories;
 using LiveDescribe.Model;
 using LiveDescribe.Utilities;
+using NAudio;
 using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using System.Windows.Threading;
-using NAudio;
 
 namespace LiveDescribe.ViewModel
 {
@@ -361,7 +361,10 @@ namespace LiveDescribe.ViewModel
 
         private void StartCountdown()
         {
-            CountdownControlViewModel.StartCountdown();
+            if (Recorder.MicrophoneAvailable())
+                CountdownControlViewModel.StartCountdown();
+            else
+                MessageBoxFactory.ShowError("No Microphone could be found.");
         }
 
         private void CancelCountdown()

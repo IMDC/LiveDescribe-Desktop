@@ -170,6 +170,16 @@ namespace LiveDescribe.Utilities
             return micStream;
         }
 
+        public bool MicrophoneAvailable()
+        {
+            try
+            {
+                WaveIn.GetCapabilities(_deviceNumber);
+            }
+            catch (MmException) { return false; }
+            return true;
+        }
+
         public void StopRecording()
         {
             lock (_recordingAccessLock)
