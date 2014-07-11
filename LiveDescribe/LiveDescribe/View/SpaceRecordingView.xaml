@@ -13,7 +13,8 @@
     Height="500"
     Width="450"
     ResizeMode="NoResize"
-    d:DataContext="{d:DesignInstance viewModel:SpaceRecordingViewModel}">
+    d:DataContext="{d:DesignInstance viewModel:SpaceRecordingViewModel}"
+    Closing="SpaceRecordingView_OnClosing">
     <Window.Resources>
         <converters:MillisecondsToTimeLeftStringConverter
             x:Key="MillisecondsToTimeLeftStringConverter" />
@@ -21,11 +22,28 @@
             x:Key="MillisecondsTimeFormatter" />
         <converters:RecordingAndCountdownConverter
             x:Key="RecordingAndCountdownConverter" />
-        <converters:InvertBoolConverter
-            x:Key="InvertBoolConverter" />
+        <converters:NotRecordingAndHasTextToBoolConverter
+            x:Key="NotRecordingAndHasTextToBoolConverter" />
+
+        <Style
+            x:Key="PlayRecordStyle"
+            TargetType="Button">
+            <Setter
+                Property="Margin"
+                Value="1" />
+        </Style>
+
+        <Style
+            x:Key="SaveCancelStyle"
+            TargetType="Button">
+            <Setter
+                Property="Margin"
+                Value="5,10" />
+        </Style>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition />
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
@@ -42,13 +60,14 @@
             <ColumnDefinition />
             <ColumnDefinition />
             <ColumnDefinition />
+            <ColumnDefinition />
         </Grid.ColumnDefinitions>
 
         <controls:CountdownControl
             x:Name="CountdownControl"
             DataContext="{Binding CountdownControlViewModel}"
             Grid.ZIndex="-1"
-            Grid.ColumnSpan="5"
+            Grid.ColumnSpan="6"
             Grid.RowSpan="7" />
 
         <TextBox
@@ -57,7 +76,7 @@
             Grid.Row="0"
             Grid.RowSpan="4"
             Grid.Column="0"
-            Grid.ColumnSpan="5"
+            Grid.ColumnSpan="6"
             IsInactiveSelectionHighlightEnabled="True"
             LostFocus="SpaceTextBox_OnLostFocus"
             VerticalScrollBarVisibility="Auto"
@@ -74,7 +93,7 @@
         <TextBlock
             Grid.Row="4"
             Grid.Column="0"
-            Grid.ColumnSpan="5"
+            Grid.ColumnSpan="6"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             FontSize="28"
@@ -86,17 +105,26 @@
             Grid.Row="5"
             Grid.Column="0"
             Grid.ColumnSpan="3"
-            IsEnabled="{Binding Recorder.IsRecording, Converter={StaticResource InvertBoolConverter}}"
-            VerticalAlignment="Center">
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center">
+            <StackPanel.IsEnabled>
+                <MultiBinding
+                    Converter="{StaticResource NotRecordingAndHasTextToBoolConverter}">
+                    <!--NOTE: IsRecording must be the first binding given for the converter to work properly-->
+                    <Binding
+                        Path="Recorder.IsRecording" />
+                    <Binding
+                        Path="SpaceHasText" />
+                </MultiBinding>
+            </StackPanel.IsEnabled>
 
             <Slider
                 HorizontalAlignment="Center"
                 Minimum="{Binding MinWordsPerMinute}"
                 Maximum="{Binding MaxWordsPerMinute}"
                 Value="{Binding WordsPerMinute, Mode=TwoWay}"
-                Width="220"
-                Margin="0,5,0,0"
-                IsEnabled="{Binding Recorder.IsRecording, Converter={StaticResource InvertBoolConverter}}" />
+                Width="200"
+                Margin="0,5,0,0" />
 
             <StackPanel
                 Orientation="Horizontal"
@@ -112,7 +140,9 @@
                         <Binding
                             Path="WordsPerMinute"
                             Mode="TwoWay"
-                            UpdateSourceTrigger="PropertyChanged" />
+                            UpdateSourceTrigger="PropertyChanged"
+                            StringFormat="{}{0:#.##}">
+                        </Binding>
                     </TextBox.Text>
                 </TextBox>
             </StackPanel>
@@ -121,10 +151,20 @@
         <StackPanel
             Orientation="Vertical"
             VerticalAlignment="Center"
+            HorizontalAlignment="Center"
             Grid.Row="5"
             Grid.Column="3"
-            Grid.ColumnSpan="2"
-            IsEnabled="{Binding Recorder.IsRecording, Converter={StaticResource InvertBoolConverter}}">
+            Grid.ColumnSpan="3">
+            <StackPanel.IsEnabled>
+                <MultiBinding
+                    Converter="{StaticResource NotRecordingAndHasTextToBoolConverter}">
+                    <!--NOTE: IsRecording must be the first binding given for the converter to work properly-->
+                    <Binding
+                        Path="Recorder.IsRecording" />
+                    <Binding
+                        Path="SpaceHasText" />
+                </MultiBinding>
+            </StackPanel.IsEnabled>
 
             <TextBlock
                 VerticalAlignment="Center"
@@ -147,21 +187,25 @@
         <ProgressBar
             Grid.Row="6"
             Grid.Column="0"
-            Grid.ColumnSpan="5"
+            Grid.ColumnSpan="6"
             Minimum="0"
             Maximum="{Binding Space.Duration}"
-            Value="{Binding ElapsedTime}" />
+            Value="{Binding ElapsedTime}"
+            Margin="1" />
 
         <Button
             Grid.Row="7"
             Grid.Column="0"
+            Grid.ColumnSpan="3"
+            Style="{StaticResource PlayRecordStyle}"
             Content="{x:Static s:UiStrings.Command_Play}"
             Command="{Binding PlayRecordedDescription}" />
 
         <Button
             Grid.Row="7"
-            Grid.Column="1"
+            Grid.Column="3"
             Grid.ColumnSpan="3"
+            Style="{StaticResource PlayRecordStyle}"
             Command="{Binding RecordDescription}">
             <Button.Content>
                 <MultiBinding
@@ -176,9 +220,17 @@
         </Button>
 
         <Button
-            Grid.Row="7"
+            Grid.Row="8"
             Grid.Column="4"
+            Style="{StaticResource SaveCancelStyle}"
             Content="{x:Static s:UiStrings.Command_Save}"
             Command="{Binding SaveDescription}" />
+
+        <Button
+            Grid.Row="8"
+            Grid.Column="5"
+            Style="{StaticResource SaveCancelStyle}"
+            Content="{x:Static s:UiStrings.Command_Cancel}"
+            Click="Cancel_OnClick"/>
     </Grid>
 </Window>

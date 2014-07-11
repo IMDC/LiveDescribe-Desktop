@@ -1,6 +1,7 @@
 ﻿using LiveDescribe.Utilities;
 using LiveDescribe.ViewModel;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows;
 
 namespace LiveDescribe.View
@@ -60,7 +61,19 @@ namespace LiveDescribe.View
              * a description. When focus is lost, the highlighted text will be coloured grey,
              * making it difficult to see.
              */
-            e.Handled = true;
+            if (_viewModel.Recorder.IsRecording)
+                e.Handled = true;
+        }
+
+        private void Cancel_OnClick(object sender, RoutedEventArgs e)
+        {
+            DialogResult = false;
+            Close();
+        }
+
+        private void SpaceRecordingView_OnClosing(object sender, CancelEventArgs e)
+        {
+            _viewModel.StopEverything();
         }
     }
 }

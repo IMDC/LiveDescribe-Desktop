@@ -88,6 +88,15 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cancel Recording.
+        /// </summary>
+        public static string Command_CancelRecording {
+            get {
+                return ResourceManager.GetString("Command_CancelRecording", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Clear.
         /// </summary>
         public static string Command_Clear {

@@ -346,6 +346,9 @@
     <value>Hours : Minutes : Seconds . Milliseconds</value>
     <comment>MarkingSpacesControl  textboxes</comment>
   </data>
+  <data name="Command_CancelRecording" xml:space="preserve">
+    <value>Cancel Recording</value>
+  </data>
   <data name="Export_DescriptionSrtTitle" xml:space="preserve">
     <value>Export Description Text To File</value>
   </data>

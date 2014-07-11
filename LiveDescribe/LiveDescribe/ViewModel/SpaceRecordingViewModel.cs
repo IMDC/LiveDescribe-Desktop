@@ -3,12 +3,12 @@ using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Factories;
 using LiveDescribe.Model;
 using LiveDescribe.Utilities;
+using NAudio;
 using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using System.Windows.Threading;
-using NAudio;
 
 namespace LiveDescribe.ViewModel
 {
@@ -29,6 +29,7 @@ namespace LiveDescribe.ViewModel
         #region Fields
 
         private bool _setDurationBasedOnWpm;
+        private bool _spaceHasText;
         private double _timeLeft;
         private double _elapsedTime;
         private double _initialTimeLeft;
@@ -119,7 +120,7 @@ namespace LiveDescribe.ViewModel
                     && !CountdownControlViewModel.IsCountingDown,
                 execute: () =>
                 {
-                    if (!string.IsNullOrWhiteSpace(_space.Text))
+                    if (SpaceHasText)
                         _description.Text = _space.Text;
 
                     _space.IsRecordedOver = true;
@@ -155,6 +156,16 @@ namespace LiveDescribe.ViewModel
                 RaisePropertyChanged();
             }
             get { return _setDurationBasedOnWpm; }
+        }
+
+        public bool SpaceHasText
+        {
+            set
+            {
+                _spaceHasText = value;
+                RaisePropertyChanged();
+            }
+            get { return _spaceHasText; }
         }
 
         public double TimeLeft
@@ -256,6 +267,11 @@ namespace LiveDescribe.ViewModel
             get { return _recorder; }
         }
 
+        public DescriptionPlayer Player
+        {
+            get { return _player; }
+        }
+
         public CountdownControlViewModel CountdownControlViewModel { private set; get; }
         #endregion
 
@@ -283,9 +299,15 @@ namespace LiveDescribe.ViewModel
         private void SetWpmValuesBasedOnSpaceText()
         {
             TokenizeSpaceText();
+            CheckIfSpaceHasText();
             CalculateMinWordsPerMinute();
             WordsPerMinute = MinWordsPerMinute;
             CalculateWordTime();
+        }
+
+        private void CheckIfSpaceHasText()
+        {
+            SpaceHasText = !string.IsNullOrWhiteSpace(Space.Text);
         }
 
         private void TokenizeSpaceText()
@@ -296,23 +318,27 @@ namespace LiveDescribe.ViewModel
 
         private void CalculateMinWordsPerMinute()
         {
-            if (string.IsNullOrWhiteSpace(Space.Text))
-                MinWordsPerMinute = 0;
-            else
+            if (SpaceHasText)
+            {
                 MinWordsPerMinute = Math.Min(MaxWordsPerMinute - 1,
                     (_tokenizer.Tokens.Count / (Space.Duration / Milliseconds.PerSecond)) * Seconds.PerMinute);
+            }
+            else
+                MinWordsPerMinute = 0;
         }
 
         private void CalculateWordTime()
         {
-            _timePerWordMsec = (!string.IsNullOrWhiteSpace(Space.Text))
+            _timePerWordMsec = (SpaceHasText)
                 ? WpmDuration / _tokenizer.Tokens.Count
                 : 0;
         }
 
         private void CalculateWpmDuration()
         {
-            WpmDuration = (_tokenizer.Tokens.Count / WordsPerMinute) * Milliseconds.PerMinute;
+            WpmDuration = (SpaceHasText)
+                ? (_tokenizer.Tokens.Count / WordsPerMinute) * Milliseconds.PerMinute
+                : 0;
         }
 
         private void StopRecording()
@@ -333,14 +359,17 @@ namespace LiveDescribe.ViewModel
 
         private void SetTimeLeft()
         {
-            TimeLeft = (SetDurationBasedOnWpm)
+            TimeLeft = (SetDurationBasedOnWpm && SpaceHasText)
                 ? WpmDuration
                 : Space.Duration;
         }
 
         private void StartCountdown()
         {
-            CountdownControlViewModel.StartCountdown();
+            if (Recorder.MicrophoneAvailable())
+                CountdownControlViewModel.StartCountdown();
+            else
+                MessageBoxFactory.ShowError("No Microphone could be found.");
         }
 
         private void CancelCountdown()
@@ -385,6 +414,17 @@ namespace LiveDescribe.ViewModel
                 StopRecording();
         }
 
+        public void StopEverything()
+        {
+            if (CountdownControlViewModel.IsCountingDown)
+                CountdownControlViewModel.CancelCountdown();
+
+            if (Recorder.IsRecording)
+                Recorder.StopRecording();
+
+            if (Player.IsPlaying)
+                Player.Stop();
+        }
         #endregion
 
         #region Event Invokations
