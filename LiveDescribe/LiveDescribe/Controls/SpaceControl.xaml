@@ -21,6 +21,9 @@
                     <MenuItem
                         Header="{x:Static s:UiStrings.Command_DeleteSpace}"
                         Command="{Binding DeleteSpaceCommand}" />
+                    <MenuItem
+                        Header="{x:Static s:UiStrings.Command_GoToSpace}"
+                        Command="{Binding GoToThisSpaceCommand}"/>
                 </ContextMenu>
             </Rectangle.ContextMenu>
             <Rectangle.Style>

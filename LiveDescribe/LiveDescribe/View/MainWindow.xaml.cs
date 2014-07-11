@@ -278,6 +278,17 @@ namespace LiveDescribe.View
                         //Scroll 1 second before the start in video of the space
                         TimeLineScrollViewer.ScrollToHorizontalOffset((_audioCanvas.Width / _videoDuration) *
                                                                       (e.Description.StartInVideo - 1000));
+
+                        if (e.Description.IsExtendedDescription)
+                        {
+                            _descriptionInfoTabViewModel.SelectedExtendedDescription = e.Description;
+                            SpaceAndDescriptionsTabControl.ExtendedDescriptionsListView.ScrollToCenterOfView(e.Description);
+                        }
+                        else
+                        {
+                            _descriptionInfoTabViewModel.SelectedRegularDescription = e.Description;
+                            SpaceAndDescriptionsTabControl.DescriptionsListView.ScrollToCenterOfView(e.Description);
+                        }
                     };
                 };
             #endregion
@@ -315,6 +326,9 @@ namespace LiveDescribe.View
                     //Scroll 1 second before the start in video of the space
                     TimeLineScrollViewer.ScrollToHorizontalOffset((_audioCanvas.Width / _videoDuration) *
                                                                   (space.StartInVideo - 1000));
+
+                    _descriptionInfoTabViewModel.SelectedSpace = space;
+                    SpaceAndDescriptionsTabControl.SpacesListView.ScrollToCenterOfView(space);
                 };
             };
 
