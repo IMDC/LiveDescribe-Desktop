@@ -1,5 +1,4 @@
 ﻿using LiveDescribe.ViewModel;
-using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
