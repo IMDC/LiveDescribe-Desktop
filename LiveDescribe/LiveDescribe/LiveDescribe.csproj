@@ -159,6 +159,7 @@
     <Compile Include="Converters\LiveDescribeVideoStateToContent.cs" />
     <Compile Include="Converters\MillisecondsTimeConverterFormatter.cs" />
     <Compile Include="Converters\MillisecondsToTimeLeftStringConverter.cs" />
+    <Compile Include="Converters\NotRecordingAndHasTextToBoolConverter.cs" />
     <Compile Include="Converters\RecordingAndCountdownConverter.cs" />
     <Compile Include="Converters\VideoStateToBoolConverter.cs" />
     <Compile Include="Converters\VarNotNullToBoolConverter.cs" />

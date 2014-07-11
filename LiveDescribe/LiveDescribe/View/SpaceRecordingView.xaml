@@ -21,8 +21,8 @@
             x:Key="MillisecondsTimeFormatter" />
         <converters:RecordingAndCountdownConverter
             x:Key="RecordingAndCountdownConverter" />
-        <converters:InvertBoolConverter
-            x:Key="InvertBoolConverter" />
+        <converters:NotRecordingAndHasTextToBoolConverter
+            x:Key="NotRecordingAndHasTextToBoolConverter" />
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -86,8 +86,17 @@
             Grid.Row="5"
             Grid.Column="0"
             Grid.ColumnSpan="3"
-            IsEnabled="{Binding Recorder.IsRecording, Converter={StaticResource InvertBoolConverter}}"
             VerticalAlignment="Center">
+            <StackPanel.IsEnabled>
+                <MultiBinding
+                    Converter="{StaticResource NotRecordingAndHasTextToBoolConverter}">
+                    <!--NOTE: IsRecording must be the first binding given for the converter to work properly-->
+                    <Binding
+                        Path="Recorder.IsRecording" />
+                    <Binding
+                        Path="SpaceHasText" />
+                </MultiBinding>
+            </StackPanel.IsEnabled>
 
             <Slider
                 HorizontalAlignment="Center"
@@ -95,8 +104,7 @@
                 Maximum="{Binding MaxWordsPerMinute}"
                 Value="{Binding WordsPerMinute, Mode=TwoWay}"
                 Width="220"
-                Margin="0,5,0,0"
-                IsEnabled="{Binding Recorder.IsRecording, Converter={StaticResource InvertBoolConverter}}" />
+                Margin="0,5,0,0" />
 
             <StackPanel
                 Orientation="Horizontal"
@@ -123,8 +131,17 @@
             VerticalAlignment="Center"
             Grid.Row="5"
             Grid.Column="3"
-            Grid.ColumnSpan="2"
-            IsEnabled="{Binding Recorder.IsRecording, Converter={StaticResource InvertBoolConverter}}">
+            Grid.ColumnSpan="2">
+            <StackPanel.IsEnabled>
+                <MultiBinding
+                    Converter="{StaticResource NotRecordingAndHasTextToBoolConverter}">
+                    <!--NOTE: IsRecording must be the first binding given for the converter to work properly-->
+                    <Binding
+                        Path="Recorder.IsRecording" />
+                    <Binding
+                        Path="SpaceHasText" />
+                </MultiBinding>
+            </StackPanel.IsEnabled>
 
             <TextBlock
                 VerticalAlignment="Center"
