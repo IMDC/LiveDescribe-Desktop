@@ -209,7 +209,7 @@ namespace LiveDescribe.View
                 {
                     if (!_marker.IsMouseCaptured) return;
 
-                    if (ScrollRightIfCan(Canvas.GetLeft(_marker)))
+                    if (ScrollRightIfCanForGraphicsThread(Canvas.GetLeft(_marker)))
                         return;
 
                     var xPosition = Mouse.GetPosition(_audioCanvas).X;
@@ -515,6 +515,19 @@ namespace LiveDescribe.View
             double scrollOffsetRight = PageScrollPercent * singlePageWidth;
             if (!((xPos - scrolledAmount) >= scrollOffsetRight)) return false;
             DispatcherHelper.UIDispatcher.Invoke(() => TimeLineScrollViewer.ScrollToHorizontalOffset(scrollOffsetRight + scrolledAmount));
+            return true;
+        }
+
+        private bool ScrollRightIfCanForGraphicsThread(double xPos)
+        {
+            double singlePageWidth = 0;
+            double scrolledAmount = 0;
+            singlePageWidth = TimeLineScrollViewer.ActualWidth;
+            scrolledAmount = TimeLineScrollViewer.HorizontalOffset;
+            double scrollOffsetRight = PageScrollPercent * singlePageWidth;
+
+            if (!((xPos - scrolledAmount) >= scrollOffsetRight)) return false;
+            TimeLineScrollViewer.ScrollToHorizontalOffset(scrollOffsetRight + scrolledAmount);
             return true;
         }
 
