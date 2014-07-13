@@ -218,7 +218,7 @@ namespace LiveDescribe.View
 
                     var xPosition = Mouse.GetPosition(_audioCanvas).X;
                     var middleOfMarker = xPosition - MarkerOffset;
-
+                   
                     //make sure the middle of the marker doesn't go below the beginning of the canvas
                     if (xPosition < -MarkerOffset)
                     {
@@ -529,6 +529,9 @@ namespace LiveDescribe.View
             singlePageWidth = TimeLineScrollViewer.ActualWidth;
             scrolledAmount = TimeLineScrollViewer.HorizontalOffset;
             double scrollOffsetRight = PageScrollPercentLimit * singlePageWidth;
+
+            if (scrolledAmount >= TimeLineScrollViewer.ScrollableWidth)
+                return false;
 
             if (!((xPos - scrolledAmount) >= scrollOffsetRight)) return false;
             TimeLineScrollViewer.ScrollToHorizontalOffset((PageScrollPercentAmount * singlePageWidth) + scrolledAmount);
