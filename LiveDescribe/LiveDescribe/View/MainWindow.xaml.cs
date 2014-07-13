@@ -34,7 +34,8 @@ namespace LiveDescribe.View
         /// <summary>
         /// when the marker hits 95% of the page it scrolls
         /// </summary>
-        private const double PageScrollPercent = 0.95;
+        private const double PageScrollPercentLimit = 0.95;
+        private const double PageScrollPercentAmount = 0.90;
         /// <summary>30 seconds page time before audiocanvas & descriptioncanvas scroll</summary>
         private const double PageTimeBeforeCanvasScrolls = 30;
         private const double LineTime = 1; //each line in the NumberTimeline appears every 1 second
@@ -210,6 +211,9 @@ namespace LiveDescribe.View
                     if (!_marker.IsMouseCaptured) return;
 
                     if (ScrollRightIfCanForGraphicsThread(Canvas.GetLeft(_marker)))
+                        return;
+
+                    if (ScrollLeftIfCanForGraphicsThread(Canvas.GetLeft(_marker)))
                         return;
 
                     var xPosition = Mouse.GetPosition(_audioCanvas).X;
@@ -512,7 +516,7 @@ namespace LiveDescribe.View
                 singlePageWidth = TimeLineScrollViewer.ActualWidth;
                 scrolledAmount = TimeLineScrollViewer.HorizontalOffset;
             });
-            double scrollOffsetRight = PageScrollPercent * singlePageWidth;
+            double scrollOffsetRight = PageScrollPercentLimit * singlePageWidth;
             if (!((xPos - scrolledAmount) >= scrollOffsetRight)) return false;
             DispatcherHelper.UIDispatcher.Invoke(() => TimeLineScrollViewer.ScrollToHorizontalOffset(scrollOffsetRight + scrolledAmount));
             return true;
@@ -524,10 +528,25 @@ namespace LiveDescribe.View
             double scrolledAmount = 0;
             singlePageWidth = TimeLineScrollViewer.ActualWidth;
             scrolledAmount = TimeLineScrollViewer.HorizontalOffset;
-            double scrollOffsetRight = PageScrollPercent * singlePageWidth;
+            double scrollOffsetRight = PageScrollPercentLimit * singlePageWidth;
 
             if (!((xPos - scrolledAmount) >= scrollOffsetRight)) return false;
-            TimeLineScrollViewer.ScrollToHorizontalOffset(scrollOffsetRight + scrolledAmount);
+            TimeLineScrollViewer.ScrollToHorizontalOffset((PageScrollPercentAmount * singlePageWidth) + scrolledAmount);
+            return true;
+        }
+
+        private bool ScrollLeftIfCanForGraphicsThread(double xPos)
+        {
+            double singlePageWidth = TimeLineScrollViewer.ActualWidth;
+            double scrolledAmount = TimeLineScrollViewer.HorizontalOffset;
+
+            //we can't scroll left cause we already scrolled as far left as possible
+            if (scrolledAmount == 0)
+                return false;
+
+            double scrollOffsetLeft = (1 - PageScrollPercentLimit) * singlePageWidth;
+            if (!((xPos - scrolledAmount) <= scrollOffsetLeft)) return false;
+            TimeLineScrollViewer.ScrollToHorizontalOffset(scrolledAmount - (PageScrollPercentAmount* singlePageWidth));
             return true;
         }
 
