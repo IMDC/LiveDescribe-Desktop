@@ -30,7 +30,7 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Constants
-        public const string DefaultWindowTitle = "Live Describe";
+        public readonly string DefaultWindowTitle = UiStrings.Program_Name;
         /// <summary>
         /// The span of time into a regular description that it can still be played.
         /// </summary>
@@ -69,7 +69,6 @@ namespace LiveDescribe.ViewModel
         public MainWindowViewModel(ILiveDescribePlayer mediaVideo)
         {
             DispatcherHelper.Initialize();
-            WindowTitle = DefaultWindowTitle;
 
             _spacecollectionviewmodel = new SpaceCollectionViewModel(mediaVideo);
             _loadingViewModel = new LoadingViewModel(100, null, 0, false);
@@ -122,7 +121,7 @@ namespace LiveDescribe.ViewModel
 
                     OnProjectClosed();
 
-                    WindowTitle = DefaultWindowTitle;
+                    SetWindowTitle();
                 });
 
 
@@ -327,19 +326,12 @@ namespace LiveDescribe.ViewModel
             PropertyChanged += (sender, args) =>
             {
                 if (args.PropertyName == "ProjectModified")
-                {
-                    if (ProjectModified)
-                        WindowTitle = string.Format(UiStrings.Window_Format_MainWindowProjectModified,
-                            _project.ProjectName, UiStrings.Program_Name);
-                    else if (ProjectLoaded)
-                        WindowTitle = string.Format(UiStrings.Window_Format_MainWindowProjectSaved,
-                            _project.ProjectName, UiStrings.Program_Name);
-                    else
-                        WindowTitle = DefaultWindowTitle;
-                }
+                    SetWindowTitle();
             };
 
             #endregion
+
+            SetWindowTitle();
         }
         #endregion
 
@@ -567,8 +559,6 @@ namespace LiveDescribe.ViewModel
 
             _project = p;
 
-            WindowTitle = string.Format("{0} - LiveDescribe", _project.ProjectName);
-
             //Set up environment
             Properties.Settings.Default.WorkingDirectory = _project.Folders.Project + "\\";
 
@@ -610,8 +600,9 @@ namespace LiveDescribe.ViewModel
             //Set Children
             _descriptioncollectionviewmodel.Project = _project;
 
-            //Ensure that project is not modified.
             ProjectModified = false;
+
+            SetWindowTitle();
         }
 
         public bool TryExit()
@@ -663,6 +654,17 @@ namespace LiveDescribe.ViewModel
             }
         }
 
+        private void SetWindowTitle()
+        {
+            if (ProjectModified)
+                WindowTitle = string.Format(UiStrings.Window_Format_MainWindowProjectModified,
+                    _project.ProjectName, UiStrings.Program_Name);
+            else if (ProjectLoaded)
+                WindowTitle = string.Format(UiStrings.Window_Format_MainWindowProjectSaved,
+                    _project.ProjectName, UiStrings.Program_Name);
+            else
+                WindowTitle = DefaultWindowTitle;
+        }
         #endregion
 
         #region Event Handler Methods
