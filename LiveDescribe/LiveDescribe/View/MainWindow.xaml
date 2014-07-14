@@ -47,6 +47,15 @@
                     <MenuItem
                         Header="{x:Static s:UiStrings.MenuItem_CloseProject}"
                         Command="{Binding CloseProject}" />
+                    
+                    <!--Exporting Options-->
+                    <MenuItem Header="Export" >
+                        <MenuItem
+                            Header="Export Video With Descriptions"
+                            Command="{Binding ExportWithDescriptions}"
+                        />
+                    </MenuItem>
+                    
                     <MenuItem
                         Name="Preferences"
                         Header="{x:Static s:UiStrings.MenuItem_Preferences}"
