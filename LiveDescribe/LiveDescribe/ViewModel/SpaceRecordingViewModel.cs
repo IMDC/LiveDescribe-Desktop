@@ -108,10 +108,16 @@ namespace LiveDescribe.ViewModel
             PlayRecordedDescription = new RelayCommand(
                 canExecute: () =>
                     Description != null
-                    && _player.CanPlay(_description)
+                        //&& _player.CanPlay(_description)
                     && !_recorder.IsRecording
                     && !CountdownControlViewModel.IsCountingDown,
-                execute: () => _player.Play(_description));
+                execute: () =>
+                {
+                    if (_player.IsPlaying)
+                        _player.Stop();
+                    else
+                        _player.Play(_description);
+                });
 
             SaveDescription = new RelayCommand(
                 canExecute: () =>
