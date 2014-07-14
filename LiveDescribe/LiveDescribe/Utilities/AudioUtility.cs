@@ -47,7 +47,7 @@ namespace LiveDescribe.Utilities
             Log.Info("Preparing to strip audio from video");
             //gets the path of the ffmpeg.exe file within the LiveDescribe solution
             var appDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            string ffmpegPath = Path.Combine(appDirectory, "Utilities/ffmpeg.exe");
+            string ffmpegPath = Path.Combine(appDirectory, "Utilities/_ffmpeg.exe");
 
             if (!File.Exists(ffmpegPath))
             {
