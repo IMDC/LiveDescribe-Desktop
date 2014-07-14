@@ -61,13 +61,13 @@ namespace LiveDescribe.ViewModel
 
         #region Binding Functions
 
-        public void AudioCanvasMouseDown(MouseEventArgs e)
+        private void AudioCanvasMouseDown(MouseEventArgs e)
         {
             EventHandler<MouseEventArgs> handler = AudioCanvasMouseDownEvent;
             if (handler != null) handler(this, e);
         }
 
-        public void AudioCanvasMouseRightButtonDown(MouseEventArgs e)
+        private void AudioCanvasMouseRightButtonDown(MouseEventArgs e)
         {
             EventHandler<MouseEventArgs> handler = AudioCanvasMouseRightButtonDownEvent;
             if (handler != null) handler(this, e);
