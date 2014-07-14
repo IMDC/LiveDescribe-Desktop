@@ -304,7 +304,7 @@ namespace LiveDescribe.Model
         /// <summary>
         /// Called when the mouse is up on this description
         /// </summary>
-        public void DescriptionMouseUp()
+        private void DescriptionMouseUp()
         {
             EventHandler handler = DescriptionMouseUpEvent;
             if (handler == null) return;
@@ -315,7 +315,7 @@ namespace LiveDescribe.Model
         /// Called when the mouse is down on this description
         /// </summary>
         /// <param name="e">the MouseEventArgs from the mouse down event</param>
-        public void DescriptionMouseDown(MouseEventArgs e)
+        private void DescriptionMouseDown(MouseEventArgs e)
         {
             EventHandler handler = DescriptionMouseDownEvent;
             if (handler != null) handler(this, e);
@@ -325,7 +325,7 @@ namespace LiveDescribe.Model
         /// Called when the mouse is moving over a description
         /// </summary>
         /// <param name="e">the MouseEventArgs from the mouse move event</param>
-        public void DescriptionMouseMove(MouseEventArgs e)
+        private void DescriptionMouseMove(MouseEventArgs e)
         {
             EventHandler handler = DescriptionMouseMoveEvent;
             if (handler != null) handler(this, e);
@@ -334,14 +334,14 @@ namespace LiveDescribe.Model
         /// <summary>
         /// Called when a description is deleted
         /// </summary>
-        public void DescriptionDelete()
+        private void DescriptionDelete()
         {
             Log.Info("Description deleted");
             EventHandler handler = DescriptionDeleteEvent;
             if (handler != null) handler(this, EventArgs.Empty);
         }
 
-        public void GoTothisDescription()
+        private void GoTothisDescription()
         {
             EventHandler handler = GoToThisDescriptionEvent;
             if (handler != null) handler(this, EventArgs.Empty);

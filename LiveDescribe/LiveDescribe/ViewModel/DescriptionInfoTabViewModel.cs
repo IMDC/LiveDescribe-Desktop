@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using LiveDescribe.Extensions;
 using LiveDescribe.Factories;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
@@ -56,6 +57,23 @@ namespace LiveDescribe.ViewModel
                     if (viewModel.DialogResult == true)
                         _descriptionCollectionViewModel.AddDescription(viewModel.Description);
                 });
+
+            DeleteSelectedSpaceOrDescription = new RelayCommand(
+                canExecute: () => SelectedSpace != null 
+                    || SelectedExtendedDescription != null 
+                    || SelectedRegularDescription != null,
+                execute: () =>
+                {
+                    if (SelectedSpace != null)
+                        SelectedSpace.DeleteSpaceCommand.ExecuteIfCan();
+
+                    if (SelectedRegularDescription != null)
+                        SelectedRegularDescription.DescriptionDeleteCommand.ExecuteIfCan();
+
+                    if (SelectedExtendedDescription != null)
+                        SelectedExtendedDescription.DescriptionDeleteCommand.ExecuteIfCan();
+                }
+            );
         }
 
         #region Commands
@@ -64,6 +82,7 @@ namespace LiveDescribe.ViewModel
 
         public ICommand RecordInSpace { private set; get; }
 
+        public ICommand DeleteSelectedSpaceOrDescription { private set; get; }
         #endregion
 
         #region Binding Properties
