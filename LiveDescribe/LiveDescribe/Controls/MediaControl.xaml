@@ -10,9 +10,22 @@
     xmlns:controls="clr-namespace:LiveDescribe.Controls"
     xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
     xmlns:converters="clr-namespace:LiveDescribe.Converters"
-    xmlns:s="clr-namespace:LiveDescribe.Resources.UiStrings">
-
+    xmlns:s="clr-namespace:LiveDescribe.Resources.UiStrings"
+    xmlns:viewModel="clr-namespace:LiveDescribe.ViewModel"
+    d:DataContext="{d:DesignInstance viewModel:MediaControlViewModel}">
     <UserControl.Resources>
+        <converters:TimeConverterFormatter
+            x:Key="TimeConverterFormatter" />
+
+        <converters:LivedescribeVideoStateToContent
+            x:Key="LivedescribeVideoStateToContent" />
+
+        <converters:BoolToMutedContentConverter
+            x:Key="BoolToMutedContentConverter" />
+
+        <converters:InvertBoolConverter
+            x:Key="InvertBool" />
+
         <Style
             x:Key="ControlPanelStyle"
             TargetType="Control">
@@ -58,22 +71,12 @@
         <StackPanel
             Orientation="Horizontal"
             Grid.Row="1">
-            <StackPanel.Resources>
-                <converters:TimeConverterFormatter
-                    x:Key="TimeConverterFormatter" />
-                
-                <converters:LivedescribeVideoStateToContent
-                    x:Key="LivedescribeVideoStateToContent" />
-                
-                <converters:BoolToMutedContentConverter
-                    x:Key="BoolToMutedContentConverter"/>
-                
-            </StackPanel.Resources>
+
             <Button
                 Style="{StaticResource ControlPanelStyle}"
                 Width="50"
                 Command="{Binding MuteCommand}"
-                Content="{Binding Path=IsMuted, Converter={StaticResource BoolToMutedContentConverter}}"
+                Content="{Binding Path=MediaVideo.IsMuted, Converter={StaticResource BoolToMutedContentConverter}}"
                 HorizontalAlignment="Center" />
 
             <Slider
@@ -83,7 +86,8 @@
                 Minimum="0"
                 Style="{StaticResource ControlPanelStyle}"
                 Width="100"
-                Margin="10,15,10,10" />
+                Margin="10,15,10,10"
+                IsEnabled="{Binding MediaVideo.IsMuted, Converter={StaticResource InvertBool}}" />
 
             <Button
                 Name="PlayControl"
@@ -104,6 +108,5 @@
                 FontFamily="Trebuchet MS"
                 Width="95" />
         </StackPanel>
-
     </Grid>
 </UserControl>

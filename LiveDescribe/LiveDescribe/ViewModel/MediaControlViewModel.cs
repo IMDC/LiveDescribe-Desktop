@@ -80,11 +80,6 @@ namespace LiveDescribe.ViewModel
                     VideoState = _mediaVideo.CurrentState;
                     RaisePropertyChanged("VideoState");
                 }
-                else if (e.PropertyName.Equals("IsMuted"))
-                {
-                    IsMuted = _mediaVideo.IsMuted;
-                    RaisePropertyChanged("IsMuted");
-                }
             };
         }
         #endregion
@@ -184,7 +179,7 @@ namespace LiveDescribe.ViewModel
 
             EventHandler handler = PlayRequested;
             _mediaVideo.CurrentState = LiveDescribeVideoStates.PlayingVideo;
-            
+
             if (handler != null) handler(this, EventArgs.Empty);
             PlayPauseButtonClickCommand = PauseCommand;
         }
@@ -247,7 +242,6 @@ namespace LiveDescribe.ViewModel
         /// </summary>
         public void MediaEnded()
         {
-           
             Log.Info("Video has ended");
             //Changing state back to video loaded because it is starting from the beginning
             _mediaVideo.CurrentState = LiveDescribeVideoStates.VideoLoaded;
@@ -307,7 +301,7 @@ namespace LiveDescribe.ViewModel
         }
         #endregion
 
-        #region Binding Properties
+        #region Properties
         /// <summary>
         /// Bound to the LiveDescribeMediaPlayer (_mediaVideo) Source property
         /// </summary>
@@ -336,7 +330,7 @@ namespace LiveDescribe.ViewModel
 
         public LiveDescribeVideoStates VideoState { get; set; }
 
-        public bool IsMuted { get; set; }
+        public ILiveDescribePlayer MediaVideo { get { return _mediaVideo; } }
         #endregion
 
         #region Accessors
