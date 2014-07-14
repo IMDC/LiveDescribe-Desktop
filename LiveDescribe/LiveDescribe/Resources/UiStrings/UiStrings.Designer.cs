@@ -259,6 +259,15 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Can not fine ffmeg.exe at location {0}.
+        /// </summary>
+        public static string Error_Format_FfmpegNotFound {
+            get {
+                return ResourceManager.GetString("Error_Format_FfmpegNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Export Description Text To File.
         /// </summary>
         public static string Export_DescriptionSrtTitle {
@@ -619,6 +628,87 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The audio file for description could not be found at {0}.
+        /// </summary>
+        public static string MessageBox_AudioFileNotFound {
+            get {
+                return ResourceManager.GetString("MessageBox_AudioFileNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Microphone Connected.
+        /// </summary>
+        public static string MessageBox_NoMicrophoneFoundError {
+            get {
+                return ResourceManager.GetString("MessageBox_NoMicrophoneFoundError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The selected project is missing file locations..
+        /// </summary>
+        public static string MessageBox_OpenProjectFileMissingError {
+            get {
+                return ResourceManager.GetString("MessageBox_OpenProjectFileMissingError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The folder {0} already exists. Do you wish to overwrite its contents?.
+        /// </summary>
+        public static string MessageBox_OverwriteProjectWarning {
+            get {
+                return ResourceManager.GetString("MessageBox_OverwriteProjectWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occured while attempting to create the project..
+        /// </summary>
+        public static string MessageBox_ProjectCreationError {
+            get {
+                return ResourceManager.GetString("MessageBox_ProjectCreationError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The LiveDescribe project &quot;{0}&quot; has been modified. Do you want to save changes before closing?.
+        /// </summary>
+        public static string MessageBox_SaveProjectWarning {
+            get {
+                return ResourceManager.GetString("MessageBox_SaveProjectWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Warning.
+        /// </summary>
+        public static string MessageBox_Title_ConfirmationWarning {
+            get {
+                return ResourceManager.GetString("MessageBox_Title_ConfirmationWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error.
+        /// </summary>
+        public static string MessageBox_Title_Error {
+            get {
+                return ResourceManager.GetString("MessageBox_Title_Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LiveDescribe Files (*{0})|*{0}|All Files(*.*)|*.*.
+        /// </summary>
+        public static string OpenFileDialog_OpenProject {
+            get {
+                return ResourceManager.GetString("OpenFileDialog_OpenProject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Copyright © 2014.
         /// </summary>
         public static string Program_Copyright {
@@ -673,6 +763,15 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to SubRip Files (*.srt)|*.srt.
+        /// </summary>
+        public static string SaveFileDialog_ExportToSrt {
+            get {
+                return ResourceManager.GetString("SaveFileDialog_ExportToSrt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Mark beginning of selected space.
         /// </summary>
         public static string ToolTip_MarkBeginning {
@@ -705,6 +804,24 @@ namespace LiveDescribe.Resources.UiStrings {
         public static string Window_AboutTitle {
             get {
                 return ResourceManager.GetString("Window_AboutTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}* {1}.
+        /// </summary>
+        public static string Window_Format_MainWindowProjectModified {
+            get {
+                return ResourceManager.GetString("Window_Format_MainWindowProjectModified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} - {1}.
+        /// </summary>
+        public static string Window_Format_MainWindowProjectSaved {
+            get {
+                return ResourceManager.GetString("Window_Format_MainWindowProjectSaved", resourceCulture);
             }
         }
         

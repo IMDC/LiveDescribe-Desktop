@@ -358,4 +358,50 @@
   <data name="Command_UnMute" xml:space="preserve">
     <value>UnMute</value>
   </data>
+  <data name="Error_Format_FfmpegNotFound" xml:space="preserve">
+    <value>Can not fine ffmeg.exe at location {0}</value>
+    <comment>0: ffmpeg path</comment>
+  </data>
+  <data name="MessageBox_AudioFileNotFound" xml:space="preserve">
+    <value>The audio file for description could not be found at {0}</value>
+    <comment>0: Description audio file location</comment>
+  </data>
+  <data name="MessageBox_NoMicrophoneFoundError" xml:space="preserve">
+    <value>No Microphone Connected</value>
+  </data>
+  <data name="MessageBox_OpenProjectFileMissingError" xml:space="preserve">
+    <value>The selected project is missing file locations.</value>
+  </data>
+  <data name="MessageBox_OverwriteProjectWarning" xml:space="preserve">
+    <value>The folder {0} already exists. Do you wish to overwrite its contents?</value>
+    <comment>0: Folder path</comment>
+  </data>
+  <data name="MessageBox_ProjectCreationError" xml:space="preserve">
+    <value>An error occured while attempting to create the project.</value>
+  </data>
+  <data name="MessageBox_SaveProjectWarning" xml:space="preserve">
+    <value>The LiveDescribe project "{0}" has been modified. Do you want to save changes before closing?</value>
+    <comment>0: Project name</comment>
+  </data>
+  <data name="MessageBox_Title_ConfirmationWarning" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="MessageBox_Title_Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="OpenFileDialog_OpenProject" xml:space="preserve">
+    <value>LiveDescribe Files (*{0})|*{0}|All Files(*.*)|*.*</value>
+    <comment>0: Project file extension</comment>
+  </data>
+  <data name="SaveFileDialog_ExportToSrt" xml:space="preserve">
+    <value>SubRip Files (*.srt)|*.srt</value>
+  </data>
+  <data name="Window_Format_MainWindowProjectModified" xml:space="preserve">
+    <value>{0}* {1}</value>
+    <comment>0: Project Name, 1: Program Name</comment>
+  </data>
+  <data name="Window_Format_MainWindowProjectSaved" xml:space="preserve">
+    <value>{0} - {1}</value>
+    <comment>0: Project Name, 1: Program Name</comment>
+  </data>
 </root>

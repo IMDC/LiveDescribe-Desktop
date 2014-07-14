@@ -2,6 +2,7 @@
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Factories;
 using LiveDescribe.Model;
+using LiveDescribe.Resources.UiStrings;
 using LiveDescribe.Utilities;
 using NAudio;
 using System;
@@ -297,7 +298,7 @@ namespace LiveDescribe.ViewModel
             }
             catch (MmException e)
             {
-                MessageBoxFactory.ShowError("No Microphone Connected");
+                MessageBoxFactory.ShowError(UiStrings.MessageBox_NoMicrophoneFoundError);
                 Log.Warn("No Microphone Connected", e);
             }
         }
@@ -375,7 +376,7 @@ namespace LiveDescribe.ViewModel
             if (Recorder.MicrophoneAvailable())
                 CountdownControlViewModel.StartCountdown();
             else
-                MessageBoxFactory.ShowError("No Microphone could be found.");
+                MessageBoxFactory.ShowError(UiStrings.MessageBox_NoMicrophoneFoundError);
         }
 
         private void CancelCountdown()
