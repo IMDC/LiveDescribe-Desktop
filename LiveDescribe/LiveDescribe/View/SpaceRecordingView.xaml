@@ -24,6 +24,8 @@
             x:Key="RecordingAndCountdownConverter" />
         <converters:NotRecordingAndHasTextToBoolConverter
             x:Key="NotRecordingAndHasTextToBoolConverter" />
+        <converters:IsPlayingToContentConverter
+            x:Key="IsPlayingToContentConverter" />
 
         <Style
             x:Key="PlayRecordStyle"
@@ -198,7 +200,7 @@
             Grid.Column="0"
             Grid.ColumnSpan="3"
             Style="{StaticResource PlayRecordStyle}"
-            Content="{x:Static s:UiStrings.Command_Play}"
+            Content="{Binding Player.IsPlaying, Converter={StaticResource IsPlayingToContentConverter}}"
             Command="{Binding PlayRecordedDescription}" />
 
         <Button
@@ -231,6 +233,6 @@
             Grid.Column="5"
             Style="{StaticResource SaveCancelStyle}"
             Content="{x:Static s:UiStrings.Command_Cancel}"
-            Click="Cancel_OnClick"/>
+            Click="Cancel_OnClick" />
     </Grid>
 </Window>

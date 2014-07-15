@@ -103,7 +103,7 @@ namespace LiveDescribe.ViewModel
                     if (ProjectModified)
                     {
                         var result = MessageBoxFactory.ShowWarningQuestion(
-                            string.Format(UiStrings.MessageBox_SaveProjectWarning, _project.ProjectName));
+                            string.Format(UiStrings.MessageBox_Format_SaveProjectWarning, _project.ProjectName));
 
                         if (result == MessageBoxResult.Yes)
                             SaveProject.Execute();
@@ -160,8 +160,7 @@ namespace LiveDescribe.ViewModel
             {
                 var projectChooser = new OpenFileDialog
                 {
-                    Filter = string.Format(UiStrings.OpenFileDialog_OpenProject,
-                        Project.Names.ProjectExtension)
+                    Filter = string.Format(UiStrings.OpenFileDialog_Format_OpenProject, Project.Names.ProjectExtension)
                 };
 
                 bool? dialogSuccess = projectChooser.ShowDialog();
@@ -546,7 +545,7 @@ namespace LiveDescribe.ViewModel
 
             //TODO: Delete description if not found, or ask for file location?
             Log.ErrorFormat("The description file could not be found at {0}", d.AudioFile);
-            MessageBoxFactory.ShowError(string.Format(UiStrings.MessageBox_AudioFileNotFound, d.AudioFile));
+            MessageBoxFactory.ShowError(string.Format(UiStrings.MessageBox_Format_AudioFileNotFound, d.AudioFile));
         }
 
         /// <summary>
@@ -611,7 +610,7 @@ namespace LiveDescribe.ViewModel
             {
                 Log.Info("Program is attempting to exit with an unsaved project");
 
-                var text = string.Format(UiStrings.MessageBox_SaveProjectWarning, _project.ProjectName);
+                var text = string.Format(UiStrings.MessageBox_Format_SaveProjectWarning, _project.ProjectName);
 
                 var result = MessageBoxFactory.ShowWarningQuestion(text);
 

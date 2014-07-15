@@ -157,6 +157,7 @@
     <Compile Include="Converters\BoolToMutedContentConverter.cs" />
     <Compile Include="Converters\BoolToRecordingContentConverter.cs" />
     <Compile Include="Converters\InvertBoolConverter.cs" />
+    <Compile Include="Converters\IsPlayingToContentConverter.cs" />
     <Compile Include="Converters\LiveDescribeVideoStateToContent.cs" />
     <Compile Include="Converters\MillisecondsTimeConverterFormatter.cs" />
     <Compile Include="Converters\MillisecondsToTimeLeftStringConverter.cs" />

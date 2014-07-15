@@ -165,7 +165,7 @@ namespace LiveDescribe.ViewModel
             if (Directory.Exists(p.Folders.Project))
             {
                 var result = MessageBoxFactory.ShowWarningQuestion(
-                    string.Format(UiStrings.MessageBox_OverwriteProjectWarning, p.Folders.Project));
+                    string.Format(UiStrings.MessageBox_Format_OverwriteProjectWarning, p.Folders.Project));
 
                 Log.Warn("Project folder already exists");
 
