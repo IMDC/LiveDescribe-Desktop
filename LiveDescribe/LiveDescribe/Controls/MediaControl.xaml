@@ -16,13 +16,12 @@
     <UserControl.Resources>
         <converters:TimeConverterFormatter
             x:Key="TimeConverterFormatter" />
-
         <converters:LivedescribeVideoStateToContent
             x:Key="LivedescribeVideoStateToContent" />
-
-        <converters:BoolToMutedContentConverter
-            x:Key="BoolToMutedContentConverter" />
-
+        <converters:BoolToContentConverter
+            x:Key="IsMutedConverter"
+            TrueContent="{x:Static s:UiStrings.Command_UnMute}"
+            FalseContent="{x:Static s:UiStrings.Command_Mute}" />
         <converters:InvertBoolConverter
             x:Key="InvertBool" />
 
@@ -76,7 +75,7 @@
                 Style="{StaticResource ControlPanelStyle}"
                 Width="50"
                 Command="{Binding MuteCommand}"
-                Content="{Binding Path=MediaVideo.IsMuted, Converter={StaticResource BoolToMutedContentConverter}}"
+                Content="{Binding Path=MediaVideo.IsMuted, Converter={StaticResource IsMutedConverter}}"
                 HorizontalAlignment="Center" />
 
             <Slider
