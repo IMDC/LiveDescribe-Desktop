@@ -25,7 +25,7 @@
                         Command="{Binding DescriptionDeleteCommand}" />
                     <MenuItem
                         Header="{x:Static s:UiStrings.Command_GoToDescription}"
-                        Command="{Binding GoToThisDescriptionCommand}"/>
+                        Command="{Binding GoToThisDescriptionCommand}" />
                 </ContextMenu>
             </Rectangle.ContextMenu>
             <Rectangle.Style>

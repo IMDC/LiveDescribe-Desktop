@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using LiveDescribe.Resources.UiStrings;
+using System.Windows;
 
 namespace LiveDescribe.Factories
 {
@@ -14,7 +15,7 @@ namespace LiveDescribe.Factories
         /// <returns>The option the user selected on the MessageBox.</returns>
         public static MessageBoxResult ShowError(string errorMessage)
         {
-            return MessageBox.Show(errorMessage, "Error", MessageBoxButton.OK,
+            return MessageBox.Show(errorMessage, UiStrings.MessageBox_Title_Error, MessageBoxButton.OK,
                 MessageBoxImage.Error);
         }
 
@@ -26,8 +27,8 @@ namespace LiveDescribe.Factories
         /// <returns></returns>
         public static MessageBoxResult ShowWarningQuestion(string warningMessage)
         {
-            return MessageBox.Show(warningMessage, "Warning", MessageBoxButton.YesNoCancel,
-                MessageBoxImage.Warning);
+            return MessageBox.Show(warningMessage, UiStrings.MessageBox_Title_ConfirmationWarning,
+                MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
         }
     }
 }

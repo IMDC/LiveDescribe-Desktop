@@ -1,5 +1,6 @@
 ﻿using LiveDescribe.Factories;
 using LiveDescribe.Model;
+using LiveDescribe.Resources.UiStrings;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -51,7 +52,7 @@ namespace LiveDescribe.Utilities
 
             if (!File.Exists(ffmpegPath))
             {
-                MessageBox.Show("Cannot find ffmpeg.exe " + ffmpegPath);
+                MessageBoxFactory.ShowError(string.Format(UiStrings.Error_Format_FfmpegNotFound, ffmpegPath));
                 Log.Error("ffmpeg.exe can not be found at " + ffmpegPath);
                 return;
             }

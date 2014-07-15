@@ -80,11 +80,6 @@ namespace LiveDescribe.ViewModel
                     VideoState = _mediaVideo.CurrentState;
                     RaisePropertyChanged("VideoState");
                 }
-                else if (e.PropertyName.Equals("IsMuted"))
-                {
-                    IsMuted = _mediaVideo.IsMuted;
-                    RaisePropertyChanged("IsMuted");
-                }
             };
         }
         #endregion
@@ -148,7 +143,7 @@ namespace LiveDescribe.ViewModel
         /// <summary>
         /// what happens when the marker is moved using the mouse
         /// </summary>
-        public void OnMarkerMouseMove()
+        private void OnMarkerMouseMove()
         {
             EventHandler handler = OnMarkerMouseMoveRequested;
             if (handler == null) return;
@@ -158,7 +153,7 @@ namespace LiveDescribe.ViewModel
         /// <summary>
         /// What happens when the mouse is released on the marker
         /// </summary>
-        public void OnMarkerMouseUp()
+        private void OnMarkerMouseUp()
         {
             EventHandler handler = OnMarkerMouseUpRequested;
             if (handler == null) return;
@@ -168,7 +163,7 @@ namespace LiveDescribe.ViewModel
         /// <summary>
         /// What hapens when the marker is pressed down
         /// </summary>
-        public void OnMarkerMouseDown()
+        private void OnMarkerMouseDown()
         {
             PauseCommand.Execute();
             EventHandler handler = OnMarkerMouseDownRequested;
@@ -178,13 +173,13 @@ namespace LiveDescribe.ViewModel
         /// <summary>
         /// Plays the video
         /// </summary>
-        public void Play()
+        private void Play()
         {
             Log.Info("Play video");
 
             EventHandler handler = PlayRequested;
             _mediaVideo.CurrentState = LiveDescribeVideoStates.PlayingVideo;
-            
+
             if (handler != null) handler(this, EventArgs.Empty);
             PlayPauseButtonClickCommand = PauseCommand;
         }
@@ -192,7 +187,7 @@ namespace LiveDescribe.ViewModel
         /// <summary>
         /// Pauses the video
         /// </summary>
-        public void Pause()
+        private void Pause()
         {
             Log.Info("Pause video");
             EventHandler handler = PauseRequested;
@@ -205,7 +200,7 @@ namespace LiveDescribe.ViewModel
         /// <summary>
         /// This event is thrown when the video is opened or "loaded"
         /// </summary>
-        public void VideoOpen()
+        private void VideoOpen()
         {
             EventHandler handler = VideoOpenedRequested;
             Log.Info("Video loaded");
@@ -218,7 +213,7 @@ namespace LiveDescribe.ViewModel
         /// <summary>
         /// Mutes the video's audio
         /// </summary>
-        public void Mute()
+        private void Mute()
         {
             Log.Info(_mediaVideo.IsMuted ? "Video UnMuted" : "Video Muted");
 
@@ -233,7 +228,7 @@ namespace LiveDescribe.ViewModel
         /// throws an event when the media fails to load an example of this happening would be if
         /// the video format is not supported
         /// </summary>
-        public void MediaFailed()
+        private void MediaFailed()
         {
             EventHandler handler = MediaFailedEvent;
             Log.Warn("Media Failed to load...");
@@ -245,9 +240,8 @@ namespace LiveDescribe.ViewModel
         /// <summary>
         /// thros an event when the media is finished
         /// </summary>
-        public void MediaEnded()
+        private void MediaEnded()
         {
-           
             Log.Info("Video has ended");
             //Changing state back to video loaded because it is starting from the beginning
             _mediaVideo.CurrentState = LiveDescribeVideoStates.VideoLoaded;
@@ -257,7 +251,7 @@ namespace LiveDescribe.ViewModel
             PlayPauseButtonClickCommand = PlayCommand;
         }
 
-        public void PauseForExtendedDescription()
+        private void PauseForExtendedDescription()
         {
             _mediaVideo.CurrentState = LiveDescribeVideoStates.PlayingExtendedDescription;
             EventHandler handler = OnPausedForExtendedDescription;
@@ -307,7 +301,7 @@ namespace LiveDescribe.ViewModel
         }
         #endregion
 
-        #region Binding Properties
+        #region Properties
         /// <summary>
         /// Bound to the LiveDescribeMediaPlayer (_mediaVideo) Source property
         /// </summary>
@@ -336,7 +330,7 @@ namespace LiveDescribe.ViewModel
 
         public LiveDescribeVideoStates VideoState { get; set; }
 
-        public bool IsMuted { get; set; }
+        public ILiveDescribePlayer MediaVideo { get { return _mediaVideo; } }
         #endregion
 
         #region Accessors

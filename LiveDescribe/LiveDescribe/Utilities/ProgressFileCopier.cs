@@ -69,23 +69,23 @@ namespace LiveDescribe.Utilities
             /// <summary>
             /// Copy the file even if the destination file can not be encrypted.
             /// </summary>
-            COPY_FILE_ALLOW_DECRYPTED_DESTINATION = 0x00000008,
+            CopyFileAllowDecryptedDestination = 0x00000008,
             /// <summary>
             /// Make the destination file a symbolic link if the source file is also a symbolic link.
             /// </summary>
-            COPY_FILE_COPY_SYMLINK = 0x00000800,
+            CopyFileCopySymlink = 0x00000800,
             /// <summary>
             /// Force the copy operation to fail if the destination file already exists.
             /// </summary>
-            COPY_FILE_FAIL_IF_EXISTS = 0x00000001,
+            CopyFileFailIfExists = 0x00000001,
             /// <summary>
             /// Use unbuffered I/O, bypassing cache resources. Reccomended for large file transfers.
             /// </summary>
-            COPY_FILE_NO_BUFFERING = 0x00001000,
+            CopyFileNoBuffering = 0x00001000,
             /// <summary>
             /// The file is copied and the original file is opened for write access.
             /// </summary>
-            COPY_FILE_OPEN_SOURCE_FOR_WRITE = 0x00000004,
+            CopyFileOpenSourceForWrite = 0x00000004,
             /// <summary>
             /// Progress of the copy is tracked in the target file in case the copy fails. The
             /// failed copy can be restarted at a later time by specifying the same values for
@@ -93,7 +93,7 @@ namespace LiveDescribe.Utilities
             /// significantly slow down the copy operation as the new file may be flushed multiple
             /// times during the copy operation.
             /// </summary>
-            COPY_FILE_RESTARTABLE = 0x00000002,
+            CopyFileRestartable = 0x00000002,
         }
 
         private enum CallbackReason : uint
@@ -101,11 +101,11 @@ namespace LiveDescribe.Utilities
             /// <summary>
             /// Another chunk of the data file was copied to the destination.
             /// </summary>
-            CALLBACK_CHUNK_FINISHED = 0x00000000,
+            CallbackChunkFinished = 0x00000000,
             /// <summary>
             /// A new stream was created for copying.
             /// </summary>
-            CALLBACK_STREAM_SWITCH = 0x00000001,
+            CallbackStreamSwitch = 0x00000001,
         }
 
         private enum ProgressResult : uint
@@ -113,19 +113,19 @@ namespace LiveDescribe.Utilities
             /// <summary>
             /// Cancel the operation and delete the destination file
             /// </summary>
-            CANCEL = 1,
+            Cancel = 1,
             /// <summary>
             /// Continue the operation
             /// </summary>
-            CONTINUE = 0,
+            Continue = 0,
             /// <summary>
             /// Continue the operation, but stop invoking the callback method for updating progress.
             /// </summary>
-            QUIET = 3,
+            Quiet = 3,
             /// <summary>
             /// Stop the operation. It can be restarted again.
             /// </summary>
-            STOP = 2,
+            Stop = 2,
         }
         #endregion
 
@@ -150,7 +150,7 @@ namespace LiveDescribe.Utilities
             IntPtr lpData)
         {
             OnProgressChanged(totalFileSize, totalBytesTransferred);
-            return ProgressResult.CONTINUE;
+            return ProgressResult.Continue;
         }
 
         public void CopyFile(string source, string destination)
@@ -161,11 +161,9 @@ namespace LiveDescribe.Utilities
 
         private void OnProgressChanged(long fileSize, long totalBytesTransferred)
         {
-            EventHandler<CopyFileProgressChangedEventArgs> handler = ProgressChanged;
+            var handler = ProgressChanged;
             if (handler != null)
-            {
                 handler(this, new CopyFileProgressChangedEventArgs(fileSize, totalBytesTransferred));
-            }
         }
     }
 }

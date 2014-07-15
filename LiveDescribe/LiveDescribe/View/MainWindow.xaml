@@ -17,6 +17,7 @@
         <KeyBinding Command="{Binding NewProject}"  Key="N" Modifiers="Control" />
         <KeyBinding Command="{Binding ShowPreferences}" Key="T" Modifiers="Control"/>
         <KeyBinding Command="{Binding MediaControlViewModel.PlayPauseButtonClickCommand}" Key="Space"/>
+        <KeyBinding Command="{Binding DescriptionInfoTabViewModel.DeleteSelectedSpaceOrDescription}" Key="Delete"/>
     </Window.InputBindings>
     
     <Grid>

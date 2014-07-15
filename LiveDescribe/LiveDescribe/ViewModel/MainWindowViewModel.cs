@@ -6,6 +6,7 @@ using LiveDescribe.Extensions;
 using LiveDescribe.Factories;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
+using LiveDescribe.Resources.UiStrings;
 using LiveDescribe.Utilities;
 using LiveDescribe.View;
 using Microsoft.Win32;
@@ -30,7 +31,7 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Constants
-        public const string DefaultWindowTitle = "Live Describe";
+        public readonly string DefaultWindowTitle = UiStrings.Program_Name;
         /// <summary>
         /// The span of time into a regular description that it can still be played.
         /// </summary>
@@ -69,7 +70,6 @@ namespace LiveDescribe.ViewModel
         public MainWindowViewModel(ILiveDescribePlayer mediaVideo)
         {
             DispatcherHelper.Initialize();
-            WindowTitle = DefaultWindowTitle;
 
             _spacecollectionviewmodel = new SpaceCollectionViewModel(mediaVideo);
             _loadingViewModel = new LoadingViewModel(100, null, 0, false);
@@ -104,8 +104,7 @@ namespace LiveDescribe.ViewModel
                     if (ProjectModified)
                     {
                         var result = MessageBoxFactory.ShowWarningQuestion(
-                            string.Format("The LiveDescribe project \"{0}\" has been modified." +
-                            " Do you want to save changes before closing?", _project.ProjectName));
+                            string.Format(UiStrings.MessageBox_SaveProjectWarning, _project.ProjectName));
 
                         if (result == MessageBoxResult.Yes)
                             SaveProject.Execute();
@@ -123,7 +122,7 @@ namespace LiveDescribe.ViewModel
 
                     OnProjectClosed();
 
-                    WindowTitle = DefaultWindowTitle;
+                    SetWindowTitle();
                 });
 
 
@@ -162,7 +161,7 @@ namespace LiveDescribe.ViewModel
             {
                 var projectChooser = new OpenFileDialog
                 {
-                    Filter = string.Format("LiveDescribe Files (*{0})|*{0}|All Files(*.*)|*.*",
+                    Filter = string.Format(UiStrings.OpenFileDialog_OpenProject,
                         Project.Names.ProjectExtension)
                 };
 
@@ -178,7 +177,7 @@ namespace LiveDescribe.ViewModel
                 }
                 catch (JsonSerializationException)
                 {
-                    MessageBoxFactory.ShowError("The selected project is missing file locations.");
+                    MessageBoxFactory.ShowError(UiStrings.MessageBox_OpenProjectFileMissingError);
                 }
             });
 
@@ -252,7 +251,7 @@ namespace LiveDescribe.ViewModel
                     var saveFileDialog = new SaveFileDialog
                     {
                         FileName = Path.GetFileNameWithoutExtension(_mediaControlViewModel.Path),
-                        Filter = "SubRip Files (*.srt)|*.srt"
+                        Filter = UiStrings.SaveFileDialog_ExportToSrt
                     };
 
                     saveFileDialog.ShowDialog();
@@ -267,7 +266,7 @@ namespace LiveDescribe.ViewModel
                     var saveFileDialog = new SaveFileDialog
                     {
                         FileName = Path.GetFileNameWithoutExtension(_mediaControlViewModel.Path),
-                        Filter = "SubRip Files (*.srt)|*.srt"
+                        Filter = UiStrings.SaveFileDialog_ExportToSrt
                     };
 
                     saveFileDialog.ShowDialog();
@@ -345,17 +344,12 @@ namespace LiveDescribe.ViewModel
             PropertyChanged += (sender, args) =>
             {
                 if (args.PropertyName == "ProjectModified")
-                {
-                    if (ProjectModified)
-                        WindowTitle = string.Format("{0}* - LiveDescribe", _project.ProjectName);
-                    else if (ProjectLoaded)
-                        WindowTitle = string.Format("{0} - LiveDescribe", _project.ProjectName);
-                    else
-                        WindowTitle = DefaultWindowTitle;
-                }
+                    SetWindowTitle();
             };
 
             #endregion
+
+            SetWindowTitle();
         }
         #endregion
 
@@ -575,7 +569,7 @@ namespace LiveDescribe.ViewModel
 
             //TODO: Delete description if not found, or ask for file location?
             Log.ErrorFormat("The description file could not be found at {0}", d.AudioFile);
-            MessageBoxFactory.ShowError("The audio file for description could not be found at " + d.AudioFile);
+            MessageBoxFactory.ShowError(string.Format(UiStrings.MessageBox_AudioFileNotFound, d.AudioFile));
         }
 
         /// <summary>
@@ -587,8 +581,6 @@ namespace LiveDescribe.ViewModel
             CloseProject.ExecuteIfCan();
 
             _project = p;
-
-            WindowTitle = string.Format("{0} - LiveDescribe", _project.ProjectName);
 
             //Set up environment
             Properties.Settings.Default.WorkingDirectory = _project.Folders.Project + "\\";
@@ -631,8 +623,9 @@ namespace LiveDescribe.ViewModel
             //Set Children
             _descriptioncollectionviewmodel.Project = _project;
 
-            //Ensure that project is not modified.
             ProjectModified = false;
+
+            SetWindowTitle();
         }
 
         public bool TryExit()
@@ -641,10 +634,9 @@ namespace LiveDescribe.ViewModel
             {
                 Log.Info("Program is attempting to exit with an unsaved project");
 
-                var text = string.Format("The LiveDescribe project \"{0}\" has been modified." +
-                    " Do you want to save changes before closing?", _project.ProjectName);
+                var text = string.Format(UiStrings.MessageBox_SaveProjectWarning, _project.ProjectName);
 
-                var result = MessageBox.Show(text, "Warning", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+                var result = MessageBoxFactory.ShowWarningQuestion(text);
 
                 if (result == MessageBoxResult.Yes)
                 {
@@ -685,6 +677,17 @@ namespace LiveDescribe.ViewModel
             }
         }
 
+        private void SetWindowTitle()
+        {
+            if (ProjectModified)
+                WindowTitle = string.Format(UiStrings.Window_Format_MainWindowProjectModified,
+                    _project.ProjectName, UiStrings.Program_Name);
+            else if (ProjectLoaded)
+                WindowTitle = string.Format(UiStrings.Window_Format_MainWindowProjectSaved,
+                    _project.ProjectName, UiStrings.Program_Name);
+            else
+                WindowTitle = DefaultWindowTitle;
+        }
         #endregion
 
         #region Event Handler Methods

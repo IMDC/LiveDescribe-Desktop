@@ -2,6 +2,7 @@
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Factories;
 using LiveDescribe.Model;
+using LiveDescribe.Resources.UiStrings;
 using LiveDescribe.Utilities;
 using System;
 using System.IO;
@@ -164,8 +165,7 @@ namespace LiveDescribe.ViewModel
             if (Directory.Exists(p.Folders.Project))
             {
                 var result = MessageBoxFactory.ShowWarningQuestion(
-                    string.Format("The folder {0} already exists. Do you wish to overwrite its contents?",
-                    p.Folders.Project));
+                    string.Format(UiStrings.MessageBox_OverwriteProjectWarning, p.Folders.Project));
 
                 Log.Warn("Project folder already exists");
 
@@ -191,7 +191,7 @@ namespace LiveDescribe.ViewModel
             //TODO: Catch individual exceptions?
             catch (Exception e)
             {
-                MessageBoxFactory.ShowError("An error occured while attempting to create the project.");
+                MessageBoxFactory.ShowError(UiStrings.MessageBox_ProjectCreationError);
 
                 Log.Error("An error occured when attempting to create files", e);
 

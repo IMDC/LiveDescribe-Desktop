@@ -239,7 +239,7 @@ namespace LiveDescribe.Model
         /// <summary>
         /// Called when a delete space command is executed
         /// </summary>
-        public void DeleteSpace()
+        private void DeleteSpace()
         {
             Log.Info("Space deleted");
             EventHandler handler = SpaceDeleteEvent;
@@ -250,7 +250,7 @@ namespace LiveDescribe.Model
         /// Called when the mouse is down on the space
         /// </summary>
         /// <param name="e"></param>
-        public void SpaceMouseDown(MouseEventArgs e)
+        private void SpaceMouseDown(MouseEventArgs e)
         {
             EventHandler<MouseEventArgs> handler = SpaceMouseDownEvent;
             if (handler != null) handler(this, e);
@@ -260,7 +260,7 @@ namespace LiveDescribe.Model
         /// Called when the mouse moves over the space
         /// </summary>
         /// <param name="e"></param>
-        public void SpaceMouseMove(MouseEventArgs e)
+        private void SpaceMouseMove(MouseEventArgs e)
         {
             EventHandler<MouseEventArgs> handler = SpaceMouseMoveEvent;
             if (handler != null) handler(this, e);
@@ -269,13 +269,13 @@ namespace LiveDescribe.Model
         /// <summary>
         /// Called when the mouse is up over a space
         /// </summary>
-        public void SpaceMouseUp(MouseEventArgs e)
+        private void SpaceMouseUp(MouseEventArgs e)
         {
             EventHandler<MouseEventArgs> handler = SpaceMouseUpEvent;
             if (handler != null) handler(this, e);
         }
 
-        public void GoToThisSpace()
+        private void GoToThisSpace()
         {
             EventHandler handler = GoToThisSpaceEvent;
             if (handler != null) handler(this, EventArgs.Empty);
