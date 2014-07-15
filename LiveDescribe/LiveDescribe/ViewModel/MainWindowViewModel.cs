@@ -613,7 +613,7 @@ namespace LiveDescribe.ViewModel
 
                 var text = string.Format(UiStrings.MessageBox_SaveProjectWarning, _project.ProjectName);
 
-                var result = MessageBoxFactory.ShowError(text);
+                var result = MessageBoxFactory.ShowWarningQuestion(text);
 
                 if (result == MessageBoxResult.Yes)
                 {
