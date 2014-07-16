@@ -5,6 +5,7 @@ using LiveDescribe.Events;
 using LiveDescribe.Extensions;
 using LiveDescribe.Factories;
 using LiveDescribe.Interfaces;
+using LiveDescribe.Managers;
 using LiveDescribe.Model;
 using LiveDescribe.Resources.UiStrings;
 using LiveDescribe.Utilities;
@@ -15,6 +16,7 @@ using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
@@ -288,12 +290,6 @@ namespace LiveDescribe.ViewModel
                 _mediaVideo.Stop();
                 OnMediaEnded(sender, e);
             };
-
-            _mediaControlViewModel.OnStrippingAudioCompleted += (sender, args) =>
-            {
-                _spacecollectionviewmodel.AddSpaces(_mediaControlViewModel.Spaces);
-                SaveProject.Execute();
-            };
             #endregion
 
             #region Property Changed Events
@@ -311,6 +307,19 @@ namespace LiveDescribe.ViewModel
             };
 
             #endregion
+
+            ProjectManager.Instance.ProjectLoaded += (sender, args) =>
+            {
+                _project = args.Value;
+
+                _mediaControlViewModel.LoadVideo(_project.Files.Video);
+
+                _spacecollectionviewmodel.AddSpaces(_project.Spaces.ToList());
+                _descriptioncollectionviewmodel.AddDescriptions(_project.Descriptions.ToList());
+                _descriptioncollectionviewmodel.Project = _project;
+                ProjectModified = false;
+                SetWindowTitle();
+            };
 
             SetWindowTitle();
         }
@@ -538,52 +547,7 @@ namespace LiveDescribe.ViewModel
         {
             CloseProject.ExecuteIfCan();
 
-            _project = p;
-
-            //Set up environment
-            Properties.Settings.Default.WorkingDirectory = _project.Folders.Project + "\\";
-
-            if (Directory.Exists(_project.Folders.Cache) && File.Exists(_project.Files.WaveForm))
-            {
-                var header = FileReader.ReadWaveFormHeader(_project);
-                var audioData = FileReader.ReadWaveFormFile(_project);
-                _mediaControlViewModel.Waveform = new Waveform(header, audioData);
-                _mediaControlViewModel.Path = _project.Files.Video;
-            }
-            else
-            {
-                Directory.CreateDirectory(_project.Folders.Cache);
-
-                _mediaControlViewModel.SetupAndStripAudio(_project);
-            }
-
-            if (Directory.Exists(_project.Folders.Descriptions))
-            {
-                if (File.Exists(_project.Files.Descriptions))
-                {
-                    var descriptions = FileReader.ReadDescriptionsFile(_project);
-                    _descriptioncollectionviewmodel.AddDescriptions(descriptions);
-                }
-            }
-            else
-            {
-                Directory.CreateDirectory(_project.Folders.Descriptions);
-            }
-
-            if (File.Exists(_project.Files.Spaces))
-            {
-                var spaces = FileReader.ReadSpacesFile(_project);
-                _spacecollectionviewmodel.AddSpaces(spaces);
-            }
-
-            _mediaVideo.CurrentState = LiveDescribeVideoStates.PausedVideo;
-
-            //Set Children
-            _descriptioncollectionviewmodel.Project = _project;
-
-            ProjectModified = false;
-
-            SetWindowTitle();
+            ProjectManager.Instance.LoadProject(p, _loadingViewModel);
         }
 
         private void CopyVideoAndSetProject(string source, Project project)

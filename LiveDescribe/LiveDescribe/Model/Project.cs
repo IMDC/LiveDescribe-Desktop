@@ -120,7 +120,7 @@ namespace LiveDescribe.Model
         public ProjectFolders Folders { private set; get; }
 
         [JsonIgnore]
-        public Waveform Waveform { private set; get; }
+        public Waveform Waveform { set; get; }
 
         [JsonProperty(Required = Required.Always)]
         public ObservableCollection<Space> Spaces { private set; get; }

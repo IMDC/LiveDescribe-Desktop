@@ -2,6 +2,7 @@
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Extensions;
 using LiveDescribe.Interfaces;
+using LiveDescribe.Managers;
 using LiveDescribe.Model;
 using LiveDescribe.Utilities;
 using System;
@@ -27,13 +28,13 @@ namespace LiveDescribe.ViewModel
         #region Instance Variables
         private readonly ILiveDescribePlayer _mediaVideo;
         private readonly LoadingViewModel _loadingViewModel;
-        private List<Space> _spaceData;
+        //private List<Space> _spaceData;
         private TimeSpan _positionTimeLabel;
         private double _originalVolume;
         private Waveform _waveform;
         private RelayCommand _playPauseButtonClickCommand;
 
-        public Project Project { get; set; }
+        //public Project Project { get; set; }
         #endregion
 
         #region Event Handlers
@@ -80,6 +81,11 @@ namespace LiveDescribe.ViewModel
                     VideoState = _mediaVideo.CurrentState;
                     RaisePropertyChanged("VideoState");
                 }
+            };
+
+            ProjectManager.Instance.ProjectLoaded += (sender, args) =>
+            {
+                Waveform = args.Value.Waveform;
             };
         }
         #endregion
@@ -346,13 +352,6 @@ namespace LiveDescribe.ViewModel
             get { return _waveform; }
         }
 
-        /// <summary>
-        /// Get the space data
-        /// </summary>
-        public List<Space> Spaces
-        {
-            get { return _spaceData; }
-        }
         #endregion
 
         #region Methods
@@ -368,42 +367,10 @@ namespace LiveDescribe.ViewModel
             _mediaVideo.CurrentState = LiveDescribeVideoStates.VideoNotLoaded;
         }
 
-        /// <summary>
-        /// This function is used to setup all the events for the background worker and to run it to
-        /// strip the audio from the video
-        /// </summary>
-        public void SetupAndStripAudio(Project p)
+        public void LoadVideo(string videoPath)
         {
-            //changes the Path variable that is binded to the media element
-            Path = p.Files.Video;
-            Project = p;
-
-            var worker = new BackgroundWorker { WorkerReportsProgress = true, };
-
-            //Strip the audio from the given project video
-            worker.DoWork += (sender, args) =>
-            {
-                var audioOperator = new AudioUtility(Project);
-                audioOperator.StripAudio(worker);
-                var waveFormData = audioOperator.ReadWavData(worker);
-                var audioHeader = audioOperator.Header;
-                _waveform = new Waveform(audioHeader, waveFormData);
-                _spaceData = AudioAnalyzer.FindSpaces(_waveform);
-            };
-
-            //Notify subscribers of stripping completion
-            worker.RunWorkerCompleted += (sender, args) =>
-            {
-                EventHandler handler = OnStrippingAudioCompleted;
-                if (handler == null) return;
-                handler(this, EventArgs.Empty);
-            };
-
-            worker.ProgressChanged += (sender, args) => _loadingViewModel.SetProgress("Importing Video", args.ProgressPercentage);
-
-            _loadingViewModel.SetProgress("Importing Video", 0);
-            _loadingViewModel.Visible = true;
-            worker.RunWorkerAsync();
+            Path = videoPath;
+            _mediaVideo.CurrentState = LiveDescribeVideoStates.PausedVideo;
         }
 
         /// <summary>
