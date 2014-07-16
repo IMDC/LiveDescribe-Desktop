@@ -16,8 +16,10 @@
                 Property="Margin"
                 Value="5" />
         </Style>
-        <converters:BoolToRecordingContentConverter
-            x:Key="BoolToRecordingContentConverter" />
+        <converters:BoolToContentConverter
+            x:Key="IsRecordingConverter"
+            TrueContent="{x:Static s:UiStrings.Command_StopRecord}"
+            FalseContent="{x:Static s:UiStrings.Command_Record}" />
     </UserControl.Resources>
 
     <Grid>
@@ -35,8 +37,7 @@
             <Button
                 Command="{Binding RecordButtonClickCommand}"
                 Style="{StaticResource ControlPanelStyle}"
-                Content="{Binding Path=Recorder.IsRecording,
-                Converter={StaticResource BoolToRecordingContentConverter}}"
+                Content="{Binding Path=Recorder.IsRecording, Converter={StaticResource IsRecordingConverter}}"
                 HorizontalAlignment="Center"
                 Width="100"
                 MinHeight="20" />

@@ -232,6 +232,15 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Stop.
+        /// </summary>
+        public static string Command_StopPlaying {
+            get {
+                return ResourceManager.GetString("Command_StopPlaying", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Stop Recording.
         /// </summary>
         public static string Command_StopRecord {
@@ -630,9 +639,27 @@ namespace LiveDescribe.Resources.UiStrings {
         /// <summary>
         ///   Looks up a localized string similar to The audio file for description could not be found at {0}.
         /// </summary>
-        public static string MessageBox_AudioFileNotFound {
+        public static string MessageBox_Format_AudioFileNotFound {
             get {
-                return ResourceManager.GetString("MessageBox_AudioFileNotFound", resourceCulture);
+                return ResourceManager.GetString("MessageBox_Format_AudioFileNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The folder {0} already exists. Do you wish to overwrite its contents?.
+        /// </summary>
+        public static string MessageBox_Format_OverwriteProjectWarning {
+            get {
+                return ResourceManager.GetString("MessageBox_Format_OverwriteProjectWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The LiveDescribe project &quot;{0}&quot; has been modified. Do you want to save changes before closing?.
+        /// </summary>
+        public static string MessageBox_Format_SaveProjectWarning {
+            get {
+                return ResourceManager.GetString("MessageBox_Format_SaveProjectWarning", resourceCulture);
             }
         }
         
@@ -655,29 +682,11 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The folder {0} already exists. Do you wish to overwrite its contents?.
-        /// </summary>
-        public static string MessageBox_OverwriteProjectWarning {
-            get {
-                return ResourceManager.GetString("MessageBox_OverwriteProjectWarning", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to An error occured while attempting to create the project..
         /// </summary>
         public static string MessageBox_ProjectCreationError {
             get {
                 return ResourceManager.GetString("MessageBox_ProjectCreationError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The LiveDescribe project &quot;{0}&quot; has been modified. Do you want to save changes before closing?.
-        /// </summary>
-        public static string MessageBox_SaveProjectWarning {
-            get {
-                return ResourceManager.GetString("MessageBox_SaveProjectWarning", resourceCulture);
             }
         }
         
@@ -702,9 +711,9 @@ namespace LiveDescribe.Resources.UiStrings {
         /// <summary>
         ///   Looks up a localized string similar to LiveDescribe Files (*{0})|*{0}|All Files(*.*)|*.*.
         /// </summary>
-        public static string OpenFileDialog_OpenProject {
+        public static string OpenFileDialog_Format_OpenProject {
             get {
-                return ResourceManager.GetString("OpenFileDialog_OpenProject", resourceCulture);
+                return ResourceManager.GetString("OpenFileDialog_Format_OpenProject", resourceCulture);
             }
         }
         
