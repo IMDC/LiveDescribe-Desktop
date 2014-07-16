@@ -133,25 +133,7 @@ namespace LiveDescribe.ViewModel
                     return;
 
                 if (viewModel.CopyVideo)
-                {
-                    LoadingViewModel.Visible = true;
-
-                    //Copy video file in background while updating the LoadingBorder
-                    var copyVideoWorker = new BackgroundWorker
-                    {
-                        WorkerReportsProgress = true,
-                    };
-                    var copier = new ProgressFileCopier();
-                    copyVideoWorker.DoWork += (sender, args) =>
-                    {
-                        copier.ProgressChanged += (o, eventArgs) => copyVideoWorker.ReportProgress(eventArgs.ProgressPercentage);
-                        copier.CopyFile(viewModel.VideoPath, viewModel.Project.Files.Video);
-                    };
-                    copyVideoWorker.ProgressChanged += (sender, args) => LoadingViewModel.SetProgress("Copying Video File", args.ProgressPercentage);
-                    copyVideoWorker.RunWorkerCompleted += (sender, args) => SetProject(viewModel.Project);
-
-                    copyVideoWorker.RunWorkerAsync();
-                }
+                    CopyVideoAndSetProject(viewModel.VideoPath, viewModel.Project);
                 else
                     SetProject(viewModel.Project);
             });
@@ -602,6 +584,28 @@ namespace LiveDescribe.ViewModel
             ProjectModified = false;
 
             SetWindowTitle();
+        }
+
+        private void CopyVideoAndSetProject(string source, Project project)
+        {
+            LoadingViewModel.Visible = true;
+
+            //Copy video file in background while updating the LoadingBorder
+            var copyVideoWorker = new BackgroundWorker
+            {
+                WorkerReportsProgress = true,
+            };
+            var copier = new ProgressFileCopier();
+            copyVideoWorker.DoWork += (sender, args) =>
+            {
+                copier.ProgressChanged += (o, eventArgs) => copyVideoWorker.ReportProgress(eventArgs.ProgressPercentage);
+                copier.CopyFile(source, project.Files.Video);
+            };
+            copyVideoWorker.ProgressChanged +=
+                (sender, args) => LoadingViewModel.SetProgress("Copying Video File", args.ProgressPercentage);
+            copyVideoWorker.RunWorkerCompleted += (sender, args) => SetProject(project);
+
+            copyVideoWorker.RunWorkerAsync();
         }
 
         public bool TryExit()
