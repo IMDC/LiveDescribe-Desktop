@@ -13,6 +13,7 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -25,7 +26,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -186,6 +186,7 @@
     </Compile>
     <Compile Include="Utilities\AudioAnalyzer.cs" />
     <Compile Include="Utilities\CustomCursors.cs" />
+    <Compile Include="Utilities\DescriptionExportUtility.cs" />
     <Compile Include="Utilities\DescriptionPlayer.cs" />
     <Compile Include="Utilities\DescriptionRecorder.cs" />
     <Compile Include="Utilities\FileDeleter.cs" />
@@ -201,12 +202,16 @@
     <Compile Include="ViewModel\CountdownControlViewModel.cs" />
     <Compile Include="ViewModel\DescriptionCanvasViewModel.cs" />
     <Compile Include="ViewModel\DescriptionInfoTabViewModel.cs" />
+    <Compile Include="ViewModel\ExportWindowViewModel.cs" />
     <Compile Include="ViewModel\LoadingViewModel.cs" />
     <Compile Include="ViewModel\MarkingSpacesControlViewModel.cs" />
     <Compile Include="ViewModel\SpaceRecordingViewModel.cs" />
     <Compile Include="ViewModel\SpaceCollectionViewModel.cs" />
     <Compile Include="View\AboutInfoView.xaml.cs">
       <DependentUpon>AboutInfoView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ExportWindow.xaml.cs">
+      <DependentUpon>ExportWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\NewProjectView.xaml.cs">
       <DependentUpon>NewProjectView.xaml</DependentUpon>
@@ -263,6 +268,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\AboutInfoView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ExportWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -356,6 +365,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Utilities\_ffmpeg.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Resource Include="Resources\Cursors\grab.cur" />
     <Resource Include="Resources\Cursors\grabbing.cur" />
     <Resource Include="Resources\Images\LiveDescribe-Splashscreen.png" />
