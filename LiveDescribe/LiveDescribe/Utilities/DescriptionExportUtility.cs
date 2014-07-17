@@ -229,7 +229,7 @@ namespace LiveDescribe.Utilities
             //outFileName = String.Join("\\", filePathSplit);
             outFileName = string.Format("{0}\\{1}.{2}", exportPath, exportName, ext);
  
-            string command = " -i \"" + videoPath + "\" -i \"" + audioPath + "\" -c copy  -map 0:1 -map 1:0 -y \"" + outFileName + "\"";
+            string command = " -i \"" + videoPath + "\" -i \"" + audioPath + "\" -c:v copy  -map 0:1 -map 1:0 -y \"" + outFileName + "\"";
             ffmpegCommand(command, true);
 
             return outFileName;
