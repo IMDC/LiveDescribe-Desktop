@@ -10,6 +10,11 @@ namespace LiveDescribe.Events
     /// </typeparam>
     public class EventArgs<T> : EventArgs
     {
+        public static implicit operator EventArgs<T>(T value)
+        {
+            return new EventArgs<T>(value);
+        }
+
         /// <summary>
         /// The Value contained in this EventArgs
         /// </summary>

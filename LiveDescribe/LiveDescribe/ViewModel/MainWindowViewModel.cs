@@ -64,7 +64,7 @@ namespace LiveDescribe.ViewModel
         public event EventHandler PauseRequested;
         public event EventHandler MuteRequested;
         public event EventHandler MediaEnded;
-        public event EventHandler<EventArgs<Description>> OnPlayingDescription;
+        public event EventHandler<EventArgs<Description>> PlayingDescription;
         #endregion
 
         #region Constructors
@@ -486,7 +486,7 @@ namespace LiveDescribe.ViewModel
                     {
                         PrepareForDescription(description);
                         DescriptionPlayer.PlayInVideo(description, videoPosition);
-                        OnPlayingDescription(this, new EventArgs<Description>(description));
+                        OnPlayingDescription(description);
                     }
                 }
                 catch (Exception ex)
@@ -732,6 +732,12 @@ namespace LiveDescribe.ViewModel
         {
             EventHandler handler = MediaEnded;
             if (handler != null) handler(sender, e);
+        }
+
+        private void OnPlayingDescription(Description description)
+        {
+            var handler = PlayingDescription;
+            if (handler != null) handler(this, description);
         }
         #endregion
     }
