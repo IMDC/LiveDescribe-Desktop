@@ -118,6 +118,7 @@
                             <Setter
                                 Property="ContextMenu"
                                 Value="{StaticResource SpaceItemContextMenu}" />
+                            <EventSetter Event="MouseDoubleClick" Handler="Item_DoubleClick"/>
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.View>
@@ -170,6 +171,7 @@
                             <Setter
                                 Property="ContextMenu"
                                 Value="{StaticResource RegularDescriptionContextMenu}" />
+                            <EventSetter Event="MouseDoubleClick" Handler="Item_DoubleClick"/>
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.SelectedItem>
@@ -226,6 +228,7 @@
                             <Setter
                                 Property="ContextMenu"
                                 Value="{StaticResource ExtendedDescriptionContextMenu}" />
+                            <EventSetter Event="MouseDoubleClick" Handler="Item_DoubleClick"/>
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.SelectedItem>
