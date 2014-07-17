@@ -74,7 +74,7 @@ namespace LiveDescribe.ViewModel
 
             _spacecollectionviewmodel = new SpaceCollectionViewModel(mediaVideo);
             _loadingViewModel = new LoadingViewModel(100, null, 0, false);
-            _mediaControlViewModel = new MediaControlViewModel(mediaVideo, _loadingViewModel);
+            _mediaControlViewModel = new MediaControlViewModel(mediaVideo);
             _preferences = new PreferencesViewModel();
             _descriptioncollectionviewmodel = new DescriptionCollectionViewModel(mediaVideo, _mediaControlViewModel);
             _descriptionInfoTabViewModel = new DescriptionInfoTabViewModel(_descriptioncollectionviewmodel, _spacecollectionviewmodel);

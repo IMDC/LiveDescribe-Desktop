@@ -21,6 +21,7 @@ namespace LiveDescribe.Managers
 
         public static readonly ProjectManager Instance = new ProjectManager();
 
+        public event EventHandler<EventArgs<List<Description>>> DescriptionsLoaded;
         public event EventHandler<EventArgs<Project>> ProjectLoaded;
 
         public Project CurrentProject { private set; get; }

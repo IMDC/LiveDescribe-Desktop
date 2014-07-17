@@ -4,10 +4,7 @@ using LiveDescribe.Extensions;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Managers;
 using LiveDescribe.Model;
-using LiveDescribe.Utilities;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 
 namespace LiveDescribe.ViewModel
 {
@@ -27,7 +24,6 @@ namespace LiveDescribe.ViewModel
 
         #region Instance Variables
         private readonly ILiveDescribePlayer _mediaVideo;
-        private readonly LoadingViewModel _loadingViewModel;
         //private List<Space> _spaceData;
         private TimeSpan _positionTimeLabel;
         private double _originalVolume;
@@ -54,10 +50,9 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Constructors
-        public MediaControlViewModel(ILiveDescribePlayer mediaVideo, LoadingViewModel loadingViewModel)
+        public MediaControlViewModel(ILiveDescribePlayer mediaVideo)
         {
             _mediaVideo = mediaVideo;
-            _loadingViewModel = loadingViewModel;
             PlayCommand = new RelayCommand(Play, PlayCheck);
             PauseCommand = new RelayCommand(Pause, PauseCheck);
             MuteCommand = new RelayCommand(Mute, () => true);
