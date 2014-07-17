@@ -208,10 +208,6 @@ namespace LiveDescribe.ViewModel
 
                     if (viewModel.DialogResult != true)
                         return;
-
-
-                   // DescriptionExportUtility exporter = new DescriptionExportUtility(_project,_mediaVideo.Path, _mediaVideo.DurationSeconds,  _descriptioncollectionviewmodel.RegularDescriptions.ToList());
-                   // exporter.exportVideoWithDescriptions();
                 });
 
             ClearCache = new RelayCommand(

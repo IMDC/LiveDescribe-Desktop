@@ -58,10 +58,12 @@ namespace LiveDescribe.Utilities
         {
             if (_descriptionList.Count > 0)
             {
-                _operations = compressAudio == true ? 4 : 3;
+                _operations = compressAudio == true ? 6 : 5;
                 _progress = 0;
 
                 string audioTrack = createDescriptionTrack();
+                string videoAudio = stripVideoAudio(_videoFile);
+                audioTrack = muxAudioFiles(videoAudio, audioTrack);
                
                 if (compressAudio)
                 {   
@@ -94,45 +96,55 @@ namespace LiveDescribe.Utilities
         private string createDescriptionTrack()
         {
             Log.Info("Preparing to Create Description Audio");
+            string init_silence;
             List<string> concat_list = new List<string>();
             List<Description> descriptions = new List<Description>(_descriptionList);
             string outFileName =  _project.Folders.Project + "\\descriptions\\combined_description_track.wav";
            
             descriptions.Sort((x, y) => x.StartInVideo.CompareTo(y.StartInVideo));
-            string init_silence = createBlankAudio(descriptions[0].StartInVideo / 1000); //create silence track for the begining of the description track
-            concat_list.Add(init_silence);
 
+            if (descriptions[0].StartInVideo > 0)
+            { 
+                init_silence = createBlankAudio(descriptions[0].StartInVideo / 1000); //create silence track for the begining of the description track
+                concat_list.Add(init_silence);
+            }
+           
             for ( int i = 0; i < descriptions.Count; i++ )
             {
                 double delta;
 
                 if (i != descriptions.Count - 1) //not the last item
                 {
-                    delta = descriptions[i + 1].StartInVideo - (descriptions[i].StartInVideo / 1000);
+                    delta = (descriptions[i + 1].StartInVideo - descriptions[i].EndInVideo) / 1000;
+                    
                 }
                 else
                 {
-                    delta = _videoDurationSeconds - (descriptions[i].StartInVideo / 1000);
+                    delta = 0; // _videoDurationSeconds - (descriptions[i].StartInVideo / 1000);
                 }
-                concat_list.Add(appendSilence(descriptions[i].AudioFile, delta));
 
+                concat_list.Add(appendSilence(descriptions[i].AudioFile, delta));
+                
                 #region progress update
                 double local_progress = (( (i + 1) * 100 )/ descriptions.Count) / _operations;
                 _progressWorker.ReportProgress((int)Math.Round(_progress + local_progress));
-                //Console.WriteLine((int)Math.Round(_progress + local_progress));
                 #endregion
             }
 
             _progress += (100 / _operations);
 
             string command = "";
+            string sub_command = "";
+            int j = 0;
 
             foreach (String file in concat_list)
             {
                 command +=  " -i \"" + file + "\"";
+                sub_command += "[" + j + ":0]";
+                j++;
             }
 
-            command += " -filter_complex concat=n=" + concat_list.Count + ":v=0:a=1 -y " + "\""
+            command += " -filter_complex " + sub_command + "concat=n=" + concat_list.Count + ":v=0:a=1[out] -map [out] -y " + "\""
                         + outFileName + "\"";
             ffmpegCommand(command, true);
 
@@ -144,7 +156,6 @@ namespace LiveDescribe.Utilities
                     File.Delete(file);
                 }
 
-                File.Delete(init_silence);
             }
             catch (DirectoryNotFoundException ex)
             {
@@ -189,7 +200,6 @@ namespace LiveDescribe.Utilities
             filePathSplit[filePathSplit.Length - 1] = "export_" + filePathSplit[filePathSplit.Length - 1];
             outFileName = String.Join("\\", filePathSplit);
 
-
             string command = " -i \"" + audioFile + "\" -filter_complex aevalsrc=0::d=" + duration 
                             + "[silence];[0:a][silence]concat=n=2:v=0:a=1[out] -map [out] -y \"" 
                             + outFileName +"\"";
@@ -219,19 +229,37 @@ namespace LiveDescribe.Utilities
             //outFileName = String.Join("\\", filePathSplit);
             outFileName = string.Format("{0}\\{1}.{2}", exportPath, exportName, ext);
  
-            string command = " -i \"" + videoPath + "\" -i \"" + audioPath + "\" -c copy -map 0:0 -map 0:1 -map 1:0 -y \"" + outFileName + "\"";
+            string command = " -i \"" + videoPath + "\" -i \"" + audioPath + "\" -c copy  -map 0:1 -map 1:0 -y \"" + outFileName + "\"";
             ffmpegCommand(command, true);
 
             return outFileName;
         }
 
         /// <summary>
-        ///             NOT YET IMPLEMENTED!
+        /// Mix together given audio files and take the output to
+        /// have the length of the first audio file
+        /// </summary>
+        /// <param name="videoAudio"></param>
+        /// <param name="descriptionAudio"></param>
+        /// <returns>Absolute path to the file created</returns>
+        private string muxAudioFiles(string videoAudio, string descriptionAudio)
+        {
+            string outFile = _project.Folders.Descriptions + "\\combined_description_audio.wav";
+            string command = string.Format(" -i {0} -i {1} -filter_complex amix=inputs=2:duration=first {2}",
+                                       videoAudio, descriptionAudio, outFile);
+            ffmpegCommand(command, true);
+
+            return outFile;
+        }
+
+        /// <summary>
+        ///      
         /// </summary>
         /// <param name="videoPath"></param>
-        /// <returns></returns>
+        /// <returns>Absolute path to the file created</returns>
         private string stripVideoAudio(string videoPath)
         {
+            Log.Info("Stripping audio from: " + videoPath);
             string[] separator = new string[] { "\\" };
             string[] filePathSplit;
             string outFileName;
@@ -241,7 +269,8 @@ namespace LiveDescribe.Utilities
             filePathSplit[filePathSplit.Length - 1] = "export_stripped_video.wav";
             outFileName = String.Join("\\", filePathSplit);
 
-
+            string command = string.Format(" -i {0} -ac 2 -ab 160k -ar 44100 -f wav -vn -y {1}", videoPath, outFileName);
+            ffmpegCommand(command, true);
 
             return outFileName;
         }
@@ -325,6 +354,7 @@ namespace LiveDescribe.Utilities
                     while (!input.EndOfStream)
                     {
                         string text = input.ReadLine();
+                        Console.WriteLine("FFMPEG: " + text);
                         string word = "";
                         for (int i = 0; i < text.Length; i++)
                         {
