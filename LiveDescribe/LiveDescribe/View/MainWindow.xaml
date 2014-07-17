@@ -168,7 +168,8 @@
                         Name="TimeLineScrollViewer"
                         HorizontalScrollBarVisibility="Visible"
                         VerticalScrollBarVisibility="Auto"
-                        SizeChanged="TimeLineScrollViewer_OnSizeChanged">
+                        SizeChanged="TimeLineScrollViewer_OnSizeChanged"
+                        VirtualizingPanel.IsVirtualizing="True">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition
