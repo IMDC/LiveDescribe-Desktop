@@ -22,6 +22,7 @@ namespace LiveDescribe.Managers
 
         #region Fields
         private readonly LoadingViewModel _loadingViewModel;
+        private readonly ObservableCollection<Space> _spaces;
         #endregion
 
         #region Events
@@ -35,13 +36,19 @@ namespace LiveDescribe.Managers
         #region Properties
         public Project Project { private set; get; }
         public ObservableCollection<Description> Descriptions { set; get; }
-        public ObservableCollection<Space> Spaces { set; get; }
+
+        public ObservableCollection<Space> Spaces
+        {
+            get { return _spaces; }
+        }
+
         #endregion
 
         #region Constructor
         public ProjectManager(LoadingViewModel loadingViewModel)
         {
             _loadingViewModel = loadingViewModel;
+            _spaces = new ObservableCollection<Space>();
         }
         #endregion
 

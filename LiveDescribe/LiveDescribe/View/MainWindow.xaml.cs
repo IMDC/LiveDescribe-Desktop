@@ -296,7 +296,7 @@ namespace LiveDescribe.View
 
             #region Event Listeners for SpaceCollectionViewModel
 
-            _spaceCollectionViewModel.SpaceAddedEvent += (sender, e) =>
+            _spaceCollectionViewModel.SpaceAdded += (sender, e) =>
             {
                 //Adding a space depends on where you right clicked so we create and add it in the view
                 Space space = e.Space;

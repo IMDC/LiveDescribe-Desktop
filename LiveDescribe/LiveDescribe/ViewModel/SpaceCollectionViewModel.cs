@@ -17,13 +17,14 @@ namespace LiveDescribe.ViewModel
         public const double MinSpaceLengthInMSecs = 333;
 
         #region Instance Variables
-        private ObservableCollection<Space> _spaces;
+        private readonly ProjectManager _projectManager;
+        // ReSharper disable once NotAccessedField.Local
         private ObservableCollectionIndexer<Space> _indexer;
         private readonly ILiveDescribePlayer _videoPlayer;
         #endregion
 
         #region Event Handlers
-        public EventHandler<SpaceEventArgs> SpaceAddedEvent;
+        public event EventHandler<SpaceEventArgs> SpaceAdded;
 
         /// <summary>
         /// Requests to a handler what to set the StartInVideo and EndInVideo time values for the
@@ -35,12 +36,11 @@ namespace LiveDescribe.ViewModel
         #region Constructors
         public SpaceCollectionViewModel(ILiveDescribePlayer videoPlayer, ProjectManager projectManager)
         {
-            Spaces = new ObservableCollection<Space>();
+            _projectManager = projectManager;
             _indexer = new ObservableCollectionIndexer<Space>(Spaces);
 
             _videoPlayer = videoPlayer;
 
-            AddSpaceCommand = new RelayCommand(AddSpace, () => true);
             GetNewSpaceTime = new RelayCommand(
                 canExecute: () => _videoPlayer.CurrentState != LiveDescribeVideoStates.VideoNotLoaded,
                 execute: () =>
@@ -50,18 +50,12 @@ namespace LiveDescribe.ViewModel
                     AddSpace(s);
                 });
 
-            projectManager.Spaces = Spaces;
-            projectManager.SpacesAudioAnalysisCompleted += (sender, args) => AddSpaces(args.Value);
-            projectManager.SpacesLoaded += (sender, args) => AddSpaces(args.Value);
+            _projectManager.SpacesAudioAnalysisCompleted += (sender, args) => AddSpaces(args.Value);
+            _projectManager.SpacesLoaded += (sender, args) => AddSpaces(args.Value);
         }
         #endregion
 
         #region Commands
-        /// <summary>
-        /// Command used for when a space is added
-        /// </summary>
-        public RelayCommand AddSpaceCommand { get; private set; }
-
         public ICommand GetNewSpaceTime { get; private set; }
         #endregion
 
@@ -71,17 +65,12 @@ namespace LiveDescribe.ViewModel
         /// </summary>
         public ObservableCollection<Space> Spaces
         {
-            set
-            {
-                _spaces = value;
-                RaisePropertyChanged();
-            }
-            get { return _spaces; }
+            get { return _projectManager.Spaces; }
         }
 
         #endregion
 
-        #region Binding Functions
+        #region Methods
         /// <summary>
         /// Method that gets called when adding a space
         /// </summary>
@@ -92,14 +81,10 @@ namespace LiveDescribe.ViewModel
 
         public void AddSpace(Space space)
         {
-            EventHandler<SpaceEventArgs> handler = SpaceAddedEvent;
-            if (handler != null) handler(this, new SpaceEventArgs(space));
+            OnSpaceAdded(space);
             Spaces.Add(space);
             SetupEventsOnSpace(space);
         }
-        #endregion
-
-        #region Methods
 
         /// <summary>
         /// Setup all the events on space that don't require any info from the UI
@@ -128,6 +113,12 @@ namespace LiveDescribe.ViewModel
         {
             var handler = RequestSpaceTime;
             if (handler != null) handler(this, new SpaceEventArgs(s));
+        }
+
+        private void OnSpaceAdded(Space space)
+        {
+            EventHandler<SpaceEventArgs> handler = SpaceAdded;
+            if (handler != null) handler(this, new SpaceEventArgs(space));
         }
         #endregion
     }
