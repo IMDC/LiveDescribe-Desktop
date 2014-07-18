@@ -172,20 +172,8 @@ namespace LiveDescribe.ViewModel
 
             SaveProject = new RelayCommand(
                 canExecute: () => ProjectModified,
-                execute: () =>
-                {
-                    FileWriter.WriteProjectFile(_project);
-
-                    if (!Directory.Exists(_project.Folders.Cache))
-                        Directory.CreateDirectory(_project.Folders.Cache);
-
-                    FileWriter.WriteWaveFormHeader(_project, _mediaControlViewModel.Waveform.Header);
-                    FileWriter.WriteWaveFormFile(_project, _mediaControlViewModel.Waveform.Data);
-                    FileWriter.WriteDescriptionsFile(_project, _descriptioncollectionviewmodel.AllDescriptions);
-                    FileWriter.WriteSpacesFile(_project, _spacecollectionviewmodel.Spaces);
-
-                    ProjectModified = false;
-                });
+                execute: () => _projectManager.SaveProject()
+            );
 
             ClearCache = new RelayCommand(
                 canExecute: () => ProjectLoaded,
@@ -316,6 +304,7 @@ namespace LiveDescribe.ViewModel
 
             #endregion
 
+            #region ProjectManager Events
             _projectManager.ProjectLoaded += (sender, args) =>
             {
                 _project = args.Value;
@@ -327,6 +316,11 @@ namespace LiveDescribe.ViewModel
                 SetWindowTitle();
             };
 
+            _projectManager.ProjectSaved += (sender, args) =>
+            {
+                ProjectModified = false;
+            };
+            #endregion
             SetWindowTitle();
         }
         #endregion

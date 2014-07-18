@@ -96,6 +96,7 @@ namespace LiveDescribe.ViewModel
             ExtendedDescriptions = new ObservableCollection<Description>();
             _extendedDescriptionIndexer = new ObservableCollectionIndexer<Description>(ExtendedDescriptions);
 
+            projectManager.Descriptions = AllDescriptions;
             projectManager.DescriptionsLoaded += (sender, args) => AddDescriptions(args.Value);
         }
         #endregion

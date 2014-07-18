@@ -20,20 +20,30 @@ namespace LiveDescribe.Managers
             (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         #endregion
 
+        #region Fields
         private readonly LoadingViewModel _loadingViewModel;
+        #endregion
 
+        #region Events
         public event EventHandler<EventArgs<List<Description>>> DescriptionsLoaded;
         public event EventHandler<EventArgs<List<Space>>> SpacesLoaded;
         public event EventHandler<EventArgs<List<Space>>> SpacesAudioAnalysisCompleted;
-
         public event EventHandler<EventArgs<Project>> ProjectLoaded;
+        public event EventHandler ProjectSaved;
+        #endregion
 
-        public Project CurrentProject { private set; get; }
+        #region Properties
+        public Project Project { private set; get; }
+        public ObservableCollection<Description> Descriptions { set; get; }
+        public ObservableCollection<Space> Spaces { set; get; }
+        #endregion
 
+        #region Constructor
         public ProjectManager(LoadingViewModel loadingViewModel)
         {
             _loadingViewModel = loadingViewModel;
         }
+        #endregion
 
         #region ProjectCreation
         /// <summary>
@@ -200,13 +210,28 @@ namespace LiveDescribe.Managers
         {
             Properties.Settings.Default.WorkingDirectory = project.Folders.Project + "\\";
 
-            CurrentProject = project;
+            Project = project;
             OnProjectLoaded(project);
             Log.InfoFormat("Project \"{0}\" loaded successfully", project.ProjectName);
 
             _loadingViewModel.Visible = false;
         }
         #endregion
+
+        public void SaveProject()
+        {
+            FileWriter.WriteProjectFile(Project);
+
+            if (!Directory.Exists(Project.Folders.Cache))
+                Directory.CreateDirectory(Project.Folders.Cache);
+
+            FileWriter.WriteWaveFormHeader(Project, Project.Waveform.Header);
+            FileWriter.WriteWaveFormFile(Project, Project.Waveform.Data);
+            FileWriter.WriteDescriptionsFile(Project, Descriptions);
+            FileWriter.WriteSpacesFile(Project, Spaces);
+
+            OnProjectSaved();
+        }
 
         #region Event Invokations
 
@@ -233,6 +258,13 @@ namespace LiveDescribe.Managers
             var handler = ProjectLoaded;
             if (handler != null) handler(this, new EventArgs<Project>(project));
         }
+
+        private void OnProjectSaved()
+        {
+            var handler = ProjectSaved;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
         #endregion
     }
 }
