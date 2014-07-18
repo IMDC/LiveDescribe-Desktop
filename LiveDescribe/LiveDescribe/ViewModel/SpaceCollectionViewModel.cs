@@ -50,6 +50,7 @@ namespace LiveDescribe.ViewModel
                     AddSpace(s);
                 });
 
+            ProjectManager.Instance.SpacesAudioAnalysisCompleted += (sender, args) => AddSpaces(args.Value);
             ProjectManager.Instance.SpacesLoaded += (sender, args) => AddSpaces(args.Value);
         }
         #endregion

@@ -314,8 +314,6 @@ namespace LiveDescribe.ViewModel
 
                 _mediaControlViewModel.LoadVideo(_project.Files.Video);
 
-                _spacecollectionviewmodel.AddSpaces(_project.Spaces.ToList());
-                _descriptioncollectionviewmodel.AddDescriptions(_project.Descriptions.ToList());
                 _descriptioncollectionviewmodel.Project = _project;
                 ProjectModified = false;
                 SetWindowTitle();

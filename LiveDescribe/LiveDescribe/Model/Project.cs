@@ -122,12 +122,6 @@ namespace LiveDescribe.Model
         [JsonIgnore]
         public Waveform Waveform { set; get; }
 
-        [JsonProperty(Required = Required.Always)]
-        public ObservableCollection<Space> Spaces { private set; get; }
-
-        [JsonProperty(Required = Required.Always)]
-        public ObservableCollection<Description> Descriptions { private set; get; }
-
         /// <summary>
         /// Empty Constructor to allow for JSON serialization.
         /// </summary>
@@ -172,9 +166,6 @@ namespace LiveDescribe.Model
             }
             else
                 Files.Video = ProjectFile.FromAbsolutePath(videoPath, Folders.Project);
-
-            Spaces = new ObservableCollection<Space>();
-            Descriptions = new ObservableCollection<Description>();
         }
 
         /// <summary>
