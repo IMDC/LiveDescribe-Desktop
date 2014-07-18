@@ -147,9 +147,7 @@ namespace LiveDescribe.ViewModel
             else
                 Log.Info("Attempting to create a project with a video located outside of project");
 
-            var projectManager = ProjectManager.Instance;
-
-            bool success = projectManager.TryCreateProjectFileAndFolder(project);
+            bool success = ProjectManager.TryCreateProjectFileAndFolder(project);
 
             if (!success)
                 return;

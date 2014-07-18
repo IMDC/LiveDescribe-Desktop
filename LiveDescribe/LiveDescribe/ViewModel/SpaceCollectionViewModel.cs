@@ -33,7 +33,7 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Constructors
-        public SpaceCollectionViewModel(ILiveDescribePlayer videoPlayer)
+        public SpaceCollectionViewModel(ILiveDescribePlayer videoPlayer, ProjectManager projectManager)
         {
             Spaces = new ObservableCollection<Space>();
             _indexer = new ObservableCollectionIndexer<Space>(Spaces);
@@ -50,8 +50,8 @@ namespace LiveDescribe.ViewModel
                     AddSpace(s);
                 });
 
-            ProjectManager.Instance.SpacesAudioAnalysisCompleted += (sender, args) => AddSpaces(args.Value);
-            ProjectManager.Instance.SpacesLoaded += (sender, args) => AddSpaces(args.Value);
+            projectManager.SpacesAudioAnalysisCompleted += (sender, args) => AddSpaces(args.Value);
+            projectManager.SpacesLoaded += (sender, args) => AddSpaces(args.Value);
         }
         #endregion
 

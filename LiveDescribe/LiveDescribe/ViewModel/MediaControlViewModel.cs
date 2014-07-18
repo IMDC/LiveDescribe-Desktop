@@ -50,7 +50,7 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Constructors
-        public MediaControlViewModel(ILiveDescribePlayer mediaVideo)
+        public MediaControlViewModel(ILiveDescribePlayer mediaVideo, ProjectManager projectManager)
         {
             _mediaVideo = mediaVideo;
             PlayCommand = new RelayCommand(Play, PlayCheck);
@@ -78,7 +78,7 @@ namespace LiveDescribe.ViewModel
                 }
             };
 
-            ProjectManager.Instance.ProjectLoaded += (sender, args) =>
+            projectManager.ProjectLoaded += (sender, args) =>
             {
                 Waveform = args.Value.Waveform;
             };

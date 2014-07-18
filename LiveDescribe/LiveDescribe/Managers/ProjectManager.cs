@@ -20,7 +20,7 @@ namespace LiveDescribe.Managers
             (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         #endregion
 
-        public static readonly ProjectManager Instance = new ProjectManager();
+        private readonly LoadingViewModel _loadingViewModel;
 
         public event EventHandler<EventArgs<List<Description>>> DescriptionsLoaded;
         public event EventHandler<EventArgs<List<Space>>> SpacesLoaded;
@@ -30,13 +30,18 @@ namespace LiveDescribe.Managers
 
         public Project CurrentProject { private set; get; }
 
+        public ProjectManager(LoadingViewModel loadingViewModel)
+        {
+            _loadingViewModel = loadingViewModel;
+        }
+
         #region ProjectCreation
         /// <summary>
         /// Attempts to create the project file and folder
         /// </summary>
         /// <param name="project">The instance of project to initialize.</param>
         /// <returns>Whether or not initialization was successful.</returns>
-        public bool TryCreateProjectFileAndFolder(Project project)
+        public static bool TryCreateProjectFileAndFolder(Project project)
         {
             //Ensure that path is absolute
             if (!Path.IsPathRooted(project.Folders.Project))
@@ -98,13 +103,13 @@ namespace LiveDescribe.Managers
         #endregion
 
         #region Load Project Methods
-        public void LoadProject(string projectPath, LoadingViewModel loadingViewModel)
+        public void LoadProject(string projectPath)
         {
             var project = FileReader.ReadProjectFile(projectPath);
-            LoadProject(project, loadingViewModel);
+            LoadProject(project);
         }
 
-        public void LoadProject(Project project, LoadingViewModel loadingViewModel)
+        public void LoadProject(Project project)
         {
             InitializeDirectories(project);
 
@@ -112,11 +117,11 @@ namespace LiveDescribe.Managers
             LoadSpaces(project);
 
             if (!File.Exists(project.Files.WaveForm))
-                StripAudioAnContinueLoadingProject(project, loadingViewModel);
+                StripAudioAnContinueLoadingProject(project);
             else
             {
                 LoadWaveForm(project);
-                ContinueLoadingProject(project, loadingViewModel);
+                ContinueLoadingProject(project);
             }
         }
 
@@ -147,7 +152,7 @@ namespace LiveDescribe.Managers
             Log.InfoFormat("Spaces loaded from {0}", project.ProjectName);
         }
 
-        private void StripAudioAnContinueLoadingProject(Project project, LoadingViewModel loadingViewModel)
+        private void StripAudioAnContinueLoadingProject(Project project)
         {
             var worker = new BackgroundWorker { WorkerReportsProgress = true, };
             Waveform waveform = null;
@@ -172,14 +177,14 @@ namespace LiveDescribe.Managers
                 OnSpacesAudioAnalysisCompleted(spaceData);
                 Log.Info("Audio stripped and spaces found.");
 
-                ContinueLoadingProject(project, loadingViewModel);
+                ContinueLoadingProject(project);
             };
 
-            worker.ProgressChanged += (sender, args) => loadingViewModel.SetProgress("Importing Video",
+            worker.ProgressChanged += (sender, args) => _loadingViewModel.SetProgress("Importing Video",
                 args.ProgressPercentage);
 
-            loadingViewModel.SetProgress("Importing Video", 0);
-            loadingViewModel.Visible = true;
+            _loadingViewModel.SetProgress("Importing Video", 0);
+            _loadingViewModel.Visible = true;
             worker.RunWorkerAsync();
         }
 
@@ -191,7 +196,7 @@ namespace LiveDescribe.Managers
             Log.InfoFormat("Waveform loaded from {0}", project.Files.WaveForm);
         }
 
-        private void ContinueLoadingProject(Project project, LoadingViewModel loadingViewModel)
+        private void ContinueLoadingProject(Project project)
         {
             Properties.Settings.Default.WorkingDirectory = project.Folders.Project + "\\";
 
@@ -199,7 +204,7 @@ namespace LiveDescribe.Managers
             OnProjectLoaded(project);
             Log.InfoFormat("Project \"{0}\" loaded successfully", project.ProjectName);
 
-            loadingViewModel.Visible = false;
+            _loadingViewModel.Visible = false;
         }
         #endregion
 

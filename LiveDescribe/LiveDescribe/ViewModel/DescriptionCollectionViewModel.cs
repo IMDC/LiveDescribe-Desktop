@@ -46,7 +46,8 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Constructors
-        public DescriptionCollectionViewModel(ILiveDescribePlayer mediaVideo, MediaControlViewModel mediaControlViewModel)
+        public DescriptionCollectionViewModel(ILiveDescribePlayer mediaVideo,
+            MediaControlViewModel mediaControlViewModel, ProjectManager projectManager)
         {
             _mediaVideo = mediaVideo;
             _mediaControlViewModel = mediaControlViewModel;
@@ -95,7 +96,7 @@ namespace LiveDescribe.ViewModel
             ExtendedDescriptions = new ObservableCollection<Description>();
             _extendedDescriptionIndexer = new ObservableCollectionIndexer<Description>(ExtendedDescriptions);
 
-            ProjectManager.Instance.DescriptionsLoaded += (sender, args) => AddDescriptions(args.Value);
+            projectManager.DescriptionsLoaded += (sender, args) => AddDescriptions(args.Value);
         }
         #endregion
 

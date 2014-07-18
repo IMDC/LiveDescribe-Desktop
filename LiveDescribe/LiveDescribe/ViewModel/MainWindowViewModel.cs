@@ -40,6 +40,8 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Instance Variables
+
+        private readonly ProjectManager _projectManager;
         private readonly Timer _descriptiontimer;
         private readonly MediaControlViewModel _mediaControlViewModel;
         private readonly PreferencesViewModel _preferences;
@@ -72,12 +74,17 @@ namespace LiveDescribe.ViewModel
         {
             DispatcherHelper.Initialize();
 
-            _spacecollectionviewmodel = new SpaceCollectionViewModel(mediaVideo);
+
             _loadingViewModel = new LoadingViewModel(100, null, 0, false);
-            _mediaControlViewModel = new MediaControlViewModel(mediaVideo);
+            _projectManager = new ProjectManager(_loadingViewModel);
+
+            _spacecollectionviewmodel = new SpaceCollectionViewModel(mediaVideo, _projectManager);
+            _mediaControlViewModel = new MediaControlViewModel(mediaVideo, _projectManager);
             _preferences = new PreferencesViewModel();
-            _descriptioncollectionviewmodel = new DescriptionCollectionViewModel(mediaVideo, _mediaControlViewModel);
-            _descriptionInfoTabViewModel = new DescriptionInfoTabViewModel(_descriptioncollectionviewmodel, _spacecollectionviewmodel);
+            _descriptioncollectionviewmodel = new DescriptionCollectionViewModel(mediaVideo,
+                _mediaControlViewModel, _projectManager);
+            _descriptionInfoTabViewModel = new DescriptionInfoTabViewModel(_descriptioncollectionviewmodel,
+                _spacecollectionviewmodel);
             _markingSpacesControlViewModel = new MarkingSpacesControlViewModel(_descriptionInfoTabViewModel, mediaVideo);
             _audioCanvasViewModel = new AudioCanvasViewModel(_spacecollectionviewmodel, mediaVideo);
             _descriptionCanvasViewModel = new DescriptionCanvasViewModel(_descriptioncollectionviewmodel, mediaVideo);
@@ -220,7 +227,8 @@ namespace LiveDescribe.ViewModel
                     };
 
                     saveFileDialog.ShowDialog();
-                    FileWriter.WriteDescriptionsTextToSrtFile(saveFileDialog.FileName, _descriptioncollectionviewmodel.AllDescriptions);
+                    FileWriter.WriteDescriptionsTextToSrtFile(saveFileDialog.FileName,
+                        _descriptioncollectionviewmodel.AllDescriptions);
                 }
             );
 
@@ -308,7 +316,7 @@ namespace LiveDescribe.ViewModel
 
             #endregion
 
-            ProjectManager.Instance.ProjectLoaded += (sender, args) =>
+            _projectManager.ProjectLoaded += (sender, args) =>
             {
                 _project = args.Value;
 
@@ -545,7 +553,7 @@ namespace LiveDescribe.ViewModel
         {
             CloseProject.ExecuteIfCan();
 
-            ProjectManager.Instance.LoadProject(p, _loadingViewModel);
+            _projectManager.LoadProject(p);
         }
 
         private void CopyVideoAndSetProject(string source, Project project)
