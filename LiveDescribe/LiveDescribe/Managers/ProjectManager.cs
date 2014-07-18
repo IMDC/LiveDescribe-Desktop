@@ -22,6 +22,7 @@ namespace LiveDescribe.Managers
         public static readonly ProjectManager Instance = new ProjectManager();
 
         public event EventHandler<EventArgs<List<Description>>> DescriptionsLoaded;
+        public event EventHandler<EventArgs<List<Space>>> SpacesLoaded;
         public event EventHandler<EventArgs<Project>> ProjectLoaded;
 
         public Project CurrentProject { private set; get; }
@@ -160,15 +161,41 @@ namespace LiveDescribe.Managers
         {
             Properties.Settings.Default.WorkingDirectory = project.Folders.Project + "\\";
 
-            CurrentProject = project;
+            LoadDescriptions(project);
+            LoadSpaces(project);
 
+            CurrentProject = project;
             OnProjectLoaded(project);
 
             loadingViewModel.Visible = false;
         }
+
+        private void LoadDescriptions(Project project)
+        {
+            var descriptions = FileReader.ReadDescriptionsFile(project);
+            OnDescriptionsLoaded(descriptions);
+        }
+
+        private void LoadSpaces(Project project)
+        {
+            var spaces = FileReader.ReadSpacesFile(project);
+            OnSpacesLoaded(spaces);
+        }
         #endregion
 
         #region Event Invokations
+
+        private void OnDescriptionsLoaded(List<Description> descriptions)
+        {
+            var handler = DescriptionsLoaded;
+            if (handler != null) handler(this, descriptions);
+        }
+
+        private void OnSpacesLoaded(List<Space> spaces)
+        {
+            var handler = SpacesLoaded;
+            if (handler != null) handler(this, spaces);
+        }
 
         private void OnProjectLoaded(Project project)
         {

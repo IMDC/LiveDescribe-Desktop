@@ -2,6 +2,7 @@
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Events;
 using LiveDescribe.Interfaces;
+using LiveDescribe.Managers;
 using LiveDescribe.Model;
 using LiveDescribe.Utilities;
 using System;
@@ -48,6 +49,8 @@ namespace LiveDescribe.ViewModel
                     OnRequestSpaceTime(s);
                     AddSpace(s);
                 });
+
+            ProjectManager.Instance.SpacesLoaded += (sender, args) => AddSpaces(args.Value);
         }
         #endregion
 

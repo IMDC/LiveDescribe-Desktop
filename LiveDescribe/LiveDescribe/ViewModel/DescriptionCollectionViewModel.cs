@@ -3,6 +3,7 @@ using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Events;
 using LiveDescribe.Factories;
 using LiveDescribe.Interfaces;
+using LiveDescribe.Managers;
 using LiveDescribe.Model;
 using LiveDescribe.Utilities;
 using NAudio;
@@ -93,6 +94,8 @@ namespace LiveDescribe.ViewModel
             _regularDescriptionIndexer = new ObservableCollectionIndexer<Description>(RegularDescriptions);
             ExtendedDescriptions = new ObservableCollection<Description>();
             _extendedDescriptionIndexer = new ObservableCollectionIndexer<Description>(ExtendedDescriptions);
+
+            ProjectManager.Instance.DescriptionsLoaded += (sender, args) => AddDescriptions(args.Value);
         }
         #endregion
 
