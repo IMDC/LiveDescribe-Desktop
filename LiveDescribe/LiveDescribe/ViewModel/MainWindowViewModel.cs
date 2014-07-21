@@ -17,7 +17,6 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
@@ -47,7 +46,6 @@ namespace LiveDescribe.ViewModel
         private readonly MediaControlViewModel _mediaControlViewModel;
         private readonly PreferencesViewModel _preferences;
         private readonly DescriptionCollectionViewModel _descriptioncollectionviewmodel;
-        private readonly SpaceCollectionViewModel _spacecollectionviewmodel;
         private readonly LoadingViewModel _loadingViewModel;
         private readonly MarkingSpacesControlViewModel _markingSpacesControlViewModel;
         private readonly ILiveDescribePlayer _mediaVideo;
@@ -79,15 +77,14 @@ namespace LiveDescribe.ViewModel
             _loadingViewModel = new LoadingViewModel(100, null, 0, false);
             _projectManager = new ProjectManager(_loadingViewModel);
 
-            _spacecollectionviewmodel = new SpaceCollectionViewModel(mediaVideo, _projectManager);
             _mediaControlViewModel = new MediaControlViewModel(mediaVideo, _projectManager);
             _preferences = new PreferencesViewModel();
             _descriptioncollectionviewmodel = new DescriptionCollectionViewModel(mediaVideo,
                 _mediaControlViewModel, _projectManager);
             _descriptionInfoTabViewModel = new DescriptionInfoTabViewModel(_descriptioncollectionviewmodel,
-                _spacecollectionviewmodel);
+                _projectManager);
             _markingSpacesControlViewModel = new MarkingSpacesControlViewModel(_descriptionInfoTabViewModel, mediaVideo);
-            _audioCanvasViewModel = new AudioCanvasViewModel(_spacecollectionviewmodel, mediaVideo);
+            _audioCanvasViewModel = new AudioCanvasViewModel(mediaVideo, _projectManager);
             _descriptionCanvasViewModel = new DescriptionCanvasViewModel(_descriptioncollectionviewmodel, mediaVideo);
 
             DescriptionPlayer = new DescriptionPlayer();
@@ -125,7 +122,7 @@ namespace LiveDescribe.ViewModel
                     TryToCleanUpUnusedDescriptionAudioFiles();
                     _descriptioncollectionviewmodel.CloseDescriptionCollectionViewModel();
                     _mediaControlViewModel.CloseMediaControlViewModel();
-                    _spacecollectionviewmodel.CloseSpaceCollectionViewModel();
+                    _projectManager.CloseProject();
                     _project = null;
                     ProjectModified = false;
 
@@ -214,7 +211,7 @@ namespace LiveDescribe.ViewModel
                 execute: () =>
                 {
                     var spaces = AudioAnalyzer.FindSpaces(_mediaControlViewModel.Waveform);
-                    _spacecollectionviewmodel.Spaces.AddRange(spaces);
+                    _projectManager.Spaces.AddRange(spaces);
                 }
             );
 
@@ -245,7 +242,7 @@ namespace LiveDescribe.ViewModel
                     };
 
                     saveFileDialog.ShowDialog();
-                    FileWriter.WriteSpacesTextToSrtFile(saveFileDialog.FileName, _spacecollectionviewmodel.Spaces);
+                    FileWriter.WriteSpacesTextToSrtFile(saveFileDialog.FileName, _projectManager.Spaces);
                 }
             );
 
@@ -304,7 +301,7 @@ namespace LiveDescribe.ViewModel
 
             #region Property Changed Events
 
-            _spacecollectionviewmodel.Spaces.CollectionChanged += ObservableCollection_CollectionChanged;
+            _projectManager.Spaces.CollectionChanged += ObservableCollection_CollectionChanged;
             _descriptioncollectionviewmodel.ExtendedDescriptions.CollectionChanged += ObservableCollection_CollectionChanged;
             _descriptioncollectionviewmodel.RegularDescriptions.CollectionChanged += ObservableCollection_CollectionChanged;
             _mediaControlViewModel.PropertyChanged += PropertyChangedHandler;
@@ -432,9 +429,9 @@ namespace LiveDescribe.ViewModel
             get { return ProjectLoaded && _projectModified; }
         }
 
-        public SpaceCollectionViewModel SpaceCollectionViewModel
+        public ProjectManager ProjectManager
         {
-            get { return _spacecollectionviewmodel; }
+            get { return _projectManager; }
         }
 
         public MediaControlViewModel MediaControlViewModel

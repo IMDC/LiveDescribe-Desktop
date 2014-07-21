@@ -1,4 +1,5 @@
 ﻿using LiveDescribe.Events;
+using LiveDescribe.Extensions;
 using LiveDescribe.Factories;
 using LiveDescribe.Model;
 using LiveDescribe.Resources.UiStrings;
@@ -24,6 +25,8 @@ namespace LiveDescribe.Managers
         #region Fields
         private readonly LoadingViewModel _loadingViewModel;
         private readonly ObservableCollection<Space> _spaces;
+        // ReSharper disable once NotAccessedField.Local
+        private ObservableCollectionIndexer<Space> _indexer;
         #endregion
 
         #region Events
@@ -51,6 +54,9 @@ namespace LiveDescribe.Managers
             _loadingViewModel = loadingViewModel;
             _spaces = new ObservableCollection<Space>();
             _spaces.CollectionChanged += SpacesOnCollectionChanged;
+            SpacesAudioAnalysisCompleted += (sender, args) => Spaces.AddRange(args.Value);
+            SpacesLoaded += (sender, args) => Spaces.AddRange(args.Value);
+            _indexer = new ObservableCollectionIndexer<Space>(Spaces);
         }
 
         #endregion
@@ -244,6 +250,12 @@ namespace LiveDescribe.Managers
             OnProjectSaved();
         }
         #endregion
+
+        public void CloseProject()
+        {
+            //TODO this
+            Spaces.Clear();
+        }
 
         #region SetupSpaceEvents
         private void SetupSpaceEvents(Space s)

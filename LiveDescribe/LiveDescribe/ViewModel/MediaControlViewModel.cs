@@ -24,13 +24,11 @@ namespace LiveDescribe.ViewModel
 
         #region Instance Variables
         private readonly ILiveDescribePlayer _mediaVideo;
-        //private List<Space> _spaceData;
         private TimeSpan _positionTimeLabel;
         private double _originalVolume;
         private Waveform _waveform;
         private RelayCommand _playPauseButtonClickCommand;
 
-        //public Project Project { get; set; }
         #endregion
 
         #region Event Handlers
@@ -40,7 +38,6 @@ namespace LiveDescribe.ViewModel
         public event EventHandler VideoOpenedRequested;
         public event EventHandler MediaFailedEvent;
         public event EventHandler MediaEndedEvent;
-        public event EventHandler OnStrippingAudioCompleted;
         public event EventHandler OnPausedForExtendedDescription;
 
         //Event handlers for the Marker on the timeline

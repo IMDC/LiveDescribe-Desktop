@@ -208,7 +208,6 @@
     <Compile Include="ViewModel\LoadingViewModel.cs" />
     <Compile Include="ViewModel\MarkingSpacesControlViewModel.cs" />
     <Compile Include="ViewModel\SpaceRecordingViewModel.cs" />
-    <Compile Include="ViewModel\SpaceCollectionViewModel.cs" />
     <Compile Include="View\AboutInfoView.xaml.cs">
       <DependentUpon>AboutInfoView.xaml</DependentUpon>
     </Compile>

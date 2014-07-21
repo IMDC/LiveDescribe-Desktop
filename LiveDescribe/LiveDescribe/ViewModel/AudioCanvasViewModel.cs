@@ -2,6 +2,7 @@
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Events;
 using LiveDescribe.Interfaces;
+using LiveDescribe.Managers;
 using LiveDescribe.Model;
 using System;
 using System.Collections.ObjectModel;
@@ -11,8 +12,7 @@ namespace LiveDescribe.ViewModel
 {
     class AudioCanvasViewModel : ViewModelBase
     {
-        private readonly SpaceCollectionViewModel _spaceCollectionViewModel;
-
+        private readonly ProjectManager _projectManager;
         private LiveDescribeVideoStates _currentState;
 
         #region Events
@@ -25,9 +25,9 @@ namespace LiveDescribe.ViewModel
         public event EventHandler<EventArgs<Space>> RequestSpaceTime;
         #endregion
 
-        public AudioCanvasViewModel(SpaceCollectionViewModel spaceCollectionViewModel, ILiveDescribePlayer mediaPlayer)
+        public AudioCanvasViewModel(ILiveDescribePlayer mediaPlayer, ProjectManager projectManager)
         {
-            _spaceCollectionViewModel = spaceCollectionViewModel;
+            _projectManager = projectManager;
 
             AudioCanvasMouseDownCommand = new RelayCommand<MouseEventArgs>(AudioCanvasMouseDown, param => true);
             AudioCanvasMouseRightButtonDownCommand = new RelayCommand<MouseEventArgs>(AudioCanvasMouseRightButtonDown, param => true);
@@ -56,12 +56,7 @@ namespace LiveDescribe.ViewModel
         #region Binding Properties
         public ObservableCollection<Space> Spaces
         {
-            get { return _spaceCollectionViewModel.Spaces; }
-        }
-
-        public SpaceCollectionViewModel SpaceCollectionViewModel
-        {
-            get { return _spaceCollectionViewModel; }
+            get { return _projectManager.Spaces; }
         }
 
         public LiveDescribeVideoStates CurrentVideoState

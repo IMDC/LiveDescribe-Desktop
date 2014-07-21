@@ -2,6 +2,7 @@
 using LiveDescribe.Controls;
 using LiveDescribe.Converters;
 using LiveDescribe.Extensions;
+using LiveDescribe.Managers;
 using LiveDescribe.Model;
 using LiveDescribe.Utilities;
 using LiveDescribe.ViewModel;
@@ -50,7 +51,7 @@ namespace LiveDescribe.View
         private double _canvasWidth;
         private double _videoDuration = -1;
         private readonly MediaControlViewModel _mediaControlViewModel;
-        private readonly SpaceCollectionViewModel _spaceCollectionViewModel;
+        private readonly ProjectManager _projectManager;
         private readonly DescriptionCollectionViewModel _descriptionCollectionViewModel;
         private readonly DescriptionInfoTabViewModel _descriptionInfoTabViewModel;
         private readonly MainWindowViewModel _mainWindowViewModel;
@@ -84,7 +85,7 @@ namespace LiveDescribe.View
 
             _mediaControlViewModel = mainWindowViewModel.MediaControlViewModel;
             _descriptionCollectionViewModel = mainWindowViewModel.DescriptionCollectionViewModel;
-            _spaceCollectionViewModel = mainWindowViewModel.SpaceCollectionViewModel;
+            _projectManager = mainWindowViewModel.ProjectManager;
             _descriptionInfoTabViewModel = mainWindowViewModel.DescriptionInfoTabViewModel;
 
             _audioCanvas = AudioCanvasControl.AudioCanvas;
@@ -186,18 +187,8 @@ namespace LiveDescribe.View
                     foreach (var desc in _descriptionCollectionViewModel.AllDescriptions)
                         DrawDescription(desc);
 
-                    foreach (var space in _spaceCollectionViewModel.Spaces)
+                    foreach (var space in _projectManager.Spaces)
                         SetSpaceLocation(space);
-                };
-
-            //listens for when the audio stripping is complete then draws the timeline and the wave form
-            //and sets the busy stripping audio to false so that the loading screen goes away
-            mainWindowViewModel.MediaControlViewModel.OnStrippingAudioCompleted += (sender, e) =>
-                {
-                    SetTimeline();
-
-                    //make this false so that the loading screen goes away after the timeline and the wave form are drawn
-                    mainWindowViewModel.LoadingViewModel.Visible = false;
                 };
 
             //captures the mouse when a mousedown request is sent to the Marker
@@ -295,16 +286,10 @@ namespace LiveDescribe.View
                 };
             #endregion
 
-            #region Event Listeners for SpaceCollectionViewModel
-
-            _spaceCollectionViewModel.Spaces.CollectionChanged += (sender, e) =>
-            {
-                if (e.Action == NotifyCollectionChangedAction.Add)
-                {
-                    foreach (Space space in e.NewItems)
-                        SetupSpaceEvents(space);
-                }
-            };
+            #region Event Listeners For AudioCanvasViewModel
+            AudioCanvasViewModel audioCanvasViewModel = mainWindowViewModel.AudioCanvasViewModel;
+            audioCanvasViewModel.AudioCanvasMouseDownEvent += AudioCanvas_OnMouseDown;
+            audioCanvasViewModel.AudioCanvasMouseRightButtonDownEvent += AudioCanvas_RecordRightClickPosition;
 
             _mainWindowViewModel.AudioCanvasViewModel.RequestSpaceTime += (sender, args) =>
             {
@@ -339,15 +324,26 @@ namespace LiveDescribe.View
             };
             #endregion
 
-            #region Event Listeners For AudioCanvasViewModel
-            AudioCanvasViewModel audioCanvasViewModel = mainWindowViewModel.AudioCanvasViewModel;
-            audioCanvasViewModel.AudioCanvasMouseDownEvent += AudioCanvas_OnMouseDown;
-            audioCanvasViewModel.AudioCanvasMouseRightButtonDownEvent += AudioCanvas_RecordRightClickPosition;
-            #endregion
-
             #region Event Listeners For DescriptionCanvasViewModel
             DescriptionCanvasViewModel descriptionCanvasViewModel = mainWindowViewModel.DescriptionCanvasViewModel;
             descriptionCanvasViewModel.DescriptionCanvasMouseDownEvent += DescriptionCanvas_MouseDown;
+            #endregion
+
+            #region Event Handlers for ProjectManager
+
+            _projectManager.Spaces.CollectionChanged += (sender, e) =>
+            {
+                if (e.Action == NotifyCollectionChangedAction.Add)
+                {
+                    foreach (Space space in e.NewItems)
+                        SetupSpaceEvents(space);
+                }
+            };
+
+
+            //listens for when the audio stripping is complete then draws the timeline and the wave form
+            //and sets the busy stripping audio to false so that the loading screen goes away
+            _projectManager.SpacesAudioAnalysisCompleted += (sender, e) => SetTimeline();
             #endregion
         }
 
@@ -650,7 +646,7 @@ namespace LiveDescribe.View
         /// </summary>
         private void ResizeSpaces()
         {
-            foreach (var space in _spaceCollectionViewModel.Spaces)
+            foreach (var space in _projectManager.Spaces)
                 space.Height = _audioCanvas.ActualHeight;
         }
 

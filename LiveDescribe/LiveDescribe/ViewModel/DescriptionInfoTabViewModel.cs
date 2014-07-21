@@ -3,6 +3,7 @@ using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Extensions;
 using LiveDescribe.Factories;
 using LiveDescribe.Interfaces;
+using LiveDescribe.Managers;
 using LiveDescribe.Model;
 using System;
 using System.Collections.ObjectModel;
@@ -21,7 +22,7 @@ namespace LiveDescribe.ViewModel
 
         #region Instance Variables
         private readonly DescriptionCollectionViewModel _descriptionCollectionViewModel;
-        private readonly SpaceCollectionViewModel _spaceCollectionViewModel;
+        private readonly ProjectManager _projectManager;
         private Description _selectedRegularDescription;
         private Description _selectedExtendedDescription;
         private Space _selectedSpace;
@@ -29,10 +30,11 @@ namespace LiveDescribe.ViewModel
         private IDescribableInterval _selectedItem;
         #endregion
 
-        public DescriptionInfoTabViewModel(DescriptionCollectionViewModel descriptionCollectionViewModel, SpaceCollectionViewModel spaceViewModel)
+        public DescriptionInfoTabViewModel(DescriptionCollectionViewModel descriptionCollectionViewModel,
+            ProjectManager projectManager)
         {
             _descriptionCollectionViewModel = descriptionCollectionViewModel;
-            _spaceCollectionViewModel = spaceViewModel;
+            _projectManager = projectManager;
 
             InitCommands();
 
@@ -59,8 +61,8 @@ namespace LiveDescribe.ViewModel
                 });
 
             DeleteSelectedSpaceOrDescription = new RelayCommand(
-                canExecute: () => SelectedSpace != null 
-                    || SelectedExtendedDescription != null 
+                canExecute: () => SelectedSpace != null
+                    || SelectedExtendedDescription != null
                     || SelectedRegularDescription != null,
                 execute: () =>
                 {
@@ -166,7 +168,7 @@ namespace LiveDescribe.ViewModel
         /// </summary>
         public ObservableCollection<Space> Spaces
         {
-            get { return _spaceCollectionViewModel.Spaces; }
+            get { return _projectManager.Spaces; }
         }
 
         #endregion
