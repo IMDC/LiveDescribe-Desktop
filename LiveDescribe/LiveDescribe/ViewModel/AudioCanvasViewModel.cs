@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using LiveDescribe.Events;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
 using System;
@@ -17,6 +18,11 @@ namespace LiveDescribe.ViewModel
         #region Events
         public EventHandler<MouseEventArgs> AudioCanvasMouseDownEvent;
         public EventHandler<MouseEventArgs> AudioCanvasMouseRightButtonDownEvent;
+        /// <summary>
+        /// Requests to a handler what to set the StartInVideo and EndInVideo time values for the
+        /// given space.
+        /// </summary>
+        public event EventHandler<EventArgs<Space>> RequestSpaceTime;
         #endregion
 
         public AudioCanvasViewModel(SpaceCollectionViewModel spaceCollectionViewModel, ILiveDescribePlayer mediaPlayer)
@@ -30,11 +36,21 @@ namespace LiveDescribe.ViewModel
                 if (args.PropertyName.Equals("CurrentState"))
                     CurrentVideoState = mediaPlayer.CurrentState;
             };
+
+            GetNewSpaceTime = new RelayCommand(
+            canExecute: () => CurrentVideoState != LiveDescribeVideoStates.VideoNotLoaded,
+            execute: () =>
+            {
+                var s = new Space();
+                OnRequestSpaceTime(s);
+                Spaces.Add(s);
+            });
         }
 
         #region Commands
         public RelayCommand<MouseEventArgs> AudioCanvasMouseDownCommand { private set; get; }
         public RelayCommand<MouseEventArgs> AudioCanvasMouseRightButtonDownCommand { private set; get; }
+        public ICommand GetNewSpaceTime { get; private set; }
         #endregion
 
         #region Binding Properties
@@ -71,6 +87,14 @@ namespace LiveDescribe.ViewModel
         {
             EventHandler<MouseEventArgs> handler = AudioCanvasMouseRightButtonDownEvent;
             if (handler != null) handler(this, e);
+        }
+        #endregion
+
+        #region Event Invokation
+        private void OnRequestSpaceTime(Space s)
+        {
+            var handler = RequestSpaceTime;
+            if (handler != null) handler(this, s);
         }
         #endregion
     }

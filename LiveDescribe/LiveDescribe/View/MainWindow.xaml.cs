@@ -306,9 +306,9 @@ namespace LiveDescribe.View
                 }
             };
 
-            _spaceCollectionViewModel.RequestSpaceTime += (sender, args) =>
+            _mainWindowViewModel.AudioCanvasViewModel.RequestSpaceTime += (sender, args) =>
             {
-                var space = args.Space;
+                var space = args.Value;
 
                 double middle = _rightClickPointOnAudioCanvas.X;  // going to be the middle of the space
                 double middleTime = (_videoDuration / _audioCanvas.Width) * middle;  // middle of the space in milliseconds

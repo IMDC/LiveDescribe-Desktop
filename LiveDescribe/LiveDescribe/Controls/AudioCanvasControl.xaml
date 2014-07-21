@@ -34,7 +34,6 @@
                 <controls:ItemCanvas.ContextMenu>
                     <ContextMenu>
                         <MenuItem
-                            DataContext="{Binding SpaceCollectionViewModel}"
                             Header="{x:Static s:UiStrings.Command_AddSpace}"
                             Command="{Binding GetNewSpaceTime}" />
                     </ContextMenu>

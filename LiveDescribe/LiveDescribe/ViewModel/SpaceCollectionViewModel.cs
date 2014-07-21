@@ -21,16 +21,6 @@ namespace LiveDescribe.ViewModel
         private readonly ProjectManager _projectManager;
         // ReSharper disable once NotAccessedField.Local
         private ObservableCollectionIndexer<Space> _indexer;
-        private readonly ILiveDescribePlayer _videoPlayer;
-        #endregion
-
-        #region Event Handlers
-
-        /// <summary>
-        /// Requests to a handler what to set the StartInVideo and EndInVideo time values for the
-        /// given space.
-        /// </summary>
-        public event EventHandler<SpaceEventArgs> RequestSpaceTime;
         #endregion
 
         #region Constructors
@@ -39,24 +29,9 @@ namespace LiveDescribe.ViewModel
             _projectManager = projectManager;
             _indexer = new ObservableCollectionIndexer<Space>(Spaces);
 
-            _videoPlayer = videoPlayer;
-
-            GetNewSpaceTime = new RelayCommand(
-                canExecute: () => _videoPlayer.CurrentState != LiveDescribeVideoStates.VideoNotLoaded,
-                execute: () =>
-                {
-                    var s = new Space();
-                    OnRequestSpaceTime(s);
-                    Spaces.Add(s);
-                });
-
             _projectManager.SpacesAudioAnalysisCompleted += (sender, args) => Spaces.AddRange(args.Value);
             _projectManager.SpacesLoaded += (sender, args) => Spaces.AddRange(args.Value);
         }
-        #endregion
-
-        #region Commands
-        public ICommand GetNewSpaceTime { get; private set; }
         #endregion
 
         #region Binding Properties
@@ -75,15 +50,6 @@ namespace LiveDescribe.ViewModel
         public void CloseSpaceCollectionViewModel()
         {
             Spaces.Clear();
-        }
-        #endregion
-
-        #region Event Invocation
-
-        private void OnRequestSpaceTime(Space s)
-        {
-            var handler = RequestSpaceTime;
-            if (handler != null) handler(this, new SpaceEventArgs(s));
         }
         #endregion
     }
