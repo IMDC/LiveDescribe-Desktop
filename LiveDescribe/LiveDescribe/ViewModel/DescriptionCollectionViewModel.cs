@@ -24,8 +24,6 @@ namespace LiveDescribe.ViewModel
         private ObservableCollection<Description> _alldescriptions;      //this list contains all the descriptions both regular and extended
         private ObservableCollection<Description> _extendedDescriptions; //this list only contains the extended description this list should be used to bind to the list view of extended descriptions
         private ObservableCollection<Description> _regularDescriptions;  //this list only contains all the regular descriptions this list should only be used to bind to the list of regular descriptions
-
-        public Project Project { get; set; }
         #endregion
 
         #region Event Handlers
@@ -35,8 +33,6 @@ namespace LiveDescribe.ViewModel
         #region Constructors
         public DescriptionCollectionViewModel(ProjectManager projectManager)
         {
-            Project = null;
-
             AllDescriptions = new ObservableCollection<Description>();
             RegularDescriptions = new ObservableCollection<Description>();
             RegularDescriptions.CollectionChanged += ObservableCollectionIndexer<Description>.CollectionChangedListener;

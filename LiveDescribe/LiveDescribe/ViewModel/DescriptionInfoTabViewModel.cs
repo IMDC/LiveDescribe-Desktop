@@ -54,7 +54,7 @@ namespace LiveDescribe.ViewModel
                 canExecute: () => SelectedSpace != null,
                 execute: () =>
                 {
-                    var viewModel = DialogShower.SpawnSpaceRecordingView(SelectedSpace, _descriptionCollectionViewModel.Project);
+                    var viewModel = DialogShower.SpawnSpaceRecordingView(SelectedSpace, _projectManager.Project);
 
                     if (viewModel.DialogResult == true)
                         _descriptionCollectionViewModel.AddDescription(viewModel.Description);

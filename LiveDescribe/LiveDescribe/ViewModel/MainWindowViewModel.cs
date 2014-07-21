@@ -326,7 +326,6 @@ namespace LiveDescribe.ViewModel
 
                 _mediaControlViewModel.LoadVideo(_project.Files.Video);
 
-                _descriptioncollectionviewmodel.Project = _project;
                 ProjectModified = false;
                 SetWindowTitle();
             };
