@@ -48,7 +48,7 @@ namespace LiveDescribe.Utilities
             Log.Info("Preparing to strip audio from video");
             //gets the path of the ffmpeg.exe file within the LiveDescribe solution
             var appDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            string ffmpegPath = Path.Combine(appDirectory, "Utilities/ffmpeg.exe");
+            string ffmpegPath = Path.Combine(appDirectory, "Utilities/_ffmpeg.exe");
 
             if (!File.Exists(ffmpegPath))
             {
@@ -75,6 +75,7 @@ namespace LiveDescribe.Utilities
 
             ffmpeg.Start();
 
+            #region parse ffmpeg
             double totalTime = 0;
             double currentTime = 0;
             //stream reader used to parse the output of the ffmpeg process
@@ -142,6 +143,7 @@ namespace LiveDescribe.Utilities
                 MessageBoxFactory.ShowError(ex.Message);
                 Log.Error("An error occured during ffmpeg audio stripping", ex);
             }
+            #endregion
 
             ffmpeg.WaitForExit();
 

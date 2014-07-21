@@ -21,6 +21,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Input;
+using System.Linq;
 
 namespace LiveDescribe.ViewModel
 {
@@ -174,6 +175,19 @@ namespace LiveDescribe.ViewModel
                 canExecute: () => ProjectModified,
                 execute: () => _projectManager.SaveProject()
             );
+
+            ExportWithDescriptions = new RelayCommand(
+                canExecute: () => ProjectLoaded,
+                execute: () =>
+                {
+                    var viewModel = DialogShower.SpawnExportWindowView(_project, _mediaVideo.Path,
+                                        _mediaVideo.DurationSeconds, 
+                                        _descriptioncollectionviewmodel.RegularDescriptions.ToList(),
+                                        _loadingViewModel);
+
+                    if (viewModel.DialogResult != true)
+                        return;
+                });
 
             ClearCache = new RelayCommand(
                 canExecute: () => ProjectLoaded,
@@ -342,6 +356,11 @@ namespace LiveDescribe.ViewModel
         /// Command to save project.
         /// </summary>
         public ICommand SaveProject { private set; get; }
+
+        /// <summary>
+        /// Command to export project Video along with the description track.
+        /// </summary>
+        public ICommand ExportWithDescriptions { private set; get; }
 
         /// <summary>
         /// Command to clear the cache of the current project.

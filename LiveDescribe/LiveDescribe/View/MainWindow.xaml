@@ -48,6 +48,22 @@
                     <MenuItem
                         Header="{x:Static s:UiStrings.MenuItem_CloseProject}"
                         Command="{Binding CloseProject}" />
+                    
+                    <!--Exporting Options-->
+                    <MenuItem Header="Export" >
+                        <MenuItem
+                            Header="Export Video With Descriptions"
+                            Command="{Binding ExportWithDescriptions}"
+                        />
+                        <MenuItem
+                        Header="{x:Static s:UiStrings.Export_DescriptionSrtTitle}"
+                        Command="{Binding ExportDescriptionsTextToSrt}"/>
+
+                        <MenuItem 
+                        Header="{x:Static s:UiStrings.Export_SpaceSrtTitle}"
+                        Command="{Binding ExportSpacesTextToSrt}"/>
+                    </MenuItem>
+                    
                     <MenuItem
                         Name="Preferences"
                         Header="{x:Static s:UiStrings.MenuItem_Preferences}"
@@ -66,13 +82,6 @@
                         Header="{x:Static s:UiStrings.MenuItem_ClearCache}"
                         Command="{Binding ClearCache}" />
                     
-                    <MenuItem
-                        Header="{x:Static s:UiStrings.Export_DescriptionSrtTitle}"
-                        Command="{Binding ExportDescriptionsTextToSrt}"/>
-                    
-                    <MenuItem 
-                        Header="{x:Static s:UiStrings.Export_SpaceSrtTitle}"
-                        Command="{Binding ExportSpacesTextToSrt}"/>
                 </MenuItem>
                 <MenuItem
                     Header="{x:Static s:UiStrings.MenuItem_Help}">
@@ -168,7 +177,8 @@
                         Name="TimeLineScrollViewer"
                         HorizontalScrollBarVisibility="Visible"
                         VerticalScrollBarVisibility="Auto"
-                        SizeChanged="TimeLineScrollViewer_OnSizeChanged">
+                        SizeChanged="TimeLineScrollViewer_OnSizeChanged"
+                        VirtualizingPanel.IsVirtualizing="True">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition
