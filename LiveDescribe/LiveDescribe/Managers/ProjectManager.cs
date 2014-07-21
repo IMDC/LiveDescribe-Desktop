@@ -35,6 +35,21 @@ namespace LiveDescribe.Managers
         public event EventHandler ProjectSaved;
         #endregion
 
+        #region Constructor
+        public ProjectManager(LoadingViewModel loadingViewModel)
+        {
+            _loadingViewModel = loadingViewModel;
+
+            _spaces = new ObservableCollection<Space>();
+            _spaces.CollectionChanged += ObservableCollectionIndexer<Space>.CollectionChangedListener;
+            _spaces.CollectionChanged += SpacesOnCollectionChanged;
+
+            SpacesAudioAnalysisCompleted += (sender, args) => Spaces.AddRange(args.Value);
+            SpacesLoaded += (sender, args) => Spaces.AddRange(args.Value);
+        }
+
+        #endregion
+
         #region Properties
         public Project Project { private set; get; }
         public ObservableCollection<Description> Descriptions { set; get; }
@@ -46,18 +61,6 @@ namespace LiveDescribe.Managers
 
         #endregion
 
-        #region Constructor
-        public ProjectManager(LoadingViewModel loadingViewModel)
-        {
-            _loadingViewModel = loadingViewModel;
-            _spaces = new ObservableCollection<Space>();
-            _spaces.CollectionChanged += ObservableCollectionIndexer<Space>.CollectionChangedListener;
-            _spaces.CollectionChanged += SpacesOnCollectionChanged;
-            SpacesAudioAnalysisCompleted += (sender, args) => Spaces.AddRange(args.Value);
-            SpacesLoaded += (sender, args) => Spaces.AddRange(args.Value);
-        }
-
-        #endregion
 
         #region ProjectCreation
         /// <summary>

@@ -52,6 +52,7 @@ namespace LiveDescribe.ViewModel
         private readonly DescriptionInfoTabViewModel _descriptionInfoTabViewModel;
         private readonly AudioCanvasViewModel _audioCanvasViewModel;
         private readonly DescriptionCanvasViewModel _descriptionCanvasViewModel;
+        private readonly DescriptionRecordingControlViewModel _descriptionRecordingControlViewModel;
         private Project _project;
         private string _windowTitle;
         private bool _projectModified;
@@ -79,13 +80,14 @@ namespace LiveDescribe.ViewModel
 
             _mediaControlViewModel = new MediaControlViewModel(mediaVideo, _projectManager);
             _preferences = new PreferencesViewModel();
-            _descriptioncollectionviewmodel = new DescriptionCollectionViewModel(mediaVideo,
-                _mediaControlViewModel, _projectManager);
+            _descriptioncollectionviewmodel = new DescriptionCollectionViewModel(_projectManager);
             _descriptionInfoTabViewModel = new DescriptionInfoTabViewModel(_descriptioncollectionviewmodel,
                 _projectManager);
             _markingSpacesControlViewModel = new MarkingSpacesControlViewModel(_descriptionInfoTabViewModel, mediaVideo);
             _audioCanvasViewModel = new AudioCanvasViewModel(mediaVideo, _projectManager);
             _descriptionCanvasViewModel = new DescriptionCanvasViewModel(_descriptioncollectionviewmodel, mediaVideo);
+            _descriptionRecordingControlViewModel = new DescriptionRecordingControlViewModel(mediaVideo,
+                _projectManager, _descriptioncollectionviewmodel);
 
             DescriptionPlayer = new DescriptionPlayer();
             DescriptionPlayer.DescriptionFinishedPlaying += (sender, e) =>
@@ -258,9 +260,11 @@ namespace LiveDescribe.ViewModel
 
             _preferences.ApplyRequested += (sender, e) =>
             {
-                _descriptioncollectionviewmodel.Recorder.MicrophoneDeviceNumber = Properties.Settings.Default.Microphone.DeviceNumber;
+                _descriptionRecordingControlViewModel.Recorder.MicrophoneDeviceNumber =
+                    Properties.Settings.Default.Microphone.DeviceNumber;
                 Log.Info("Product Name of Apply Requested Microphone: " +
-                    NAudio.Wave.WaveIn.GetCapabilities(_descriptioncollectionviewmodel.Recorder.MicrophoneDeviceNumber).ProductName);
+                    NAudio.Wave.WaveIn.GetCapabilities(
+                    _descriptionRecordingControlViewModel.Recorder.MicrophoneDeviceNumber).ProductName);
             };
 
             #region MediaControlViewModel Events
@@ -473,6 +477,11 @@ namespace LiveDescribe.ViewModel
             get { return _descriptionCanvasViewModel; }
         }
 
+        public DescriptionRecordingControlViewModel DescriptionRecordingControlViewModel
+        {
+            get { return _descriptionRecordingControlViewModel; }
+        }
+
         #endregion
 
         #region Methods
@@ -624,8 +633,8 @@ namespace LiveDescribe.ViewModel
         {
             try
             {
-                if (_descriptioncollectionviewmodel.Recorder.IsRecording)
-                    _descriptioncollectionviewmodel.Recorder.StopRecording();
+                if (_descriptionRecordingControlViewModel.Recorder.IsRecording)
+                    _descriptionRecordingControlViewModel.Recorder.StopRecording();
 
                 _descriptiontimer.Stop();
                 DescriptionPlayer.Dispose();

@@ -6,7 +6,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     mc:Ignorable="d"
     xmlns:converters="clr-namespace:LiveDescribe.Converters"
-    xmlns:s="clr-namespace:LiveDescribe.Resources.UiStrings">
+    xmlns:s="clr-namespace:LiveDescribe.Resources.UiStrings"
+    xmlns:viewModel="clr-namespace:LiveDescribe.ViewModel"
+    d:DataContext="{d:DesignInstance viewModel:DescriptionRecordingControlViewModel}">
 
     <UserControl.Resources>
         <Style
@@ -26,7 +28,7 @@
         <StackPanel>
             <CheckBox
                 Name="ExtendedDescriptionCheckBox"
-                IsChecked="{Binding ExtendedIsChecked}"
+                IsChecked="{Binding RecordExtendedDescription}"
                 Style="{StaticResource ControlPanelStyle}"
                 HorizontalAlignment="Center">
                 <TextBlock

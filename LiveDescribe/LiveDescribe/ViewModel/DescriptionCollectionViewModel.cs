@@ -24,17 +24,6 @@ namespace LiveDescribe.ViewModel
         private ObservableCollection<Description> _alldescriptions;      //this list contains all the descriptions both regular and extended
         private ObservableCollection<Description> _extendedDescriptions; //this list only contains the extended description this list should be used to bind to the list view of extended descriptions
         private ObservableCollection<Description> _regularDescriptions;  //this list only contains all the regular descriptions this list should only be used to bind to the list of regular descriptions
-        private readonly ILiveDescribePlayer _mediaVideo;
-        private DescriptionRecorder _recorder;
-        private RelayCommand _recordButtonClickCommand;
-
-        private bool _recordingExtendedDescription;
-
-        //this variable should be used as little as possible in this class
-        //most interactions between the  descriptioncollectionviewmodel and the MediaControlViewModel should be in the MainWindowViewModel
-        private readonly MediaControlViewModel _mediaControlViewModel;
-
-        private LiveDescribeVideoStates _previousVideoState; //used to restore the previous video state after it's finished recording
 
         public Project Project { get; set; }
         #endregion
@@ -44,49 +33,9 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Constructors
-        public DescriptionCollectionViewModel(ILiveDescribePlayer mediaVideo,
-            MediaControlViewModel mediaControlViewModel, ProjectManager projectManager)
+        public DescriptionCollectionViewModel(ProjectManager projectManager)
         {
-            _mediaVideo = mediaVideo;
-            _mediaControlViewModel = mediaControlViewModel;
-
             Project = null;
-            _recorder = GetDescriptionRecorder();
-
-            RecordCommand = new RelayCommand(
-                canExecute: () =>
-                    Project != null
-                    && _mediaVideo.CurrentState != LiveDescribeVideoStates.VideoNotLoaded
-                    && _recorder.CanRecord(),
-                execute: () =>
-                {
-                    try
-                    {
-                        var pf = Project.GenerateDescriptionFile();
-                        _recorder.RecordDescription(pf, ExtendedIsChecked, _mediaVideo.Position.TotalMilliseconds);
-                        //save the current state so when the button is pressed again you can restore it back to that state
-                        _previousVideoState = _mediaVideo.CurrentState;
-                    }
-                    catch (MmException e)
-                    {
-                        MessageBoxFactory.ShowError("No Microphone Connected");
-                        Log.Warn("No Microphone Connected", e);
-                    }
-                    _mediaVideo.CurrentState = LiveDescribeVideoStates.RecordingDescription;
-                    RecordButtonClickCommand = StopRecordingCommand;
-                });
-
-            StopRecordingCommand = new RelayCommand(
-                canExecute: () =>
-                    Project != null
-                    && _mediaVideo.CurrentState != LiveDescribeVideoStates.VideoNotLoaded
-                    && _recorder.IsRecording,
-                execute: () =>
-                    {
-                        _recorder.StopRecording();
-                        _mediaVideo.CurrentState = _previousVideoState;
-                        RecordButtonClickCommand = RecordCommand;
-                    });
 
             AllDescriptions = new ObservableCollection<Description>();
             RegularDescriptions = new ObservableCollection<Description>();
@@ -100,35 +49,7 @@ namespace LiveDescribe.ViewModel
         }
         #endregion
 
-        #region Commands
-        /// <summary>
-        /// Setter and getter for RecordCommand gets bound to the record button
-        /// </summary>
-        private RelayCommand RecordCommand { get; set; }
-        private RelayCommand StopRecordingCommand { get; set; }
-
-        public RelayCommand RecordButtonClickCommand
-        {
-            get { return _recordButtonClickCommand ?? (_recordButtonClickCommand = RecordCommand); }
-            set
-            {
-                _recordButtonClickCommand = value;
-                RaisePropertyChanged();
-            }
-        }
-        #endregion
-
         #region Properties
-        public DescriptionRecorder Recorder
-        {
-            set
-            {
-                _recorder = value;
-                RaisePropertyChanged();
-            }
-            get { return _recorder; }
-        }
-
         /// <summary>
         /// Property to set and get the ObservableCollection containing all of the descriptions
         /// </summary>
@@ -170,18 +91,6 @@ namespace LiveDescribe.ViewModel
             get { return _regularDescriptions; }
         }
 
-        /// <summary>
-        /// Property that gets set when the extended description checkbox is checked or unchecked
-        /// </summary>
-        public bool ExtendedIsChecked
-        {
-            set
-            {
-                _recordingExtendedDescription = value;
-                RaisePropertyChanged();
-            }
-            get { return _recordingExtendedDescription; }
-        }
         #endregion
 
         #region Methods
@@ -254,15 +163,8 @@ namespace LiveDescribe.ViewModel
             AllDescriptions.Clear();
             ExtendedDescriptions.Clear();
             RegularDescriptions.Clear();
-            Recorder = GetDescriptionRecorder();
         }
 
-        private DescriptionRecorder GetDescriptionRecorder()
-        {
-            var dr = new DescriptionRecorder();
-            dr.DescriptionRecorded += (sender, args) => AddDescription(args.Value);
-            return dr;
-        }
         #endregion
 
         #region Event Invokation Methods

@@ -204,6 +204,7 @@
     <Compile Include="ViewModel\CountdownControlViewModel.cs" />
     <Compile Include="ViewModel\DescriptionCanvasViewModel.cs" />
     <Compile Include="ViewModel\DescriptionInfoTabViewModel.cs" />
+    <Compile Include="ViewModel\DescriptionRecordingControlViewModel.cs" />
     <Compile Include="ViewModel\ExportWindowViewModel.cs" />
     <Compile Include="ViewModel\LoadingViewModel.cs" />
     <Compile Include="ViewModel\MarkingSpacesControlViewModel.cs" />

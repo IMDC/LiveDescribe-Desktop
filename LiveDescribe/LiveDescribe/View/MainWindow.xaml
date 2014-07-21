@@ -2,24 +2,45 @@
     x:Class="LiveDescribe.View.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:s="clr-namespace:LiveDescribe.Resources.UiStrings"
     xmlns:controls="clr-namespace:LiveDescribe.Controls"
+    xmlns:viewModel="clr-namespace:LiveDescribe.ViewModel"
+    mc:Ignorable="d"
     Title="{Binding WindowTitle}"
     Height="600"
     Width="960"
     MinHeight="600"
     MinWidth="960"
-    Closing="MainWindow_OnClosing">
-    
+    Closing="MainWindow_OnClosing"
+    d:DataContext="{d:DesignInstance viewModel:MainWindowViewModel}">
+
     <Window.InputBindings>
-        <KeyBinding Command="{Binding OpenProject}" Key="O" Modifiers="Control" />
-        <KeyBinding Command="{Binding SaveProject}" Key="S" Modifiers="Control" />
-        <KeyBinding Command="{Binding NewProject}"  Key="N" Modifiers="Control" />
-        <KeyBinding Command="{Binding ShowPreferences}" Key="T" Modifiers="Control"/>
-        <KeyBinding Command="{Binding MediaControlViewModel.PlayPauseButtonClickCommand}" Key="Space"/>
-        <KeyBinding Command="{Binding DescriptionInfoTabViewModel.DeleteSelectedSpaceOrDescription}" Key="Delete"/>
+        <KeyBinding
+            Command="{Binding OpenProject}"
+            Key="O"
+            Modifiers="Control" />
+        <KeyBinding
+            Command="{Binding SaveProject}"
+            Key="S"
+            Modifiers="Control" />
+        <KeyBinding
+            Command="{Binding NewProject}"
+            Key="N"
+            Modifiers="Control" />
+        <KeyBinding
+            Command="{Binding ShowPreferences}"
+            Key="T"
+            Modifiers="Control" />
+        <KeyBinding
+            Command="{Binding MediaControlViewModel.PlayPauseButtonClickCommand}"
+            Key="Space" />
+        <KeyBinding
+            Command="{Binding DescriptionInfoTabViewModel.DeleteSelectedSpaceOrDescription}"
+            Key="Delete" />
     </Window.InputBindings>
-    
+
     <Grid>
         <controls:LoadingControl
             x:Name="LoadingControl"
@@ -34,7 +55,7 @@
                 <MenuItem
                     Header="{x:Static s:UiStrings.MenuItem_File}">
                     <MenuItem
-                        Header="{x:Static s:UiStrings.MenuItem_NewProject}"                        
+                        Header="{x:Static s:UiStrings.MenuItem_NewProject}"
                         Command="{Binding NewProject}"
                         InputGestureText="Ctrl+N" />
                     <MenuItem
@@ -48,22 +69,22 @@
                     <MenuItem
                         Header="{x:Static s:UiStrings.MenuItem_CloseProject}"
                         Command="{Binding CloseProject}" />
-                    
+
                     <!--Exporting Options-->
-                    <MenuItem Header="Export" >
+                    <MenuItem
+                        Header="Export">
                         <MenuItem
                             Header="Export Video With Descriptions"
-                            Command="{Binding ExportWithDescriptions}"
-                        />
+                            Command="{Binding ExportWithDescriptions}" />
                         <MenuItem
-                        Header="{x:Static s:UiStrings.Export_DescriptionSrtTitle}"
-                        Command="{Binding ExportDescriptionsTextToSrt}"/>
+                            Header="{x:Static s:UiStrings.Export_DescriptionSrtTitle}"
+                            Command="{Binding ExportDescriptionsTextToSrt}" />
 
-                        <MenuItem 
-                        Header="{x:Static s:UiStrings.Export_SpaceSrtTitle}"
-                        Command="{Binding ExportSpacesTextToSrt}"/>
+                        <MenuItem
+                            Header="{x:Static s:UiStrings.Export_SpaceSrtTitle}"
+                            Command="{Binding ExportSpacesTextToSrt}" />
                     </MenuItem>
-                    
+
                     <MenuItem
                         Name="Preferences"
                         Header="{x:Static s:UiStrings.MenuItem_Preferences}"
@@ -81,7 +102,7 @@
                     <MenuItem
                         Header="{x:Static s:UiStrings.MenuItem_ClearCache}"
                         Command="{Binding ClearCache}" />
-                    
+
                 </MenuItem>
                 <MenuItem
                     Header="{x:Static s:UiStrings.MenuItem_Help}">
@@ -135,7 +156,7 @@
 
                 <controls:DescriptionRecordingControl
                     x:Name="DescriptionRecordingControl"
-                    DataContext="{Binding DescriptionCollectionViewModel}"
+                    DataContext="{Binding DescriptionRecordingControlViewModel}"
                     Grid.Column="0"
                     Grid.Row="11"
                     Grid.RowSpan="2" />
