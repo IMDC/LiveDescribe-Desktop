@@ -11,6 +11,7 @@
     xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
     xmlns:converters="clr-namespace:LiveDescribe.Converters"
     xmlns:s="clr-namespace:LiveDescribe.Resources.UiStrings"
+    xmlns:u="clr-namespace:LiveDescribe.Utilities"
     xmlns:viewModel="clr-namespace:LiveDescribe.ViewModel"
     d:DataContext="{d:DesignInstance viewModel:MediaControlViewModel}">
     <UserControl.Resources>
@@ -20,8 +21,8 @@
             x:Key="LivedescribeVideoStateToContent" />
         <converters:BoolToContentConverter
             x:Key="IsMutedConverter"
-            TrueContent="{x:Static s:UiStrings.Command_UnMute}"
-            FalseContent="{x:Static s:UiStrings.Command_Mute}" />
+            TrueContent="{x:Static u:CustomResources.UnMute}"
+            FalseContent="{x:Static u:CustomResources.Mute}" />
         <converters:InvertBoolConverter
             x:Key="InvertBool" />
 

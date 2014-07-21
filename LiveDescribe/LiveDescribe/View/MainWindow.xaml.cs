@@ -63,9 +63,10 @@ namespace LiveDescribe.View
         #endregion
 
         public MainWindow()
-        {
-            var splashScreen = new SplashScreen("../Resources/Images/LiveDescribe-Splashscreen.png");
-            splashScreen.Show(true);
+        {            
+            var splashscreen = new SplashScreen("../Resources/Images/LiveDescribe-Splashscreen.png");
+            splashscreen.Show(true);
+            CustomResources.LoadResources();
 #if !DEBUG
             Thread.Sleep(2000);
 #endif
@@ -91,8 +92,6 @@ namespace LiveDescribe.View
             _marker = MarkerControl.Marker;
 
             _millisecondsTimeConverter = new MillisecondsTimeConverterFormatter();
-
-            CustomCursors.CreateCustomCursors();
 
             #region TimeLineScrollViewer Event Listeners
             TimeLineScrollViewer.ScrollChanged += (sender, e) =>

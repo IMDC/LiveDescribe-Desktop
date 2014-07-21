@@ -64,7 +64,7 @@ namespace LiveDescribe.Controls
             }
             else
             {
-                Container.Cursor = CustomCursors.GrabbingCursor;
+                Container.Cursor = CustomResources.GrabbingCursor;
                 Container.CurrentActionState = ItemCanvas.ActionState.Dragging;
             }
         }
@@ -112,7 +112,7 @@ namespace LiveDescribe.Controls
             else if (xPos < (Space.X + ResizeSpaceOffset)) //mouse is over left size of space
                 Mouse.SetCursor(Cursors.SizeWE);
             else
-                Mouse.SetCursor(CustomCursors.GrabCursor);
+                Mouse.SetCursor(CustomResources.GrabCursor);
         }
 
         private void ResizeEndOfSpace(double mouseXPosition)
@@ -195,8 +195,8 @@ namespace LiveDescribe.Controls
 
         private void SetAppropriateCursorUponMouseCaptured()
         {
-            if (Container.Cursor != CustomCursors.GrabbingCursor && Container.CurrentActionState == ItemCanvas.ActionState.Dragging)
-                Container.Cursor = CustomCursors.GrabbingCursor;
+            if (Container.Cursor != CustomResources.GrabbingCursor && Container.CurrentActionState == ItemCanvas.ActionState.Dragging)
+                Container.Cursor = CustomResources.GrabbingCursor;
 
             if (Container.Cursor != Cursors.SizeWE && (Container.CurrentActionState == ItemCanvas.ActionState.ResizingBeginningOfItem ||
                 Container.CurrentActionState == ItemCanvas.ActionState.ResizingEndOfItem))
