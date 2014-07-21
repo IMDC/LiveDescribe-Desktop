@@ -154,13 +154,20 @@
                         Width="130*" />
                 </Grid.ColumnDefinitions>
 
-                <controls:DescriptionRecordingControl
-                    x:Name="DescriptionRecordingControl"
-                    DataContext="{Binding DescriptionRecordingControlViewModel}"
-                    Grid.Column="0"
-                    Grid.Row="11"
-                    Grid.RowSpan="2" />
+                <StackPanel
+                    Orientation="Vertical"
+                    Grid.Row="8"
+                    Grid.RowSpan="5">
 
+                    <controls:MarkingSpacesControl
+                        DataContext="{Binding MarkingSpacesControlViewModel}"
+                        Margin="0,0,0,10" />
+
+                    <controls:DescriptionRecordingControl
+                        x:Name="DescriptionRecordingControl"
+                        DataContext="{Binding DescriptionRecordingControlViewModel}" />
+
+                </StackPanel>
                 <controls:MediaControl
                     x:Name="MediaControl"
                     DataContext="{Binding MediaControlViewModel}"
@@ -168,7 +175,6 @@
                     Grid.Column="0"
                     Grid.RowSpan="8"
                     Grid.ColumnSpan="4" />
-
 
                 <!--Description Information-->
                 <controls:SpaceAndDescriptionsTabControl
@@ -179,11 +185,7 @@
                     Grid.ColumnSpan="3"
                     Grid.RowSpan="8" />
 
-                <controls:MarkingSpacesControl
-                    DataContext="{Binding MarkingSpacesControlViewModel}"
-                    Grid.Column="0"
-                    Grid.Row="8"
-                    Grid.RowSpan="3" />
+
 
                 <!--Timeline-->
                 <Border

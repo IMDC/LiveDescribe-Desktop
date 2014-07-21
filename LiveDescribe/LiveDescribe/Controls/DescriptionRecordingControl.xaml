@@ -8,6 +8,7 @@
     xmlns:converters="clr-namespace:LiveDescribe.Converters"
     xmlns:s="clr-namespace:LiveDescribe.Resources.UiStrings"
     xmlns:viewModel="clr-namespace:LiveDescribe.ViewModel"
+    xmlns:u="clr-namespace:LiveDescribe.Utilities"
     d:DataContext="{d:DesignInstance viewModel:DescriptionRecordingControlViewModel}">
 
     <UserControl.Resources>
@@ -20,8 +21,8 @@
         </Style>
         <converters:BoolToContentConverter
             x:Key="IsRecordingConverter"
-            TrueContent="{x:Static s:UiStrings.Command_StopRecord}"
-            FalseContent="{x:Static s:UiStrings.Command_Record}" />
+            TrueContent="{x:Static u:CustomResources.StopRecord}"
+            FalseContent="{x:Static u:CustomResources.Record}" />
     </UserControl.Resources>
 
     <Grid>
@@ -41,8 +42,9 @@
                 Style="{StaticResource ControlPanelStyle}"
                 Content="{Binding Path=Recorder.IsRecording, Converter={StaticResource IsRecordingConverter}}"
                 HorizontalAlignment="Center"
-                Width="100"
-                MinHeight="20" />
+                HorizontalContentAlignment="Center"
+                Width="60"
+                Height="35" />
         </StackPanel>
     </Grid>
 </UserControl>

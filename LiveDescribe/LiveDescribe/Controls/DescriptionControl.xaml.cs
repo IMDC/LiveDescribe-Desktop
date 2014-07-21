@@ -43,7 +43,7 @@ namespace LiveDescribe.Controls
             {
                 _originalPositionForDraggingDescription = e.GetPosition(Container).X;
                 DescriptionGraphic.CaptureMouse();
-                Container.Cursor = CustomCursors.GrabbingCursor;
+                Container.Cursor = CustomResources.GrabbingCursor;
                 Container.CurrentActionState = ItemCanvas.ActionState.Dragging;
             }
         }
@@ -65,7 +65,7 @@ namespace LiveDescribe.Controls
 
         private void HandlerDescriptionNonMouseCapturedState()
         {
-            Mouse.SetCursor(CustomCursors.GrabCursor);
+            Mouse.SetCursor(CustomResources.GrabCursor);
         }
 
         private void HandleDescriptionMouseCapturedState(double xPos)

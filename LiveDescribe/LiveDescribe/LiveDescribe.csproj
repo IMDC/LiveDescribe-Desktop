@@ -187,7 +187,7 @@
       <DependentUpon>UiStrings.resx</DependentUpon>
     </Compile>
     <Compile Include="Utilities\AudioAnalyzer.cs" />
-    <Compile Include="Utilities\CustomCursors.cs" />
+    <Compile Include="Utilities\CustomResources.cs" />
     <Compile Include="Utilities\DescriptionExportUtility.cs" />
     <Compile Include="Utilities\DescriptionPlayer.cs" />
     <Compile Include="Utilities\DescriptionRecorder.cs" />
@@ -367,6 +367,13 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\Icons\pause.png" />
+    <Resource Include="Resources\Icons\play.png" />
+    <Resource Include="Resources\Icons\mute.png" />
+    <Resource Include="Resources\Icons\unmute.png" />
+    <None Include="Resources\mute.bmp" />
+    <Resource Include="Resources\Icons\stop.png" />
+    <Resource Include="Resources\Icons\record.png" />
     <Content Include="Utilities\_ffmpeg.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
