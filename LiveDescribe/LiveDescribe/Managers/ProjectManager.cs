@@ -7,6 +7,7 @@ using LiveDescribe.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Windows;
@@ -49,7 +50,9 @@ namespace LiveDescribe.Managers
         {
             _loadingViewModel = loadingViewModel;
             _spaces = new ObservableCollection<Space>();
+            _spaces.CollectionChanged += SpacesOnCollectionChanged;
         }
+
         #endregion
 
         #region ProjectCreation
@@ -225,6 +228,7 @@ namespace LiveDescribe.Managers
         }
         #endregion
 
+        #region Save Project
         public void SaveProject()
         {
             FileWriter.WriteProjectFile(Project);
@@ -239,6 +243,23 @@ namespace LiveDescribe.Managers
 
             OnProjectSaved();
         }
+        #endregion
+
+        #region SetupSpaceEvents
+        private void SetupSpaceEvents(Space s)
+        {
+            s.SpaceDeleteEvent += (sender, args) => Spaces.Remove(s);
+        }
+
+        private void SpacesOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
+        {
+            if (args.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (Space space in args.NewItems)
+                    SetupSpaceEvents(space);
+            }
+        }
+        #endregion
 
         #region Event Invokations
 

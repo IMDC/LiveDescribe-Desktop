@@ -7,6 +7,7 @@ using LiveDescribe.Utilities;
 using LiveDescribe.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
@@ -296,41 +297,13 @@ namespace LiveDescribe.View
 
             #region Event Listeners for SpaceCollectionViewModel
 
-            _spaceCollectionViewModel.SpaceAdded += (sender, e) =>
+            _spaceCollectionViewModel.Spaces.CollectionChanged += (sender, e) =>
             {
-                //Adding a space depends on where you right clicked so we create and add it in the view
-                Space space = e.Space;
-
-                //Set space only if the video is loaded/playing/recording/etc
-                if (_videoMedia.CurrentState != LiveDescribeVideoStates.VideoNotLoaded)
-                    SetSpaceLocation(space);
-
-                space.SpaceMouseDownEvent += (sender1, e1) =>
+                if (e.Action == NotifyCollectionChangedAction.Add)
                 {
-                    if (Mouse.LeftButton == MouseButtonState.Pressed)
-                    {
-                        _descriptionInfoTabViewModel.SelectedSpace = space;
-                        SpaceAndDescriptionsTabControl.SpacesListView.ScrollToCenterOfView(space);
-                    }
-                };
-
-                space.PropertyChanged += (o, args) =>
-                {
-                    if (args.PropertyName.Equals("StartInVideo") || args.PropertyName.Equals("EndInVideo"))
-                        SetSpaceLocation(space);
-                };
-
-                space.GoToThisSpaceEvent += (o, args) =>
-                {
-                    UpdateMarkerPosition((space.StartInVideo / _videoDuration) * (_audioCanvas.Width) - MarkerOffset);
-                    UpdateVideoPosition((int)space.StartInVideo);
-                    //Scroll 1 second before the start in video of the space
-                    TimeLineScrollViewer.ScrollToHorizontalOffset((_audioCanvas.Width / _videoDuration) *
-                                                                  (space.StartInVideo - 1000));
-
-                    _descriptionInfoTabViewModel.SelectedSpace = space;
-                    SpaceAndDescriptionsTabControl.SpacesListView.ScrollToCenterOfView(space);
-                };
+                    foreach (Space space in e.NewItems)
+                        SetupSpaceEvents(space);
+                }
             };
 
             _spaceCollectionViewModel.RequestSpaceTime += (sender, args) =>
@@ -476,6 +449,42 @@ namespace LiveDescribe.View
         #endregion
 
         #region Helper Functions
+
+        private void SetupSpaceEvents(Space space)
+        {
+            //Adding a space depends on where you right clicked so we create and add it in the view
+            //Set space only if the video is loaded/playing/recording/etc
+            if (_videoMedia.CurrentState != LiveDescribeVideoStates.VideoNotLoaded)
+                SetSpaceLocation(space);
+
+            space.SpaceMouseDownEvent += (sender1, e1) =>
+            {
+                if (Mouse.LeftButton == MouseButtonState.Pressed)
+                {
+                    _descriptionInfoTabViewModel.SelectedSpace = space;
+                    SpaceAndDescriptionsTabControl.SpacesListView.ScrollToCenterOfView(space);
+                }
+            };
+
+            space.PropertyChanged += (o, args) =>
+            {
+                if (args.PropertyName.Equals("StartInVideo") || args.PropertyName.Equals("EndInVideo"))
+                    SetSpaceLocation(space);
+            };
+
+            space.GoToThisSpaceEvent += (o, args) =>
+            {
+                UpdateMarkerPosition((space.StartInVideo / _videoDuration) * (_audioCanvas.Width) - MarkerOffset);
+                UpdateVideoPosition((int)space.StartInVideo);
+                //Scroll 1 second before the start in video of the space
+                TimeLineScrollViewer.ScrollToHorizontalOffset((_audioCanvas.Width / _videoDuration) *
+                                                              (space.StartInVideo - 1000));
+
+                _descriptionInfoTabViewModel.SelectedSpace = space;
+                SpaceAndDescriptionsTabControl.SpacesListView.ScrollToCenterOfView(space);
+            };
+        }
+
         /// <summary>
         /// Updates the Marker Position in the timeline and sets the corresponding time in the timelabel
         /// </summary>

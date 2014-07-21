@@ -24,7 +24,6 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Event Handlers
-        public event EventHandler<SpaceEventArgs> SpaceAdded;
 
         /// <summary>
         /// Requests to a handler what to set the StartInVideo and EndInVideo time values for the
@@ -81,18 +80,7 @@ namespace LiveDescribe.ViewModel
 
         public void AddSpace(Space space)
         {
-            OnSpaceAdded(space);
             Spaces.Add(space);
-            SetupEventsOnSpace(space);
-        }
-
-        /// <summary>
-        /// Setup all the events on space that don't require any info from the UI
-        /// </summary>
-        /// <param name="space">The space that the events are setup on</param>
-        private void SetupEventsOnSpace(Space space)
-        {
-            space.SpaceDeleteEvent += (sender, e) => Spaces.Remove(space);
         }
 
         public void CloseSpaceCollectionViewModel()
@@ -113,12 +101,6 @@ namespace LiveDescribe.ViewModel
         {
             var handler = RequestSpaceTime;
             if (handler != null) handler(this, new SpaceEventArgs(s));
-        }
-
-        private void OnSpaceAdded(Space space)
-        {
-            EventHandler<SpaceEventArgs> handler = SpaceAdded;
-            if (handler != null) handler(this, new SpaceEventArgs(space));
         }
         #endregion
     }
