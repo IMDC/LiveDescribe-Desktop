@@ -370,6 +370,8 @@
     <Resource Include="Resources\Icons\mute.png" />
     <Resource Include="Resources\Icons\unmute.png" />
     <None Include="Resources\mute.bmp" />
+    <Resource Include="Resources\Icons\stop.png" />
+    <Resource Include="Resources\Icons\record.png" />
     <Content Include="Utilities\_ffmpeg.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

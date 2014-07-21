@@ -10,7 +10,6 @@
     xmlns:controls="clr-namespace:LiveDescribe.Controls"
     xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
     xmlns:converters="clr-namespace:LiveDescribe.Converters"
-    xmlns:s="clr-namespace:LiveDescribe.Resources.UiStrings"
     xmlns:u="clr-namespace:LiveDescribe.Utilities"
     xmlns:viewModel="clr-namespace:LiveDescribe.ViewModel"
     d:DataContext="{d:DesignInstance viewModel:MediaControlViewModel}">

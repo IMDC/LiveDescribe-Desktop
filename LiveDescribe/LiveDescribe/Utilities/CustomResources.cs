@@ -27,6 +27,12 @@ namespace LiveDescribe.Utilities
 
             UnMute = new Image();
             UnMute.Source = new BitmapImage(new Uri("pack://application:,,,/Resources/Icons/unmute.png"));
+
+            Record = new Image();
+            Record.Source = new BitmapImage(new Uri("pack://application:,,,/Resources/Icons/record.png"));
+
+            StopRecord = new Image();
+            StopRecord.Source = new BitmapImage(new Uri("pack://application:,,,/Resources/Icons/stop.png"));
         }
 
         public static Cursor GrabbingCursor { get; private set; }
@@ -35,5 +41,7 @@ namespace LiveDescribe.Utilities
         public static Image Pause { get; private set; }
         public static Image Mute { get; private set; }
         public static Image UnMute { get; private set; }
+        public static Image Record { get; private set; }
+        public static Image StopRecord { get; private set; }
     }
 }
