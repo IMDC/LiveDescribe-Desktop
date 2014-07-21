@@ -20,8 +20,8 @@
             x:Key="LivedescribeVideoStateToContent" />
         <converters:BoolToContentConverter
             x:Key="IsMutedConverter"
-            TrueContent="{x:Static u:CustomResources.UnMute}"
-            FalseContent="{x:Static u:CustomResources.Mute}" />
+            TrueContent="{x:Static u:CustomResources.Mute}"
+            FalseContent="{x:Static u:CustomResources.UnMute}" />
         <converters:InvertBoolConverter
             x:Key="InvertBool" />
 
