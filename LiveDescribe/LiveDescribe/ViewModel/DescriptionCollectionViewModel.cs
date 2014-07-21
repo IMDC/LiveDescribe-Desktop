@@ -23,9 +23,7 @@ namespace LiveDescribe.ViewModel
         #region Instance Variables
         private ObservableCollection<Description> _alldescriptions;      //this list contains all the descriptions both regular and extended
         private ObservableCollection<Description> _extendedDescriptions; //this list only contains the extended description this list should be used to bind to the list view of extended descriptions
-        private ObservableCollectionIndexer<Description> _extendedDescriptionIndexer;
         private ObservableCollection<Description> _regularDescriptions;  //this list only contains all the regular descriptions this list should only be used to bind to the list of regular descriptions
-        private ObservableCollectionIndexer<Description> _regularDescriptionIndexer;
         private readonly ILiveDescribePlayer _mediaVideo;
         private DescriptionRecorder _recorder;
         private RelayCommand _recordButtonClickCommand;
@@ -92,9 +90,10 @@ namespace LiveDescribe.ViewModel
 
             AllDescriptions = new ObservableCollection<Description>();
             RegularDescriptions = new ObservableCollection<Description>();
-            _regularDescriptionIndexer = new ObservableCollectionIndexer<Description>(RegularDescriptions);
+            RegularDescriptions.CollectionChanged += ObservableCollectionIndexer<Description>.CollectionChangedListener;
+
             ExtendedDescriptions = new ObservableCollection<Description>();
-            _extendedDescriptionIndexer = new ObservableCollectionIndexer<Description>(ExtendedDescriptions);
+            ExtendedDescriptions.CollectionChanged += ObservableCollectionIndexer<Description>.CollectionChangedListener;
 
             projectManager.Descriptions = AllDescriptions;
             projectManager.DescriptionsLoaded += (sender, args) => AddDescriptions(args.Value);
