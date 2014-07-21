@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Events;
+using LiveDescribe.Extensions;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Managers;
 using LiveDescribe.Model;
@@ -46,11 +47,11 @@ namespace LiveDescribe.ViewModel
                 {
                     var s = new Space();
                     OnRequestSpaceTime(s);
-                    AddSpace(s);
+                    Spaces.Add(s);
                 });
 
-            _projectManager.SpacesAudioAnalysisCompleted += (sender, args) => AddSpaces(args.Value);
-            _projectManager.SpacesLoaded += (sender, args) => AddSpaces(args.Value);
+            _projectManager.SpacesAudioAnalysisCompleted += (sender, args) => Spaces.AddRange(args.Value);
+            _projectManager.SpacesLoaded += (sender, args) => Spaces.AddRange(args.Value);
         }
         #endregion
 
@@ -70,28 +71,10 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Methods
-        /// <summary>
-        /// Method that gets called when adding a space
-        /// </summary>
-        public void AddSpace()
-        {
-            AddSpace(new Space());
-        }
-
-        public void AddSpace(Space space)
-        {
-            Spaces.Add(space);
-        }
 
         public void CloseSpaceCollectionViewModel()
         {
             Spaces.Clear();
-        }
-
-        public void AddSpaces(List<Space> spaces)
-        {
-            foreach (var space in spaces)
-                AddSpace(space);
         }
         #endregion
 

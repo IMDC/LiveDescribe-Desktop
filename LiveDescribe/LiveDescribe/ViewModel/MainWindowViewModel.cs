@@ -17,11 +17,11 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Input;
-using System.Linq;
 
 namespace LiveDescribe.ViewModel
 {
@@ -181,7 +181,7 @@ namespace LiveDescribe.ViewModel
                 execute: () =>
                 {
                     var viewModel = DialogShower.SpawnExportWindowView(_project, _mediaVideo.Path,
-                                        _mediaVideo.DurationSeconds, 
+                                        _mediaVideo.DurationSeconds,
                                         _descriptioncollectionviewmodel.RegularDescriptions.ToList(),
                                         _loadingViewModel);
 
@@ -214,7 +214,7 @@ namespace LiveDescribe.ViewModel
                 execute: () =>
                 {
                     var spaces = AudioAnalyzer.FindSpaces(_mediaControlViewModel.Waveform);
-                    _spacecollectionviewmodel.AddSpaces(spaces);
+                    _spacecollectionviewmodel.Spaces.AddRange(spaces);
                 }
             );
 

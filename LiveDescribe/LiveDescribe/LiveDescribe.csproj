@@ -169,6 +169,7 @@
     <Compile Include="Events\SpaceEventArgs.cs" />
     <Compile Include="Extensions\CommandExtensions.cs" />
     <Compile Include="Extensions\ItemsControlExtensions.cs" />
+    <Compile Include="Extensions\ObservableCollectionExtensions.cs" />
     <Compile Include="Factories\DialogShower.cs" />
     <Compile Include="Factories\MessageBoxFactory.cs" />
     <Compile Include="Interfaces\IDescribableInterval.cs" />
