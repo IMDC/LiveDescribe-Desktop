@@ -179,13 +179,13 @@
     <Compile Include="Model\Space.cs" />
     <Compile Include="Model\Header.cs" />
     <Compile Include="Model\Waveform.cs" />
+    <Compile Include="Resources\CustomResources.cs" />
     <Compile Include="Resources\UiStrings\UiStrings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>UiStrings.resx</DependentUpon>
     </Compile>
     <Compile Include="Utilities\AudioAnalyzer.cs" />
-    <Compile Include="Utilities\CustomResources.cs" />
     <Compile Include="Utilities\DescriptionExportUtility.cs" />
     <Compile Include="Utilities\DescriptionPlayer.cs" />
     <Compile Include="Utilities\DescriptionRecorder.cs" />
@@ -371,6 +371,8 @@
     <Resource Include="Resources\Icons\unmute.png" />
     <Resource Include="Resources\Icons\stop.png" />
     <Resource Include="Resources\Icons\record.png" />
+    <Content Include="Resources\SoundEffects\beep.wav" />
+    <Content Include="Resources\SoundEffects\finished-beep.wav" />
     <Content Include="Utilities\_ffmpeg.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

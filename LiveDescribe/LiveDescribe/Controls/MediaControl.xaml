@@ -12,6 +12,7 @@
     xmlns:converters="clr-namespace:LiveDescribe.Converters"
     xmlns:u="clr-namespace:LiveDescribe.Utilities"
     xmlns:viewModel="clr-namespace:LiveDescribe.ViewModel"
+    xmlns:resources="clr-namespace:LiveDescribe.Resources"
     d:DataContext="{d:DesignInstance viewModel:MediaControlViewModel}">
     <UserControl.Resources>
         <converters:TimeConverterFormatter
@@ -20,8 +21,8 @@
             x:Key="LivedescribeVideoStateToContent" />
         <converters:BoolToContentConverter
             x:Key="IsMutedConverter"
-            TrueContent="{x:Static u:CustomResources.Mute}"
-            FalseContent="{x:Static u:CustomResources.UnMute}" />
+            TrueContent="{x:Static resources:CustomResources.Mute}"
+            FalseContent="{x:Static resources:CustomResources.UnMute}" />
         <converters:InvertBoolConverter
             x:Key="InvertBool" />
 

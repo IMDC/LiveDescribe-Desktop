@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Controls;
 using System.Windows.Data;
+using LiveDescribe.Resources;
 using LiveDescribe.Resources.UiStrings;
 using LiveDescribe.Utilities;
 

@@ -1,4 +1,5 @@
 ﻿using LiveDescribe.Model;
+using LiveDescribe.Resources;
 using LiveDescribe.Utilities;
 using System.Windows;
 using System.Windows.Input;

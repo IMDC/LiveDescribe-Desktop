@@ -7,7 +7,8 @@
     mc:Ignorable="d"
     xmlns:converters="clr-namespace:LiveDescribe.Converters"
     xmlns:u="clr-namespace:LiveDescribe.Utilities"
-    xmlns:s="clr-namespace:LiveDescribe.Resources.UiStrings">
+    xmlns:s="clr-namespace:LiveDescribe.Resources.UiStrings"
+    xmlns:resources="clr-namespace:LiveDescribe.Resources">
 
     <UserControl.Resources>
         <Style
@@ -19,8 +20,8 @@
         </Style>
         <converters:BoolToContentConverter
             x:Key="IsRecordingConverter"
-            TrueContent="{x:Static u:CustomResources.StopRecord}"
-            FalseContent="{x:Static u:CustomResources.Record}" />
+            TrueContent="{x:Static resources:CustomResources.StopRecord}"
+            FalseContent="{x:Static resources:CustomResources.Record}" />
     </UserControl.Resources>
 
     <Grid>
