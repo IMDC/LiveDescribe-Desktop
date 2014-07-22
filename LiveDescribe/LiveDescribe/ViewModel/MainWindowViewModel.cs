@@ -103,7 +103,7 @@ namespace LiveDescribe.ViewModel
             #region Commands
             //Commands
             CloseProject = new RelayCommand(
-                canExecute: () => ProjectLoaded,
+                canExecute: () => _projectManager.HasProjectLoaded,
                 execute: () =>
                 {
                     if (ProjectModified)
@@ -172,7 +172,7 @@ namespace LiveDescribe.ViewModel
             );
 
             ExportWithDescriptions = new RelayCommand(
-                canExecute: () => ProjectLoaded,
+                canExecute: () => _projectManager.HasProjectLoaded,
                 execute: () =>
                 {
                     var viewModel = DialogShower.SpawnExportWindowView(_project, _mediaVideo.Path,
@@ -184,7 +184,7 @@ namespace LiveDescribe.ViewModel
                 });
 
             ClearCache = new RelayCommand(
-                canExecute: () => ProjectLoaded,
+                canExecute: () => _projectManager.HasProjectLoaded,
                 execute: () =>
                 {
                     var p = _project;
@@ -204,7 +204,7 @@ namespace LiveDescribe.ViewModel
             });
 
             FindSpaces = new RelayCommand(
-                canExecute: () => ProjectLoaded,
+                canExecute: () => _projectManager.HasProjectLoaded,
                 execute: () =>
                 {
                     var spaces = AudioAnalyzer.FindSpaces(_mediaControlViewModel.Waveform);
@@ -213,7 +213,7 @@ namespace LiveDescribe.ViewModel
             );
 
             ExportDescriptionsTextToSrt = new RelayCommand(
-                canExecute: () => ProjectLoaded,
+                canExecute: () => _projectManager.HasProjectLoaded,
                 execute: () =>
                 {
                     var saveFileDialog = new SaveFileDialog
@@ -229,7 +229,7 @@ namespace LiveDescribe.ViewModel
             );
 
             ExportSpacesTextToSrt = new RelayCommand(
-                canExecute: () => ProjectLoaded,
+                canExecute: () => _projectManager.HasProjectLoaded,
                 execute: () =>
                 {
                     var saveFileDialog = new SaveFileDialog
@@ -405,11 +405,6 @@ namespace LiveDescribe.ViewModel
             get { return _windowTitle; }
         }
 
-        public bool ProjectLoaded
-        {
-            get { return _project != null; }
-        }
-
         /// <summary>
         /// Keeps track of whether the project has been modified or not by the program. This will be
         /// true iff there is a project loaded already.
@@ -420,11 +415,11 @@ namespace LiveDescribe.ViewModel
             {
                 if (_projectModified != value)
                 {
-                    _projectModified = ProjectLoaded && value;
+                    _projectModified = _projectManager.HasProjectLoaded && value;
                     RaisePropertyChanged();
                 }
             }
-            get { return ProjectLoaded && _projectModified; }
+            get { return _projectManager.HasProjectLoaded && _projectModified; }
         }
 
         public ProjectManager ProjectManager
@@ -641,7 +636,7 @@ namespace LiveDescribe.ViewModel
             if (ProjectModified)
                 WindowTitle = string.Format(UiStrings.Window_Format_MainWindowProjectModified,
                     _project.ProjectName, UiStrings.Program_Name);
-            else if (ProjectLoaded)
+            else if (_projectManager.HasProjectLoaded)
                 WindowTitle = string.Format(UiStrings.Window_Format_MainWindowProjectSaved,
                     _project.ProjectName, UiStrings.Program_Name);
             else

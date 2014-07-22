@@ -51,7 +51,6 @@ namespace LiveDescribe.Managers
             _spaces.CollectionChanged += ObservableCollectionIndexer<Space>.CollectionChangedListener;
             _spaces.CollectionChanged += SpacesOnCollectionChanged;
 
-
             _projectLoader = new ProjectLoader(loadingViewModel);
             _projectLoader.DescriptionsLoaded += (sender, args) => AllDescriptions.AddRange(args.Value);
             _projectLoader.SpacesLoaded += (sender, args) => Spaces.AddRange(args.Value);
@@ -67,6 +66,11 @@ namespace LiveDescribe.Managers
 
         #region Properties
         public Project Project { private set; get; }
+
+        public bool HasProjectLoaded
+        {
+            get { return Project != null; }
+        }
 
         public ObservableCollection<Description> AllDescriptions
         {
@@ -122,6 +126,8 @@ namespace LiveDescribe.Managers
             RegularDescriptions.Clear();
 
             Spaces.Clear();
+
+            Project = null;
 
             OnProjectClosed();
         }
