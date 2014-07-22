@@ -1,9 +1,13 @@
-﻿using LiveDescribe.Factories;
+﻿using LiveDescribe.Events;
+using LiveDescribe.Factories;
 using LiveDescribe.Model;
 using LiveDescribe.Resources.UiStrings;
 using LiveDescribe.Utilities;
+using LiveDescribe.ViewModel;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Windows;
 
@@ -16,7 +20,27 @@ namespace LiveDescribe.Managers
             (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         #endregion
 
-        #region ProjectCreation
+        #region Fields
+
+        private readonly LoadingViewModel _loadingViewModel;
+        #endregion
+
+        #region Events
+        public event EventHandler<EventArgs<List<Description>>> DescriptionsLoaded;
+        public event EventHandler<EventArgs<List<Space>>> SpacesLoaded;
+        public event EventHandler<EventArgs<List<Space>>> SpacesAudioAnalysisCompleted;
+        public event EventHandler<EventArgs<Project>> ProjectLoaded;
+        #endregion
+
+        #region Constructor
+
+        public ProjectLoader(LoadingViewModel loadingViewModel)
+        {
+            _loadingViewModel = loadingViewModel;
+        }
+        #endregion
+
+        #region Initialize Project Directory
         /// <summary>
         /// Attempts to create the project file and folder
         /// </summary>
@@ -78,6 +102,131 @@ namespace LiveDescribe.Managers
                  */
                 throw;
             }
+        }
+        #endregion
+
+        #region LoadProject
+        public void StartLoadingProject(Project project)
+        {
+            InitializeDirectories(project);
+
+            LoadDescriptions(project);
+            LoadSpaces(project);
+
+            if (!File.Exists(project.Files.WaveForm))
+                StripAudioAnContinueLoadingProject(project);
+            else
+            {
+                LoadWaveForm(project);
+                ContinueLoadingProject(project);
+            }
+        }
+
+        private void InitializeDirectories(Project project)
+        {
+            CreateDirectoryIfNotExists(project.Folders.Descriptions);
+            CreateDirectoryIfNotExists(project.Folders.Cache);
+        }
+
+        private void CreateDirectoryIfNotExists(string absolutePath)
+        {
+            if (!Directory.Exists(absolutePath))
+                Directory.CreateDirectory(absolutePath);
+            Log.InfoFormat("\"{0}\" directory created", absolutePath);
+        }
+
+        private void LoadDescriptions(Project project)
+        {
+            var descriptions = FileReader.ReadDescriptionsFile(project);
+            OnDescriptionsLoaded(descriptions);
+            Log.InfoFormat("Descriptions loaded from {0}", project.ProjectName);
+        }
+
+        private void LoadSpaces(Project project)
+        {
+            var spaces = FileReader.ReadSpacesFile(project);
+            OnSpacesLoaded(spaces);
+            Log.InfoFormat("Spaces loaded from {0}", project.ProjectName);
+        }
+
+        private void StripAudioAnContinueLoadingProject(Project project)
+        {
+            var worker = new BackgroundWorker { WorkerReportsProgress = true, };
+            Waveform waveform = null;
+            List<Space> spaceData = null;
+
+            //Strip the audio from the given project video
+            worker.DoWork += (sender, args) =>
+            {
+                Log.Info("Beginning to strip audio");
+                var audioOperator = new AudioUtility(project);
+                audioOperator.StripAudio(worker);
+                var waveFormData = audioOperator.ReadWavData(worker);
+                var audioHeader = audioOperator.Header;
+                waveform = new Waveform(audioHeader, waveFormData);
+                spaceData = AudioAnalyzer.FindSpaces(waveform);
+            };
+
+            worker.RunWorkerCompleted += (sender, args) =>
+            {
+                project.Waveform = waveform;
+
+                OnSpacesAudioAnalysisCompleted(spaceData);
+                Log.Info("Audio stripped and spaces found.");
+
+                ContinueLoadingProject(project);
+            };
+
+            worker.ProgressChanged += (sender, args) => _loadingViewModel.SetProgress("Importing Video",
+                args.ProgressPercentage);
+
+            _loadingViewModel.SetProgress("Importing Video", 0);
+            _loadingViewModel.Visible = true;
+            worker.RunWorkerAsync();
+        }
+
+        private void LoadWaveForm(Project project)
+        {
+            var header = FileReader.ReadWaveFormHeader(project);
+            var audioData = FileReader.ReadWaveFormFile(project);
+            project.Waveform = new Waveform(header, audioData);
+            Log.InfoFormat("Waveform loaded from {0}", project.Files.WaveForm);
+        }
+
+        private void ContinueLoadingProject(Project project)
+        {
+            Properties.Settings.Default.WorkingDirectory = project.Folders.Project + "\\";
+
+            OnProjectLoaded(project);
+            Log.InfoFormat("Project \"{0}\" loaded successfully", project.ProjectName);
+
+            _loadingViewModel.Visible = false;
+        }
+        #endregion
+
+        #region Event Invokation
+        private void OnDescriptionsLoaded(List<Description> descriptions)
+        {
+            var handler = DescriptionsLoaded;
+            if (handler != null) handler(this, descriptions);
+        }
+
+        private void OnSpacesLoaded(List<Space> spaces)
+        {
+            var handler = SpacesLoaded;
+            if (handler != null) handler(this, spaces);
+        }
+
+        private void OnSpacesAudioAnalysisCompleted(List<Space> spaces)
+        {
+            EventHandler<EventArgs<List<Space>>> handler = SpacesAudioAnalysisCompleted;
+            if (handler != null) handler(this, spaces);
+        }
+
+        private void OnProjectLoaded(Project project)
+        {
+            var handler = ProjectLoaded;
+            if (handler != null) handler(this, new EventArgs<Project>(project));
         }
         #endregion
     }

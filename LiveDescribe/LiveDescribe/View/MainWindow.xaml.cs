@@ -295,10 +295,7 @@ namespace LiveDescribe.View
                 }
             };
 
-
-            //listens for when the audio stripping is complete then draws the timeline and the wave form
-            //and sets the busy stripping audio to false so that the loading screen goes away
-            _projectManager.SpacesAudioAnalysisCompleted += (sender, e) => SetTimeline();
+            _projectManager.ProjectLoaded += (sender, e) => SetTimeline();
             #endregion
         }
 
