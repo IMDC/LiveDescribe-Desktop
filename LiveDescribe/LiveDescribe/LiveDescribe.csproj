@@ -175,6 +175,7 @@
     <Compile Include="Interfaces\IDescribableInterval.cs" />
     <Compile Include="Interfaces\IListIndexable.cs" />
     <Compile Include="LiveDescribeConstants.cs" />
+    <Compile Include="Managers\ProjectLoader.cs" />
     <Compile Include="Managers\ProjectManager.cs" />
     <Compile Include="Model\Project.cs" />
     <Compile Include="Model\ProjectFile.cs" />
@@ -370,7 +371,6 @@
     <Resource Include="Resources\Icons\play.png" />
     <Resource Include="Resources\Icons\mute.png" />
     <Resource Include="Resources\Icons\unmute.png" />
-    <None Include="Resources\mute.bmp" />
     <Resource Include="Resources\Icons\stop.png" />
     <Resource Include="Resources\Icons\record.png" />
     <Content Include="Utilities\_ffmpeg.exe">

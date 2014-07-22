@@ -140,19 +140,17 @@ namespace LiveDescribe.ViewModel
         /// </summary>
         private void CreateProject()
         {
+            Log.Info(CopyVideo
+                ? "Attempting to create a project with a copied video"
+                : "Attempting to create a project with a video located outside of project");
+
             var project = new Project(ProjectName, ProjectPath, VideoPath, CopyVideo);
 
-            if (CopyVideo)
-                Log.Info("Attempting to create a project with a copied video");
-            else
-                Log.Info("Attempting to create a project with a video located outside of project");
-
-            bool success = ProjectManager.TryCreateProjectFileAndFolder(project);
-
-            if (!success)
-                return;
+            try { ProjectLoader.InitializeProjectDirectory(project); }
+            catch { return; }
 
             Project = project;
+
             Log.Info("Project Created");
             OnProjectCreated();
         }
