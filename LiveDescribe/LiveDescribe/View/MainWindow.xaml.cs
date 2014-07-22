@@ -65,7 +65,7 @@ namespace LiveDescribe.View
         #endregion
 
         public MainWindow()
-        {            
+        {
             var splashscreen = new SplashScreen("../Resources/Images/LiveDescribe-Splashscreen.png");
             splashscreen.Show(true);
             CustomResources.LoadResources();
@@ -235,53 +235,13 @@ namespace LiveDescribe.View
             #region Event Listeners for DescriptionCollectionViewModel
             //When a description is added, attach an event to the StartInVideo and EndInVideo properties
             //so when those properties change it redraws them
-            _descriptionCollectionViewModel.AddDescriptionEvent += (sender, e) =>
+            _descriptionCollectionViewModel.AllDescriptions.CollectionChanged += (sender, e) =>
                 {
-                    /* Draw the description only if the video is loaded, because there is currently
-                     * an issue with the video loading after the descriptions are added from an
-                     * opened project.
-                     */
-                    if (_videoMedia.CurrentState != LiveDescribeVideoStates.VideoNotLoaded)
-                        DrawDescription(e.Description);
+                    if (e.Action != NotifyCollectionChangedAction.Add)
+                        return;
 
-                    e.Description.DescriptionMouseDownEvent += (sender1, e1) =>
-                    {
-                        //Add mouse down event on every description here
-                        var e2 = (MouseEventArgs)e1;
-                        if (Mouse.LeftButton == MouseButtonState.Pressed)
-                        {
-                            if (e.Description.IsExtendedDescription)
-                            {
-                                _descriptionInfoTabViewModel.SelectedExtendedDescription = e.Description;
-                                SpaceAndDescriptionsTabControl.ExtendedDescriptionsListView.ScrollToCenterOfView(e.Description);
-                            }
-                            else
-                            {
-                                _descriptionInfoTabViewModel.SelectedRegularDescription = e.Description;
-                                SpaceAndDescriptionsTabControl.DescriptionsListView.ScrollToCenterOfView(e.Description);
-                            }
-                        }
-                    };
-
-                    e.Description.GoToThisDescriptionEvent += (sender1, e1) =>
-                    {
-                        UpdateMarkerPosition((e.Description.StartInVideo / _videoDuration) * (_audioCanvas.Width) - MarkerOffset);
-                        UpdateVideoPosition((int)e.Description.StartInVideo);
-                        //Scroll 1 second before the start in video of the space
-                        TimeLineScrollViewer.ScrollToHorizontalOffset((_audioCanvas.Width / _videoDuration) *
-                                                                      (e.Description.StartInVideo - 1000));
-
-                        if (e.Description.IsExtendedDescription)
-                        {
-                            _descriptionInfoTabViewModel.SelectedExtendedDescription = e.Description;
-                            SpaceAndDescriptionsTabControl.ExtendedDescriptionsListView.ScrollToCenterOfView(e.Description);
-                        }
-                        else
-                        {
-                            _descriptionInfoTabViewModel.SelectedRegularDescription = e.Description;
-                            SpaceAndDescriptionsTabControl.DescriptionsListView.ScrollToCenterOfView(e.Description);
-                        }
-                    };
+                    foreach (Description d in e.NewItems)
+                        AddDescriptionEventHandlers(d);
                 };
             #endregion
 
@@ -335,7 +295,7 @@ namespace LiveDescribe.View
                 if (e.Action == NotifyCollectionChangedAction.Add)
                 {
                     foreach (Space space in e.NewItems)
-                        SetupSpaceEvents(space);
+                        AddSpaceEventHandlers(space);
                 }
             };
 
@@ -445,7 +405,56 @@ namespace LiveDescribe.View
 
         #region Helper Functions
 
-        private void SetupSpaceEvents(Space space)
+        private void AddDescriptionEventHandlers(Description description)
+        {
+            /* Draw the description only if the video is loaded, because there is currently
+             * an issue with the video loading after the descriptions are added from an
+             * opened project.
+             */
+            if (_videoMedia.CurrentState != LiveDescribeVideoStates.VideoNotLoaded)
+                DrawDescription(description);
+
+            description.DescriptionMouseDownEvent += (sender1, e1) =>
+            {
+                //Add mouse down event on every description here
+                var e2 = (MouseEventArgs)e1;
+                if (Mouse.LeftButton == MouseButtonState.Pressed)
+                {
+                    if (description.IsExtendedDescription)
+                    {
+                        _descriptionInfoTabViewModel.SelectedExtendedDescription = description;
+                        SpaceAndDescriptionsTabControl.ExtendedDescriptionsListView.ScrollToCenterOfView(description);
+                    }
+                    else
+                    {
+                        _descriptionInfoTabViewModel.SelectedRegularDescription = description;
+                        SpaceAndDescriptionsTabControl.DescriptionsListView.ScrollToCenterOfView(description);
+                    }
+                }
+            };
+
+            description.GoToThisDescriptionEvent += (sender1, e1) =>
+            {
+                UpdateMarkerPosition((description.StartInVideo / _videoDuration) * (_audioCanvas.Width) - MarkerOffset);
+                UpdateVideoPosition((int)description.StartInVideo);
+                //Scroll 1 second before the start in video of the space
+                TimeLineScrollViewer.ScrollToHorizontalOffset((_audioCanvas.Width / _videoDuration) *
+                                                              (description.StartInVideo - 1000));
+
+                if (description.IsExtendedDescription)
+                {
+                    _descriptionInfoTabViewModel.SelectedExtendedDescription = description;
+                    SpaceAndDescriptionsTabControl.ExtendedDescriptionsListView.ScrollToCenterOfView(description);
+                }
+                else
+                {
+                    _descriptionInfoTabViewModel.SelectedRegularDescription = description;
+                    SpaceAndDescriptionsTabControl.DescriptionsListView.ScrollToCenterOfView(description);
+                }
+            };
+        }
+
+        private void AddSpaceEventHandlers(Space space)
         {
             //Adding a space depends on where you right clicked so we create and add it in the view
             //Set space only if the video is loaded/playing/recording/etc

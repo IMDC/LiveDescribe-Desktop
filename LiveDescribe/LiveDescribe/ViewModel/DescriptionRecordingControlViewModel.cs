@@ -131,7 +131,8 @@ namespace LiveDescribe.ViewModel
         private DescriptionRecorder GetDescriptionRecorder()
         {
             var dr = new DescriptionRecorder();
-            dr.DescriptionRecorded += (sender, args) => _descriptionCollectionViewModel.AddDescription(args.Value);
+            dr.DescriptionRecorded += (sender, args) =>
+                _descriptionCollectionViewModel.AllDescriptions.Add(args.Value);
             return dr;
         }
         #endregion

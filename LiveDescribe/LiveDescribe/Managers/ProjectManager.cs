@@ -258,20 +258,21 @@ namespace LiveDescribe.Managers
             Spaces.Clear();
         }
 
-        #region SetupSpaceEvents
-        private void SetupSpaceEvents(Space s)
+        #region AddSpaceEventHandlers
+        private void AddSpaceEventHandlers(Space s)
         {
             s.SpaceDeleteEvent += (sender, args) => Spaces.Remove(s);
         }
 
         private void SpacesOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
         {
-            if (args.Action == NotifyCollectionChangedAction.Add)
-            {
-                foreach (Space space in args.NewItems)
-                    SetupSpaceEvents(space);
-            }
+            if (args.Action != NotifyCollectionChangedAction.Add)
+                return;
+
+            foreach (Space space in args.NewItems)
+                AddSpaceEventHandlers(space);
         }
+
         #endregion
 
         #region Event Invokations

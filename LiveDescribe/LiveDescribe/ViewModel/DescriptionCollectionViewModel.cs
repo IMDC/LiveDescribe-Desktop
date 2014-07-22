@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Events;
+using LiveDescribe.Extensions;
 using LiveDescribe.Factories;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Managers;
@@ -10,6 +11,7 @@ using NAudio;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 
 namespace LiveDescribe.ViewModel
 {
@@ -26,14 +28,12 @@ namespace LiveDescribe.ViewModel
         private ObservableCollection<Description> _regularDescriptions;  //this list only contains all the regular descriptions this list should only be used to bind to the list of regular descriptions
         #endregion
 
-        #region Event Handlers
-        public event EventHandler<DescriptionEventArgs> AddDescriptionEvent;
-        #endregion
-
         #region Constructors
         public DescriptionCollectionViewModel(ProjectManager projectManager)
         {
             AllDescriptions = new ObservableCollection<Description>();
+            AllDescriptions.CollectionChanged += DescriptionsOnCollectionChanged;
+
             RegularDescriptions = new ObservableCollection<Description>();
             RegularDescriptions.CollectionChanged += ObservableCollectionIndexer<Description>.CollectionChangedListener;
 
@@ -41,8 +41,9 @@ namespace LiveDescribe.ViewModel
             ExtendedDescriptions.CollectionChanged += ObservableCollectionIndexer<Description>.CollectionChangedListener;
 
             projectManager.Descriptions = AllDescriptions;
-            projectManager.DescriptionsLoaded += (sender, args) => AddDescriptions(args.Value);
+            projectManager.DescriptionsLoaded += (sender, args) => AllDescriptions.AddRange(args.Value);
         }
+
         #endregion
 
         #region Properties
@@ -92,53 +93,12 @@ namespace LiveDescribe.ViewModel
         #region Methods
 
         /// <summary>
-        /// Method to add a description to the list and throw an event, whenever you are adding a
-        /// description to the list you should use this method
-        /// </summary>
-        /// <param name="filename">Filename of the description</param>
-        /// <param name="startwavefiletime">The start time in the wav file of the description</param>
-        /// <param name="endwavefiletime">The end time in the wav file of the description</param>
-        /// <param name="startinvideo">The time in the video the description should start playing</param>
-        /// <param name="isExtendedDescription">Whether it is an extended description or not</param>
-        public void AddDescription(ProjectFile filename, double startwavefiletime, double endwavefiletime,
-            double startinvideo, bool isExtendedDescription)
-        {
-            AddDescription(new Description(filename, startwavefiletime, endwavefiletime, startinvideo,
-                isExtendedDescription));
-        }
-
-        public void AddDescription(Description desc)
-        {
-#if ZAGGA
-            if (desc.IsExtendedDescription)
-                return;
-#endif
-
-            if (!desc.IsExtendedDescription)
-                RegularDescriptions.Add(desc);
-            else
-                ExtendedDescriptions.Add(desc);
-
-            SetupEventsOnDescription(desc);
-
-            AllDescriptions.Add(desc);
-            OnAddDescription(desc);
-        }
-
-        public void AddDescriptions(List<Description> descriptions)
-        {
-            foreach (var desc in descriptions)
-                AddDescription(desc);
-        }
-
-        /// <summary>
         /// Method to setup events on a descriptions no graphics setup should be included in here,
         /// that should be in the view
         /// </summary>
         /// <param name="desc">The description to setup the events on</param>
-        private void SetupEventsOnDescription(Description desc)
+        private void AddDescriptionEventHandlers(Description desc)
         {
-            //this method gets called when a description is deleted
             desc.DescriptionDeleteEvent += (sender1, e1) =>
                 {
                     //remove description from appropriate lists
@@ -163,14 +123,25 @@ namespace LiveDescribe.ViewModel
 
         #endregion
 
-        #region Event Invokation Methods
-
-        private void OnAddDescription(Description desc)
+        private void DescriptionsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
         {
-            EventHandler<DescriptionEventArgs> addDescriptionHandler = AddDescriptionEvent;
-            if (addDescriptionHandler != null)
-                addDescriptionHandler(this, new DescriptionEventArgs(desc));
+            if (args.Action != NotifyCollectionChangedAction.Add)
+                return;
+
+            foreach (Description d in args.NewItems)
+            {
+#if ZAGGA
+            if (d.IsExtendedDescription)
+                continue;
+#endif
+
+                if (!d.IsExtendedDescription)
+                    RegularDescriptions.Add(d);
+                else
+                    ExtendedDescriptions.Add(d);
+
+                AddDescriptionEventHandlers(d);
+            }
         }
-        #endregion
     }
 }
