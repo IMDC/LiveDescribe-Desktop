@@ -24,6 +24,9 @@ namespace LiveDescribe.Managers
 
         #region Fields
         private readonly LoadingViewModel _loadingViewModel;
+        private readonly ObservableCollection<Description> _allDescriptions;
+        private readonly ObservableCollection<Description> _extendedDescriptions;
+        private readonly ObservableCollection<Description> _regularDescriptions;
         private readonly ObservableCollection<Space> _spaces;
         #endregion
 
@@ -33,6 +36,7 @@ namespace LiveDescribe.Managers
         public event EventHandler<EventArgs<List<Space>>> SpacesAudioAnalysisCompleted;
         public event EventHandler<EventArgs<Project>> ProjectLoaded;
         public event EventHandler ProjectSaved;
+        public event EventHandler ProjectClosed;
         #endregion
 
         #region Constructor
@@ -40,9 +44,22 @@ namespace LiveDescribe.Managers
         {
             _loadingViewModel = loadingViewModel;
 
+            _allDescriptions = new ObservableCollection<Description>();
+            _allDescriptions.CollectionChanged += DescriptionsOnCollectionChanged;
+
+            _extendedDescriptions = new ObservableCollection<Description>();
+            _extendedDescriptions.CollectionChanged +=
+                ObservableCollectionIndexer<Description>.CollectionChangedListener;
+
+            _regularDescriptions = new ObservableCollection<Description>();
+            _regularDescriptions.CollectionChanged +=
+                ObservableCollectionIndexer<Description>.CollectionChangedListener;
+
             _spaces = new ObservableCollection<Space>();
             _spaces.CollectionChanged += ObservableCollectionIndexer<Space>.CollectionChangedListener;
             _spaces.CollectionChanged += SpacesOnCollectionChanged;
+
+            DescriptionsLoaded += (sender, args) => AllDescriptions.AddRange(args.Value);
 
             SpacesAudioAnalysisCompleted += (sender, args) => Spaces.AddRange(args.Value);
             SpacesLoaded += (sender, args) => Spaces.AddRange(args.Value);
@@ -52,7 +69,21 @@ namespace LiveDescribe.Managers
 
         #region Properties
         public Project Project { private set; get; }
-        public ObservableCollection<Description> Descriptions { set; get; }
+
+        public ObservableCollection<Description> AllDescriptions
+        {
+            get { return _allDescriptions; }
+        }
+
+        public ObservableCollection<Description> ExtendedDescriptions
+        {
+            get { return _extendedDescriptions; }
+        }
+
+        public ObservableCollection<Description> RegularDescriptions
+        {
+            get { return _regularDescriptions; }
+        }
 
         public ObservableCollection<Space> Spaces
         {
@@ -245,7 +276,7 @@ namespace LiveDescribe.Managers
 
             FileWriter.WriteWaveFormHeader(Project, Project.Waveform.Header);
             FileWriter.WriteWaveFormFile(Project, Project.Waveform.Data);
-            FileWriter.WriteDescriptionsFile(Project, Descriptions);
+            FileWriter.WriteDescriptionsFile(Project, AllDescriptions);
             FileWriter.WriteSpacesFile(Project, Spaces);
 
             OnProjectSaved();
@@ -254,9 +285,56 @@ namespace LiveDescribe.Managers
 
         public void CloseProject()
         {
-            //TODO this
+            AllDescriptions.Clear();
+            ExtendedDescriptions.Clear();
+            RegularDescriptions.Clear();
+
             Spaces.Clear();
+
+            OnProjectClosed();
         }
+
+        #region AddDescriptionEventHandlers
+        private void DescriptionsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
+        {
+            if (args.Action != NotifyCollectionChangedAction.Add)
+                return;
+
+            foreach (Description d in args.NewItems)
+            {
+#if ZAGGA
+                if (d.IsExtendedDescription)
+                    continue;
+#endif
+
+                if (!d.IsExtendedDescription)
+                    RegularDescriptions.Add(d);
+                else
+                    ExtendedDescriptions.Add(d);
+
+                AddDescriptionEventHandlers(d);
+            }
+        }
+
+        /// <summary>
+        /// Method to setup events on a descriptions no graphics setup should be included in here,
+        /// that should be in the view
+        /// </summary>
+        /// <param name="desc">The description to setup the events on</param>
+        private void AddDescriptionEventHandlers(Description desc)
+        {
+            desc.DescriptionDeleteEvent += (sender1, e1) =>
+            {
+                //remove description from appropriate lists
+                if (desc.IsExtendedDescription)
+                    ExtendedDescriptions.Remove(desc);
+                else if (!desc.IsExtendedDescription)
+                    RegularDescriptions.Remove(desc);
+
+                AllDescriptions.Remove(desc);
+            };
+        }
+        #endregion
 
         #region AddSpaceEventHandlers
         private void AddSpaceEventHandlers(Space s)
@@ -307,6 +385,11 @@ namespace LiveDescribe.Managers
             if (handler != null) handler(this, EventArgs.Empty);
         }
 
+        private void OnProjectClosed()
+        {
+            var handler = ProjectClosed;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
         #endregion
     }
 }

@@ -21,7 +21,6 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Instance Variables
-        private readonly DescriptionCollectionViewModel _descriptionCollectionViewModel;
         private readonly ProjectManager _projectManager;
         private Description _selectedRegularDescription;
         private Description _selectedExtendedDescription;
@@ -30,10 +29,8 @@ namespace LiveDescribe.ViewModel
         private IDescribableInterval _selectedItem;
         #endregion
 
-        public DescriptionInfoTabViewModel(DescriptionCollectionViewModel descriptionCollectionViewModel,
-            ProjectManager projectManager)
+        public DescriptionInfoTabViewModel(ProjectManager projectManager)
         {
-            _descriptionCollectionViewModel = descriptionCollectionViewModel;
             _projectManager = projectManager;
 
             InitCommands();
@@ -57,7 +54,7 @@ namespace LiveDescribe.ViewModel
                     var viewModel = DialogShower.SpawnSpaceRecordingView(SelectedSpace, _projectManager.Project);
 
                     if (viewModel.DialogResult == true)
-                        _descriptionCollectionViewModel.AllDescriptions.Add(viewModel.Description);
+                        _projectManager.AllDescriptions.Add(viewModel.Description);
                 });
 
             DeleteSelectedSpaceOrDescription = new RelayCommand(
@@ -151,7 +148,7 @@ namespace LiveDescribe.ViewModel
         /// </summary>
         public ObservableCollection<Description> ExtendedDescriptions
         {
-            get { return _descriptionCollectionViewModel.ExtendedDescriptions; }
+            get { return _projectManager.ExtendedDescriptions; }
         }
 
         /// <summary>
@@ -160,7 +157,7 @@ namespace LiveDescribe.ViewModel
         /// </summary>
         public ObservableCollection<Description> RegularDescriptions
         {
-            get { return _descriptionCollectionViewModel.RegularDescriptions; }
+            get { return _projectManager.RegularDescriptions; }
         }
 
         /// <summary>

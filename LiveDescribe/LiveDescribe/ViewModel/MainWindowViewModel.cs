@@ -45,7 +45,6 @@ namespace LiveDescribe.ViewModel
         private readonly Timer _descriptiontimer;
         private readonly MediaControlViewModel _mediaControlViewModel;
         private readonly PreferencesViewModel _preferences;
-        private readonly DescriptionCollectionViewModel _descriptioncollectionviewmodel;
         private readonly LoadingViewModel _loadingViewModel;
         private readonly MarkingSpacesControlViewModel _markingSpacesControlViewModel;
         private readonly ILiveDescribePlayer _mediaVideo;
@@ -80,14 +79,12 @@ namespace LiveDescribe.ViewModel
 
             _mediaControlViewModel = new MediaControlViewModel(mediaVideo, _projectManager);
             _preferences = new PreferencesViewModel();
-            _descriptioncollectionviewmodel = new DescriptionCollectionViewModel(_projectManager);
-            _descriptionInfoTabViewModel = new DescriptionInfoTabViewModel(_descriptioncollectionviewmodel,
-                _projectManager);
+            _descriptionInfoTabViewModel = new DescriptionInfoTabViewModel(_projectManager);
             _markingSpacesControlViewModel = new MarkingSpacesControlViewModel(_descriptionInfoTabViewModel, mediaVideo);
             _audioCanvasViewModel = new AudioCanvasViewModel(mediaVideo, _projectManager);
-            _descriptionCanvasViewModel = new DescriptionCanvasViewModel(_descriptioncollectionviewmodel, mediaVideo);
+            _descriptionCanvasViewModel = new DescriptionCanvasViewModel(mediaVideo, _projectManager);
             _descriptionRecordingControlViewModel = new DescriptionRecordingControlViewModel(mediaVideo,
-                _projectManager, _descriptioncollectionviewmodel);
+                _projectManager);
 
             DescriptionPlayer = new DescriptionPlayer();
             DescriptionPlayer.DescriptionFinishedPlaying += (sender, e) =>
@@ -122,7 +119,6 @@ namespace LiveDescribe.ViewModel
 
                     Log.Info("Closed Project");
                     TryToCleanUpUnusedDescriptionAudioFiles();
-                    _descriptioncollectionviewmodel.CloseDescriptionCollectionViewModel();
                     _mediaControlViewModel.CloseMediaControlViewModel();
                     _projectManager.CloseProject();
                     _project = null;
@@ -180,9 +176,8 @@ namespace LiveDescribe.ViewModel
                 execute: () =>
                 {
                     var viewModel = DialogShower.SpawnExportWindowView(_project, _mediaVideo.Path,
-                                        _mediaVideo.DurationSeconds,
-                                        _descriptioncollectionviewmodel.RegularDescriptions.ToList(),
-                                        _loadingViewModel);
+                        _mediaVideo.DurationSeconds, _projectManager.RegularDescriptions.ToList(),
+                        _loadingViewModel);
 
                     if (viewModel.DialogResult != true)
                         return;
@@ -229,7 +224,7 @@ namespace LiveDescribe.ViewModel
 
                     saveFileDialog.ShowDialog();
                     FileWriter.WriteDescriptionsTextToSrtFile(saveFileDialog.FileName,
-                        _descriptioncollectionviewmodel.AllDescriptions);
+                        _projectManager.AllDescriptions);
                 }
             );
 
@@ -306,8 +301,8 @@ namespace LiveDescribe.ViewModel
             #region Property Changed Events
 
             _projectManager.Spaces.CollectionChanged += ObservableCollection_CollectionChanged;
-            _descriptioncollectionviewmodel.ExtendedDescriptions.CollectionChanged += ObservableCollection_CollectionChanged;
-            _descriptioncollectionviewmodel.RegularDescriptions.CollectionChanged += ObservableCollection_CollectionChanged;
+            _projectManager.ExtendedDescriptions.CollectionChanged += ObservableCollection_CollectionChanged;
+            _projectManager.RegularDescriptions.CollectionChanged += ObservableCollection_CollectionChanged;
             _mediaControlViewModel.PropertyChanged += PropertyChangedHandler;
 
             //Update window title based on project name
@@ -447,10 +442,6 @@ namespace LiveDescribe.ViewModel
             get { return _preferences; }
         }
 
-        public DescriptionCollectionViewModel DescriptionCollectionViewModel
-        {
-            get { return _descriptioncollectionviewmodel; }
-        }
         public LoadingViewModel LoadingViewModel
         {
             get { return _loadingViewModel; }
@@ -493,7 +484,7 @@ namespace LiveDescribe.ViewModel
         {
             OnGraphicsTick(sender, e);
             //I put this method in it's own timer in the MainWindowViewModel for now, because I believe it should be separate from the view
-            foreach (var description in _descriptioncollectionviewmodel.AllDescriptions)
+            foreach (var description in _projectManager.AllDescriptions)
             {
                 double videoPosition = 0;
 

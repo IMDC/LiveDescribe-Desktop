@@ -296,7 +296,6 @@
     <Compile Include="Model\Description.cs" />
     <Compile Include="Converters\TimeConverterFormatter.cs" />
     <Compile Include="Utilities\AudioUtility.cs" />
-    <Compile Include="ViewModel\DescriptionCollectionViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="ViewModel\PreferencesViewModel.cs" />
     <Compile Include="ViewModel\MediaControlViewModel.cs" />

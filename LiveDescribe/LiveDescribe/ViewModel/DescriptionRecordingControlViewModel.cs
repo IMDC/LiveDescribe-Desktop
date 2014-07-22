@@ -21,18 +21,15 @@ namespace LiveDescribe.ViewModel
         private ICommand _recordButtonClickCommand;
         private readonly ILiveDescribePlayer _mediaVideo;
         private readonly ProjectManager _projectManager;
-        private readonly DescriptionCollectionViewModel _descriptionCollectionViewModel;
         private bool _recordExtendedDescription;
         /// <summary>Used to restore the previous video state after it's finished recording.</summary>
         private LiveDescribeVideoStates _previousVideoState;
 
         #region Constructor
-        public DescriptionRecordingControlViewModel(ILiveDescribePlayer mediaVideo, ProjectManager projectManager,
-            DescriptionCollectionViewModel descriptionCollectionViewModel)
+        public DescriptionRecordingControlViewModel(ILiveDescribePlayer mediaVideo, ProjectManager projectManager)
         {
             _mediaVideo = mediaVideo;
             _projectManager = projectManager;
-            _descriptionCollectionViewModel = descriptionCollectionViewModel;
 
             _recorder = GetDescriptionRecorder();
 
@@ -132,7 +129,7 @@ namespace LiveDescribe.ViewModel
         {
             var dr = new DescriptionRecorder();
             dr.DescriptionRecorded += (sender, args) =>
-                _descriptionCollectionViewModel.AllDescriptions.Add(args.Value);
+                _projectManager.AllDescriptions.Add(args.Value);
             return dr;
         }
         #endregion

@@ -52,7 +52,6 @@ namespace LiveDescribe.View
         private double _videoDuration = -1;
         private readonly MediaControlViewModel _mediaControlViewModel;
         private readonly ProjectManager _projectManager;
-        private readonly DescriptionCollectionViewModel _descriptionCollectionViewModel;
         private readonly DescriptionInfoTabViewModel _descriptionInfoTabViewModel;
         private readonly MainWindowViewModel _mainWindowViewModel;
         private readonly MillisecondsTimeConverterFormatter _millisecondsTimeConverter;
@@ -85,7 +84,6 @@ namespace LiveDescribe.View
             _mainWindowViewModel = mainWindowViewModel;
 
             _mediaControlViewModel = mainWindowViewModel.MediaControlViewModel;
-            _descriptionCollectionViewModel = mainWindowViewModel.DescriptionCollectionViewModel;
             _projectManager = mainWindowViewModel.ProjectManager;
             _descriptionInfoTabViewModel = mainWindowViewModel.DescriptionInfoTabViewModel;
 
@@ -183,7 +181,7 @@ namespace LiveDescribe.View
 
                     SetTimeline();
 
-                    foreach (var desc in _descriptionCollectionViewModel.AllDescriptions)
+                    foreach (var desc in _projectManager.AllDescriptions)
                         DrawDescription(desc);
 
                     foreach (var space in _projectManager.Spaces)
@@ -232,19 +230,6 @@ namespace LiveDescribe.View
 
             #endregion
 
-            #region Event Listeners for DescriptionCollectionViewModel
-            //When a description is added, attach an event to the StartInVideo and EndInVideo properties
-            //so when those properties change it redraws them
-            _descriptionCollectionViewModel.AllDescriptions.CollectionChanged += (sender, e) =>
-                {
-                    if (e.Action != NotifyCollectionChangedAction.Add)
-                        return;
-
-                    foreach (Description d in e.NewItems)
-                        AddDescriptionEventHandlers(d);
-                };
-            #endregion
-
             #region Event Listeners For AudioCanvasViewModel
             AudioCanvasViewModel audioCanvasViewModel = mainWindowViewModel.AudioCanvasViewModel;
             audioCanvasViewModel.AudioCanvasMouseDownEvent += AudioCanvas_OnMouseDown;
@@ -289,6 +274,17 @@ namespace LiveDescribe.View
             #endregion
 
             #region Event Handlers for ProjectManager
+
+            //When a description is added, attach an event to the StartInVideo and EndInVideo properties
+            //so when those properties change it redraws them
+            _projectManager.AllDescriptions.CollectionChanged += (sender, e) =>
+            {
+                if (e.Action != NotifyCollectionChangedAction.Add)
+                    return;
+
+                foreach (Description d in e.NewItems)
+                    AddDescriptionEventHandlers(d);
+            };
 
             _projectManager.Spaces.CollectionChanged += (sender, e) =>
             {
@@ -645,7 +641,7 @@ namespace LiveDescribe.View
         /// </summary>
         private void ResizeDescriptions()
         {
-            foreach (var description in _descriptionCollectionViewModel.AllDescriptions)
+            foreach (var description in _projectManager.AllDescriptions)
                 description.Height = _descriptionCanvas.ActualHeight;
         }
 
