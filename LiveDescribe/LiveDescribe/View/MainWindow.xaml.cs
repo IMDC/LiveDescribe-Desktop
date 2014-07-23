@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using GalaSoft.MvvmLight.Threading;
+﻿using GalaSoft.MvvmLight.Threading;
 using LiveDescribe.Controls;
 using LiveDescribe.Converters;
 using LiveDescribe.Extensions;
@@ -12,6 +11,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -145,7 +145,7 @@ namespace LiveDescribe.View
 
             mainWindowViewModel.GraphicsTick += Play_Tick;
 
-            mainWindowViewModel.OnPlayingDescription += (sender, args) =>
+            mainWindowViewModel.PlayingDescription += (sender, args) =>
             {
                 try
                 {
@@ -218,7 +218,7 @@ namespace LiveDescribe.View
 
                     var xPosition = Mouse.GetPosition(_audioCanvas).X;
                     var middleOfMarker = xPosition - MarkerOffset;
-                   
+
                     //make sure the middle of the marker doesn't go below the beginning of the canvas
                     if (xPosition < -MarkerOffset)
                     {
@@ -549,7 +549,7 @@ namespace LiveDescribe.View
 
             double scrollOffsetLeft = (1 - PageScrollPercentLimit) * singlePageWidth;
             if (!((xPos - scrolledAmount) <= scrollOffsetLeft)) return false;
-            TimeLineScrollViewer.ScrollToHorizontalOffset(scrolledAmount - (PageScrollPercentAmount* singlePageWidth));
+            TimeLineScrollViewer.ScrollToHorizontalOffset(scrolledAmount - (PageScrollPercentAmount * singlePageWidth));
             return true;
         }
 

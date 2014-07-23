@@ -42,7 +42,6 @@ namespace LiveDescribe.ViewModel
 
         #region Event Handlers
         public event EventHandler<DescriptionEventArgs> AddDescriptionEvent;
-        public event EventHandler RecordRequestedMicrophoneNotPluggedIn;
         #endregion
 
         #region Constructors
@@ -269,13 +268,6 @@ namespace LiveDescribe.ViewModel
             EventHandler<DescriptionEventArgs> addDescriptionHandler = AddDescriptionEvent;
             if (addDescriptionHandler != null)
                 addDescriptionHandler(this, new DescriptionEventArgs(desc));
-        }
-
-        private void OnRecordRequestedMicrophoneNotPluggedIn()
-        {
-            EventHandler handlerNotPluggedIn = RecordRequestedMicrophoneNotPluggedIn;
-            if (handlerNotPluggedIn != null)
-                RecordRequestedMicrophoneNotPluggedIn(this, EventArgs.Empty);
         }
         #endregion
     }
