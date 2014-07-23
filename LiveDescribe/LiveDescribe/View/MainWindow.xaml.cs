@@ -335,8 +335,6 @@ namespace LiveDescribe.View
         /// <param name="e"></param>
         private void TimeLineScrollViewer_OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Log.Info("TimeLineScrollViewer Sized Changed");
-
             //Video is loaded
             if (_videoMedia.CurrentState != LiveDescribeVideoStates.VideoNotLoaded)
                 SetTimeline();

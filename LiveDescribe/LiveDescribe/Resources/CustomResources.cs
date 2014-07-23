@@ -34,6 +34,12 @@ namespace LiveDescribe.Resources
 
             StopRecord = new Image();
             StopRecord.Source = new BitmapImage(new Uri("pack://application:,,,/Resources/Icons/stop.png"));
+
+            BeginSpace = new Image();
+            BeginSpace.Source = new BitmapImage(new Uri("pack://application:,,,/Resources/Icons/beginspace.png"));
+
+            EndSpace = new Image();
+            EndSpace.Source = new BitmapImage(new Uri("pack://application:,,,/Resources/Icons/endspace.png"));
         }
 
         private static void LoadCursors()
@@ -52,6 +58,8 @@ namespace LiveDescribe.Resources
         public static Image UnMute { get; private set; }
         public static Image Record { get; private set; }
         public static Image StopRecord { get; private set; }
+        public static Image BeginSpace { get; private set; }
+        public static Image EndSpace { get; private set; }
 
         public static WaveOut Beep
         {
