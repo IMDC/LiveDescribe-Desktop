@@ -2,16 +2,16 @@
 using LiveDescribe.Controls;
 using LiveDescribe.Converters;
 using LiveDescribe.Extensions;
+using LiveDescribe.Managers;
 using LiveDescribe.Model;
 using LiveDescribe.Resources;
-using LiveDescribe.Utilities;
 using LiveDescribe.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -50,8 +50,7 @@ namespace LiveDescribe.View
         private double _canvasWidth;
         private double _videoDuration = -1;
         private readonly MediaControlViewModel _mediaControlViewModel;
-        private readonly SpaceCollectionViewModel _spaceCollectionViewModel;
-        private readonly DescriptionCollectionViewModel _descriptionCollectionViewModel;
+        private readonly ProjectManager _projectManager;
         private readonly DescriptionInfoTabViewModel _descriptionInfoTabViewModel;
         private readonly MainWindowViewModel _mainWindowViewModel;
         private readonly MillisecondsTimeConverterFormatter _millisecondsTimeConverter;
@@ -64,7 +63,7 @@ namespace LiveDescribe.View
         #endregion
 
         public MainWindow()
-        {            
+        {
             var splashscreen = new SplashScreen("../Resources/Images/LiveDescribe-Splashscreen.png");
             splashscreen.Show(true);
             CustomResources.LoadResources();
@@ -84,8 +83,7 @@ namespace LiveDescribe.View
             _mainWindowViewModel = mainWindowViewModel;
 
             _mediaControlViewModel = mainWindowViewModel.MediaControlViewModel;
-            _descriptionCollectionViewModel = mainWindowViewModel.DescriptionCollectionViewModel;
-            _spaceCollectionViewModel = mainWindowViewModel.SpaceCollectionViewModel;
+            _projectManager = mainWindowViewModel.ProjectManager;
             _descriptionInfoTabViewModel = mainWindowViewModel.DescriptionInfoTabViewModel;
 
             _audioCanvas = AudioCanvasControl.AudioCanvas;
@@ -134,15 +132,6 @@ namespace LiveDescribe.View
                     CommandManager.InvalidateRequerySuggested();
                 };
 
-            mainWindowViewModel.ProjectClosed += (sender, e) =>
-            {
-                _audioCanvas.Children.Clear();
-                NumberTimeline.Children.Clear();
-
-                UpdateMarkerPosition(-MarkerOffset);
-                _marker.IsEnabled = false;
-            };
-
             mainWindowViewModel.GraphicsTick += Play_Tick;
 
             mainWindowViewModel.PlayingDescription += (sender, args) =>
@@ -182,21 +171,11 @@ namespace LiveDescribe.View
 
                     SetTimeline();
 
-                    foreach (var desc in _descriptionCollectionViewModel.AllDescriptions)
+                    foreach (var desc in _projectManager.AllDescriptions)
                         DrawDescription(desc);
 
-                    foreach (var space in _spaceCollectionViewModel.Spaces)
+                    foreach (var space in _projectManager.Spaces)
                         SetSpaceLocation(space);
-                };
-
-            //listens for when the audio stripping is complete then draws the timeline and the wave form
-            //and sets the busy stripping audio to false so that the loading screen goes away
-            mainWindowViewModel.MediaControlViewModel.OnStrippingAudioCompleted += (sender, e) =>
-                {
-                    SetTimeline();
-
-                    //make this false so that the loading screen goes away after the timeline and the wave form are drawn
-                    mainWindowViewModel.LoadingViewModel.Visible = false;
                 };
 
             //captures the mouse when a mousedown request is sent to the Marker
@@ -241,101 +220,14 @@ namespace LiveDescribe.View
 
             #endregion
 
-            #region Event Listeners for DescriptionCollectionViewModel
-            //When a description is added, attach an event to the StartInVideo and EndInVideo properties
-            //so when those properties change it redraws them
-            _descriptionCollectionViewModel.AddDescriptionEvent += (sender, e) =>
-                {
-                    /* Draw the description only if the video is loaded, because there is currently
-                     * an issue with the video loading after the descriptions are added from an
-                     * opened project.
-                     */
-                    if (_videoMedia.CurrentState != LiveDescribeVideoStates.VideoNotLoaded)
-                        DrawDescription(e.Description);
+            #region Event Listeners For AudioCanvasViewModel
+            AudioCanvasViewModel audioCanvasViewModel = mainWindowViewModel.AudioCanvasViewModel;
+            audioCanvasViewModel.AudioCanvasMouseDownEvent += AudioCanvas_OnMouseDown;
+            audioCanvasViewModel.AudioCanvasMouseRightButtonDownEvent += AudioCanvas_RecordRightClickPosition;
 
-                    e.Description.DescriptionMouseDownEvent += (sender1, e1) =>
-                    {
-                        //Add mouse down event on every description here
-                        var e2 = (MouseEventArgs)e1;
-                        if (Mouse.LeftButton == MouseButtonState.Pressed)
-                        {
-                            if (e.Description.IsExtendedDescription)
-                            {
-                                _descriptionInfoTabViewModel.SelectedExtendedDescription = e.Description;
-                                SpaceAndDescriptionsTabControl.ExtendedDescriptionsListView.ScrollToCenterOfView(e.Description);
-                            }
-                            else
-                            {
-                                _descriptionInfoTabViewModel.SelectedRegularDescription = e.Description;
-                                SpaceAndDescriptionsTabControl.DescriptionsListView.ScrollToCenterOfView(e.Description);
-                            }
-                        }
-                    };
-
-                    e.Description.GoToThisDescriptionEvent += (sender1, e1) =>
-                    {
-                        UpdateMarkerPosition((e.Description.StartInVideo / _videoDuration) * (_audioCanvas.Width) - MarkerOffset);
-                        UpdateVideoPosition((int)e.Description.StartInVideo);
-                        //Scroll 1 second before the start in video of the space
-                        TimeLineScrollViewer.ScrollToHorizontalOffset((_audioCanvas.Width / _videoDuration) *
-                                                                      (e.Description.StartInVideo - 1000));
-
-                        if (e.Description.IsExtendedDescription)
-                        {
-                            _descriptionInfoTabViewModel.SelectedExtendedDescription = e.Description;
-                            SpaceAndDescriptionsTabControl.ExtendedDescriptionsListView.ScrollToCenterOfView(e.Description);
-                        }
-                        else
-                        {
-                            _descriptionInfoTabViewModel.SelectedRegularDescription = e.Description;
-                            SpaceAndDescriptionsTabControl.DescriptionsListView.ScrollToCenterOfView(e.Description);
-                        }
-                    };
-                };
-            #endregion
-
-            #region Event Listeners for SpaceCollectionViewModel
-
-            _spaceCollectionViewModel.SpaceAddedEvent += (sender, e) =>
+            _mainWindowViewModel.AudioCanvasViewModel.RequestSpaceTime += (sender, args) =>
             {
-                //Adding a space depends on where you right clicked so we create and add it in the view
-                Space space = e.Space;
-
-                //Set space only if the video is loaded/playing/recording/etc
-                if (_videoMedia.CurrentState != LiveDescribeVideoStates.VideoNotLoaded)
-                    SetSpaceLocation(space);
-
-                space.SpaceMouseDownEvent += (sender1, e1) =>
-                {
-                    if (Mouse.LeftButton == MouseButtonState.Pressed)
-                    {
-                        _descriptionInfoTabViewModel.SelectedSpace = space;
-                        SpaceAndDescriptionsTabControl.SpacesListView.ScrollToCenterOfView(space);
-                    }
-                };
-
-                space.PropertyChanged += (o, args) =>
-                {
-                    if (args.PropertyName.Equals("StartInVideo") || args.PropertyName.Equals("EndInVideo"))
-                        SetSpaceLocation(space);
-                };
-
-                space.GoToThisSpaceEvent += (o, args) =>
-                {
-                    UpdateMarkerPosition((space.StartInVideo / _videoDuration) * (_audioCanvas.Width) - MarkerOffset);
-                    UpdateVideoPosition((int)space.StartInVideo);
-                    //Scroll 1 second before the start in video of the space
-                    TimeLineScrollViewer.ScrollToHorizontalOffset((_audioCanvas.Width / _videoDuration) *
-                                                                  (space.StartInVideo - 1000));
-
-                    _descriptionInfoTabViewModel.SelectedSpace = space;
-                    SpaceAndDescriptionsTabControl.SpacesListView.ScrollToCenterOfView(space);
-                };
-            };
-
-            _spaceCollectionViewModel.RequestSpaceTime += (sender, args) =>
-            {
-                var space = args.Space;
+                var space = args.Value;
 
                 double middle = _rightClickPointOnAudioCanvas.X;  // going to be the middle of the space
                 double middleTime = (_videoDuration / _audioCanvas.Width) * middle;  // middle of the space in milliseconds
@@ -366,15 +258,44 @@ namespace LiveDescribe.View
             };
             #endregion
 
-            #region Event Listeners For AudioCanvasViewModel
-            AudioCanvasViewModel audioCanvasViewModel = mainWindowViewModel.AudioCanvasViewModel;
-            audioCanvasViewModel.AudioCanvasMouseDownEvent += AudioCanvas_OnMouseDown;
-            audioCanvasViewModel.AudioCanvasMouseRightButtonDownEvent += AudioCanvas_RecordRightClickPosition;
-            #endregion
-
             #region Event Listeners For DescriptionCanvasViewModel
             DescriptionCanvasViewModel descriptionCanvasViewModel = mainWindowViewModel.DescriptionCanvasViewModel;
             descriptionCanvasViewModel.DescriptionCanvasMouseDownEvent += DescriptionCanvas_MouseDown;
+            #endregion
+
+            #region Event Handlers for ProjectManager
+
+            //When a description is added, attach an event to the StartInVideo and EndInVideo properties
+            //so when those properties change it redraws them
+            _projectManager.AllDescriptions.CollectionChanged += (sender, e) =>
+            {
+                if (e.Action != NotifyCollectionChangedAction.Add)
+                    return;
+
+                foreach (Description d in e.NewItems)
+                    AddDescriptionEventHandlers(d);
+            };
+
+            _projectManager.Spaces.CollectionChanged += (sender, e) =>
+            {
+                if (e.Action == NotifyCollectionChangedAction.Add)
+                {
+                    foreach (Space space in e.NewItems)
+                        AddSpaceEventHandlers(space);
+                }
+            };
+
+            _projectManager.ProjectLoaded += (sender, e) => SetTimeline();
+
+
+            _projectManager.ProjectClosed += (sender, e) =>
+            {
+                _audioCanvas.Children.Clear();
+                NumberTimeline.Children.Clear();
+
+                UpdateMarkerPosition(-MarkerOffset);
+                _marker.IsEnabled = false;
+            };
             #endregion
         }
 
@@ -476,6 +397,91 @@ namespace LiveDescribe.View
         #endregion
 
         #region Helper Functions
+
+        private void AddDescriptionEventHandlers(Description description)
+        {
+            /* Draw the description only if the video is loaded, because there is currently
+             * an issue with the video loading after the descriptions are added from an
+             * opened project.
+             */
+            if (_videoMedia.CurrentState != LiveDescribeVideoStates.VideoNotLoaded)
+                DrawDescription(description);
+
+            description.DescriptionMouseDownEvent += (sender1, e1) =>
+            {
+                //Add mouse down event on every description here
+                var e2 = (MouseEventArgs)e1;
+                if (Mouse.LeftButton == MouseButtonState.Pressed)
+                {
+                    if (description.IsExtendedDescription)
+                    {
+                        _descriptionInfoTabViewModel.SelectedExtendedDescription = description;
+                        SpaceAndDescriptionsTabControl.ExtendedDescriptionsListView.ScrollToCenterOfView(description);
+                    }
+                    else
+                    {
+                        _descriptionInfoTabViewModel.SelectedRegularDescription = description;
+                        SpaceAndDescriptionsTabControl.DescriptionsListView.ScrollToCenterOfView(description);
+                    }
+                }
+            };
+
+            description.GoToThisDescriptionEvent += (sender1, e1) =>
+            {
+                UpdateMarkerPosition((description.StartInVideo / _videoDuration) * (_audioCanvas.Width) - MarkerOffset);
+                UpdateVideoPosition((int)description.StartInVideo);
+                //Scroll 1 second before the start in video of the space
+                TimeLineScrollViewer.ScrollToHorizontalOffset((_audioCanvas.Width / _videoDuration) *
+                                                              (description.StartInVideo - 1000));
+
+                if (description.IsExtendedDescription)
+                {
+                    _descriptionInfoTabViewModel.SelectedExtendedDescription = description;
+                    SpaceAndDescriptionsTabControl.ExtendedDescriptionsListView.ScrollToCenterOfView(description);
+                }
+                else
+                {
+                    _descriptionInfoTabViewModel.SelectedRegularDescription = description;
+                    SpaceAndDescriptionsTabControl.DescriptionsListView.ScrollToCenterOfView(description);
+                }
+            };
+        }
+
+        private void AddSpaceEventHandlers(Space space)
+        {
+            //Adding a space depends on where you right clicked so we create and add it in the view
+            //Set space only if the video is loaded/playing/recording/etc
+            if (_videoMedia.CurrentState != LiveDescribeVideoStates.VideoNotLoaded)
+                SetSpaceLocation(space);
+
+            space.SpaceMouseDownEvent += (sender1, e1) =>
+            {
+                if (Mouse.LeftButton == MouseButtonState.Pressed)
+                {
+                    _descriptionInfoTabViewModel.SelectedSpace = space;
+                    SpaceAndDescriptionsTabControl.SpacesListView.ScrollToCenterOfView(space);
+                }
+            };
+
+            space.PropertyChanged += (o, args) =>
+            {
+                if (args.PropertyName.Equals("StartInVideo") || args.PropertyName.Equals("EndInVideo"))
+                    SetSpaceLocation(space);
+            };
+
+            space.GoToThisSpaceEvent += (o, args) =>
+            {
+                UpdateMarkerPosition((space.StartInVideo / _videoDuration) * (_audioCanvas.Width) - MarkerOffset);
+                UpdateVideoPosition((int)space.StartInVideo);
+                //Scroll 1 second before the start in video of the space
+                TimeLineScrollViewer.ScrollToHorizontalOffset((_audioCanvas.Width / _videoDuration) *
+                                                              (space.StartInVideo - 1000));
+
+                _descriptionInfoTabViewModel.SelectedSpace = space;
+                SpaceAndDescriptionsTabControl.SpacesListView.ScrollToCenterOfView(space);
+            };
+        }
+
         /// <summary>
         /// Updates the Marker Position in the timeline and sets the corresponding time in the timelabel
         /// </summary>
@@ -632,7 +638,7 @@ namespace LiveDescribe.View
         /// </summary>
         private void ResizeDescriptions()
         {
-            foreach (var description in _descriptionCollectionViewModel.AllDescriptions)
+            foreach (var description in _projectManager.AllDescriptions)
                 description.Height = _descriptionCanvas.ActualHeight;
         }
 
@@ -641,7 +647,7 @@ namespace LiveDescribe.View
         /// </summary>
         private void ResizeSpaces()
         {
-            foreach (var space in _spaceCollectionViewModel.Spaces)
+            foreach (var space in _projectManager.Spaces)
                 space.Height = _audioCanvas.ActualHeight;
         }
 

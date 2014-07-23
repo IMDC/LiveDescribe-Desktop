@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Factories;
+using LiveDescribe.Managers;
 using LiveDescribe.Model;
 using LiveDescribe.Resources.UiStrings;
 using LiveDescribe.Utilities;
@@ -139,70 +140,17 @@ namespace LiveDescribe.ViewModel
         /// </summary>
         private void CreateProject()
         {
-            Project p;
-            if (_copyVideo)
-            {
-                p = new Project(_projectName, Path.GetFileName(_videoPath), _projectPath);
-                Log.Info("Attempting to create a project with a copied video");
-            }
-            else
-            {
-                //Get a video path relative to the project folder
-                p = new Project(_projectName, _projectPath);
-                p.Files.Video = ProjectFile.FromAbsolutePath(_videoPath, p.Folders.Project);
+            Log.Info(CopyVideo
+                ? "Attempting to create a project with a copied video"
+                : "Attempting to create a project with a video located outside of project");
 
-                Log.Info("Attempting to create a project with a video located outside of project");
-            }
+            var project = new Project(ProjectName, ProjectPath, VideoPath, CopyVideo);
 
-            //Ensure that path is absolute
-            if (!Path.IsPathRooted(p.Folders.Project))
-            {
-                MessageBoxFactory.ShowError("Project location must be a root path.");
-                Log.Warn("Given project path is not rooted");
-                return;
-            }
+            try { ProjectLoader.InitializeProjectDirectory(project); }
+            catch { return; }
 
-            if (Directory.Exists(p.Folders.Project))
-            {
-                var result = MessageBoxFactory.ShowWarningQuestion(
-                    string.Format(UiStrings.MessageBox_Format_OverwriteProjectWarning, p.Folders.Project));
+            Project = project;
 
-                Log.Warn("Project folder already exists");
-
-                //Return if user doesn't agree to overwrite files.
-                if (result != MessageBoxResult.Yes)
-                    return;
-
-                Log.Info("User has decided to overwrite an existing project directory");
-                FileDeleter.DeleteProject(p);
-            }
-
-            //Attempt to create files
-            try
-            {
-                Log.Info("Creating project directories");
-                Directory.CreateDirectory(p.Folders.Project);
-                Directory.CreateDirectory(p.Folders.Cache);
-                Directory.CreateDirectory(p.Folders.Descriptions);
-
-                Log.Info("Creating project file");
-                FileWriter.WriteProjectFile(p);
-            }
-            //TODO: Catch individual exceptions?
-            catch (Exception e)
-            {
-                MessageBoxFactory.ShowError(UiStrings.MessageBox_ProjectCreationError);
-
-                Log.Error("An error occured when attempting to create files", e);
-
-                /* TODO: Delete files on error? If we decide to do this, then only delete created
-                 * files as opposed to deleting entire directory, as the latter can have
-                 * disastorous consequences if user picks the wrong directory and there's an error.
-                 */
-                return;
-            }
-
-            Project = p;
             Log.Info("Project Created");
             OnProjectCreated();
         }

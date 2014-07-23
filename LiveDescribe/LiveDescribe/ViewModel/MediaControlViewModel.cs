@@ -2,11 +2,9 @@
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Extensions;
 using LiveDescribe.Interfaces;
+using LiveDescribe.Managers;
 using LiveDescribe.Model;
-using LiveDescribe.Utilities;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 
 namespace LiveDescribe.ViewModel
 {
@@ -26,14 +24,11 @@ namespace LiveDescribe.ViewModel
 
         #region Instance Variables
         private readonly ILiveDescribePlayer _mediaVideo;
-        private readonly LoadingViewModel _loadingViewModel;
-        private List<Space> _spaceData;
         private TimeSpan _positionTimeLabel;
         private double _originalVolume;
         private Waveform _waveform;
         private RelayCommand _playPauseButtonClickCommand;
 
-        public Project Project { get; set; }
         #endregion
 
         #region Event Handlers
@@ -43,7 +38,6 @@ namespace LiveDescribe.ViewModel
         public event EventHandler VideoOpenedRequested;
         public event EventHandler MediaFailedEvent;
         public event EventHandler MediaEndedEvent;
-        public event EventHandler OnStrippingAudioCompleted;
         public event EventHandler OnPausedForExtendedDescription;
 
         //Event handlers for the Marker on the timeline
@@ -53,10 +47,9 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Constructors
-        public MediaControlViewModel(ILiveDescribePlayer mediaVideo, LoadingViewModel loadingViewModel)
+        public MediaControlViewModel(ILiveDescribePlayer mediaVideo, ProjectManager projectManager)
         {
             _mediaVideo = mediaVideo;
-            _loadingViewModel = loadingViewModel;
             PlayCommand = new RelayCommand(Play, PlayCheck);
             PauseCommand = new RelayCommand(Pause, PauseCheck);
             MuteCommand = new RelayCommand(Mute, () => true);
@@ -81,6 +74,13 @@ namespace LiveDescribe.ViewModel
                     RaisePropertyChanged("VideoState");
                 }
             };
+
+            projectManager.ProjectLoaded += (sender, args) =>
+            {
+                Waveform = args.Value.Waveform;
+            };
+
+            projectManager.ProjectClosed += (sender, args) => CloseMediaControlViewModel();
         }
         #endregion
 
@@ -346,20 +346,13 @@ namespace LiveDescribe.ViewModel
             get { return _waveform; }
         }
 
-        /// <summary>
-        /// Get the space data
-        /// </summary>
-        public List<Space> Spaces
-        {
-            get { return _spaceData; }
-        }
         #endregion
 
         #region Methods
         /// <summary>
         /// This function is to close the video control, it is called by the main control
         /// </summary>
-        public void CloseMediaControlViewModel()
+        private void CloseMediaControlViewModel()
         {
             _waveform = null;
             _mediaVideo.Path = null;
@@ -368,42 +361,10 @@ namespace LiveDescribe.ViewModel
             _mediaVideo.CurrentState = LiveDescribeVideoStates.VideoNotLoaded;
         }
 
-        /// <summary>
-        /// This function is used to setup all the events for the background worker and to run it to
-        /// strip the audio from the video
-        /// </summary>
-        public void SetupAndStripAudio(Project p)
+        public void LoadVideo(string videoPath)
         {
-            //changes the Path variable that is binded to the media element
-            Path = p.Files.Video;
-            Project = p;
-
-            var worker = new BackgroundWorker { WorkerReportsProgress = true, };
-
-            //Strip the audio from the given project video
-            worker.DoWork += (sender, args) =>
-            {
-                var audioOperator = new AudioUtility(Project);
-                audioOperator.StripAudio(worker);
-                var waveFormData = audioOperator.ReadWavData(worker);
-                var audioHeader = audioOperator.Header;
-                _waveform = new Waveform(audioHeader, waveFormData);
-                _spaceData = AudioAnalyzer.FindSpaces(_waveform);
-            };
-
-            //Notify subscribers of stripping completion
-            worker.RunWorkerCompleted += (sender, args) =>
-            {
-                EventHandler handler = OnStrippingAudioCompleted;
-                if (handler == null) return;
-                handler(this, EventArgs.Empty);
-            };
-
-            worker.ProgressChanged += (sender, args) => _loadingViewModel.SetProgress("Importing Video", args.ProgressPercentage);
-
-            _loadingViewModel.SetProgress("Importing Video", 0);
-            _loadingViewModel.Visible = true;
-            worker.RunWorkerAsync();
+            Path = videoPath;
+            _mediaVideo.CurrentState = LiveDescribeVideoStates.PausedVideo;
         }
 
         /// <summary>

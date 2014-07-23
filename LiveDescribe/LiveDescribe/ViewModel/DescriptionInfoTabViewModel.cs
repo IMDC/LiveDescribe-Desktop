@@ -3,6 +3,7 @@ using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Extensions;
 using LiveDescribe.Factories;
 using LiveDescribe.Interfaces;
+using LiveDescribe.Managers;
 using LiveDescribe.Model;
 using System;
 using System.Collections.ObjectModel;
@@ -20,8 +21,7 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Instance Variables
-        private readonly DescriptionCollectionViewModel _descriptionCollectionViewModel;
-        private readonly SpaceCollectionViewModel _spaceCollectionViewModel;
+        private readonly ProjectManager _projectManager;
         private Description _selectedRegularDescription;
         private Description _selectedExtendedDescription;
         private Space _selectedSpace;
@@ -29,10 +29,9 @@ namespace LiveDescribe.ViewModel
         private IDescribableInterval _selectedItem;
         #endregion
 
-        public DescriptionInfoTabViewModel(DescriptionCollectionViewModel descriptionCollectionViewModel, SpaceCollectionViewModel spaceViewModel)
+        public DescriptionInfoTabViewModel(ProjectManager projectManager)
         {
-            _descriptionCollectionViewModel = descriptionCollectionViewModel;
-            _spaceCollectionViewModel = spaceViewModel;
+            _projectManager = projectManager;
 
             InitCommands();
 
@@ -52,15 +51,15 @@ namespace LiveDescribe.ViewModel
                 canExecute: () => SelectedSpace != null,
                 execute: () =>
                 {
-                    var viewModel = DialogShower.SpawnSpaceRecordingView(SelectedSpace, _descriptionCollectionViewModel.Project);
+                    var viewModel = DialogShower.SpawnSpaceRecordingView(SelectedSpace, _projectManager.Project);
 
                     if (viewModel.DialogResult == true)
-                        _descriptionCollectionViewModel.AddDescription(viewModel.Description);
+                        _projectManager.AllDescriptions.Add(viewModel.Description);
                 });
 
             DeleteSelectedSpaceOrDescription = new RelayCommand(
-                canExecute: () => SelectedSpace != null 
-                    || SelectedExtendedDescription != null 
+                canExecute: () => SelectedSpace != null
+                    || SelectedExtendedDescription != null
                     || SelectedRegularDescription != null,
                 execute: () =>
                 {
@@ -149,7 +148,7 @@ namespace LiveDescribe.ViewModel
         /// </summary>
         public ObservableCollection<Description> ExtendedDescriptions
         {
-            get { return _descriptionCollectionViewModel.ExtendedDescriptions; }
+            get { return _projectManager.ExtendedDescriptions; }
         }
 
         /// <summary>
@@ -158,7 +157,7 @@ namespace LiveDescribe.ViewModel
         /// </summary>
         public ObservableCollection<Description> RegularDescriptions
         {
-            get { return _descriptionCollectionViewModel.RegularDescriptions; }
+            get { return _projectManager.RegularDescriptions; }
         }
 
         /// <summary>
@@ -166,7 +165,7 @@ namespace LiveDescribe.ViewModel
         /// </summary>
         public ObservableCollection<Space> Spaces
         {
-            get { return _spaceCollectionViewModel.Spaces; }
+            get { return _projectManager.Spaces; }
         }
 
         #endregion

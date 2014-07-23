@@ -169,11 +169,14 @@
     <Compile Include="Events\SpaceEventArgs.cs" />
     <Compile Include="Extensions\CommandExtensions.cs" />
     <Compile Include="Extensions\ItemsControlExtensions.cs" />
+    <Compile Include="Extensions\ObservableCollectionExtensions.cs" />
     <Compile Include="Factories\DialogShower.cs" />
     <Compile Include="Factories\MessageBoxFactory.cs" />
     <Compile Include="Interfaces\IDescribableInterval.cs" />
     <Compile Include="Interfaces\IListIndexable.cs" />
     <Compile Include="LiveDescribeConstants.cs" />
+    <Compile Include="Managers\ProjectLoader.cs" />
+    <Compile Include="Managers\ProjectManager.cs" />
     <Compile Include="Model\Project.cs" />
     <Compile Include="Model\ProjectFile.cs" />
     <Compile Include="Model\Space.cs" />
@@ -202,11 +205,11 @@
     <Compile Include="ViewModel\CountdownControlViewModel.cs" />
     <Compile Include="ViewModel\DescriptionCanvasViewModel.cs" />
     <Compile Include="ViewModel\DescriptionInfoTabViewModel.cs" />
+    <Compile Include="ViewModel\DescriptionRecordingControlViewModel.cs" />
     <Compile Include="ViewModel\ExportWindowViewModel.cs" />
     <Compile Include="ViewModel\LoadingViewModel.cs" />
     <Compile Include="ViewModel\MarkingSpacesControlViewModel.cs" />
     <Compile Include="ViewModel\SpaceRecordingViewModel.cs" />
-    <Compile Include="ViewModel\SpaceCollectionViewModel.cs" />
     <Compile Include="View\AboutInfoView.xaml.cs">
       <DependentUpon>AboutInfoView.xaml</DependentUpon>
     </Compile>
@@ -294,7 +297,6 @@
     <Compile Include="Model\Description.cs" />
     <Compile Include="Converters\TimeConverterFormatter.cs" />
     <Compile Include="Utilities\AudioUtility.cs" />
-    <Compile Include="ViewModel\DescriptionCollectionViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="ViewModel\PreferencesViewModel.cs" />
     <Compile Include="ViewModel\MediaControlViewModel.cs" />

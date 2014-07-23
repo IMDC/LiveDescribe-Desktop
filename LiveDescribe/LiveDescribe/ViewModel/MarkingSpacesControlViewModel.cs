@@ -118,7 +118,7 @@ namespace LiveDescribe.ViewModel
                 if (SelectedSpace != null
                     && !double.IsNaN(value)
                     && 0 <= value
-                    && value <= SelectedSpace.EndInVideo - SpaceCollectionViewModel.MinSpaceLengthInMSecs)
+                    && value <= SelectedSpace.EndInVideo - LiveDescribeConstants.MinSpaceLengthInMSecs)
                     SelectedSpace.StartInVideo = value;
 
                 RaisePropertyChanged();
@@ -132,7 +132,7 @@ namespace LiveDescribe.ViewModel
             {
                 if (SelectedSpace != null
                     && !double.IsNaN(value)
-                    && SelectedSpace.StartInVideo + SpaceCollectionViewModel.MinSpaceLengthInMSecs <= value
+                    && SelectedSpace.StartInVideo + LiveDescribeConstants.MinSpaceLengthInMSecs <= value
                     && value <= _player.DurationMilliseconds)
                     SelectedSpace.EndInVideo = value;
 

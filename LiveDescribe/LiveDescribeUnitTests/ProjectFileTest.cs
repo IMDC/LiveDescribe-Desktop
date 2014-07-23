@@ -179,7 +179,7 @@ namespace LiveDescribeUnitTests
             ProjectFile descriptionFile2;
 
             //Act
-            p = new Project(projectName, videoFile, projectPath);
+            p = new Project(projectName, projectPath, videoFile, true);
             descriptionFile1 = p.GenerateDescriptionFile();
             descriptionFile1a = ProjectFile.FromAbsolutePath(descriptionFile1.AbsolutePath, p.Folders.Project);
             descriptionFile2 = ProjectFile.FromRelativePath(descriptionFile1.RelativePath, p.Folders.Project);

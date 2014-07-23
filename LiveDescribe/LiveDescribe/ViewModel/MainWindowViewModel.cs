@@ -5,6 +5,7 @@ using LiveDescribe.Events;
 using LiveDescribe.Extensions;
 using LiveDescribe.Factories;
 using LiveDescribe.Interfaces;
+using LiveDescribe.Managers;
 using LiveDescribe.Model;
 using LiveDescribe.Resources.UiStrings;
 using LiveDescribe.Utilities;
@@ -12,14 +13,13 @@ using LiveDescribe.View;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Input;
-using System.Linq;
 
 namespace LiveDescribe.ViewModel
 {
@@ -39,25 +39,24 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Instance Variables
+
+        private readonly ProjectManager _projectManager;
         private readonly Timer _descriptiontimer;
         private readonly MediaControlViewModel _mediaControlViewModel;
         private readonly PreferencesViewModel _preferences;
-        private readonly DescriptionCollectionViewModel _descriptioncollectionviewmodel;
-        private readonly SpaceCollectionViewModel _spacecollectionviewmodel;
         private readonly LoadingViewModel _loadingViewModel;
         private readonly MarkingSpacesControlViewModel _markingSpacesControlViewModel;
         private readonly ILiveDescribePlayer _mediaVideo;
         private readonly DescriptionInfoTabViewModel _descriptionInfoTabViewModel;
         private readonly AudioCanvasViewModel _audioCanvasViewModel;
         private readonly DescriptionCanvasViewModel _descriptionCanvasViewModel;
+        private readonly DescriptionRecordingControlViewModel _descriptionRecordingControlViewModel;
         private Project _project;
         private string _windowTitle;
-        private bool _projectModified;
         private Description _lastRegularDescriptionPlayed;
         #endregion
 
         #region Events
-        public event EventHandler ProjectClosed;
         public event EventHandler GraphicsTick;
         public event EventHandler PlayRequested;
         public event EventHandler PauseRequested;
@@ -71,15 +70,18 @@ namespace LiveDescribe.ViewModel
         {
             DispatcherHelper.Initialize();
 
-            _spacecollectionviewmodel = new SpaceCollectionViewModel(mediaVideo);
+
             _loadingViewModel = new LoadingViewModel(100, null, 0, false);
-            _mediaControlViewModel = new MediaControlViewModel(mediaVideo, _loadingViewModel);
+            _projectManager = new ProjectManager(_loadingViewModel);
+
+            _mediaControlViewModel = new MediaControlViewModel(mediaVideo, _projectManager);
             _preferences = new PreferencesViewModel();
-            _descriptioncollectionviewmodel = new DescriptionCollectionViewModel(mediaVideo, _mediaControlViewModel);
-            _descriptionInfoTabViewModel = new DescriptionInfoTabViewModel(_descriptioncollectionviewmodel, _spacecollectionviewmodel);
+            _descriptionInfoTabViewModel = new DescriptionInfoTabViewModel(_projectManager);
             _markingSpacesControlViewModel = new MarkingSpacesControlViewModel(_descriptionInfoTabViewModel, mediaVideo);
-            _audioCanvasViewModel = new AudioCanvasViewModel(_spacecollectionviewmodel, mediaVideo);
-            _descriptionCanvasViewModel = new DescriptionCanvasViewModel(_descriptioncollectionviewmodel, mediaVideo);
+            _audioCanvasViewModel = new AudioCanvasViewModel(mediaVideo, _projectManager);
+            _descriptionCanvasViewModel = new DescriptionCanvasViewModel(mediaVideo, _projectManager);
+            _descriptionRecordingControlViewModel = new DescriptionRecordingControlViewModel(mediaVideo,
+                _projectManager);
 
             DescriptionPlayer = new DescriptionPlayer();
             DescriptionPlayer.DescriptionFinishedPlaying += (sender, e) =>
@@ -98,10 +100,10 @@ namespace LiveDescribe.ViewModel
             #region Commands
             //Commands
             CloseProject = new RelayCommand(
-                canExecute: () => ProjectLoaded,
+                canExecute: () => _projectManager.HasProjectLoaded,
                 execute: () =>
                 {
-                    if (ProjectModified)
+                    if (_projectManager.IsProjectModified)
                     {
                         var result = MessageBoxFactory.ShowWarningQuestion(
                             string.Format(UiStrings.MessageBox_Format_SaveProjectWarning, _project.ProjectName));
@@ -112,17 +114,7 @@ namespace LiveDescribe.ViewModel
                             return;
                     }
 
-                    Log.Info("Closed Project");
-                    TryToCleanUpUnusedDescriptionAudioFiles();
-                    _descriptioncollectionviewmodel.CloseDescriptionCollectionViewModel();
-                    _mediaControlViewModel.CloseMediaControlViewModel();
-                    _spacecollectionviewmodel.CloseSpaceCollectionViewModel();
-                    _project = null;
-                    ProjectModified = false;
-
-                    OnProjectClosed();
-
-                    SetWindowTitle();
+                    _projectManager.CloseProject();
                 });
 
 
@@ -134,25 +126,7 @@ namespace LiveDescribe.ViewModel
                     return;
 
                 if (viewModel.CopyVideo)
-                {
-                    LoadingViewModel.Visible = true;
-
-                    //Copy video file in background while updating the LoadingBorder
-                    var copyVideoWorker = new BackgroundWorker
-                    {
-                        WorkerReportsProgress = true,
-                    };
-                    var copier = new ProgressFileCopier();
-                    copyVideoWorker.DoWork += (sender, args) =>
-                    {
-                        copier.ProgressChanged += (o, eventArgs) => copyVideoWorker.ReportProgress(eventArgs.ProgressPercentage);
-                        copier.CopyFile(viewModel.VideoPath, viewModel.Project.Files.Video);
-                    };
-                    copyVideoWorker.ProgressChanged += (sender, args) => LoadingViewModel.SetProgress("Copying Video File", args.ProgressPercentage);
-                    copyVideoWorker.RunWorkerCompleted += (sender, args) => SetProject(viewModel.Project);
-
-                    copyVideoWorker.RunWorkerAsync();
-                }
+                    CopyVideoAndSetProject(viewModel.VideoPath, viewModel.Project);
                 else
                     SetProject(viewModel.Project);
             });
@@ -181,37 +155,24 @@ namespace LiveDescribe.ViewModel
             });
 
             SaveProject = new RelayCommand(
-                canExecute: () => ProjectModified,
-                execute: () =>
-                {
-                    FileWriter.WriteProjectFile(_project);
-
-                    if (!Directory.Exists(_project.Folders.Cache))
-                        Directory.CreateDirectory(_project.Folders.Cache);
-
-                    FileWriter.WriteWaveFormHeader(_project, _mediaControlViewModel.Waveform.Header);
-                    FileWriter.WriteWaveFormFile(_project, _mediaControlViewModel.Waveform.Data);
-                    FileWriter.WriteDescriptionsFile(_project, _descriptioncollectionviewmodel.AllDescriptions);
-                    FileWriter.WriteSpacesFile(_project, _spacecollectionviewmodel.Spaces);
-
-                    ProjectModified = false;
-                });
+                canExecute: () => _projectManager.IsProjectModified,
+                execute: () => _projectManager.SaveProject()
+            );
 
             ExportWithDescriptions = new RelayCommand(
-                canExecute: () => ProjectLoaded,
+                canExecute: () => _projectManager.HasProjectLoaded,
                 execute: () =>
                 {
                     var viewModel = DialogShower.SpawnExportWindowView(_project, _mediaVideo.Path,
-                                        _mediaVideo.DurationSeconds, 
-                                        _descriptioncollectionviewmodel.RegularDescriptions.ToList(),
-                                        _loadingViewModel);
+                        _mediaVideo.DurationSeconds, _projectManager.RegularDescriptions.ToList(),
+                        _loadingViewModel);
 
                     if (viewModel.DialogResult != true)
                         return;
                 });
 
             ClearCache = new RelayCommand(
-                canExecute: () => ProjectLoaded,
+                canExecute: () => _projectManager.HasProjectLoaded,
                 execute: () =>
                 {
                     var p = _project;
@@ -231,16 +192,16 @@ namespace LiveDescribe.ViewModel
             });
 
             FindSpaces = new RelayCommand(
-                canExecute: () => ProjectLoaded,
+                canExecute: () => _projectManager.HasProjectLoaded,
                 execute: () =>
                 {
                     var spaces = AudioAnalyzer.FindSpaces(_mediaControlViewModel.Waveform);
-                    _spacecollectionviewmodel.AddSpaces(spaces);
+                    _projectManager.Spaces.AddRange(spaces);
                 }
             );
 
             ExportDescriptionsTextToSrt = new RelayCommand(
-                canExecute: () => ProjectLoaded,
+                canExecute: () => _projectManager.HasProjectLoaded,
                 execute: () =>
                 {
                     var saveFileDialog = new SaveFileDialog
@@ -250,12 +211,13 @@ namespace LiveDescribe.ViewModel
                     };
 
                     saveFileDialog.ShowDialog();
-                    FileWriter.WriteDescriptionsTextToSrtFile(saveFileDialog.FileName, _descriptioncollectionviewmodel.AllDescriptions);
+                    FileWriter.WriteDescriptionsTextToSrtFile(saveFileDialog.FileName,
+                        _projectManager.AllDescriptions);
                 }
             );
 
             ExportSpacesTextToSrt = new RelayCommand(
-                canExecute: () => ProjectLoaded,
+                canExecute: () => _projectManager.HasProjectLoaded,
                 execute: () =>
                 {
                     var saveFileDialog = new SaveFileDialog
@@ -265,7 +227,7 @@ namespace LiveDescribe.ViewModel
                     };
 
                     saveFileDialog.ShowDialog();
-                    FileWriter.WriteSpacesTextToSrtFile(saveFileDialog.FileName, _spacecollectionviewmodel.Spaces);
+                    FileWriter.WriteSpacesTextToSrtFile(saveFileDialog.FileName, _projectManager.Spaces);
                 }
             );
 
@@ -281,9 +243,11 @@ namespace LiveDescribe.ViewModel
 
             _preferences.ApplyRequested += (sender, e) =>
             {
-                _descriptioncollectionviewmodel.Recorder.MicrophoneDeviceNumber = Properties.Settings.Default.Microphone.DeviceNumber;
+                _descriptionRecordingControlViewModel.Recorder.MicrophoneDeviceNumber =
+                    Properties.Settings.Default.Microphone.DeviceNumber;
                 Log.Info("Product Name of Apply Requested Microphone: " +
-                    NAudio.Wave.WaveIn.GetCapabilities(_descriptioncollectionviewmodel.Recorder.MicrophoneDeviceNumber).ProductName);
+                    NAudio.Wave.WaveIn.GetCapabilities(
+                    _descriptionRecordingControlViewModel.Recorder.MicrophoneDeviceNumber).ProductName);
             };
 
             #region MediaControlViewModel Events
@@ -320,28 +284,40 @@ namespace LiveDescribe.ViewModel
                 _mediaVideo.Stop();
                 OnMediaEnded(sender, e);
             };
-
-            _mediaControlViewModel.OnStrippingAudioCompleted += (sender, args) =>
-            {
-                _spacecollectionviewmodel.AddSpaces(_mediaControlViewModel.Spaces);
-                SaveProject.Execute();
-            };
             #endregion
 
             #region Property Changed Events
 
-            _spacecollectionviewmodel.Spaces.CollectionChanged += ObservableCollection_CollectionChanged;
-            _descriptioncollectionviewmodel.ExtendedDescriptions.CollectionChanged += ObservableCollection_CollectionChanged;
-            _descriptioncollectionviewmodel.RegularDescriptions.CollectionChanged += ObservableCollection_CollectionChanged;
             _mediaControlViewModel.PropertyChanged += PropertyChangedHandler;
 
             //Update window title based on project name
             PropertyChanged += (sender, args) =>
             {
-                if (args.PropertyName == "ProjectModified")
+                if (args.PropertyName == "IsProjectModified")
                     SetWindowTitle();
             };
 
+            #endregion
+
+            #region ProjectManager Events
+            _projectManager.ProjectLoaded += (sender, args) =>
+            {
+                _project = args.Value;
+
+                _mediaControlViewModel.LoadVideo(_project.Files.Video);
+
+                SetWindowTitle();
+            };
+
+            _projectManager.ProjectModifiedStateChanged += (sender, args) => SetWindowTitle();
+
+            _projectManager.ProjectClosed += (sender, args) =>
+            {
+                TryToCleanUpUnusedDescriptionAudioFiles();
+                _project = null;
+
+                SetWindowTitle();
+            };
             #endregion
 
             SetWindowTitle();
@@ -419,31 +395,9 @@ namespace LiveDescribe.ViewModel
             get { return _windowTitle; }
         }
 
-        public bool ProjectLoaded
+        public ProjectManager ProjectManager
         {
-            get { return _project != null; }
-        }
-
-        /// <summary>
-        /// Keeps track of whether the project has been modified or not by the program. This will be
-        /// true iff there is a project loaded already.
-        /// </summary>
-        public bool ProjectModified
-        {
-            set
-            {
-                if (_projectModified != value)
-                {
-                    _projectModified = ProjectLoaded && value;
-                    RaisePropertyChanged();
-                }
-            }
-            get { return ProjectLoaded && _projectModified; }
-        }
-
-        public SpaceCollectionViewModel SpaceCollectionViewModel
-        {
-            get { return _spacecollectionviewmodel; }
+            get { return _projectManager; }
         }
 
         public MediaControlViewModel MediaControlViewModel
@@ -456,10 +410,6 @@ namespace LiveDescribe.ViewModel
             get { return _preferences; }
         }
 
-        public DescriptionCollectionViewModel DescriptionCollectionViewModel
-        {
-            get { return _descriptioncollectionviewmodel; }
-        }
         public LoadingViewModel LoadingViewModel
         {
             get { return _loadingViewModel; }
@@ -485,6 +435,11 @@ namespace LiveDescribe.ViewModel
             get { return _descriptionCanvasViewModel; }
         }
 
+        public DescriptionRecordingControlViewModel DescriptionRecordingControlViewModel
+        {
+            get { return _descriptionRecordingControlViewModel; }
+        }
+
         #endregion
 
         #region Methods
@@ -497,7 +452,7 @@ namespace LiveDescribe.ViewModel
         {
             OnGraphicsTick(sender, e);
             //I put this method in it's own timer in the MainWindowViewModel for now, because I believe it should be separate from the view
-            foreach (var description in _descriptioncollectionviewmodel.AllDescriptions)
+            foreach (var description in _projectManager.AllDescriptions)
             {
                 double videoPosition = 0;
 
@@ -575,57 +530,34 @@ namespace LiveDescribe.ViewModel
         {
             CloseProject.ExecuteIfCan();
 
-            _project = p;
+            _projectManager.LoadProject(p);
+        }
 
-            //Set up environment
-            Properties.Settings.Default.WorkingDirectory = _project.Folders.Project + "\\";
+        private void CopyVideoAndSetProject(string source, Project project)
+        {
+            LoadingViewModel.Visible = true;
 
-            if (Directory.Exists(_project.Folders.Cache) && File.Exists(_project.Files.WaveForm))
+            //Copy video file in background while updating the LoadingBorder
+            var copyVideoWorker = new BackgroundWorker
             {
-                var header = FileReader.ReadWaveFormHeader(_project);
-                var audioData = FileReader.ReadWaveFormFile(_project);
-                _mediaControlViewModel.Waveform = new Waveform(header, audioData);
-                _mediaControlViewModel.Path = _project.Files.Video;
-            }
-            else
+                WorkerReportsProgress = true,
+            };
+            var copier = new ProgressFileCopier();
+            copyVideoWorker.DoWork += (sender, args) =>
             {
-                Directory.CreateDirectory(_project.Folders.Cache);
+                copier.ProgressChanged += (o, eventArgs) => copyVideoWorker.ReportProgress(eventArgs.ProgressPercentage);
+                copier.CopyFile(source, project.Files.Video);
+            };
+            copyVideoWorker.ProgressChanged +=
+                (sender, args) => LoadingViewModel.SetProgress("Copying Video File", args.ProgressPercentage);
+            copyVideoWorker.RunWorkerCompleted += (sender, args) => SetProject(project);
 
-                _mediaControlViewModel.SetupAndStripAudio(_project);
-            }
-
-            if (Directory.Exists(_project.Folders.Descriptions))
-            {
-                if (File.Exists(_project.Files.Descriptions))
-                {
-                    var descriptions = FileReader.ReadDescriptionsFile(_project);
-                    _descriptioncollectionviewmodel.AddDescriptions(descriptions);
-                }
-            }
-            else
-            {
-                Directory.CreateDirectory(_project.Folders.Descriptions);
-            }
-
-            if (File.Exists(_project.Files.Spaces))
-            {
-                var spaces = FileReader.ReadSpacesFile(_project);
-                _spacecollectionviewmodel.AddSpaces(spaces);
-            }
-
-            _mediaVideo.CurrentState = LiveDescribeVideoStates.PausedVideo;
-
-            //Set Children
-            _descriptioncollectionviewmodel.Project = _project;
-
-            ProjectModified = false;
-
-            SetWindowTitle();
+            copyVideoWorker.RunWorkerAsync();
         }
 
         public bool TryExit()
         {
-            if (ProjectModified)
+            if (_projectManager.IsProjectModified)
             {
                 Log.Info("Program is attempting to exit with an unsaved project");
 
@@ -659,8 +591,8 @@ namespace LiveDescribe.ViewModel
         {
             try
             {
-                if (_descriptioncollectionviewmodel.Recorder.IsRecording)
-                    _descriptioncollectionviewmodel.Recorder.StopRecording();
+                if (_descriptionRecordingControlViewModel.Recorder.IsRecording)
+                    _descriptionRecordingControlViewModel.Recorder.StopRecording();
 
                 _descriptiontimer.Stop();
                 DescriptionPlayer.Dispose();
@@ -674,10 +606,10 @@ namespace LiveDescribe.ViewModel
 
         private void SetWindowTitle()
         {
-            if (ProjectModified)
+            if (_projectManager.IsProjectModified)
                 WindowTitle = string.Format(UiStrings.Window_Format_MainWindowProjectModified,
                     _project.ProjectName, UiStrings.Program_Name);
-            else if (ProjectLoaded)
+            else if (_projectManager.HasProjectLoaded)
                 WindowTitle = string.Format(UiStrings.Window_Format_MainWindowProjectSaved,
                     _project.ProjectName, UiStrings.Program_Name);
             else
@@ -685,75 +617,7 @@ namespace LiveDescribe.ViewModel
         }
         #endregion
 
-        #region Event Handler Methods
-        /// <summary>
-        /// Adds a propertychanged handler to each new element of an observable collection, and
-        /// removes one from each removed element.
-        /// </summary>
-        /// <param name="sender">Sender</param>
-        /// <param name="e">Event Args</param>
-        private void ObservableCollection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.Action == NotifyCollectionChangedAction.Add)
-            {
-                foreach (var item in e.NewItems)
-                {
-                    var notifier = item as INotifyPropertyChanged;
-
-                    if (notifier != null)
-                        notifier.PropertyChanged += ObservableCollectionElement_PropertyChanged;
-                }
-            }
-            else if (e.Action == NotifyCollectionChangedAction.Remove)
-            {
-                foreach (var item in e.OldItems)
-                {
-                    var notifier = item as INotifyPropertyChanged;
-
-                    if (notifier != null)
-                        notifier.PropertyChanged -= ObservableCollectionElement_PropertyChanged;
-                }
-            }
-
-            ProjectModified = true;
-        }
-
-        /// <summary>
-        /// Flags the current project as modified, so that the program (and user) know that it has
-        /// been modified since the last save.
-        /// </summary>
-        /// <param name="sender">Sender</param>
-        /// <param name="e">Event Args</param>
-        private void ObservableCollectionElement_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            //TODO: Find a better way to implement this
-            switch (e.PropertyName)
-            {
-                //Fallthrough cases
-                case "AudioFile":
-                case "IsExtendedDescription":
-                case "StartWaveFileTime":
-                case "EndWaveFileTime":
-                case "ActualLength":
-                case "StartInVideo":
-                case "EndInVideo":
-                case "Text":
-                case "AudioData":
-                case "Header":
-                case "IsRecordedOver":
-                    ProjectModified = true;
-                    break;
-            }
-        }
-        #endregion
-
         #region Event Invokation Methods
-
-        private void OnProjectClosed()
-        {
-            EventHandler handler = ProjectClosed;
-            if (handler != null) handler(this, EventArgs.Empty);
-        }
 
         private void OnGraphicsTick(object sender, ElapsedEventArgs e)
         {

@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Reflection;
 
@@ -110,13 +111,16 @@ namespace LiveDescribe.Model
         /// The name of the project.
         /// </summary>
         [JsonProperty(Required = Required.Always)]
-        public string ProjectName { set; get; }
+        public string ProjectName { private set; get; }
 
         [JsonProperty(Required = Required.Always)]
-        public ProjectFiles Files { set; get; }
+        public ProjectFiles Files { private set; get; }
 
         [JsonProperty(Required = Required.Always)]
-        public ProjectFolders Folders { set; get; }
+        public ProjectFolders Folders { private set; get; }
+
+        [JsonIgnore]
+        public Waveform Waveform { set; get; }
 
         /// <summary>
         /// Empty Constructor to allow for JSON serialization.
@@ -125,12 +129,13 @@ namespace LiveDescribe.Model
         { }
 
         /// <summary>
-        /// Constructs an instance of Project. The VideoFile Property does not get set, and must be
-        /// set externally.
+        /// Constructs an instance of Project.
         /// </summary>
-        /// <param name="projectName">Name of the project.</param>
+        ///<param name="projectName">Name of the project.</param>
         /// <param name="projectPath">Absolute path to the project folder.</param>
-        public Project(string projectName, string projectPath)
+        /// <param name="videoPath">Absolute path to the video file.</param>
+        /// <param name="copyVideo">Whether or not to copy the video file into the project folder.</param>
+        public Project(string projectName, string projectPath, string videoPath, bool copyVideo)
         {
             ProjectName = projectName;
 
@@ -153,18 +158,14 @@ namespace LiveDescribe.Model
                 WaveForm = ProjectFile.FromRelativePath(Path.Combine(Folders.Cache.RelativePath,
                 Names.WaveFormFile), projectFolder),
             };
-        }
 
-        /// <summary>
-        /// Constructs an instance of Project.
-        /// </summary>
-        /// <param name="projectName">Name of the project.</param>
-        /// <param name="videoFileName">Name and extension of the video.</param>
-        /// <param name="projectPath">Absolute path to the project folder.</param>
-        public Project(string projectName, string videoFileName, string projectPath) :
-            this(projectName, projectPath)
-        {
-            Files.Video = ProjectFile.FromRelativePath(videoFileName, Folders.Project);
+            if (copyVideo)
+            {
+                string videoFileName = Path.GetFileName(videoPath);
+                Files.Video = ProjectFile.FromRelativePath(videoFileName, Folders.Project);
+            }
+            else
+                Files.Video = ProjectFile.FromAbsolutePath(videoPath, Folders.Project);
         }
 
         /// <summary>
