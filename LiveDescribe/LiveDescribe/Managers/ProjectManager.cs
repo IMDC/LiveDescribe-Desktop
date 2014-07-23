@@ -260,7 +260,6 @@ namespace LiveDescribe.Managers
         /// <param name="e">Event Args</param>
         private void ObservableCollectionElement_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            //TODO: Find a better way to implement this
             switch (e.PropertyName)
             {
                 //Fallthrough cases

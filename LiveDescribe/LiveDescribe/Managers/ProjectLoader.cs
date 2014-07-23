@@ -89,17 +89,11 @@ namespace LiveDescribe.Managers
                 Log.Info("Creating spaces file");
                 FileWriter.WriteSpacesFile(project, new ObservableCollection<Space>());
             }
-            //TODO: Catch individual exceptions?
             catch (Exception e)
             {
                 MessageBoxFactory.ShowError(UiStrings.MessageBox_ProjectCreationError);
 
                 Log.Error("An error occured when attempting to create files", e);
-
-                /* TODO: Delete files on error? If we decide to do this, then only delete created
-                 * files as opposed to deleting entire directory, as the latter can have
-                 * disastorous consequences if user picks the wrong directory and there's an error.
-                 */
                 throw;
             }
         }

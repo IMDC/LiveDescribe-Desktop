@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Reflection;
 
@@ -209,7 +208,6 @@ namespace LiveDescribe.Model
         /// <returns></returns>
         public ProjectFile GenerateDescriptionFile()
         {
-            //TODO: Move this functionality elsewhere
             string fileName = string.Format("{0}_desc_{1}.wav",
                 ProjectName, DateTime.Now.ToString("yyMMddHHmmssfff"));
 

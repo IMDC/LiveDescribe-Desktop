@@ -1,7 +1,7 @@
-﻿using System.Linq;
-using LiveDescribe.Model;
+﻿using LiveDescribe.Model;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace LiveDescribe.Utilities
