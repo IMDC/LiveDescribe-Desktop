@@ -62,13 +62,16 @@
                         Header="{x:Static s:UiStrings.MenuItem_OpenProject}"
                         Command="{Binding OpenProject}"
                         InputGestureText="Ctrl+O" />
+                    <Separator />
+
+                    <MenuItem
+                        Header="{x:Static s:UiStrings.MenuItem_CloseProject}"
+                        Command="{Binding CloseProject}" />
                     <MenuItem
                         Header="{x:Static s:UiStrings.MenuItem_SaveProject}"
                         Command="{Binding SaveProject}"
                         InputGestureText="Ctrl+S" />
-                    <MenuItem
-                        Header="{x:Static s:UiStrings.MenuItem_CloseProject}"
-                        Command="{Binding CloseProject}" />
+                    <Separator />
 
                     <!--Exporting Options-->
                     <MenuItem
@@ -84,6 +87,7 @@
                             Header="{x:Static s:UiStrings.Export_SpaceSrtTitle}"
                             Command="{Binding ExportSpacesTextToSrt}" />
                     </MenuItem>
+                    <Separator />
 
                     <MenuItem
                         Name="Preferences"
