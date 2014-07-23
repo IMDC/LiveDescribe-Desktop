@@ -373,6 +373,8 @@
     <Resource Include="Resources\Icons\unmute.png" />
     <Resource Include="Resources\Icons\stop.png" />
     <Resource Include="Resources\Icons\record.png" />
+    <Resource Include="Resources\Icons\endspace.png" />
+    <Resource Include="Resources\Icons\beginspace.png" />
     <Content Include="Resources\SoundEffects\beep.wav" />
     <Content Include="Resources\SoundEffects\finished-beep.wav" />
     <Content Include="Utilities\_ffmpeg.exe">

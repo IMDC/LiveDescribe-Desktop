@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:converters="clr-namespace:LiveDescribe.Converters"
     xmlns:s="clr-namespace:LiveDescribe.Resources.UiStrings"
+    xmlns:u="clr-namespace:LiveDescribe.Resources"
     mc:Ignorable="d"
     d:DesignWidth="300">
     <UserControl.Resources>
@@ -60,7 +61,7 @@
             Grid.Column="3"
             ToolTipService.ShowOnDisabled="True"
             ToolTip="{x:Static s:UiStrings.ToolTip_MarkBeginning}"
-            Content="{x:Static s:UiStrings.Command_SetBeginTime}"
+            Content="{x:Static u:CustomResources.BeginSpace}"
             Command="{Binding SetBeginToMarker}" />
 
         <TextBox
@@ -86,7 +87,7 @@
             Grid.Column="3"
             ToolTipService.ShowOnDisabled="True"
             ToolTip="{x:Static s:UiStrings.ToolTip_MarkEnd}"
-            Content="{x:Static s:UiStrings.Command_SetEndTime}"
+            Content="{x:Static u:CustomResources.EndSpace}"
             Command="{Binding SetEndToMarker}" />
 
         <TextBox

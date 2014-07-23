@@ -350,10 +350,10 @@
     <value>Cancel Recording</value>
   </data>
   <data name="Export_DescriptionSrtTitle" xml:space="preserve">
-    <value>Export Description Text To File</value>
+    <value>Export Description Text to SRT File</value>
   </data>
   <data name="Export_SpaceSrtTitle" xml:space="preserve">
-    <value>Export Space Text To File</value>
+    <value>Export Space Text to SRT File</value>
   </data>
   <data name="Command_UnMute" xml:space="preserve">
     <value>UnMute</value>
