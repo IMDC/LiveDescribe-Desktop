@@ -193,7 +193,7 @@
             Grid.Column="0"
             Grid.ColumnSpan="6"
             Minimum="0"
-            Maximum="{Binding Space.Duration}"
+            Maximum="{Binding RecordDuration}"
             Value="{Binding ElapsedTime}"
             Margin="1" />
 

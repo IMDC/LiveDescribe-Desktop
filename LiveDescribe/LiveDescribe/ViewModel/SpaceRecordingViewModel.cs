@@ -33,7 +33,6 @@ namespace LiveDescribe.ViewModel
         private bool _spaceHasText;
         private double _timeLeft;
         private double _elapsedTime;
-        private double _initialTimeLeft;
         private Description _description;
         private Space _space;
         private readonly DescriptionRecorder _recorder;
@@ -47,6 +46,7 @@ namespace LiveDescribe.ViewModel
         private double _maxWordsPerMinute;
         private double _minWordsPerMinute;
         private double _wordTimeAccumulator;
+        private double _recordDuration;
         /// <summary>Keeps track of Space Text words during recording.</summary>
         private PositionalStringTokenizer _tokenizer;
         #endregion
@@ -69,6 +69,7 @@ namespace LiveDescribe.ViewModel
             Project = project;
             ResetElapsedTime();
             SetTimeLeft();
+            RecordDuration = Space.Duration;
             MaxWordsPerMinute = DefaultMaxWordsPerMinute;
             MinWordsPerMinute = DefaultMinWordsPerMinute;
 
@@ -235,6 +236,16 @@ namespace LiveDescribe.ViewModel
             get { return _wpmDuration; }
         }
 
+        public double RecordDuration
+        {
+            set
+            {
+                _recordDuration = value;
+                RaisePropertyChanged();
+            }
+            get { return _recordDuration; }
+        }
+
         public Project Project { set; get; }
 
         public string Text
@@ -290,7 +301,7 @@ namespace LiveDescribe.ViewModel
                 var pf = Project.GenerateDescriptionFile();
                 CalculateWordTime();
                 _wordTimeAccumulator = 0;
-                _initialTimeLeft = TimeLeft;
+                RecordDuration = TimeLeft;
                 _recorder.RecordDescription(pf, false, Space.StartInVideo);
                 _recordingTimer.Start();
                 _stopwatch.Start();
@@ -409,7 +420,7 @@ namespace LiveDescribe.ViewModel
         private void RecordingTimerOnTick(object sender, EventArgs eventArgs)
         {
             ElapsedTime = _stopwatch.ElapsedMilliseconds;
-            TimeLeft = _initialTimeLeft - ElapsedTime;
+            TimeLeft = RecordDuration - ElapsedTime;
 
             if (_timePerWordMsec != 0 && _wordTimeAccumulator < ElapsedTime)
             {
