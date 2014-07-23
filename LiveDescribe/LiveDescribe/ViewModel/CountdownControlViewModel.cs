@@ -1,6 +1,9 @@
-﻿using GalaSoft.MvvmLight;
+﻿using System.Threading;
+using GalaSoft.MvvmLight;
 using System;
 using System.Windows.Threading;
+using LiveDescribe.Resources;
+using NAudio.Wave;
 
 namespace LiveDescribe.ViewModel
 {
@@ -30,10 +33,14 @@ namespace LiveDescribe.ViewModel
             _timer.Tick += (sender, args) =>
             {
                 CountdownTimeSeconds -= TimerIntervalSeconds;
-
+                
                 //If there is no check to see if the time is equal to 0, then it will show the 0.
-                if (CountdownTimeSeconds < 0)
+                if (CountdownTimeSeconds == 0)
+                    CustomResources.LongBeep.Play();
+                else if (CountdownTimeSeconds < 0)
                     StopCountdown();
+                else
+                   CustomResources.Beep.Play();
             };
         }
         #endregion
@@ -76,6 +83,7 @@ namespace LiveDescribe.ViewModel
             CountdownTimeSeconds = CountdownStartingNumberSeconds;
             Visible = true;
             _timer.Start();
+            CustomResources.Beep.Play();
             IsCountingDown = true;
         }
 

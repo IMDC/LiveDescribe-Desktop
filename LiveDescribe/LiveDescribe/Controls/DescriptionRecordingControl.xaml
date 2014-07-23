@@ -9,8 +9,8 @@
     xmlns:s="clr-namespace:LiveDescribe.Resources.UiStrings"
     xmlns:viewModel="clr-namespace:LiveDescribe.ViewModel"
     xmlns:u="clr-namespace:LiveDescribe.Utilities"
+    xmlns:resources="clr-namespace:LiveDescribe.Resources"
     d:DataContext="{d:DesignInstance viewModel:DescriptionRecordingControlViewModel}">
-
     <UserControl.Resources>
         <Style
             x:Key="ControlPanelStyle"
@@ -21,8 +21,8 @@
         </Style>
         <converters:BoolToContentConverter
             x:Key="IsRecordingConverter"
-            TrueContent="{x:Static u:CustomResources.StopRecord}"
-            FalseContent="{x:Static u:CustomResources.Record}" />
+            TrueContent="{x:Static resources:CustomResources.StopRecord}"
+            FalseContent="{x:Static resources:CustomResources.Record}" />
     </UserControl.Resources>
 
     <Grid>

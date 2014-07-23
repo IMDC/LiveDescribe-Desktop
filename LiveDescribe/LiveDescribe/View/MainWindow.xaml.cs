@@ -4,6 +4,7 @@ using LiveDescribe.Converters;
 using LiveDescribe.Extensions;
 using LiveDescribe.Managers;
 using LiveDescribe.Model;
+using LiveDescribe.Resources;
 using LiveDescribe.Utilities;
 using LiveDescribe.ViewModel;
 using System;
