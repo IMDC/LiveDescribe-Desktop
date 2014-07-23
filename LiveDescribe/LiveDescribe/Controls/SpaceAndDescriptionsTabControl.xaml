@@ -9,6 +9,13 @@
     d:DesignWidth="300"
     xmlns:converters="clr-namespace:LiveDescribe.Converters"
     xmlns:s="clr-namespace:LiveDescribe.Resources.UiStrings">
+
+    <UserControl.InputBindings>
+        <KeyBinding
+            Command="{Binding DeleteSelectedSpaceOrDescription}"
+            Key="Delete" />
+    </UserControl.InputBindings>
+
     <UserControl.Resources>
         <converters:MillisecondsTimeConverterFormatter
             x:Key="MillisecondsTimeConverter" />
@@ -118,7 +125,9 @@
                             <Setter
                                 Property="ContextMenu"
                                 Value="{StaticResource SpaceItemContextMenu}" />
-                            <EventSetter Event="MouseDoubleClick" Handler="Item_DoubleClick"/>
+                            <EventSetter
+                                Event="MouseDoubleClick"
+                                Handler="Item_DoubleClick" />
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.View>
@@ -171,7 +180,9 @@
                             <Setter
                                 Property="ContextMenu"
                                 Value="{StaticResource RegularDescriptionContextMenu}" />
-                            <EventSetter Event="MouseDoubleClick" Handler="Item_DoubleClick"/>
+                            <EventSetter
+                                Event="MouseDoubleClick"
+                                Handler="Item_DoubleClick" />
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.SelectedItem>
@@ -228,7 +239,9 @@
                             <Setter
                                 Property="ContextMenu"
                                 Value="{StaticResource ExtendedDescriptionContextMenu}" />
-                            <EventSetter Event="MouseDoubleClick" Handler="Item_DoubleClick"/>
+                            <EventSetter
+                                Event="MouseDoubleClick"
+                                Handler="Item_DoubleClick" />
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.SelectedItem>
