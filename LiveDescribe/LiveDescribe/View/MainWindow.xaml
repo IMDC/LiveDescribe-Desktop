@@ -89,7 +89,7 @@
                         Name="Preferences"
                         Header="{x:Static s:UiStrings.MenuItem_Preferences}"
                         Command="{Binding ShowPreferences}"
-                        InputGestureText="Ctrl+P" />
+                        InputGestureText="Ctrl+T" />
                     <MenuItem
                         Header="{x:Static s:UiStrings.MenuItem_Exit}"
                         Click="MenuItemExit_Click" />
