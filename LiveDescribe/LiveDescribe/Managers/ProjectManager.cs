@@ -142,6 +142,7 @@ namespace LiveDescribe.Managers
         }
         #endregion
 
+        #region Close Project
         public void CloseProject()
         {
             AllDescriptions.Clear();
@@ -150,11 +151,14 @@ namespace LiveDescribe.Managers
 
             Spaces.Clear();
 
+            Log.InfoFormat("Closed Project \"{0}\"", Project.ProjectName);
+
             Project = null;
             IsProjectModified = false;
 
             OnProjectClosed();
         }
+        #endregion
 
         #region AddDescriptionEventHandlers
         private void DescriptionsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)

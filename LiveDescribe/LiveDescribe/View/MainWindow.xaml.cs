@@ -5,7 +5,6 @@ using LiveDescribe.Extensions;
 using LiveDescribe.Managers;
 using LiveDescribe.Model;
 using LiveDescribe.Resources;
-using LiveDescribe.Utilities;
 using LiveDescribe.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -13,7 +12,6 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -133,15 +131,6 @@ namespace LiveDescribe.View
                     //this is to recheck all the graphics states
                     CommandManager.InvalidateRequerySuggested();
                 };
-
-            mainWindowViewModel.ProjectClosed += (sender, e) =>
-            {
-                _audioCanvas.Children.Clear();
-                NumberTimeline.Children.Clear();
-
-                UpdateMarkerPosition(-MarkerOffset);
-                _marker.IsEnabled = false;
-            };
 
             mainWindowViewModel.GraphicsTick += Play_Tick;
 
@@ -297,6 +286,16 @@ namespace LiveDescribe.View
             };
 
             _projectManager.ProjectLoaded += (sender, e) => SetTimeline();
+
+
+            _projectManager.ProjectClosed += (sender, e) =>
+            {
+                _audioCanvas.Children.Clear();
+                NumberTimeline.Children.Clear();
+
+                UpdateMarkerPosition(-MarkerOffset);
+                _marker.IsEnabled = false;
+            };
             #endregion
         }
 

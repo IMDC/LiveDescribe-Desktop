@@ -57,7 +57,6 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Events
-        public event EventHandler ProjectClosed;
         public event EventHandler GraphicsTick;
         public event EventHandler PlayRequested;
         public event EventHandler PauseRequested;
@@ -115,15 +114,7 @@ namespace LiveDescribe.ViewModel
                             return;
                     }
 
-                    Log.Info("Closed Project");
-                    TryToCleanUpUnusedDescriptionAudioFiles();
-                    _mediaControlViewModel.CloseMediaControlViewModel();
                     _projectManager.CloseProject();
-                    _project = null;
-
-                    OnProjectClosed();
-
-                    SetWindowTitle();
                 });
 
 
@@ -319,7 +310,16 @@ namespace LiveDescribe.ViewModel
             };
 
             _projectManager.ProjectModifiedStateChanged += (sender, args) => SetWindowTitle();
+
+            _projectManager.ProjectClosed += (sender, args) =>
+            {
+                TryToCleanUpUnusedDescriptionAudioFiles();
+                _project = null;
+
+                SetWindowTitle();
+            };
             #endregion
+
             SetWindowTitle();
         }
         #endregion
@@ -618,12 +618,6 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Event Invokation Methods
-
-        private void OnProjectClosed()
-        {
-            EventHandler handler = ProjectClosed;
-            if (handler != null) handler(this, EventArgs.Empty);
-        }
 
         private void OnGraphicsTick(object sender, ElapsedEventArgs e)
         {

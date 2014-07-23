@@ -79,6 +79,8 @@ namespace LiveDescribe.ViewModel
             {
                 Waveform = args.Value.Waveform;
             };
+
+            projectManager.ProjectClosed += (sender, args) => CloseMediaControlViewModel();
         }
         #endregion
 
@@ -350,7 +352,7 @@ namespace LiveDescribe.ViewModel
         /// <summary>
         /// This function is to close the video control, it is called by the main control
         /// </summary>
-        public void CloseMediaControlViewModel()
+        private void CloseMediaControlViewModel()
         {
             _waveform = null;
             _mediaVideo.Path = null;
