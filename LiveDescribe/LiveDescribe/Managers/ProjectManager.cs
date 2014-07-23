@@ -4,7 +4,6 @@ using LiveDescribe.Model;
 using LiveDescribe.Utilities;
 using LiveDescribe.ViewModel;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -21,6 +20,7 @@ namespace LiveDescribe.Managers
 
         #region Fields
         private readonly ProjectLoader _projectLoader;
+        private bool _isProjectModified;
         private readonly ObservableCollection<Description> _allDescriptions;
         private readonly ObservableCollection<Description> _extendedDescriptions;
         private readonly ObservableCollection<Description> _regularDescriptions;
@@ -31,6 +31,7 @@ namespace LiveDescribe.Managers
         public event EventHandler<EventArgs<Project>> ProjectLoaded;
         public event EventHandler ProjectSaved;
         public event EventHandler ProjectClosed;
+        public event EventHandler ProjectModifiedStateChanged;
         #endregion
 
         #region Constructor
@@ -42,14 +43,17 @@ namespace LiveDescribe.Managers
             _extendedDescriptions = new ObservableCollection<Description>();
             _extendedDescriptions.CollectionChanged +=
                 ObservableCollectionIndexer<Description>.CollectionChangedListener;
+            _extendedDescriptions.CollectionChanged += ObservableCollection_ProjectModifiedHandler;
 
             _regularDescriptions = new ObservableCollection<Description>();
             _regularDescriptions.CollectionChanged +=
                 ObservableCollectionIndexer<Description>.CollectionChangedListener;
+            _regularDescriptions.CollectionChanged += ObservableCollection_ProjectModifiedHandler;
 
             _spaces = new ObservableCollection<Space>();
             _spaces.CollectionChanged += ObservableCollectionIndexer<Space>.CollectionChangedListener;
             _spaces.CollectionChanged += SpacesOnCollectionChanged;
+            _spaces.CollectionChanged += ObservableCollection_ProjectModifiedHandler;
 
             _projectLoader = new ProjectLoader(loadingViewModel);
             _projectLoader.DescriptionsLoaded += (sender, args) => AllDescriptions.AddRange(args.Value);
@@ -58,6 +62,7 @@ namespace LiveDescribe.Managers
             _projectLoader.ProjectLoaded += (sender, args) =>
             {
                 Project = args.Value;
+                IsProjectModified = false;
                 OnProjectLoaded(Project);
             };
         }
@@ -70,6 +75,23 @@ namespace LiveDescribe.Managers
         public bool HasProjectLoaded
         {
             get { return Project != null; }
+        }
+
+        /// <summary>
+        /// Keeps track of whether the project has been modified or not by the program. This will be
+        /// true iff there is a project loaded already.
+        /// </summary>
+        public bool IsProjectModified
+        {
+            private set
+            {
+                if (_isProjectModified != value)
+                {
+                    _isProjectModified = HasProjectLoaded && value;
+                    OnProjectModifiedStateChanged();
+                }
+            }
+            get { return HasProjectLoaded && _isProjectModified; }
         }
 
         public ObservableCollection<Description> AllDescriptions
@@ -115,6 +137,7 @@ namespace LiveDescribe.Managers
             FileWriter.WriteDescriptionsFile(Project, AllDescriptions);
             FileWriter.WriteSpacesFile(Project, Spaces);
 
+            IsProjectModified = false;
             OnProjectSaved();
         }
         #endregion
@@ -128,6 +151,7 @@ namespace LiveDescribe.Managers
             Spaces.Clear();
 
             Project = null;
+            IsProjectModified = false;
 
             OnProjectClosed();
         }
@@ -191,6 +215,68 @@ namespace LiveDescribe.Managers
 
         #endregion
 
+        #region Project Modification Event Handlers
+        /// <summary>
+        /// Adds a propertychanged handler to each new element of an observable collection, and
+        /// removes one from each removed element.
+        /// </summary>
+        /// <param name="sender">Sender</param>
+        /// <param name="e">Event Args</param>
+        private void ObservableCollection_ProjectModifiedHandler(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (var item in e.NewItems)
+                {
+                    var notifier = item as INotifyPropertyChanged;
+
+                    if (notifier != null)
+                        notifier.PropertyChanged += ObservableCollectionElement_PropertyChanged;
+                }
+            }
+            else if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                foreach (var item in e.OldItems)
+                {
+                    var notifier = item as INotifyPropertyChanged;
+
+                    if (notifier != null)
+                        notifier.PropertyChanged -= ObservableCollectionElement_PropertyChanged;
+                }
+            }
+
+            IsProjectModified = true;
+        }
+
+        /// <summary>
+        /// Flags the current project as modified, so that the program (and user) know that it has
+        /// been modified since the last save.
+        /// </summary>
+        /// <param name="sender">Sender</param>
+        /// <param name="e">Event Args</param>
+        private void ObservableCollectionElement_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            //TODO: Find a better way to implement this
+            switch (e.PropertyName)
+            {
+                //Fallthrough cases
+                case "AudioFile":
+                case "IsExtendedDescription":
+                case "StartWaveFileTime":
+                case "EndWaveFileTime":
+                case "ActualLength":
+                case "StartInVideo":
+                case "EndInVideo":
+                case "Text":
+                case "AudioData":
+                case "Header":
+                case "IsRecordedOver":
+                    IsProjectModified = true;
+                    break;
+            }
+        }
+        #endregion
+
         #region Event Invokations
         private void OnProjectLoaded(Project project)
         {
@@ -207,6 +293,12 @@ namespace LiveDescribe.Managers
         private void OnProjectClosed()
         {
             var handler = ProjectClosed;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
+        private void OnProjectModifiedStateChanged()
+        {
+            var handler = ProjectModifiedStateChanged;
             if (handler != null) handler(this, EventArgs.Empty);
         }
         #endregion

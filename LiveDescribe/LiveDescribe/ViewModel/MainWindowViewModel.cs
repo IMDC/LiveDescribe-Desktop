@@ -13,7 +13,6 @@ using LiveDescribe.View;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -54,7 +53,6 @@ namespace LiveDescribe.ViewModel
         private readonly DescriptionRecordingControlViewModel _descriptionRecordingControlViewModel;
         private Project _project;
         private string _windowTitle;
-        private bool _projectModified;
         private Description _lastRegularDescriptionPlayed;
         #endregion
 
@@ -106,7 +104,7 @@ namespace LiveDescribe.ViewModel
                 canExecute: () => _projectManager.HasProjectLoaded,
                 execute: () =>
                 {
-                    if (ProjectModified)
+                    if (_projectManager.IsProjectModified)
                     {
                         var result = MessageBoxFactory.ShowWarningQuestion(
                             string.Format(UiStrings.MessageBox_Format_SaveProjectWarning, _project.ProjectName));
@@ -122,7 +120,6 @@ namespace LiveDescribe.ViewModel
                     _mediaControlViewModel.CloseMediaControlViewModel();
                     _projectManager.CloseProject();
                     _project = null;
-                    ProjectModified = false;
 
                     OnProjectClosed();
 
@@ -167,7 +164,7 @@ namespace LiveDescribe.ViewModel
             });
 
             SaveProject = new RelayCommand(
-                canExecute: () => ProjectModified,
+                canExecute: () => _projectManager.IsProjectModified,
                 execute: () => _projectManager.SaveProject()
             );
 
@@ -300,15 +297,12 @@ namespace LiveDescribe.ViewModel
 
             #region Property Changed Events
 
-            _projectManager.Spaces.CollectionChanged += ObservableCollection_CollectionChanged;
-            _projectManager.ExtendedDescriptions.CollectionChanged += ObservableCollection_CollectionChanged;
-            _projectManager.RegularDescriptions.CollectionChanged += ObservableCollection_CollectionChanged;
             _mediaControlViewModel.PropertyChanged += PropertyChangedHandler;
 
             //Update window title based on project name
             PropertyChanged += (sender, args) =>
             {
-                if (args.PropertyName == "ProjectModified")
+                if (args.PropertyName == "IsProjectModified")
                     SetWindowTitle();
             };
 
@@ -321,14 +315,10 @@ namespace LiveDescribe.ViewModel
 
                 _mediaControlViewModel.LoadVideo(_project.Files.Video);
 
-                ProjectModified = false;
                 SetWindowTitle();
             };
 
-            _projectManager.ProjectSaved += (sender, args) =>
-            {
-                ProjectModified = false;
-            };
+            _projectManager.ProjectModifiedStateChanged += (sender, args) => SetWindowTitle();
             #endregion
             SetWindowTitle();
         }
@@ -403,23 +393,6 @@ namespace LiveDescribe.ViewModel
                 RaisePropertyChanged();
             }
             get { return _windowTitle; }
-        }
-
-        /// <summary>
-        /// Keeps track of whether the project has been modified or not by the program. This will be
-        /// true iff there is a project loaded already.
-        /// </summary>
-        public bool ProjectModified
-        {
-            set
-            {
-                if (_projectModified != value)
-                {
-                    _projectModified = _projectManager.HasProjectLoaded && value;
-                    RaisePropertyChanged();
-                }
-            }
-            get { return _projectManager.HasProjectLoaded && _projectModified; }
         }
 
         public ProjectManager ProjectManager
@@ -584,7 +557,7 @@ namespace LiveDescribe.ViewModel
 
         public bool TryExit()
         {
-            if (ProjectModified)
+            if (_projectManager.IsProjectModified)
             {
                 Log.Info("Program is attempting to exit with an unsaved project");
 
@@ -633,7 +606,7 @@ namespace LiveDescribe.ViewModel
 
         private void SetWindowTitle()
         {
-            if (ProjectModified)
+            if (_projectManager.IsProjectModified)
                 WindowTitle = string.Format(UiStrings.Window_Format_MainWindowProjectModified,
                     _project.ProjectName, UiStrings.Program_Name);
             else if (_projectManager.HasProjectLoaded)
@@ -641,68 +614,6 @@ namespace LiveDescribe.ViewModel
                     _project.ProjectName, UiStrings.Program_Name);
             else
                 WindowTitle = DefaultWindowTitle;
-        }
-        #endregion
-
-        #region Event Handler Methods
-        /// <summary>
-        /// Adds a propertychanged handler to each new element of an observable collection, and
-        /// removes one from each removed element.
-        /// </summary>
-        /// <param name="sender">Sender</param>
-        /// <param name="e">Event Args</param>
-        private void ObservableCollection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.Action == NotifyCollectionChangedAction.Add)
-            {
-                foreach (var item in e.NewItems)
-                {
-                    var notifier = item as INotifyPropertyChanged;
-
-                    if (notifier != null)
-                        notifier.PropertyChanged += ObservableCollectionElement_PropertyChanged;
-                }
-            }
-            else if (e.Action == NotifyCollectionChangedAction.Remove)
-            {
-                foreach (var item in e.OldItems)
-                {
-                    var notifier = item as INotifyPropertyChanged;
-
-                    if (notifier != null)
-                        notifier.PropertyChanged -= ObservableCollectionElement_PropertyChanged;
-                }
-            }
-
-            ProjectModified = true;
-        }
-
-        /// <summary>
-        /// Flags the current project as modified, so that the program (and user) know that it has
-        /// been modified since the last save.
-        /// </summary>
-        /// <param name="sender">Sender</param>
-        /// <param name="e">Event Args</param>
-        private void ObservableCollectionElement_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            //TODO: Find a better way to implement this
-            switch (e.PropertyName)
-            {
-                //Fallthrough cases
-                case "AudioFile":
-                case "IsExtendedDescription":
-                case "StartWaveFileTime":
-                case "EndWaveFileTime":
-                case "ActualLength":
-                case "StartInVideo":
-                case "EndInVideo":
-                case "Text":
-                case "AudioData":
-                case "Header":
-                case "IsRecordedOver":
-                    ProjectModified = true;
-                    break;
-            }
         }
         #endregion
 
