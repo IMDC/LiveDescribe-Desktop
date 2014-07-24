@@ -407,6 +407,12 @@
   <data name="Command_StopPlaying" xml:space="preserve">
     <value>Stop</value>
   </data>
+  <data name="Command_Apply" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="Command_Ok" xml:space="preserve">
+    <value>Ok</value>
+  </data>
   <data name="Command_ResetToDefault" xml:space="preserve">
     <value>Reset to Defaults</value>
   </data>

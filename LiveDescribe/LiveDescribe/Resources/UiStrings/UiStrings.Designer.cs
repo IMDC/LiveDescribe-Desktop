@@ -79,6 +79,15 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Apply.
+        /// </summary>
+        public static string Command_Apply {
+            get {
+                return ResourceManager.GetString("Command_Apply", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         public static string Command_Cancel {
@@ -165,6 +174,15 @@ namespace LiveDescribe.Resources.UiStrings {
         public static string Command_Mute {
             get {
                 return ResourceManager.GetString("Command_Mute", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ok.
+        /// </summary>
+        public static string Command_Ok {
+            get {
+                return ResourceManager.GetString("Command_Ok", resourceCulture);
             }
         }
         

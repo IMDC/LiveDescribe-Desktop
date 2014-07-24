@@ -39,17 +39,19 @@
                 Orientation="Horizontal"
                 DockPanel.Dock="Bottom"
                 HorizontalAlignment="Right">
+
                 <Button
                     Style="{StaticResource ButtonStyle}"
-                    Command="{Binding ApplyCommand}"
-                    HorizontalAlignment="Right"
-                    Content="{x:Static s:UiStrings.Command_Accept}" />
+                    Content="{x:Static s:UiStrings.Command_Ok}"
+                    Command="{Binding AcceptChangesAndClose}" />
                 <Button
                     Style="{StaticResource ButtonStyle}"
-                    HorizontalAlignment="Left"
-                    Click="Close_OnClick"
-                    Content="{x:Static s:UiStrings.Command_Close}">
-                </Button>
+                    Command="{Binding CancelChanges}"
+                    Content="{x:Static s:UiStrings.Command_Cancel}" />
+                <Button
+                    Style="{StaticResource ButtonStyle}"
+                    Command="{Binding AcceptChanges}"
+                    Content="{x:Static s:UiStrings.Command_Apply}" />
             </StackPanel>
             <TabControl>
 
@@ -88,9 +90,9 @@
                                 SelectedColor="{Binding ColourScheme.SelectedItemColour}" />
                         </GroupBox>
                         <Button
+                            Style="{StaticResource ButtonStyle}"
                             Content="{x:Static s:UiStrings.Command_ResetToDefault}"
                             Command="{Binding ResetColourScheme}"
-                            Style="{StaticResource ButtonStyle}"
                             HorizontalAlignment="Right" />
                     </StackPanel>
                 </TabItem>

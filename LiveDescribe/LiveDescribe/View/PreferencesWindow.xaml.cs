@@ -13,12 +13,11 @@ namespace LiveDescribe.View
             InitializeComponent();
 
             DataContext = datacontext;
-        }
-
-        private void Close_OnClick(object sender, RoutedEventArgs e)
-        {
-            DialogResult = false;
-            Close();
+            datacontext.RequestClose += (sender, args) =>
+            {
+                DialogResult = args.Value;
+                Close();
+            };
         }
     }
 }
