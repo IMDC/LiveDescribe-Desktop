@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:s="clr-namespace:LiveDescribe.Resources.UiStrings"
+    xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
     Title="{x:Static s:UiStrings.Window_PreferencesTitle}"
     Height="500"
     Width="500"
@@ -17,6 +18,16 @@
             <Setter
                 Property="Padding"
                 Value="10" />
+        </Style>
+        <Style
+            x:Key="ColorPickerStyle"
+            TargetType="xctk:ColorPicker">
+            <Setter
+                Property="DisplayColorAndName"
+                Value="True" />
+            <Setter
+                Property="Margin"
+                Value="5" />
         </Style>
     </Window.Resources>
     <Grid>
@@ -38,6 +49,35 @@
                 </Button>
             </StackPanel>
             <TabControl>
+
+                <!--Colour Tab-->
+                <TabItem
+                    Header="{x:Static s:UiStrings.Header_ColourSettings}">
+                    <StackPanel>
+                        <GroupBox
+                            Header="{x:Static s:UiStrings.Header_RegularDescriptions}">
+                            <xctk:ColorPicker
+                                Style="{StaticResource ColorPickerStyle}" />
+                        </GroupBox>
+                        <GroupBox
+                            Header="{x:Static s:UiStrings.Header_ExtendedDescriptions}">
+                            <xctk:ColorPicker
+                                Style="{StaticResource ColorPickerStyle}" />
+                        </GroupBox>
+                        <GroupBox
+                            Header="{x:Static s:UiStrings.Header_Spaces}">
+                            <xctk:ColorPicker
+                                Style="{StaticResource ColorPickerStyle}" />
+                        </GroupBox>
+                        <GroupBox
+                            Header="{x:Static s:UiStrings.Header_CompletedSpaces}">
+                            <xctk:ColorPicker
+                                Style="{StaticResource ColorPickerStyle}" />
+                        </GroupBox>
+                    </StackPanel>
+                </TabItem>
+
+                <!--Mic Tab-->
                 <TabItem
                     Header="{x:Static s:UiStrings.Header_AudioSource}">
                     <ListView

@@ -407,4 +407,11 @@
   <data name="Command_StopPlaying" xml:space="preserve">
     <value>Stop</value>
   </data>
+  <data name="Header_ColourSettings" xml:space="preserve">
+    <value>Colours</value>
+  </data>
+  <data name="Header_CompletedSpaces" xml:space="preserve">
+    <value>Completed Spaces</value>
+    <comment>Completed Spaces header for colour options</comment>
+  </data>
 </root>
