@@ -1,6 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using LiveDescribe.Events;
 using LiveDescribe.Extensions;
 using LiveDescribe.Factories;
 using LiveDescribe.Model;
@@ -10,6 +9,7 @@ using NAudio.Wave;
 using System;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Input;
@@ -85,7 +85,7 @@ namespace LiveDescribe.ViewModel
 
         #region Events
         public event EventHandler ApplyRequested;
-        public event EventHandler<EventArgs<bool>> RequestClose;
+        public event EventHandler RequestClose;
         #endregion
 
         #region Constructors
@@ -112,12 +112,12 @@ namespace LiveDescribe.ViewModel
                 execute: () =>
                 {
                     AcceptChanges.Execute();
-                    OnRequestClose(true);
+                    OnRequestClose();
                 });
 
             CancelChanges = new RelayCommand(
                 canExecute: () => true,
-                execute: () => OnRequestClose(false));
+                execute: OnRequestClose);
 
             ResetColourScheme = new RelayCommand(
                 canExecute: () => true,
@@ -126,9 +126,7 @@ namespace LiveDescribe.ViewModel
                     var result = MessageBoxFactory.ShowWarningQuestion(UiStrings.MessageBox_ResetColourSchemeWarning);
 
                     if (result == MessageBoxResult.Yes)
-                    {
                         ColourScheme = new ColourScheme(ColourScheme.DefaultColourScheme);
-                    }
                 });
         }
 
@@ -200,6 +198,14 @@ namespace LiveDescribe.ViewModel
                 if (!Sources.Contains(audioSource))
                     Sources.Add(audioSource);
             }
+
+            if (Settings.Default.Microphone != null && 0 < Sources.Count)
+                SelectedAudioSource = Sources.First(audioSourceInfo =>
+                    audioSourceInfo.DeviceNumber == Settings.Default.Microphone.DeviceNumber);
+            else if (0 < Sources.Count)
+                SelectedAudioSource = Sources[0];
+            else
+                SelectedAudioSource = null;
         }
 
         /// <summary>
@@ -207,6 +213,9 @@ namespace LiveDescribe.ViewModel
         /// </summary>
         private void SaveAudioSourceInfo()
         {
+            if (SelectedAudioSource == null)
+                return;
+
             var sourceStream = new WaveIn
             {
                 DeviceNumber = SelectedAudioSource.DeviceNumber,
@@ -228,11 +237,10 @@ namespace LiveDescribe.ViewModel
         /// <summary>
         /// Makes a request to the view to close itself.
         /// </summary>
-        /// <param name="success">The dialog result for the view.</param>
-        private void OnRequestClose(bool success)
+        private void OnRequestClose()
         {
             var handler = RequestClose;
-            if (handler != null) handler(this, success);
+            if (handler != null) handler(this, EventArgs.Empty);
         }
         #endregion
     }

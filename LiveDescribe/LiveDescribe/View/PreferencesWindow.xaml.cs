@@ -13,11 +13,7 @@ namespace LiveDescribe.View
             InitializeComponent();
 
             DataContext = datacontext;
-            datacontext.RequestClose += (sender, args) =>
-            {
-                DialogResult = args.Value;
-                Close();
-            };
+            datacontext.RequestClose += (sender, args) => Close();
         }
     }
 }
