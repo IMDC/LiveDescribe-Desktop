@@ -414,4 +414,7 @@
     <value>Completed Spaces</value>
     <comment>Completed Spaces header for colour options</comment>
   </data>
+  <data name="Header_SelectedItem" xml:space="preserve">
+    <value>Selected Space/Description</value>
+  </data>
 </root>

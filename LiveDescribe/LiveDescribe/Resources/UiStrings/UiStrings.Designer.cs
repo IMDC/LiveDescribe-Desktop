@@ -394,6 +394,15 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Selected Space/Description.
+        /// </summary>
+        public static string Header_SelectedItem {
+            get {
+                return ResourceManager.GetString("Header_SelectedItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Completed.
         /// </summary>
         public static string Header_SpaceCompleted {

@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using LiveDescribe.Model;
 using LiveDescribe.Properties;
 using NAudio.Wave;
 using System;
@@ -73,6 +74,7 @@ namespace LiveDescribe.ViewModel
         #region Instance Variables
         private ObservableCollection<AudioSourceInfo> _sources;
         private AudioSourceInfo _selectedsource;
+        private ColourScheme _colourScheme;
         #endregion
 
         #region EventHandlers
@@ -84,6 +86,8 @@ namespace LiveDescribe.ViewModel
         public PreferencesViewModel()
         {
             _sources = new ObservableCollection<AudioSourceInfo>();
+            ColourScheme = ColourScheme.DefaultColourScheme;
+
             ApplyCommand = new RelayCommand(Apply, () => true);
         }
         #endregion
@@ -141,6 +145,17 @@ namespace LiveDescribe.ViewModel
                 return _selectedsource;
             }
         }
+
+        public ColourScheme ColourScheme
+        {
+            get { return _colourScheme; }
+            set
+            {
+                _colourScheme = value;
+                RaisePropertyChanged();
+            }
+        }
+
         #endregion
 
         #region Helper Functions
