@@ -407,6 +407,9 @@
   <data name="Command_StopPlaying" xml:space="preserve">
     <value>Stop</value>
   </data>
+  <data name="Command_ResetToDefault" xml:space="preserve">
+    <value>Reset to Defaults</value>
+  </data>
   <data name="Header_ColourSettings" xml:space="preserve">
     <value>Colours</value>
   </data>
@@ -416,5 +419,8 @@
   </data>
   <data name="Header_SelectedItem" xml:space="preserve">
     <value>Selected Space/Description</value>
+  </data>
+  <data name="MessageBox_ResetColourSchemeWarning" xml:space="preserve">
+    <value>Are you sure you want to reset all colours to default?</value>
   </data>
 </root>

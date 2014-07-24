@@ -6,6 +6,7 @@ namespace LiveDescribe.Model
 {
     public class ColourScheme : INotifyPropertyChanged
     {
+        #region Default ColourScheme
         public static readonly ColourScheme DefaultColourScheme = new ColourScheme
         {
             _regularDescriptionColour = Color.FromArgb(0x40, 0x00, 0x80, 0x00),
@@ -14,6 +15,7 @@ namespace LiveDescribe.Model
             _completedSpaceColour = Color.FromArgb(0x28, 0xff, 0xff, 0x00),
             _selectedItemColour = Color.FromArgb(0x40, 0xff, 0xff, 0x00),
         };
+        #endregion
 
         #region Fields
         private Color _regularDescriptionColour;
@@ -30,13 +32,17 @@ namespace LiveDescribe.Model
         #region Constructor
         public ColourScheme() { }
 
+        /// <summary>
+        /// Makes a deep copy of another ColourScheme.
+        /// </summary>
+        /// <param name="otherScheme">The ColourScheme to make a copy of.</param>
         public ColourScheme(ColourScheme otherScheme)
         {
-            _regularDescriptionColour = otherScheme.RegularDescriptionColour;
-            _extendedDescriptionColour = otherScheme.ExtendedDescriptionColour;
-            _spaceColour = otherScheme.SpaceColour;
-            _completedSpaceColour = otherScheme.CompletedSpaceColour;
-            _selectedItemColour = otherScheme.SelectedItemColour;
+            RegularDescriptionColour = otherScheme.RegularDescriptionColour;
+            ExtendedDescriptionColour = otherScheme.ExtendedDescriptionColour;
+            SpaceColour = otherScheme.SpaceColour;
+            CompletedSpaceColour = otherScheme.CompletedSpaceColour;
+            SelectedItemColour = otherScheme.SelectedItemColour;
         }
         #endregion
 

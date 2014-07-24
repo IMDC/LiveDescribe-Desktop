@@ -1,12 +1,16 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using LiveDescribe.Factories;
 using LiveDescribe.Model;
 using LiveDescribe.Properties;
+using LiveDescribe.Resources.UiStrings;
 using NAudio.Wave;
 using System;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Runtime.Serialization;
+using System.Windows;
+using System.Windows.Input;
 
 namespace LiveDescribe.ViewModel
 {
@@ -86,30 +90,45 @@ namespace LiveDescribe.ViewModel
         public PreferencesViewModel()
         {
             _sources = new ObservableCollection<AudioSourceInfo>();
-            ColourScheme = ColourScheme.DefaultColourScheme;
+            ColourScheme = new ColourScheme(ColourScheme.DefaultColourScheme);
 
-            ApplyCommand = new RelayCommand(Apply, () => true);
+            InitCommands();
         }
+
+        private void InitCommands()
+        {
+            ApplyCommand = new RelayCommand(
+                canExecute: () => true,
+                execute: () =>
+                {
+                    EventHandler handler = ApplyRequested;
+                    SaveAudioSourceInfo();
+                    if (handler == null) return;
+                    handler(this, EventArgs.Empty);
+                });
+
+            ResetColourScheme = new RelayCommand(
+                canExecute: () => true,
+                execute: () =>
+                {
+                    var result = MessageBoxFactory.ShowWarningQuestion(UiStrings.MessageBox_ResetColourSchemeWarning);
+
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        ColourScheme = new ColourScheme(ColourScheme.DefaultColourScheme);
+                    }
+                });
+        }
+
         #endregion
 
         #region Commands
 
-        public RelayCommand ApplyCommand { get; private set; }
-
-        #endregion
-
-        #region Binding Functions
-
         /// <summary>
         /// called when the preferences should be saved and applied to the settings
         /// </summary>
-        private void Apply()
-        {
-            EventHandler handler = ApplyRequested;
-            SaveAudioSourceInfo();
-            if (handler == null) return;
-            handler(this, EventArgs.Empty);
-        }
+        public ICommand ApplyCommand { get; private set; }
+        public ICommand ResetColourScheme { get; private set; }
         #endregion
 
         #region Binding Properties
@@ -124,10 +143,7 @@ namespace LiveDescribe.ViewModel
                 _sources = value;
                 RaisePropertyChanged();
             }
-            get
-            {
-                return _sources;
-            }
+            get { return _sources; }
         }
 
         /// <summary>
@@ -140,10 +156,7 @@ namespace LiveDescribe.ViewModel
                 _selectedsource = value;
                 RaisePropertyChanged();
             }
-            get
-            {
-                return _selectedsource;
-            }
+            get { return _selectedsource; }
         }
 
         public ColourScheme ColourScheme

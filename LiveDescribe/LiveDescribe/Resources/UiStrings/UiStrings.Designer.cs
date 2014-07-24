@@ -205,6 +205,15 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reset to Defaults.
+        /// </summary>
+        public static string Command_ResetToDefault {
+            get {
+                return ResourceManager.GetString("Command_ResetToDefault", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Save.
         /// </summary>
         public static string Command_Save {
@@ -714,6 +723,15 @@ namespace LiveDescribe.Resources.UiStrings {
         public static string MessageBox_ProjectCreationError {
             get {
                 return ResourceManager.GetString("MessageBox_ProjectCreationError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to reset all colours to default?.
+        /// </summary>
+        public static string MessageBox_ResetColourSchemeWarning {
+            get {
+                return ResourceManager.GetString("MessageBox_ResetColourSchemeWarning", resourceCulture);
             }
         }
         

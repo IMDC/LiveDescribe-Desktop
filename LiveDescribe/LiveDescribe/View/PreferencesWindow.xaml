@@ -87,6 +87,11 @@
                                 Style="{StaticResource ColorPickerStyle}"
                                 SelectedColor="{Binding ColourScheme.SelectedItemColour}" />
                         </GroupBox>
+                        <Button
+                            Content="{x:Static s:UiStrings.Command_ResetToDefault}"
+                            Command="{Binding ResetColourScheme}"
+                            Style="{StaticResource ButtonStyle}"
+                            HorizontalAlignment="Right" />
                     </StackPanel>
                 </TabItem>
 
