@@ -1,9 +1,11 @@
-﻿using System.ComponentModel;
+﻿using LiveDescribe.Converters;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Media;
 
 namespace LiveDescribe.Model
 {
+    [TypeConverter(typeof(ColourSchemeTypeConverter))]
     public class ColourScheme : INotifyPropertyChanged
     {
         #region Default ColourScheme

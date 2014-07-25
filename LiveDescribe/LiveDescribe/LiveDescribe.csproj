@@ -173,6 +173,7 @@
       <DependentUpon>SpaceControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\BoolToContentConverter.cs" />
+    <Compile Include="Converters\ColourSchemeTypeConverter.cs" />
     <Compile Include="Converters\InvertBoolConverter.cs" />
     <Compile Include="Converters\LiveDescribeVideoStateToContent.cs" />
     <Compile Include="Converters\MillisecondsTimeConverterFormatter.cs" />
