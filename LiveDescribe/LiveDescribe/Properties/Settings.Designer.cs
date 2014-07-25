@@ -48,7 +48,6 @@ namespace LiveDescribe.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("DefaultColourScheme")]
         public global::LiveDescribe.Model.ColourScheme ColourScheme {
             get {
                 return ((global::LiveDescribe.Model.ColourScheme)(this["ColourScheme"]));

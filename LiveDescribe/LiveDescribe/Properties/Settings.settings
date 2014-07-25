@@ -9,7 +9,7 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="ColourScheme" Type="LiveDescribe.Model.ColourScheme" Scope="User">
-      <Value Profile="(Default)">DefaultColourScheme</Value>
+      <Value Profile="(Default)" />
     </Setting>
   </Settings>
 </SettingsFile>

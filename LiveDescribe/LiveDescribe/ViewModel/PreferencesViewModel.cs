@@ -18,6 +18,11 @@ namespace LiveDescribe.ViewModel
 {
     public class PreferencesViewModel : ViewModelBase
     {
+        #region Logger
+        private static readonly log4net.ILog Log = log4net.LogManager.GetLogger
+            (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        #endregion
+
         #region Inner Classes
 
         public class AudioSourceInfo : ISerializable
@@ -92,7 +97,8 @@ namespace LiveDescribe.ViewModel
         public PreferencesViewModel()
         {
             _sources = new ObservableCollection<AudioSourceInfo>();
-            ColourScheme = ColourScheme.DefaultColourScheme.DeepCopy();
+
+            RetrieveApplicationSettings();
 
             InitCommands();
         }
@@ -103,7 +109,7 @@ namespace LiveDescribe.ViewModel
                 canExecute: () => true,
                 execute: () =>
                 {
-                    SaveAudioSourceInfo();
+                    SaveApplicationSettings();
                     OnApplyRequested();
                 });
 
@@ -184,6 +190,29 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Methods
+
+        /// <summary>
+        /// Gets all relevant data from Application settings and sets the relevant properties with
+        /// it.
+        /// </summary>
+        public void RetrieveApplicationSettings()
+        {
+            ColourScheme = (Settings.Default.ColourScheme != null)
+                ? Settings.Default.ColourScheme.DeepCopy()
+                : ColourScheme.DefaultColourScheme.DeepCopy();
+
+            Log.Info("Application settings loaded");
+        }
+
+        public void SaveApplicationSettings()
+        {
+            Settings.Default.ColourScheme = ColourScheme;
+            Settings.Default.Save();
+
+            SaveAudioSourceInfo();
+
+            Log.Info("Application settings saved");
+        }
 
         /// <summary>
         /// used to initialize the Collection of all the microphones available
