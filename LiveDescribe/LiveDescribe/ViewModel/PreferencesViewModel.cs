@@ -1,11 +1,18 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using LiveDescribe.Extensions;
+using LiveDescribe.Factories;
+using LiveDescribe.Model;
 using LiveDescribe.Properties;
+using LiveDescribe.Resources.UiStrings;
 using NAudio.Wave;
 using System;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Linq;
 using System.Runtime.Serialization;
+using System.Windows;
+using System.Windows.Input;
 
 namespace LiveDescribe.ViewModel
 {
@@ -73,42 +80,70 @@ namespace LiveDescribe.ViewModel
         #region Instance Variables
         private ObservableCollection<AudioSourceInfo> _sources;
         private AudioSourceInfo _selectedsource;
+        private ColourScheme _colourScheme;
         #endregion
 
-        #region EventHandlers
-        public EventHandler ShowPreferencesRequested;
-        public EventHandler ApplyRequested;
+        #region Events
+        public event EventHandler ApplyRequested;
+        public event EventHandler RequestClose;
         #endregion
 
         #region Constructors
         public PreferencesViewModel()
         {
             _sources = new ObservableCollection<AudioSourceInfo>();
-            ApplyCommand = new RelayCommand(Apply, () => true);
+            ColourScheme = new ColourScheme(ColourScheme.DefaultColourScheme);
+
+            InitCommands();
         }
+
+        private void InitCommands()
+        {
+            AcceptChanges = new RelayCommand(
+                canExecute: () => true,
+                execute: () =>
+                {
+                    SaveAudioSourceInfo();
+                    OnApplyRequested();
+                });
+
+            AcceptChangesAndClose = new RelayCommand(
+                canExecute: () => AcceptChanges.CanExecute(),
+                execute: () =>
+                {
+                    AcceptChanges.Execute();
+                    OnRequestClose();
+                });
+
+            CancelChanges = new RelayCommand(
+                canExecute: () => true,
+                execute: OnRequestClose);
+
+            ResetColourScheme = new RelayCommand(
+                canExecute: () => true,
+                execute: () =>
+                {
+                    var result = MessageBoxFactory.ShowWarningQuestion(UiStrings.MessageBox_ResetColourSchemeWarning);
+
+                    if (result == MessageBoxResult.Yes)
+                        ColourScheme = new ColourScheme(ColourScheme.DefaultColourScheme);
+                });
+        }
+
         #endregion
 
         #region Commands
 
-        public RelayCommand ApplyCommand { get; private set; }
-
-        #endregion
-
-        #region Binding Functions
-
         /// <summary>
         /// called when the preferences should be saved and applied to the settings
         /// </summary>
-        private void Apply()
-        {
-            EventHandler handler = ApplyRequested;
-            SaveAudioSourceInfo();
-            if (handler == null) return;
-            handler(this, EventArgs.Empty);
-        }
+        public ICommand AcceptChanges { get; private set; }
+        public ICommand AcceptChangesAndClose { get; private set; }
+        public ICommand CancelChanges { get; private set; }
+        public ICommand ResetColourScheme { get; private set; }
         #endregion
 
-        #region Binding Properties
+        #region Properties
 
         /// <summary>
         /// Collection that holds all the AudioSourceInfo for every microphone available
@@ -120,10 +155,7 @@ namespace LiveDescribe.ViewModel
                 _sources = value;
                 RaisePropertyChanged();
             }
-            get
-            {
-                return _sources;
-            }
+            get { return _sources; }
         }
 
         /// <summary>
@@ -136,14 +168,22 @@ namespace LiveDescribe.ViewModel
                 _selectedsource = value;
                 RaisePropertyChanged();
             }
-            get
+            get { return _selectedsource; }
+        }
+
+        public ColourScheme ColourScheme
+        {
+            get { return _colourScheme; }
+            set
             {
-                return _selectedsource;
+                _colourScheme = value;
+                RaisePropertyChanged();
             }
         }
+
         #endregion
 
-        #region Helper Functions
+        #region Methods
 
         /// <summary>
         /// used to initialize the Collection of all the microphones available
@@ -158,6 +198,14 @@ namespace LiveDescribe.ViewModel
                 if (!Sources.Contains(audioSource))
                     Sources.Add(audioSource);
             }
+
+            if (Settings.Default.Microphone != null && 0 < Sources.Count)
+                SelectedAudioSource = Sources.First(audioSourceInfo =>
+                    audioSourceInfo.DeviceNumber == Settings.Default.Microphone.DeviceNumber);
+            else if (0 < Sources.Count)
+                SelectedAudioSource = Sources[0];
+            else
+                SelectedAudioSource = null;
         }
 
         /// <summary>
@@ -165,6 +213,9 @@ namespace LiveDescribe.ViewModel
         /// </summary>
         private void SaveAudioSourceInfo()
         {
+            if (SelectedAudioSource == null)
+                return;
+
             var sourceStream = new WaveIn
             {
                 DeviceNumber = SelectedAudioSource.DeviceNumber,
@@ -173,6 +224,23 @@ namespace LiveDescribe.ViewModel
 
             Settings.Default.Microphone = sourceStream;
             Settings.Default.Save();
+        }
+        #endregion
+
+        #region Event Invokation
+        private void OnApplyRequested()
+        {
+            var handler = ApplyRequested;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Makes a request to the view to close itself.
+        /// </summary>
+        private void OnRequestClose()
+        {
+            var handler = RequestClose;
+            if (handler != null) handler(this, EventArgs.Empty);
         }
         #endregion
     }

@@ -7,10 +7,12 @@ using LiveDescribe.Factories;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Managers;
 using LiveDescribe.Model;
+using LiveDescribe.Properties;
 using LiveDescribe.Resources.UiStrings;
 using LiveDescribe.Utilities;
 using LiveDescribe.View;
 using Microsoft.Win32;
+using NAudio;
 using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
@@ -244,10 +246,16 @@ namespace LiveDescribe.ViewModel
             _preferences.ApplyRequested += (sender, e) =>
             {
                 _descriptionRecordingControlViewModel.Recorder.MicrophoneDeviceNumber =
-                    Properties.Settings.Default.Microphone.DeviceNumber;
-                Log.Info("Product Name of Apply Requested Microphone: " +
-                    NAudio.Wave.WaveIn.GetCapabilities(
-                    _descriptionRecordingControlViewModel.Recorder.MicrophoneDeviceNumber).ProductName);
+                    Settings.Default.Microphone.DeviceNumber;
+                try
+                {
+                    Log.Info("Product Name of Apply Requested Microphone: " + NAudio.Wave.WaveIn.GetCapabilities(
+                        _descriptionRecordingControlViewModel.Recorder.MicrophoneDeviceNumber).ProductName);
+                }
+                catch (MmException)
+                {
+                    Log.Info("No Microphone is plugged in.");
+                }
             };
 
             #region MediaControlViewModel Events
