@@ -209,6 +209,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>UiStrings.resx</DependentUpon>
     </Compile>
+    <Compile Include="Settings.cs" />
     <Compile Include="Utilities\AudioAnalyzer.cs" />
     <Compile Include="Utilities\DescriptionExportUtility.cs" />
     <Compile Include="Utilities\DescriptionPlayer.cs" />

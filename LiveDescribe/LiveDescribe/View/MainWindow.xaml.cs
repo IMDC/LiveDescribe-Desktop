@@ -77,6 +77,7 @@ namespace LiveDescribe.View
             SpaceAndDescriptionsTabControl.ExtendedDescriptionsTabItem.Visibility = Visibility.Hidden;
 #endif
             Settings.Default.Upgrade();
+            Settings.Default.InitializeDefaultValuesIfNull();
 
             _videoMedia = MediaControl.VideoMedia;
 
