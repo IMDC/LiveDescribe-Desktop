@@ -2,11 +2,18 @@
     x:Class="LiveDescribe.View.PreferencesWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:s="clr-namespace:LiveDescribe.Resources.UiStrings"
+    xmlns:controls="clr-namespace:LiveDescribe.Controls"
+    xmlns:viewModel="clr-namespace:LiveDescribe.ViewModel"
+    xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+    mc:Ignorable="d"
     Title="{x:Static s:UiStrings.Window_PreferencesTitle}"
     Height="500"
     Width="500"
-    ResizeMode="NoResize">
+    ResizeMode="NoResize"
+    d:DataContext="{d:DesignInstance viewModel:PreferencesViewModel}">
     <Window.Resources>
         <Style
             x:Key="ButtonStyle"
@@ -18,6 +25,13 @@
                 Property="Padding"
                 Value="10" />
         </Style>
+        <Style
+            x:Key="ColorPickerStyle"
+            TargetType="xctk:ColorPicker">
+            <Setter
+                Property="Margin"
+                Value="5" />
+        </Style>
     </Window.Resources>
     <Grid>
         <DockPanel>
@@ -25,19 +39,65 @@
                 Orientation="Horizontal"
                 DockPanel.Dock="Bottom"
                 HorizontalAlignment="Right">
+
                 <Button
                     Style="{StaticResource ButtonStyle}"
-                    Command="{Binding ApplyCommand}"
-                    HorizontalAlignment="Right"
-                    Content="{x:Static s:UiStrings.Command_Accept}" />
+                    Content="{x:Static s:UiStrings.Command_Ok}"
+                    Command="{Binding AcceptChangesAndClose}" />
                 <Button
                     Style="{StaticResource ButtonStyle}"
-                    HorizontalAlignment="Left"
-                    Click="Close_OnClick"
-                    Content="{x:Static s:UiStrings.Command_Close}">
-                </Button>
+                    Command="{Binding CancelChanges}"
+                    Content="{x:Static s:UiStrings.Command_Cancel}" />
+                <Button
+                    Style="{StaticResource ButtonStyle}"
+                    Command="{Binding AcceptChanges}"
+                    Content="{x:Static s:UiStrings.Command_Apply}" />
             </StackPanel>
             <TabControl>
+
+                <!--Colour Tab-->
+                <TabItem
+                    Header="{x:Static s:UiStrings.Header_ColourSettings}">
+                    <StackPanel>
+                        <GroupBox
+                            Header="{x:Static s:UiStrings.Header_RegularDescriptions}">
+                            <xctk:ColorPicker
+                                Style="{StaticResource ColorPickerStyle}"
+                                SelectedColor="{Binding ColourScheme.RegularDescriptionColour}" />
+                        </GroupBox>
+                        <GroupBox
+                            Header="{x:Static s:UiStrings.Header_ExtendedDescriptions}">
+                            <xctk:ColorPicker
+                                Style="{StaticResource ColorPickerStyle}"
+                                SelectedColor="{Binding ColourScheme.ExtendedDescriptionColour}" />
+                        </GroupBox>
+                        <GroupBox
+                            Header="{x:Static s:UiStrings.Header_Spaces}">
+                            <xctk:ColorPicker
+                                Style="{StaticResource ColorPickerStyle}"
+                                SelectedColor="{Binding ColourScheme.SpaceColour}" />
+                        </GroupBox>
+                        <GroupBox
+                            Header="{x:Static s:UiStrings.Header_CompletedSpaces}">
+                            <xctk:ColorPicker
+                                Style="{StaticResource ColorPickerStyle}"
+                                SelectedColor="{Binding ColourScheme.CompletedSpaceColour}" />
+                        </GroupBox>
+                        <GroupBox
+                            Header="{x:Static s:UiStrings.Header_SelectedItem}">
+                            <xctk:ColorPicker
+                                Style="{StaticResource ColorPickerStyle}"
+                                SelectedColor="{Binding ColourScheme.SelectedItemColour}" />
+                        </GroupBox>
+                        <Button
+                            Style="{StaticResource ButtonStyle}"
+                            Content="{x:Static s:UiStrings.Command_ResetToDefault}"
+                            Command="{Binding ResetColourScheme}"
+                            HorizontalAlignment="Right" />
+                    </StackPanel>
+                </TabItem>
+
+                <!--Mic Tab-->
                 <TabItem
                     Header="{x:Static s:UiStrings.Header_AudioSource}">
                     <ListView

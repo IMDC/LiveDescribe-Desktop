@@ -113,6 +113,24 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="Xceed.Wpf.AvalonDock">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.2.1\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Aero">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.2.1\lib\net40\Xceed.Wpf.AvalonDock.Themes.Aero.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Metro">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.2.1\lib\net40\Xceed.Wpf.AvalonDock.Themes.Metro.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2010">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.2.1\lib\net40\Xceed.Wpf.AvalonDock.Themes.VS2010.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.DataGrid">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.2.1\lib\net40\Xceed.Wpf.DataGrid.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.Toolkit">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.2.1\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -155,6 +173,7 @@
       <DependentUpon>SpaceControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\BoolToContentConverter.cs" />
+    <Compile Include="Converters\ColorToSolidBrushConverter.cs" />
     <Compile Include="Converters\InvertBoolConverter.cs" />
     <Compile Include="Converters\LiveDescribeVideoStateToContent.cs" />
     <Compile Include="Converters\MillisecondsTimeConverterFormatter.cs" />
@@ -172,11 +191,13 @@
     <Compile Include="Extensions\ObservableCollectionExtensions.cs" />
     <Compile Include="Factories\DialogShower.cs" />
     <Compile Include="Factories\MessageBoxFactory.cs" />
+    <Compile Include="Interfaces\ICopy.cs" />
     <Compile Include="Interfaces\IDescribableInterval.cs" />
     <Compile Include="Interfaces\IListIndexable.cs" />
     <Compile Include="LiveDescribeConstants.cs" />
     <Compile Include="Managers\ProjectLoader.cs" />
     <Compile Include="Managers\ProjectManager.cs" />
+    <Compile Include="Model\ColourScheme.cs" />
     <Compile Include="Model\Project.cs" />
     <Compile Include="Model\ProjectFile.cs" />
     <Compile Include="Model\Space.cs" />
@@ -343,6 +364,7 @@
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </None>
     <AppDesigner Include="Properties\" />
   </ItemGroup>

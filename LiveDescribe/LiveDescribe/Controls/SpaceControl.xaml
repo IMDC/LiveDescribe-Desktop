@@ -8,7 +8,12 @@
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="300"
-    xmlns:controls="clr-namespace:LiveDescribe.Controls">
+    xmlns:controls="clr-namespace:LiveDescribe.Controls"
+    xmlns:converters="clr-namespace:LiveDescribe.Converters">
+    <controls:ItemControl.Resources>
+        <converters:ColorToSolidBrushConverter
+            x:Key="BrushConverter" />
+    </controls:ItemControl.Resources>
     <Grid>
         <Rectangle
             Name="SpaceGraphic"
@@ -23,56 +28,15 @@
                         Command="{Binding DeleteSpaceCommand}" />
                     <MenuItem
                         Header="{x:Static s:UiStrings.Command_GoToSpace}"
-                        Command="{Binding GoToThisSpaceCommand}"/>
+                        Command="{Binding GoToThisSpaceCommand}" />
                 </ContextMenu>
             </Rectangle.ContextMenu>
             <Rectangle.Style>
                 <Style
                     TargetType="Rectangle">
-                    <Style.Triggers>
-                        <MultiDataTrigger>
-                            <MultiDataTrigger.Conditions>
-                                <Condition
-                                    Binding="{Binding IsSelected}"
-                                    Value="false" />
-                                <Condition
-                                    Binding="{Binding IsRecordedOver}"
-                                    Value="true" />
-                            </MultiDataTrigger.Conditions>
-                            <Setter
-                                Property="Fill"
-                                Value="DimGray" />
-                            <Setter
-                                Property="Opacity"
-                                Value="0.15" />
-                        </MultiDataTrigger>
-                        <MultiDataTrigger>
-                            <MultiDataTrigger.Conditions>
-                                <Condition
-                                    Binding="{Binding IsSelected}"
-                                    Value="false" />
-                                <Condition
-                                    Binding="{Binding IsRecordedOver}"
-                                    Value="false" />
-                            </MultiDataTrigger.Conditions>
-                            <Setter
-                                Property="Fill"
-                                Value="Blue" />
-                            <Setter
-                                Property="Opacity"
-                                Value="0.3" />
-                        </MultiDataTrigger>
-                        <DataTrigger
-                            Binding="{Binding IsSelected}"
-                            Value="true">
-                            <Setter
-                                Property="Fill"
-                                Value="Yellow" />
-                            <Setter
-                                Property="Opacity"
-                                Value="0.2" />
-                        </DataTrigger>
-                    </Style.Triggers>
+                    <Setter
+                        Property="Fill"
+                        Value="{Binding Colour, Converter={StaticResource BrushConverter}}" />
                 </Style>
             </Rectangle.Style>
         </Rectangle>

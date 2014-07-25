@@ -8,9 +8,14 @@
     xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
     xmlns:s="clr-namespace:LiveDescribe.Resources.UiStrings"
     xmlns:command="http://www.galasoft.ch/mvvmlight"
+    xmlns:converters="clr-namespace:LiveDescribe.Converters"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="300">
+    <controls:ItemControl.Resources>
+        <converters:ColorToSolidBrushConverter
+            x:Key="BrushConverter" />
+    </controls:ItemControl.Resources>
     <Grid>
         <Rectangle
             x:Name="DescriptionGraphic"
@@ -31,51 +36,9 @@
             <Rectangle.Style>
                 <Style
                     TargetType="Rectangle">
-                    <Style.Triggers>
-                        <MultiDataTrigger>
-                            <MultiDataTrigger.Conditions>
-                                <Condition
-                                    Binding="{Binding IsExtendedDescription}"
-                                    Value="true" />
-                                <Condition
-                                    Binding="{Binding IsSelected}"
-                                    Value="false" />
-                            </MultiDataTrigger.Conditions>
-                            <Setter
-                                Property="Fill"
-                                Value="Red" />
-                            <Setter
-                                Property="Opacity"
-                                Value="0.25" />
-                        </MultiDataTrigger>
-
-                        <MultiDataTrigger>
-                            <MultiDataTrigger.Conditions>
-                                <Condition
-                                    Binding="{Binding IsExtendedDescription}"
-                                    Value="false" />
-                                <Condition
-                                    Binding="{Binding IsSelected}"
-                                    Value="false" />
-                            </MultiDataTrigger.Conditions>
-                            <Setter
-                                Property="Fill"
-                                Value="Green" />
-                            <Setter
-                                Property="Opacity"
-                                Value="0.25" />
-                        </MultiDataTrigger>
-                        <DataTrigger
-                            Binding="{Binding IsSelected}"
-                            Value="true">
-                            <Setter
-                                Property="Fill"
-                                Value="Yellow" />
-                            <Setter
-                                Property="Opacity"
-                                Value="0.25" />
-                        </DataTrigger>
-                    </Style.Triggers>
+                    <Setter
+                        Property="Fill"
+                        Value="{Binding Colour, Converter={StaticResource BrushConverter}}" />
                 </Style>
             </Rectangle.Style>
             <i:Interaction.Triggers>
