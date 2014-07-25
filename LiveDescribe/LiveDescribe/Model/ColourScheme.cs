@@ -1,4 +1,5 @@
 ﻿using LiveDescribe.Converters;
+using LiveDescribe.Interfaces;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Media;
@@ -6,7 +7,7 @@ using System.Windows.Media;
 namespace LiveDescribe.Model
 {
     [TypeConverter(typeof(ColourSchemeTypeConverter))]
-    public class ColourScheme : INotifyPropertyChanged
+    public class ColourScheme : INotifyPropertyChanged, ICopy<ColourScheme>
     {
         #region Default ColourScheme
         public static readonly ColourScheme DefaultColourScheme = new ColourScheme
@@ -29,23 +30,6 @@ namespace LiveDescribe.Model
 
         #region Events
         public event PropertyChangedEventHandler PropertyChanged;
-        #endregion
-
-        #region Constructor
-        public ColourScheme() { }
-
-        /// <summary>
-        /// Makes a deep copy of another ColourScheme.
-        /// </summary>
-        /// <param name="otherScheme">The ColourScheme to make a copy of.</param>
-        public ColourScheme(ColourScheme otherScheme)
-        {
-            RegularDescriptionColour = otherScheme.RegularDescriptionColour;
-            ExtendedDescriptionColour = otherScheme.ExtendedDescriptionColour;
-            SpaceColour = otherScheme.SpaceColour;
-            CompletedSpaceColour = otherScheme.CompletedSpaceColour;
-            SelectedItemColour = otherScheme.SelectedItemColour;
-        }
         #endregion
 
         #region Properties
@@ -99,6 +83,26 @@ namespace LiveDescribe.Model
             }
         }
 
+        #endregion
+
+        #region Methods
+
+        public ColourScheme ShallowCopy()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public ColourScheme DeepCopy()
+        {
+            return new ColourScheme
+            {
+                RegularDescriptionColour = RegularDescriptionColour,
+                ExtendedDescriptionColour = ExtendedDescriptionColour,
+                SpaceColour = SpaceColour,
+                CompletedSpaceColour = CompletedSpaceColour,
+                SelectedItemColour = SelectedItemColour,
+            };
+        }
         #endregion
 
         #region Event Invokation

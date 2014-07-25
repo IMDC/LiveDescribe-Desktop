@@ -92,7 +92,7 @@ namespace LiveDescribe.ViewModel
         public PreferencesViewModel()
         {
             _sources = new ObservableCollection<AudioSourceInfo>();
-            ColourScheme = new ColourScheme(ColourScheme.DefaultColourScheme);
+            ColourScheme = ColourScheme.DefaultColourScheme.DeepCopy();
 
             InitCommands();
         }
@@ -126,7 +126,7 @@ namespace LiveDescribe.ViewModel
                     var result = MessageBoxFactory.ShowWarningQuestion(UiStrings.MessageBox_ResetColourSchemeWarning);
 
                     if (result == MessageBoxResult.Yes)
-                        ColourScheme = new ColourScheme(ColourScheme.DefaultColourScheme);
+                        ColourScheme = ColourScheme.DefaultColourScheme.DeepCopy();
                 });
         }
 

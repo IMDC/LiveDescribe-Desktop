@@ -191,6 +191,7 @@
     <Compile Include="Extensions\ObservableCollectionExtensions.cs" />
     <Compile Include="Factories\DialogShower.cs" />
     <Compile Include="Factories\MessageBoxFactory.cs" />
+    <Compile Include="Interfaces\ICopy.cs" />
     <Compile Include="Interfaces\IDescribableInterval.cs" />
     <Compile Include="Interfaces\IListIndexable.cs" />
     <Compile Include="LiveDescribeConstants.cs" />

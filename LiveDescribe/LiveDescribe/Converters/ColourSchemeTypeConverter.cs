@@ -17,7 +17,7 @@ namespace LiveDescribe.Converters
             var stringValue = value as string;
             if (stringValue != null && stringValue == "DefaultColourScheme")
             {
-                return new ColourScheme(ColourScheme.DefaultColourScheme);
+                return ColourScheme.DefaultColourScheme.DeepCopy();
             }
 
             return base.ConvertFrom(context, culture, value);
