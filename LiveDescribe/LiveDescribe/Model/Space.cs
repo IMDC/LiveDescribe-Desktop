@@ -1,10 +1,12 @@
 ﻿using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Interfaces;
+using LiveDescribe.Properties;
 using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace LiveDescribe.Model
 {
@@ -28,6 +30,7 @@ namespace LiveDescribe.Model
         private bool _isSelected;
         private bool _isRecordedOver;
         private int _index;
+        private Color _colour;
         #endregion
 
         #region Event Handlers
@@ -62,6 +65,12 @@ namespace LiveDescribe.Model
             SpaceMouseUpCommand = new RelayCommand<MouseEventArgs>(SpaceMouseUp, param => true);
             SpaceMouseDownCommand = new RelayCommand<MouseEventArgs>(SpaceMouseDown, param => true);
             SpaceMouseMoveCommand = new RelayCommand<MouseEventArgs>(SpaceMouseMove, param => true);
+
+            Settings.Default.PropertyChanged += (sender, args) =>
+            {
+                if (args.PropertyName == "ColourScheme")
+                    SetColour();
+            };
         }
         #endregion
 
@@ -232,6 +241,18 @@ namespace LiveDescribe.Model
             }
             get { return _index; }
         }
+
+        [JsonIgnore]
+        public Color Colour
+        {
+            set
+            {
+                _colour = value;
+                NotifyPropertyChanged();
+            }
+            get { return _colour; }
+        }
+
         #endregion
 
         #region Command Methods
@@ -288,6 +309,16 @@ namespace LiveDescribe.Model
         {
             Duration = EndInVideo - StartInVideo;
         }
+
+        private void SetColour()
+        {
+            if (IsSelected)
+                Colour = Settings.Default.ColourScheme.SelectedItemColour;
+            else if (IsRecordedOver)
+                Colour = Settings.Default.ColourScheme.CompletedSpaceColour;
+            else
+                Colour = Settings.Default.ColourScheme.SpaceColour;
+        }
         #endregion
 
         #region PropertyChanged
@@ -304,6 +335,9 @@ namespace LiveDescribe.Model
         {
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null) { handler(this, new PropertyChangedEventArgs(propertyName)); }
+
+            if (propertyName == "IsSelected" || propertyName == "IsRecordedOver")
+                SetColour();
         }
         #endregion
     }

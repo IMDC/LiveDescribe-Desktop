@@ -12,8 +12,8 @@ namespace LiveDescribe.Model
         {
             _regularDescriptionColour = Color.FromArgb(0x40, 0x00, 0x80, 0x00),
             _extendedDescriptionColour = Color.FromArgb(0x40, 0xff, 0x0, 0x0),
-            _spaceColour = Color.FromArgb(040, 0x69, 0x69, 0x69),
-            _completedSpaceColour = Color.FromArgb(0x28, 0xff, 0xff, 0x00),
+            _spaceColour = Color.FromArgb(0x40, 0x00, 0x00, 0xff),
+            _completedSpaceColour = Color.FromArgb(040, 0x69, 0x69, 0x69),
             _selectedItemColour = Color.FromArgb(0x40, 0xff, 0xff, 0x00),
         };
         #endregion

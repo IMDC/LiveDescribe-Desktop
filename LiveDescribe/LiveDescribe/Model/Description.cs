@@ -1,11 +1,13 @@
 ﻿using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Interfaces;
+using LiveDescribe.Properties;
 using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace LiveDescribe.Model
 {
@@ -32,6 +34,7 @@ namespace LiveDescribe.Model
         private bool _isSelected;
         private bool _isPlaying;
         private int _index;
+        private Color _colour;
         #endregion
 
         #region Events
@@ -72,6 +75,12 @@ namespace LiveDescribe.Model
             DescriptionDeleteCommand = new RelayCommand(DescriptionDelete, () => true);
             //called when mouse moves over description
             DescriptionMouseMoveCommand = new RelayCommand<MouseEventArgs>(DescriptionMouseMove, param => true);
+
+            Settings.Default.PropertyChanged += (sender, args) =>
+            {
+                if (args.PropertyName == "ColourScheme")
+                    SetColour();
+            };
         }
 
         #region Properties
@@ -268,6 +277,17 @@ namespace LiveDescribe.Model
             }
             get { return _index; }
         }
+
+        [JsonIgnore]
+        public Color Colour
+        {
+            set
+            {
+                _colour = value;
+                NotifyPropertyChanged();
+            }
+            get { return _colour; }
+        }
         #endregion
 
         #region Commands
@@ -297,6 +317,19 @@ namespace LiveDescribe.Model
 
         [JsonIgnore]
         public RelayCommand GoToThisDescriptionCommand { get; private set; }
+        #endregion
+
+        #region Methods
+
+        private void SetColour()
+        {
+            if (IsSelected)
+                Colour = Settings.Default.ColourScheme.SelectedItemColour;
+            else if (IsExtendedDescription)
+                Colour = Settings.Default.ColourScheme.ExtendedDescriptionColour;
+            else
+                Colour = Settings.Default.ColourScheme.RegularDescriptionColour;
+        }
         #endregion
 
         #region Binding Functions
@@ -360,8 +393,13 @@ namespace LiveDescribe.Model
         /// <param name="propertyName">The name of the property changed.</param>
         private void NotifyPropertyChanged([CallerMemberName]string propertyName = "")
         {
-            PropertyChangedEventHandler handler = PropertyChanged;
+            var handler = PropertyChanged;
             if (handler != null) { handler(this, new PropertyChangedEventArgs(propertyName)); }
+
+            if (propertyName == "IsExtendedDescription" || propertyName == "IsSelected")
+            {
+                SetColour();
+            }
         }
         #endregion
     }
