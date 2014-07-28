@@ -6,6 +6,7 @@ using LiveDescribe.Managers;
 using LiveDescribe.Model;
 using LiveDescribe.Properties;
 using LiveDescribe.Resources;
+using LiveDescribe.Resources.UiStrings;
 using LiveDescribe.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -95,6 +96,8 @@ namespace LiveDescribe.View
             _marker = MarkerControl.Marker;
 
             _millisecondsTimeConverter = new MillisecondsTimeConverterFormatter();
+
+            SetRecentDocumentsList();
 
             #region TimeLineScrollViewer Event Listeners
             TimeLineScrollViewer.ScrollChanged += (sender, e) =>
@@ -289,7 +292,11 @@ namespace LiveDescribe.View
                 }
             };
 
-            _projectManager.ProjectLoaded += (sender, e) => SetTimeline();
+            _projectManager.ProjectLoaded += (sender, e) =>
+            {
+                SetTimeline();
+                SetRecentDocumentsList();
+            };
 
 
             _projectManager.ProjectClosed += (sender, e) =>
@@ -398,7 +405,7 @@ namespace LiveDescribe.View
 
         #endregion
 
-        #region Helper Functions
+        #region Methods
 
         private void AddDescriptionEventHandlers(Description description)
         {
@@ -570,6 +577,29 @@ namespace LiveDescribe.View
             double staticCanvasWidth = (_videoDuration / (PageTimeBeforeCanvasScrolls * 1000)) * screenWidth;
             _audioCanvas.MaxWidth = staticCanvasWidth;
             return staticCanvasWidth;
+        }
+
+        private void SetRecentDocumentsList()
+        {
+            OpenRecentMenuItem.Items.Clear();
+            var list = new List<Tuple<string, string>>();
+
+            if (list.Count == 0)
+            {
+                OpenRecentMenuItem.IsEnabled = false;
+            }
+            else
+            {
+                foreach (var tuple in list)
+                {
+                    OpenRecentMenuItem.Items.Add(new MenuItem { Header = tuple.Item1 });
+                }
+
+                OpenRecentMenuItem.Items.Add(new Separator());
+                OpenRecentMenuItem.Items.Add(new MenuItem { Header = UiStrings.MenuItem_ClearList });
+
+                OpenRecentMenuItem.IsEnabled = true;
+            }
         }
 
         #endregion

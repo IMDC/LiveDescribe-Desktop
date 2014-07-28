@@ -62,6 +62,9 @@
                         Header="{x:Static s:UiStrings.MenuItem_OpenProject}"
                         Command="{Binding OpenProject}"
                         InputGestureText="Ctrl+O" />
+                    <MenuItem
+                        x:Name="OpenRecentMenuItem"
+                        Header="{x:Static s:UiStrings.MenuItem_OpenRecent}" />
                     <Separator />
 
                     <MenuItem
