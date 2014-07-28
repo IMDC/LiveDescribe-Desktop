@@ -33,6 +33,7 @@ namespace LiveDescribe.Managers
             var cmd = _redoStack.Pop();
             cmd.Execute();
             _undoStack.Push(cmd);
+            CommandManager.InvalidateRequerySuggested();
         }
 
         public void Undo()
@@ -40,6 +41,7 @@ namespace LiveDescribe.Managers
             var cmd = _undoStack.Pop();
             cmd.UnExecute();
             _redoStack.Push(cmd);
+            CommandManager.InvalidateRequerySuggested();
         }
 
         public bool CanRedo()
@@ -52,14 +54,13 @@ namespace LiveDescribe.Managers
             return (_undoStack.Count != 0) ? true : false;
         }
 
-        public void InsertSpaceForInsert(ObservableCollection<Space> collection, Space element)
+        public void InsertSpaceForInsertInCollection(ObservableCollection<Space> collection, Space element)
         {
             var cmd = new InsertSpaceUndoRedoCommand(collection, element);
             _undoStack.Push(cmd); _redoStack.Clear();
-            Console.WriteLine(_undoStack.Count);
         }
 
-        public void InsertSpaceForDelete(ObservableCollection<Space> collection, Space element)
+        public void InsertSpaceForDeletion(ObservableCollection<Space> collection, Space element)
         {
             var cmd = new DeleteSpaceUndoRedoCommand(collection, element);
             _undoStack.Push(cmd); _redoStack.Clear();

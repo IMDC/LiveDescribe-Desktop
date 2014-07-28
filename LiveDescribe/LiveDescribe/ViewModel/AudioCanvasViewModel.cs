@@ -44,7 +44,7 @@ namespace LiveDescribe.ViewModel
                 var s = new Space();
                 OnRequestSpaceTime(s);
                 Spaces.Add(s);
-                _undoManager.InsertSpaceForInsert(Spaces, s);                
+                _undoManager.InsertSpaceForInsertInCollection(Spaces, s);
             });
         }
 

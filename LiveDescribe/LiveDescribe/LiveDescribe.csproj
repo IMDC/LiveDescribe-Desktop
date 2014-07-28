@@ -212,7 +212,7 @@
       <DependentUpon>UiStrings.resx</DependentUpon>
     </Compile>
     <Compile Include="Settings.cs" />
-    <Compile Include="UndoCommands\DeleteUndoRedoCommand.cs" />
+    <Compile Include="UndoCommands\DeleteSpaceUndoRedoCommand.cs" />
     <Compile Include="UndoCommands\InsertSpaceUndoRedoCommand.cs" />
     <Compile Include="Utilities\AudioAnalyzer.cs" />
     <Compile Include="Utilities\DescriptionExportUtility.cs" />

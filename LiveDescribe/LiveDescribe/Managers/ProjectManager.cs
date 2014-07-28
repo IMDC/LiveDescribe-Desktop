@@ -205,23 +205,37 @@ namespace LiveDescribe.Managers
         }
         #endregion
 
-        #region AddSpaceEventHandlers
+        #region Add And Remove SpaceEventHandlers
         private void AddSpaceEventHandlers(Space s)
         {
-            s.SpaceDeleteEvent += (sender, args) =>
-            {
-                Spaces.Remove(s);
-                _undoRedoManager.InsertSpaceForDelete(Spaces, s);
-            };
+            s.SpaceDeleteEvent += SpaceDeleted;
+        }
+
+        private void SpaceDeleted(object sender, EventArgs e)
+        {
+            Space s = (Space)sender;
+            Console.WriteLine("Space Deleted Event");
+            Spaces.Remove(s);
+            _undoRedoManager.InsertSpaceForDeletion(Spaces, s);
         }
 
         private void SpacesOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
         {
-            if (args.Action != NotifyCollectionChangedAction.Add)
-                return;
+            if (args.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (Space space in args.NewItems)
+                    AddSpaceEventHandlers(space);
+            }
+            else if (args.Action == NotifyCollectionChangedAction.Remove)
+            {
+                foreach (Space space in args.OldItems)
+                    RemoveSpaceEventHandlers(space);
+            }
+        }
 
-            foreach (Space space in args.NewItems)
-                AddSpaceEventHandlers(space);
+        private void RemoveSpaceEventHandlers(Space space)
+        {
+            space.SpaceDeleteEvent -= SpaceDeleted;
         }
 
         #endregion
