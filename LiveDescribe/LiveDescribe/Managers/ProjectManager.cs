@@ -211,7 +211,7 @@ namespace LiveDescribe.Managers
             s.SpaceDeleteEvent += (sender, args) =>
             {
                 Spaces.Remove(s);
-                _undoRedoManager.InsertIUndoRedoForDelete(Spaces, s);
+                _undoRedoManager.InsertSpaceForDelete(Spaces, s);
             };
         }
 

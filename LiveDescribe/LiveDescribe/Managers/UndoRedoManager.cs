@@ -52,14 +52,14 @@ namespace LiveDescribe.Managers
             return (_undoStack.Count != 0) ? true : false;
         }
 
-        public void InsertIUndoRedoForInsert(ObservableCollection<Space> collection, Space element)
+        public void InsertSpaceForInsert(ObservableCollection<Space> collection, Space element)
         {
             var cmd = new InsertSpaceUndoRedoCommand(collection, element);
             _undoStack.Push(cmd); _redoStack.Clear();
             Console.WriteLine(_undoStack.Count);
         }
 
-        public void InsertIUndoRedoForDelete(ObservableCollection<Space> collection, Space element)
+        public void InsertSpaceForDelete(ObservableCollection<Space> collection, Space element)
         {
             var cmd = new DeleteSpaceUndoRedoCommand(collection, element);
             _undoStack.Push(cmd); _redoStack.Clear();
