@@ -295,6 +295,12 @@ namespace LiveDescribe.View
             _projectManager.ProjectLoaded += (sender, e) =>
             {
                 SetTimeline();
+                Settings.Default.RecentProjects.Add(new NamedFilePath
+                {
+                    Name = e.Value.ProjectName,
+                    Path = e.Value.Folders.Project,
+                });
+                Settings.Default.Save();
                 SetRecentDocumentsList();
             };
 
@@ -582,17 +588,16 @@ namespace LiveDescribe.View
         private void SetRecentDocumentsList()
         {
             OpenRecentMenuItem.Items.Clear();
-            var list = new List<Tuple<string, string>>();
 
-            if (list.Count == 0)
+            if (Settings.Default.RecentProjects.Count == 0)
             {
                 OpenRecentMenuItem.IsEnabled = false;
             }
             else
             {
-                foreach (var tuple in list)
+                foreach (var path in Settings.Default.RecentProjects)
                 {
-                    OpenRecentMenuItem.Items.Add(new MenuItem { Header = tuple.Item1 });
+                    OpenRecentMenuItem.Items.Add(new MenuItem { Header = path.Name });
                 }
 
                 OpenRecentMenuItem.Items.Add(new Separator());

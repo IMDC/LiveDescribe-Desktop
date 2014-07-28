@@ -1,4 +1,5 @@
 ﻿using LiveDescribe.Model;
+using System.Collections.Generic;
 
 namespace LiveDescribe.Properties
 {
@@ -36,7 +37,8 @@ namespace LiveDescribe.Properties
         {
             if (ColourScheme == null)
                 ColourScheme = ColourScheme.DefaultColourScheme;
-
+            if (RecentProjects == null)
+                RecentProjects = new List<NamedFilePath>();
             Save();
         }
     }
