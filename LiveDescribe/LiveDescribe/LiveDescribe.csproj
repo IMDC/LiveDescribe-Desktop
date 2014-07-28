@@ -198,6 +198,7 @@
     <Compile Include="Managers\ProjectLoader.cs" />
     <Compile Include="Managers\ProjectManager.cs" />
     <Compile Include="Model\ColourScheme.cs" />
+    <Compile Include="Model\ObservableDropoutCollection.cs" />
     <Compile Include="Model\NamedFilePath.cs" />
     <Compile Include="Model\Project.cs" />
     <Compile Include="Model\ProjectFile.cs" />

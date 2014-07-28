@@ -59,9 +59,9 @@ namespace LiveDescribe.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.Collections.ObjectModel.ObservableCollection<LiveDescribe.Model.NamedFilePath> RecentProjects {
+        public global::LiveDescribe.Model.ObservableDropoutCollection<LiveDescribe.Model.NamedFilePath> RecentProjects {
             get {
-                return ((global::System.Collections.ObjectModel.ObservableCollection<LiveDescribe.Model.NamedFilePath>)(this["RecentProjects"]));
+                return ((global::LiveDescribe.Model.ObservableDropoutCollection<LiveDescribe.Model.NamedFilePath>)(this["RecentProjects"]));
             }
             set {
                 this["RecentProjects"] = value;

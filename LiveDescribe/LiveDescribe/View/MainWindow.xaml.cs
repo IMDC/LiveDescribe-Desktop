@@ -588,14 +588,17 @@ namespace LiveDescribe.View
             }
             else
             {
+                int counter = 1;
                 foreach (var namedFilePath in Settings.Default.RecentProjects)
                 {
                     OpenRecentMenuItem.Items.Add(new MenuItem
                     {
-                        Header = namedFilePath.Name,
+                        Header = string.Format(UiStrings.MenuItem_Format_RecentProjectItem, counter, namedFilePath.Name),
+                        ToolTip = namedFilePath.Path,
                         Command = _mainWindowViewModel.OpenProjectPath,
                         CommandParameter = namedFilePath.Path,
                     });
+                    counter++;
                 }
 
                 OpenRecentMenuItem.Items.Add(new Separator());

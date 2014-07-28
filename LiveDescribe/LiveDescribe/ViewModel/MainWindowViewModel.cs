@@ -561,7 +561,7 @@ namespace LiveDescribe.ViewModel
 
             _projectManager.LoadProject(p);
 
-            Settings.Default.RecentProjects.Add(new NamedFilePath
+            Settings.Default.RecentProjects.AddFirst(new NamedFilePath
             {
                 Name = p.ProjectName,
                 Path = p.Files.Project,

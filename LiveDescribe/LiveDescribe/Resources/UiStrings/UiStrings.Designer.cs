@@ -637,6 +637,15 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0}. {1}.
+        /// </summary>
+        public static string MenuItem_Format_RecentProjectItem {
+            get {
+                return ResourceManager.GetString("MenuItem_Format_RecentProjectItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Help.
         /// </summary>
         public static string MenuItem_Help {

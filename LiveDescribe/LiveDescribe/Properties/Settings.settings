@@ -11,7 +11,7 @@
         <Setting Name="ColourScheme" Type="LiveDescribe.Model.ColourScheme" Scope="User">
             <Value Profile="(Default)" />
         </Setting>
-        <Setting Name="RecentProjects" Type="System.Collections.ObjectModel.ObservableCollection&lt;LiveDescribe.Model.NamedFilePath&gt;" Scope="User">
+        <Setting Name="RecentProjects" Type="LiveDescribe.Model.ObservableDropoutCollection&lt;LiveDescribe.Model.NamedFilePath&gt;" Scope="User">
             <Value Profile="(Default)" />
         </Setting>
     </Settings>
