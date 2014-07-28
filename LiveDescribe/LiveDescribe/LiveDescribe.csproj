@@ -194,9 +194,11 @@
     <Compile Include="Interfaces\ICopy.cs" />
     <Compile Include="Interfaces\IDescribableInterval.cs" />
     <Compile Include="Interfaces\IListIndexable.cs" />
+    <Compile Include="Interfaces\IUndoRedoCommand.cs" />
     <Compile Include="LiveDescribeConstants.cs" />
     <Compile Include="Managers\ProjectLoader.cs" />
     <Compile Include="Managers\ProjectManager.cs" />
+    <Compile Include="Managers\UndoRedoManager.cs" />
     <Compile Include="Model\ColourScheme.cs" />
     <Compile Include="Model\Project.cs" />
     <Compile Include="Model\ProjectFile.cs" />
@@ -210,6 +212,8 @@
       <DependentUpon>UiStrings.resx</DependentUpon>
     </Compile>
     <Compile Include="Settings.cs" />
+    <Compile Include="UndoCommands\DeleteUndoRedoCommand.cs" />
+    <Compile Include="UndoCommands\InsertSpaceUndoRedoCommand.cs" />
     <Compile Include="Utilities\AudioAnalyzer.cs" />
     <Compile Include="Utilities\DescriptionExportUtility.cs" />
     <Compile Include="Utilities\DescriptionPlayer.cs" />

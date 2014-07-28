@@ -39,6 +39,14 @@
         <KeyBinding
             Command="{Binding DescriptionInfoTabViewModel.DeleteSelectedSpaceOrDescription}"
             Key="Delete" />
+        <KeyBinding
+            Command="{Binding UndoRedoManager.UndoCommand}"
+            Key="Z"
+            Modifiers="Control" />        
+        <KeyBinding
+            Command="{Binding UndoRedoManager.RedoCommand}"
+            Key="Y"
+            Modifiers="Control"/>
     </Window.InputBindings>
 
     <Grid>

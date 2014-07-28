@@ -25,6 +25,7 @@ namespace LiveDescribe.Managers
         private readonly ObservableCollection<Description> _extendedDescriptions;
         private readonly ObservableCollection<Description> _regularDescriptions;
         private readonly ObservableCollection<Space> _spaces;
+        private readonly UndoRedoManager _undoRedoManager;
         #endregion
 
         #region Events
@@ -35,8 +36,10 @@ namespace LiveDescribe.Managers
         #endregion
 
         #region Constructor
-        public ProjectManager(LoadingViewModel loadingViewModel)
+        public ProjectManager(LoadingViewModel loadingViewModel, UndoRedoManager undoRedoManager)
         {
+            _undoRedoManager = undoRedoManager;
+
             _allDescriptions = new ObservableCollection<Description>();
             _allDescriptions.CollectionChanged += DescriptionsOnCollectionChanged;
 
@@ -205,7 +208,11 @@ namespace LiveDescribe.Managers
         #region AddSpaceEventHandlers
         private void AddSpaceEventHandlers(Space s)
         {
-            s.SpaceDeleteEvent += (sender, args) => Spaces.Remove(s);
+            s.SpaceDeleteEvent += (sender, args) =>
+            {
+                Spaces.Remove(s);
+                _undoRedoManager.InsertIUndoRedoForDelete(Spaces, s);
+            };
         }
 
         private void SpacesOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
