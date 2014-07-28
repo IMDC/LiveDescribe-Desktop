@@ -298,7 +298,7 @@ namespace LiveDescribe.View
                 Settings.Default.RecentProjects.Add(new NamedFilePath
                 {
                     Name = e.Value.ProjectName,
-                    Path = e.Value.Folders.Project,
+                    Path = e.Value.Files.Project,
                 });
                 Settings.Default.Save();
                 SetRecentDocumentsList();
@@ -597,11 +597,20 @@ namespace LiveDescribe.View
             {
                 foreach (var path in Settings.Default.RecentProjects)
                 {
-                    OpenRecentMenuItem.Items.Add(new MenuItem { Header = path.Name });
+                    OpenRecentMenuItem.Items.Add(new MenuItem
+                    {
+                        Header = path.Name,
+                        Command = _mainWindowViewModel.OpenProjectPath,
+                        CommandParameter = path.Path,
+                    });
                 }
 
                 OpenRecentMenuItem.Items.Add(new Separator());
-                OpenRecentMenuItem.Items.Add(new MenuItem { Header = UiStrings.MenuItem_ClearList });
+                OpenRecentMenuItem.Items.Add(new MenuItem
+                {
+                    Header = UiStrings.MenuItem_ClearList,
+                    Command = _mainWindowViewModel.ClearRecentProjects
+                });
 
                 OpenRecentMenuItem.IsEnabled = true;
             }
