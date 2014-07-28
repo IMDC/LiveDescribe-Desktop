@@ -1,5 +1,5 @@
 ﻿using LiveDescribe.Model;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace LiveDescribe.Properties
 {
@@ -38,7 +38,7 @@ namespace LiveDescribe.Properties
             if (ColourScheme == null)
                 ColourScheme = ColourScheme.DefaultColourScheme;
             if (RecentProjects == null)
-                RecentProjects = new List<NamedFilePath>();
+                RecentProjects = new ObservableCollection<NamedFilePath>();
             Save();
         }
     }

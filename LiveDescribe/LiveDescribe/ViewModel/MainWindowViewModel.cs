@@ -560,6 +560,13 @@ namespace LiveDescribe.ViewModel
             CloseProject.ExecuteIfCan();
 
             _projectManager.LoadProject(p);
+
+            Settings.Default.RecentProjects.Add(new NamedFilePath
+            {
+                Name = p.ProjectName,
+                Path = p.Files.Project,
+            });
+            Settings.Default.Save();
         }
 
         private void CopyVideoAndSetProject(string source, Project project)

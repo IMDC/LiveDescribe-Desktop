@@ -292,18 +292,7 @@ namespace LiveDescribe.View
                 }
             };
 
-            _projectManager.ProjectLoaded += (sender, e) =>
-            {
-                SetTimeline();
-                Settings.Default.RecentProjects.Add(new NamedFilePath
-                {
-                    Name = e.Value.ProjectName,
-                    Path = e.Value.Files.Project,
-                });
-                Settings.Default.Save();
-                SetRecentDocumentsList();
-            };
-
+            _projectManager.ProjectLoaded += (sender, e) => SetTimeline();
 
             _projectManager.ProjectClosed += (sender, e) =>
             {
@@ -313,6 +302,10 @@ namespace LiveDescribe.View
                 UpdateMarkerPosition(-MarkerOffset);
                 _marker.IsEnabled = false;
             };
+            #endregion
+
+            #region Event Handlers for Settings
+            Settings.Default.RecentProjects.CollectionChanged += (sender, args) => SetRecentDocumentsList();
             #endregion
         }
 
@@ -595,13 +588,13 @@ namespace LiveDescribe.View
             }
             else
             {
-                foreach (var path in Settings.Default.RecentProjects)
+                foreach (var namedFilePath in Settings.Default.RecentProjects)
                 {
                     OpenRecentMenuItem.Items.Add(new MenuItem
                     {
-                        Header = path.Name,
+                        Header = namedFilePath.Name,
                         Command = _mainWindowViewModel.OpenProjectPath,
-                        CommandParameter = path.Path,
+                        CommandParameter = namedFilePath.Path,
                     });
                 }
 
