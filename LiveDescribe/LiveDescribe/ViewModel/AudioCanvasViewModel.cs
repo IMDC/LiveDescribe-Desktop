@@ -43,7 +43,7 @@ namespace LiveDescribe.ViewModel
             {
                 var s = new Space();
                 OnRequestSpaceTime(s);
-                Spaces.Add(s);
+                projectManager.AddSpaceAndTrackForUndo(s);
             });
         }
 
