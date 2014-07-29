@@ -23,13 +23,12 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Instance Variables
-        private ObservableCollection<AudioSourceInfo> _sources;
+        private readonly ObservableCollection<AudioSourceInfo> _sources;
         private AudioSourceInfo _selectedsource;
         private ColourScheme _colourScheme;
         #endregion
 
         #region Events
-        public event EventHandler ApplyRequested;
         public event EventHandler RequestClose;
         #endregion
 
@@ -47,11 +46,7 @@ namespace LiveDescribe.ViewModel
         {
             AcceptChanges = new RelayCommand(
                 canExecute: () => true,
-                execute: () =>
-                {
-                    SaveApplicationSettings();
-                    OnApplyRequested();
-                });
+                execute: SaveApplicationSettings);
 
             AcceptChangesAndClose = new RelayCommand(
                 canExecute: () => AcceptChanges.CanExecute(),
@@ -96,11 +91,6 @@ namespace LiveDescribe.ViewModel
         /// </summary>
         public ObservableCollection<AudioSourceInfo> Sources
         {
-            private set
-            {
-                _sources = value;
-                RaisePropertyChanged();
-            }
             get { return _sources; }
         }
 
@@ -197,12 +187,6 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Event Invokation
-        private void OnApplyRequested()
-        {
-            var handler = ApplyRequested;
-            if (handler != null) handler(this, EventArgs.Empty);
-        }
-
         /// <summary>
         /// Makes a request to the view to close itself.
         /// </summary>
