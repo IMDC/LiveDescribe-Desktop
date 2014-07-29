@@ -27,12 +27,12 @@ namespace LiveDescribe.HistoryItems
         public void Execute()
         {
             _allDescriptions.Remove(_element);
-           // _descriptions.Remove(_element);
+            _descriptions.Remove(_element);
         }
 
         public void UnExecute()
         {
-            //_descriptions.Insert(Math.Max(0, _element.Index - 1), _element);
+            _descriptions.Insert(Math.Max(0, _element.Index - 1), _element);
             _allDescriptions.Add(_element);
         }
     }
