@@ -36,7 +36,8 @@ namespace LiveDescribe.Properties
         {
             if (ColourScheme == null)
                 ColourScheme = ColourScheme.DefaultColourScheme;
-
+            if (RecentProjects == null)
+                RecentProjects = new ObservableDropoutCollection<NamedFilePath>();
             Save();
         }
     }

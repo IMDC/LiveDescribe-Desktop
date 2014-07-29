@@ -6,6 +6,7 @@ using LiveDescribe.Managers;
 using LiveDescribe.Model;
 using LiveDescribe.Properties;
 using LiveDescribe.Resources;
+using LiveDescribe.Resources.UiStrings;
 using LiveDescribe.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -95,6 +96,8 @@ namespace LiveDescribe.View
             _marker = MarkerControl.Marker;
 
             _millisecondsTimeConverter = new MillisecondsTimeConverterFormatter();
+
+            SetRecentDocumentsList();
 
             #region TimeLineScrollViewer Event Listeners
             TimeLineScrollViewer.ScrollChanged += (sender, e) =>
@@ -291,7 +294,6 @@ namespace LiveDescribe.View
 
             _projectManager.ProjectLoaded += (sender, e) => SetTimeline();
 
-
             _projectManager.ProjectClosed += (sender, e) =>
             {
                 _audioCanvas.Children.Clear();
@@ -300,6 +302,10 @@ namespace LiveDescribe.View
                 UpdateMarkerPosition(-MarkerOffset);
                 _marker.IsEnabled = false;
             };
+            #endregion
+
+            #region Event Handlers for Settings
+            Settings.Default.RecentProjects.CollectionChanged += (sender, args) => SetRecentDocumentsList();
             #endregion
         }
 
@@ -398,7 +404,7 @@ namespace LiveDescribe.View
 
         #endregion
 
-        #region Helper Functions
+        #region Methods
 
         private void AddDescriptionEventHandlers(Description description)
         {
@@ -570,6 +576,40 @@ namespace LiveDescribe.View
             double staticCanvasWidth = (_videoDuration / (PageTimeBeforeCanvasScrolls * 1000)) * screenWidth;
             _audioCanvas.MaxWidth = staticCanvasWidth;
             return staticCanvasWidth;
+        }
+
+        private void SetRecentDocumentsList()
+        {
+            OpenRecentMenuItem.Items.Clear();
+
+            if (Settings.Default.RecentProjects.Count == 0)
+            {
+                OpenRecentMenuItem.IsEnabled = false;
+            }
+            else
+            {
+                int counter = 1;
+                foreach (var namedFilePath in Settings.Default.RecentProjects)
+                {
+                    OpenRecentMenuItem.Items.Add(new MenuItem
+                    {
+                        Header = string.Format(UiStrings.MenuItem_Format_RecentProjectItem, counter, namedFilePath.Name),
+                        ToolTip = namedFilePath.Path,
+                        Command = _mainWindowViewModel.OpenProjectPath,
+                        CommandParameter = namedFilePath.Path,
+                    });
+                    counter++;
+                }
+
+                OpenRecentMenuItem.Items.Add(new Separator());
+                OpenRecentMenuItem.Items.Add(new MenuItem
+                {
+                    Header = UiStrings.MenuItem_ClearList,
+                    Command = _mainWindowViewModel.ClearRecentProjects
+                });
+
+                OpenRecentMenuItem.IsEnabled = true;
+            }
         }
 
         #endregion

@@ -144,16 +144,27 @@ namespace LiveDescribe.ViewModel
                 if (dialogSuccess != true)
                     return;
 
+                OpenProjectPath.Execute(projectChooser.FileName);
+            });
+
+            OpenProjectPath = new RelayCommand<string>(path =>
+            {
                 //Attempt to read project. If object fields are missing, an error window pops up.
                 try
                 {
-                    Project p = FileReader.ReadProjectFile(projectChooser.FileName);
+                    Project p = FileReader.ReadProjectFile(path);
                     SetProject(p);
                 }
                 catch (JsonSerializationException)
                 {
                     MessageBoxFactory.ShowError(UiStrings.MessageBox_OpenProjectFileMissingError);
                 }
+            });
+
+            ClearRecentProjects = new RelayCommand(() =>
+            {
+                Settings.Default.RecentProjects.Clear();
+                Settings.Default.Save();
             });
 
             SaveProject = new RelayCommand(
@@ -344,6 +355,16 @@ namespace LiveDescribe.ViewModel
         /// Command to open an already existing project.
         /// </summary>
         public ICommand OpenProject { private set; get; }
+
+        /// <summary>
+        /// Opens a project with a given Project file path.
+        /// </summary>
+        public RelayCommand<string> OpenProjectPath { private set; get; }
+
+        /// <summary>
+        /// Clears the list of recently opened projects.
+        /// </summary>
+        public ICommand ClearRecentProjects { private set; get; }
 
         /// <summary>
         /// Command to save project.
@@ -539,6 +560,13 @@ namespace LiveDescribe.ViewModel
             CloseProject.ExecuteIfCan();
 
             _projectManager.LoadProject(p);
+
+            Settings.Default.RecentProjects.AddFirst(new NamedFilePath
+            {
+                Name = p.ProjectName,
+                Path = p.Files.Project,
+            });
+            Settings.Default.Save();
         }
 
         private void CopyVideoAndSetProject(string source, Project project)

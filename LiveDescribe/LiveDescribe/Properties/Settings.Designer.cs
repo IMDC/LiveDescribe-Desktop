@@ -56,5 +56,16 @@ namespace LiveDescribe.Properties {
                 this["ColourScheme"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::LiveDescribe.Model.ObservableDropoutCollection<LiveDescribe.Model.NamedFilePath> RecentProjects {
+            get {
+                return ((global::LiveDescribe.Model.ObservableDropoutCollection<LiveDescribe.Model.NamedFilePath>)(this["RecentProjects"]));
+            }
+            set {
+                this["RecentProjects"] = value;
+            }
+        }
     }
 }

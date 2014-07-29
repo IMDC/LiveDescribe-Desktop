@@ -592,6 +592,15 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Clear List.
+        /// </summary>
+        public static string MenuItem_ClearList {
+            get {
+                return ResourceManager.GetString("MenuItem_ClearList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Close Project.
         /// </summary>
         public static string MenuItem_CloseProject {
@@ -628,6 +637,15 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0}. {1}.
+        /// </summary>
+        public static string MenuItem_Format_RecentProjectItem {
+            get {
+                return ResourceManager.GetString("MenuItem_Format_RecentProjectItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Help.
         /// </summary>
         public static string MenuItem_Help {
@@ -651,6 +669,15 @@ namespace LiveDescribe.Resources.UiStrings {
         public static string MenuItem_OpenProject {
             get {
                 return ResourceManager.GetString("MenuItem_OpenProject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open Recent.
+        /// </summary>
+        public static string MenuItem_OpenRecent {
+            get {
+                return ResourceManager.GetString("MenuItem_OpenRecent", resourceCulture);
             }
         }
         

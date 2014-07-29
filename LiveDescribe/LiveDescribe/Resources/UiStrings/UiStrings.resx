@@ -429,4 +429,14 @@
   <data name="MessageBox_ResetColourSchemeWarning" xml:space="preserve">
     <value>Are you sure you want to reset all colours to default?</value>
   </data>
+  <data name="MenuItem_ClearList" xml:space="preserve">
+    <value>Clear List</value>
+  </data>
+  <data name="MenuItem_OpenRecent" xml:space="preserve">
+    <value>Open Recent</value>
+  </data>
+  <data name="MenuItem_Format_RecentProjectItem" xml:space="preserve">
+    <value>{0}. {1}</value>
+    <comment>0: Number, 1: Project Name</comment>
+  </data>
 </root>
