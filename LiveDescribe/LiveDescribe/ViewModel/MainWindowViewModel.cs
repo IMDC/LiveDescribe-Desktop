@@ -80,7 +80,7 @@ namespace LiveDescribe.ViewModel
             _preferences = new PreferencesViewModel();
             _descriptionInfoTabViewModel = new DescriptionInfoTabViewModel(_projectManager);
             _markingSpacesControlViewModel = new MarkingSpacesControlViewModel(_descriptionInfoTabViewModel, mediaVideo);
-            _audioCanvasViewModel = new AudioCanvasViewModel(mediaVideo, _projectManager, _undoRedoManager);
+            _audioCanvasViewModel = new AudioCanvasViewModel(mediaVideo, _projectManager);
             _descriptionCanvasViewModel = new DescriptionCanvasViewModel(mediaVideo, _projectManager);
             _descriptionRecordingControlViewModel = new DescriptionRecordingControlViewModel(mediaVideo,
                 _projectManager);

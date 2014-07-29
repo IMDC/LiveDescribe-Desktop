@@ -191,10 +191,12 @@
     <Compile Include="Extensions\ObservableCollectionExtensions.cs" />
     <Compile Include="Factories\DialogShower.cs" />
     <Compile Include="Factories\MessageBoxFactory.cs" />
+    <Compile Include="HistoryItems\DeleteDescriptionHistoryItem.cs" />
+    <Compile Include="HistoryItems\InsertDescriptionHistoryItem.cs" />
     <Compile Include="Interfaces\ICopy.cs" />
     <Compile Include="Interfaces\IDescribableInterval.cs" />
     <Compile Include="Interfaces\IListIndexable.cs" />
-    <Compile Include="Interfaces\IUndoRedoCommand.cs" />
+    <Compile Include="Interfaces\IHistoryItem.cs" />
     <Compile Include="LiveDescribeConstants.cs" />
     <Compile Include="Managers\ProjectLoader.cs" />
     <Compile Include="Managers\ProjectManager.cs" />
@@ -212,8 +214,8 @@
       <DependentUpon>UiStrings.resx</DependentUpon>
     </Compile>
     <Compile Include="Settings.cs" />
-    <Compile Include="UndoCommands\DeleteSpaceUndoRedoCommand.cs" />
-    <Compile Include="UndoCommands\InsertSpaceUndoRedoCommand.cs" />
+    <Compile Include="HistoryItems\DeleteSpaceHistoryItem.cs" />
+    <Compile Include="HistoryItems\InsertSpaceHistoryItem.cs" />
     <Compile Include="Utilities\AudioAnalyzer.cs" />
     <Compile Include="Utilities\DescriptionExportUtility.cs" />
     <Compile Include="Utilities\DescriptionPlayer.cs" />

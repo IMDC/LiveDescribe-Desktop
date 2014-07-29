@@ -25,7 +25,7 @@ namespace LiveDescribe.ViewModel
         public event EventHandler<EventArgs<Space>> RequestSpaceTime;
         #endregion
 
-        public AudioCanvasViewModel(ILiveDescribePlayer mediaPlayer, ProjectManager projectManager, UndoRedoManager _undoManager)
+        public AudioCanvasViewModel(ILiveDescribePlayer mediaPlayer, ProjectManager projectManager)
         {
             _projectManager = projectManager;
 
@@ -43,8 +43,7 @@ namespace LiveDescribe.ViewModel
             {
                 var s = new Space();
                 OnRequestSpaceTime(s);
-                Spaces.Add(s);
-                _undoManager.InsertSpaceForInsertInCollection(Spaces, s);
+                projectManager.AddSpaceAndTrackForUndo(s);
             });
         }
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LiveDescribe.Interfaces
 {
-    public interface IUndoRedoCommand
+    public interface IHistoryItem
     {
         void Execute();
         void UnExecute();

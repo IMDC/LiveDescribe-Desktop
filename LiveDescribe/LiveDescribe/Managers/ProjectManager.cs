@@ -205,6 +205,15 @@ namespace LiveDescribe.Managers
         }
         #endregion
 
+        #region public methods
+
+        public void AddSpaceAndTrackForUndo(Space space)
+        {
+            Spaces.Add(space);
+            _undoRedoManager.InsertSpaceForInsertUndoRedo(Spaces, space);
+        }
+        #endregion
+
         #region Add And Remove SpaceEventHandlers
         private void AddSpaceEventHandlers(Space s)
         {
@@ -216,7 +225,7 @@ namespace LiveDescribe.Managers
             Space s = (Space)sender;
             Console.WriteLine("Space Deleted Event");
             Spaces.Remove(s);
-            _undoRedoManager.InsertSpaceForDeletion(Spaces, s);
+            _undoRedoManager.InsertSpaceForDeleteUndoRedo(Spaces, s);
         }
 
         private void SpacesOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)

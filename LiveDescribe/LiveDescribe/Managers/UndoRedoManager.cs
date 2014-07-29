@@ -1,7 +1,7 @@
 ﻿using GalaSoft.MvvmLight.Command;
+using LiveDescribe.HistoryItems;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
-using LiveDescribe.UndoCommands;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -14,13 +14,13 @@ namespace LiveDescribe.Managers
 {
     public class UndoRedoManager
     {
-        private Stack<IUndoRedoCommand> _undoStack;
-        private Stack<IUndoRedoCommand> _redoStack;
+        private readonly Stack<IHistoryItem> _undoStack;
+        private readonly Stack<IHistoryItem> _redoStack;
 
         public UndoRedoManager() 
         {
-            _undoStack = new Stack<IUndoRedoCommand>();
-            _redoStack = new Stack<IUndoRedoCommand>();
+            _undoStack = new Stack<IHistoryItem>();
+            _redoStack = new Stack<IHistoryItem>();
             RedoCommand = new RelayCommand(Redo, CanRedo);
             UndoCommand = new RelayCommand(Undo, CanUndo);
         }
@@ -46,23 +46,37 @@ namespace LiveDescribe.Managers
 
         public bool CanRedo()
         {
-            return (_redoStack.Count != 0) ? true : false;
+            return (_redoStack.Count != 0);
         }
 
         public bool CanUndo()
         {
-            return (_undoStack.Count != 0) ? true : false;
+            return (_undoStack.Count != 0);
         }
 
-        public void InsertSpaceForInsertInCollection(ObservableCollection<Space> collection, Space element)
+        public void InsertSpaceForInsertUndoRedo(ObservableCollection<Space> collection, Space element)
         {
-            var cmd = new InsertSpaceUndoRedoCommand(collection, element);
+            var cmd = new InsertSpaceHistoryItem(collection, element);
             _undoStack.Push(cmd); _redoStack.Clear();
         }
 
-        public void InsertSpaceForDeletion(ObservableCollection<Space> collection, Space element)
+        public void InsertSpaceForDeleteUndoRedo(ObservableCollection<Space> collection, Space element)
         {
-            var cmd = new DeleteSpaceUndoRedoCommand(collection, element);
+            var cmd = new DeleteSpaceHistoryItem(collection, element);
+            _undoStack.Push(cmd); _redoStack.Clear();
+        }
+
+        public void InsertDescriptionForDeleteUndoRedo(ObservableCollection<Description> allDescriptions, 
+            ObservableCollection<Description> descriptions, Description element)
+        {
+            var cmd = new DeleteDescriptionHistoryItem(allDescriptions, descriptions, element);
+            _undoStack.Push(cmd); _redoStack.Clear();
+        }
+
+        public void InsertDescriptionForInsertUndoRedo(ObservableCollection<Description> allDescriptions,
+            ObservableCollection<Description> descriptions, Description element)
+        {
+            var cmd = new InsertDescriptionHistoryItem(allDescriptions, descriptions, element);
             _undoStack.Push(cmd); _redoStack.Clear();
         }
     }
