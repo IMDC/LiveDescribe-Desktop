@@ -4,6 +4,7 @@ using LiveDescribe.Converters;
 using LiveDescribe.Extensions;
 using LiveDescribe.Managers;
 using LiveDescribe.Model;
+using LiveDescribe.Properties;
 using LiveDescribe.Resources;
 using LiveDescribe.ViewModel;
 using System;
@@ -75,6 +76,9 @@ namespace LiveDescribe.View
             DescriptionRecordingControl.ExtendedDescriptionCheckBox.Visibility = Visibility.Hidden;
             SpaceAndDescriptionsTabControl.ExtendedDescriptionsTabItem.Visibility = Visibility.Hidden;
 #endif
+            Settings.Default.Upgrade();
+            Settings.Default.InitializeDefaultValuesIfNull();
+
             _videoMedia = MediaControl.VideoMedia;
 
             var mainWindowViewModel = new MainWindowViewModel(_videoMedia);

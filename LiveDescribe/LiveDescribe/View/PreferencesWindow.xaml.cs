@@ -13,6 +13,7 @@ namespace LiveDescribe.View
             InitializeComponent();
 
             DataContext = datacontext;
+            datacontext.RetrieveApplicationSettings();
             datacontext.RequestClose += (sender, args) => Close();
         }
     }

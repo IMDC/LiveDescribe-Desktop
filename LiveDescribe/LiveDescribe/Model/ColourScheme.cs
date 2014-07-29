@@ -1,18 +1,19 @@
-﻿using System.ComponentModel;
+﻿using LiveDescribe.Interfaces;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Media;
 
 namespace LiveDescribe.Model
 {
-    public class ColourScheme : INotifyPropertyChanged
+    public class ColourScheme : INotifyPropertyChanged, ICopy<ColourScheme>
     {
         #region Default ColourScheme
         public static readonly ColourScheme DefaultColourScheme = new ColourScheme
         {
             _regularDescriptionColour = Color.FromArgb(0x40, 0x00, 0x80, 0x00),
             _extendedDescriptionColour = Color.FromArgb(0x40, 0xff, 0x0, 0x0),
-            _spaceColour = Color.FromArgb(040, 0x69, 0x69, 0x69),
-            _completedSpaceColour = Color.FromArgb(0x28, 0xff, 0xff, 0x00),
+            _spaceColour = Color.FromArgb(0x40, 0x00, 0x00, 0xff),
+            _completedSpaceColour = Color.FromArgb(040, 0x69, 0x69, 0x69),
             _selectedItemColour = Color.FromArgb(0x40, 0xff, 0xff, 0x00),
         };
         #endregion
@@ -27,23 +28,6 @@ namespace LiveDescribe.Model
 
         #region Events
         public event PropertyChangedEventHandler PropertyChanged;
-        #endregion
-
-        #region Constructor
-        public ColourScheme() { }
-
-        /// <summary>
-        /// Makes a deep copy of another ColourScheme.
-        /// </summary>
-        /// <param name="otherScheme">The ColourScheme to make a copy of.</param>
-        public ColourScheme(ColourScheme otherScheme)
-        {
-            RegularDescriptionColour = otherScheme.RegularDescriptionColour;
-            ExtendedDescriptionColour = otherScheme.ExtendedDescriptionColour;
-            SpaceColour = otherScheme.SpaceColour;
-            CompletedSpaceColour = otherScheme.CompletedSpaceColour;
-            SelectedItemColour = otherScheme.SelectedItemColour;
-        }
         #endregion
 
         #region Properties
@@ -97,6 +81,26 @@ namespace LiveDescribe.Model
             }
         }
 
+        #endregion
+
+        #region Methods
+
+        public ColourScheme ShallowCopy()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public ColourScheme DeepCopy()
+        {
+            return new ColourScheme
+            {
+                RegularDescriptionColour = RegularDescriptionColour,
+                ExtendedDescriptionColour = ExtendedDescriptionColour,
+                SpaceColour = SpaceColour,
+                CompletedSpaceColour = CompletedSpaceColour,
+                SelectedItemColour = SelectedItemColour,
+            };
+        }
         #endregion
 
         #region Event Invokation
