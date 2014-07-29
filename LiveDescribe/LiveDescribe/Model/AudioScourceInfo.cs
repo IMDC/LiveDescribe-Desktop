@@ -18,15 +18,15 @@ namespace LiveDescribe.Model
             DeviceNumber = deviceNumber;
         }
 
+        public AudioSourceInfo(SerializationInfo info, StreamingContext context)
+        {
+            Source = (WaveInCapabilities)info.GetValue("source", typeof(WaveInCapabilities));
+        }
+
+
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("source", Source, typeof(WaveInCapabilities));
-        }
-
-        public AudioSourceInfo(SerializationInfo info, StreamingContext context)
-        {
-            Source =
-                (WaveInCapabilities)info.GetValue("source", typeof(WaveInCapabilities));
         }
 
         public override bool Equals(object obj)

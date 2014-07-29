@@ -322,7 +322,7 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to AudioSource.
+        ///   Looks up a localized string similar to Microphone.
         /// </summary>
         public static string Header_AudioSource {
             get {
@@ -390,6 +390,15 @@ namespace LiveDescribe.Resources.UiStrings {
         public static string Header_ExtendedDescriptions {
             get {
                 return ResourceManager.GetString("Header_ExtendedDescriptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Microphone.
+        /// </summary>
+        public static string Header_Microphone {
+            get {
+                return ResourceManager.GetString("Header_Microphone", resourceCulture);
             }
         }
         

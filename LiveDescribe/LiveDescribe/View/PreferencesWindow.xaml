@@ -32,6 +32,14 @@
                 Property="Margin"
                 Value="5" />
         </Style>
+        <Style
+            x:Key="ComboBoxStyle"
+            TargetType="ComboBox">
+            <Setter
+                Property="Margin"
+                Value="5" />
+        </Style>
+
     </Window.Resources>
     <Grid>
         <DockPanel>
@@ -100,40 +108,25 @@
                 <!--Mic Tab-->
                 <TabItem
                     Header="{x:Static s:UiStrings.Header_AudioSource}">
-                    <ListView
-                        ItemsSource="{Binding Sources}">
-                        <ListView.SelectedItem>
-                            <Binding
-                                Path="SelectedAudioSource"
-                                UpdateSourceTrigger="PropertyChanged"
-                                ValidatesOnDataErrors="True"
-                                Mode="TwoWay" />
-                        </ListView.SelectedItem>
-                        <ListView.View>
-                            <GridView>
-                                <GridViewColumn
-                                    Header="{x:Static s:UiStrings.Header_Name}"
-                                    Width="240">
-                                    <GridViewColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock
-                                                Text="{Binding Name}" />
-                                        </DataTemplate>
-                                    </GridViewColumn.CellTemplate>
-                                </GridViewColumn>
-                                <GridViewColumn
-                                    Header="{x:Static s:UiStrings.Header_Channels}"
-                                    Width="240">
-                                    <GridViewColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock
-                                                Text="{Binding Channels}" />
-                                        </DataTemplate>
-                                    </GridViewColumn.CellTemplate>
-                                </GridViewColumn>
-                            </GridView>
-                        </ListView.View>
-                    </ListView>
+                    <StackPanel>
+                        <GroupBox
+                            Header="{x:Static s:UiStrings.Header_Microphone}">
+                            <ComboBox
+                                Style="{StaticResource ComboBoxStyle}"
+                                ItemsSource="{Binding Sources}"
+                                SelectedItem="{Binding SelectedAudioSource,
+                                    Mode=TwoWay,
+                                    UpdateSourceTrigger=PropertyChanged,
+                                    ValidatesOnDataErrors=True}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock
+                                            Text="{Binding Name}" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </GroupBox>
+                    </StackPanel>
                 </TabItem>
             </TabControl>
         </DockPanel>
