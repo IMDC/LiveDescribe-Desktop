@@ -439,7 +439,13 @@
     <value>{0}. {1}</value>
     <comment>0: Number, 1: Project Name</comment>
   </data>
+  <data name="Command_TestMic" xml:space="preserve">
+    <value>Test Microphone</value>
+  </data>
   <data name="Header_Microphone" xml:space="preserve">
     <value>Microphone</value>
+  </data>
+  <data name="Header_VolumeLevel" xml:space="preserve">
+    <value>Volume Level</value>
   </data>
 </root>

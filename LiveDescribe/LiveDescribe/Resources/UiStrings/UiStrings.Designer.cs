@@ -277,6 +277,15 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Test Microphone.
+        /// </summary>
+        public static string Command_TestMic {
+            get {
+                return ResourceManager.GetString("Command_TestMic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Record Extended Description.
         /// </summary>
         public static string Command_ToggleRecordExtended {
@@ -471,6 +480,15 @@ namespace LiveDescribe.Resources.UiStrings {
         public static string Header_StartTime {
             get {
                 return ResourceManager.GetString("Header_StartTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Volume Level.
+        /// </summary>
+        public static string Header_VolumeLevel {
+            get {
+                return ResourceManager.GetString("Header_VolumeLevel", resourceCulture);
             }
         }
         

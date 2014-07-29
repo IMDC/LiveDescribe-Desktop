@@ -25,6 +25,8 @@ namespace LiveDescribe.ViewModel
         #region Instance Variables
         private readonly ObservableCollection<AudioSourceInfo> _sources;
         private AudioSourceInfo _selectedsource;
+        private WaveIn _microphoneStream;
+        private short _microphoneReceiveLevel;
         private ColourScheme _colourScheme;
         #endregion
 
@@ -69,6 +71,28 @@ namespace LiveDescribe.ViewModel
                     if (result == MessageBoxResult.Yes)
                         ColourScheme = ColourScheme.DefaultColourScheme.DeepCopy();
                 });
+
+            TestMicrophone = new RelayCommand(
+                canExecute: () => SelectedAudioSource != null,
+                execute: () =>
+                {
+                    if (_microphoneStream != null)
+                    {
+                        _microphoneStream.StopRecording();
+                        _microphoneStream.Dispose();
+                        _microphoneStream = null;
+                    }
+                    else
+                    {
+                        _microphoneStream = new WaveIn
+                        {
+                            DeviceNumber = SelectedAudioSource.DeviceNumber,
+                            WaveFormat = new WaveFormat(44100, SelectedAudioSource.Source.Channels)
+                        };
+                        _microphoneStream.DataAvailable += MicrophoneStreamOnDataAvailable;
+                        _microphoneStream.StartRecording();
+                    }
+                });
         }
 
         #endregion
@@ -82,6 +106,7 @@ namespace LiveDescribe.ViewModel
         public ICommand AcceptChangesAndClose { get; private set; }
         public ICommand CancelChanges { get; private set; }
         public ICommand ResetColourScheme { get; private set; }
+        public ICommand TestMicrophone { get; private set; }
         #endregion
 
         #region Properties
@@ -109,12 +134,22 @@ namespace LiveDescribe.ViewModel
 
         public ColourScheme ColourScheme
         {
-            get { return _colourScheme; }
             set
             {
                 _colourScheme = value;
                 RaisePropertyChanged();
             }
+            get { return _colourScheme; }
+        }
+
+        public short MicrophoneReceiveLevel
+        {
+            set
+            {
+                _microphoneReceiveLevel = value;
+                RaisePropertyChanged();
+            }
+            get { return _microphoneReceiveLevel; }
         }
 
         #endregion
@@ -183,6 +218,26 @@ namespace LiveDescribe.ViewModel
 
             Settings.Default.Microphone = sourceStream;
             Settings.Default.Save();
+        }
+
+        /// <summary>
+        /// Collects sample information from the mic and sets the receive level to the max volume
+        /// amount found.
+        /// </summary>
+        /// <param name="sender">Sender.</param>
+        /// <param name="args">Args.</param>
+        private void MicrophoneStreamOnDataAvailable(object sender, WaveInEventArgs args)
+        {
+            const int bytesPerSample = 40;
+            short max = 0;
+            for (int i = 0; i + 4 < args.BytesRecorded; i += bytesPerSample)
+            {
+                short leftValue = BitConverter.ToInt16(args.Buffer, i);
+                short rightValue = BitConverter.ToInt16(args.Buffer, i + 2);
+
+                max = Math.Max(max, Math.Max(leftValue, rightValue));
+            }
+            MicrophoneReceiveLevel = max;
         }
         #endregion
 
