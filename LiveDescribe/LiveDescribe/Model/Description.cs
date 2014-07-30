@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Interfaces;
+using LiveDescribe.Managers;
 using LiveDescribe.Properties;
 using Newtonsoft.Json;
 using System;
@@ -236,6 +237,13 @@ namespace LiveDescribe.Model
                 NotifyPropertyChanged();
             }
             get { return _text; }
+        }
+
+        public void SetStartAndEndInVideo(double startInVideo, double endInVideo)
+        {
+            _startinvideo = startInVideo;
+            _endinvideo = endInVideo;
+            NotifyPropertyChanged();
         }
 
         [JsonIgnore]

@@ -90,9 +90,8 @@ namespace LiveDescribe.Controls
             else if ((newPositionMilliseconds + lengthOfDescriptionMilliseconds) > Container.VideoDuration)
                 newPosition = (Container.Width / Container.VideoDuration) * (Container.VideoDuration - lengthOfDescriptionMilliseconds);
 
-            Description.X = newPosition;
             _originalPositionForDraggingDescription = xPos;
-            Description.StartInVideo = (Container.VideoDuration / Container.Width) * (Description.X);
+            Description.StartInVideo = (Container.VideoDuration / Container.Width) * (newPosition);
             Description.EndInVideo = Description.StartInVideo + (Description.EndWaveFileTime - Description.StartWaveFileTime);
         }
 

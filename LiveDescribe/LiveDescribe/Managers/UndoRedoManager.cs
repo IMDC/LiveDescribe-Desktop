@@ -79,5 +79,13 @@ namespace LiveDescribe.Managers
             var cmd = new InsertDescriptionHistoryItem(allDescriptions, descriptions, element);
             _undoStack.Push(cmd); _redoStack.Clear();
         }
+
+        public void InsertItemForMoveUndoRedo(IDescribableInterval item, double originalStartInVideo, double originalEndInVideo,
+            double newStartInVideo, double newEndInVideo)
+        {
+            var cmd = new MoveHistoryItem(item, originalStartInVideo, originalEndInVideo,
+                newStartInVideo, newEndInVideo);
+            _undoStack.Push(cmd); _redoStack.Clear();
+        }
     }
 }

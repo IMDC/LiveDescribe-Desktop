@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Interfaces;
+using LiveDescribe.Managers;
 using LiveDescribe.Properties;
 using Newtonsoft.Json;
 using System;
@@ -105,6 +106,13 @@ namespace LiveDescribe.Model
             {
                 return _text;
             }
+        }
+
+        public void SetStartAndEndInVideo(double startInVideo, double endInVideo)
+        {
+            _startInVideo = startInVideo;
+            _endInVideo = endInVideo;
+            NotifyPropertyChanged();
         }
 
         /// <summary>
@@ -252,7 +260,6 @@ namespace LiveDescribe.Model
             }
             get { return _colour; }
         }
-
         #endregion
 
         #region Command Methods
