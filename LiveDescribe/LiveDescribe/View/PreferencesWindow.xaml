@@ -27,20 +27,12 @@
                 Value="10" />
         </Style>
         <Style
-            x:Key="ColorPickerStyle"
-            TargetType="xctk:ColorPicker">
-            <Setter
-                Property="Margin"
-                Value="5" />
-        </Style>
-        <Style
             x:Key="ComboBoxStyle"
             TargetType="ComboBox">
             <Setter
                 Property="Margin"
                 Value="5" />
         </Style>
-
     </Window.Resources>
     <Grid>
         <DockPanel>
@@ -67,43 +59,8 @@
                 <!--Colour Tab-->
                 <TabItem
                     Header="{x:Static s:UiStrings.Header_ColourSettings}">
-                    <StackPanel>
-                        <GroupBox
-                            Header="{x:Static s:UiStrings.Header_RegularDescriptions}">
-                            <xctk:ColorPicker
-                                Style="{StaticResource ColorPickerStyle}"
-                                SelectedColor="{Binding ColourScheme.RegularDescriptionColour}" />
-                        </GroupBox>
-                        <GroupBox
-                            Header="{x:Static s:UiStrings.Header_ExtendedDescriptions}">
-                            <xctk:ColorPicker
-                                Style="{StaticResource ColorPickerStyle}"
-                                SelectedColor="{Binding ColourScheme.ExtendedDescriptionColour}" />
-                        </GroupBox>
-                        <GroupBox
-                            Header="{x:Static s:UiStrings.Header_Spaces}">
-                            <xctk:ColorPicker
-                                Style="{StaticResource ColorPickerStyle}"
-                                SelectedColor="{Binding ColourScheme.SpaceColour}" />
-                        </GroupBox>
-                        <GroupBox
-                            Header="{x:Static s:UiStrings.Header_CompletedSpaces}">
-                            <xctk:ColorPicker
-                                Style="{StaticResource ColorPickerStyle}"
-                                SelectedColor="{Binding ColourScheme.CompletedSpaceColour}" />
-                        </GroupBox>
-                        <GroupBox
-                            Header="{x:Static s:UiStrings.Header_SelectedItem}">
-                            <xctk:ColorPicker
-                                Style="{StaticResource ColorPickerStyle}"
-                                SelectedColor="{Binding ColourScheme.SelectedItemColour}" />
-                        </GroupBox>
-                        <Button
-                            Style="{StaticResource ButtonStyle}"
-                            Content="{x:Static s:UiStrings.Command_ResetToDefault}"
-                            Command="{Binding ResetColourScheme}"
-                            HorizontalAlignment="Right" />
-                    </StackPanel>
+                    <controls:ColourSchemeSettingsControl
+                        DataContext="{Binding ColourSchemeSettingsControlViewModel}" />
                 </TabItem>
 
                 <!--Mic Tab-->

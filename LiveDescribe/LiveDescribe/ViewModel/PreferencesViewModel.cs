@@ -1,16 +1,14 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Extensions;
-using LiveDescribe.Factories;
 using LiveDescribe.Model;
 using LiveDescribe.Properties;
-using LiveDescribe.Resources.UiStrings;
+using LiveDescribe.ViewModel.Controls;
 using NAudio.Wave;
 using System;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
-using System.Windows;
 using System.Windows.Input;
 
 namespace LiveDescribe.ViewModel
@@ -29,7 +27,7 @@ namespace LiveDescribe.ViewModel
         private BufferedWaveProvider _microphoneBuffer;
         private WaveOut _microphonePlayer;
         private short _microphoneReceiveLevel;
-        private ColourScheme _colourScheme;
+        private readonly ColourSchemeSettingsControlViewModel _colourSchemeSettingsControlViewModel;
         #endregion
 
         #region Events
@@ -40,6 +38,7 @@ namespace LiveDescribe.ViewModel
         public PreferencesViewModel()
         {
             _sources = new ObservableCollection<AudioSourceInfo>();
+            _colourSchemeSettingsControlViewModel = new ColourSchemeSettingsControlViewModel();
 
             RetrieveApplicationSettings();
 
@@ -64,16 +63,6 @@ namespace LiveDescribe.ViewModel
                 canExecute: () => true,
                 execute: OnRequestClose);
 
-            ResetColourScheme = new RelayCommand(
-                canExecute: () => true,
-                execute: () =>
-                {
-                    var result = MessageBoxFactory.ShowWarningQuestion(UiStrings.MessageBox_ResetColourSchemeWarning);
-
-                    if (result == MessageBoxResult.Yes)
-                        ColourScheme = ColourScheme.DefaultColourScheme.DeepCopy();
-                });
-
             TestMicrophone = new RelayCommand(
                 canExecute: () => SelectedAudioSource != null,
                 execute: () =>
@@ -94,7 +83,6 @@ namespace LiveDescribe.ViewModel
         public ICommand AcceptChanges { get; private set; }
         public ICommand AcceptChangesAndClose { get; private set; }
         public ICommand CancelChanges { get; private set; }
-        public ICommand ResetColourScheme { get; private set; }
         public ICommand TestMicrophone { get; private set; }
         #endregion
 
@@ -121,16 +109,6 @@ namespace LiveDescribe.ViewModel
             get { return _selectedsource; }
         }
 
-        public ColourScheme ColourScheme
-        {
-            set
-            {
-                _colourScheme = value;
-                RaisePropertyChanged();
-            }
-            get { return _colourScheme; }
-        }
-
         public short MicrophoneReceiveLevel
         {
             set
@@ -139,6 +117,11 @@ namespace LiveDescribe.ViewModel
                 RaisePropertyChanged();
             }
             get { return _microphoneReceiveLevel; }
+        }
+
+        public ColourSchemeSettingsControlViewModel ColourSchemeSettingsControlViewModel
+        {
+            get { return _colourSchemeSettingsControlViewModel; }
         }
 
         #endregion
@@ -151,7 +134,7 @@ namespace LiveDescribe.ViewModel
         /// </summary>
         public void RetrieveApplicationSettings()
         {
-            ColourScheme = (Settings.Default.ColourScheme != null)
+            ColourSchemeSettingsControlViewModel.ColourScheme = (Settings.Default.ColourScheme != null)
                 ? Settings.Default.ColourScheme.DeepCopy()
                 : ColourScheme.DefaultColourScheme.DeepCopy();
 
@@ -160,7 +143,7 @@ namespace LiveDescribe.ViewModel
 
         public void SaveApplicationSettings()
         {
-            Settings.Default.ColourScheme = ColourScheme;
+            Settings.Default.ColourScheme = ColourSchemeSettingsControlViewModel.ColourScheme;
             Settings.Default.Save();
 
             SaveAudioSourceInfo();
