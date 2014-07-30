@@ -70,7 +70,7 @@ namespace LiveDescribe.View
             splashscreen.Show(true);
             CustomResources.LoadResources();
 #if !DEBUG
-            Thread.Sleep(2000);
+            System.Threading.Thread.Sleep(2000);
 #endif
             InitializeComponent();
 #if ZAGGA
