@@ -448,4 +448,7 @@
   <data name="Header_VolumeLevel" xml:space="preserve">
     <value>Volume Level</value>
   </data>
+  <data name="Label_MicTestWarning" xml:space="preserve">
+    <value>Warning: Testing the microphone while using speakers will result in a lot of reverberation. It is reccomended to use headphones while testing a microphone to avoid this.</value>
+  </data>
 </root>

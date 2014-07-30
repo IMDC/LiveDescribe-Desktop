@@ -529,6 +529,15 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Warning: Testing the microphone while using speakers will result in a lot of reverberation. It is reccomended to use headphones while testing a microphone to avoid this..
+        /// </summary>
+        public static string Label_MicTestWarning {
+            get {
+                return ResourceManager.GetString("Label_MicTestWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No.
         /// </summary>
         public static string Label_No {

@@ -34,9 +34,9 @@
                 Style="{StaticResource ComboBoxStyle}"
                 ItemsSource="{Binding Sources}"
                 SelectedItem="{Binding SelectedAudioSource,
-                                    Mode=TwoWay,
-                                    UpdateSourceTrigger=PropertyChanged,
-                                    ValidatesOnDataErrors=True}">
+                    Mode=TwoWay,
+                    UpdateSourceTrigger=PropertyChanged,
+                    ValidatesOnDataErrors=True}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock
@@ -56,10 +56,18 @@
                 Value="{Binding MicrophoneReceiveLevel}" />
         </GroupBox>
 
-        <Button
-            Style="{StaticResource ButtonStyle}"
-            Command="{Binding TestMicrophone}"
-            Content="{x:Static s:UiStrings.Command_TestMic}"
-            HorizontalAlignment="Right" />
+        <DockPanel
+            Margin="5">
+            <Button
+                Style="{StaticResource ButtonStyle}"
+                Command="{Binding TestMicrophone}"
+                Content="{x:Static s:UiStrings.Command_TestMic}"
+                DockPanel.Dock="Right" />
+            <TextBlock
+                Text="{x:Static s:UiStrings.Label_MicTestWarning}"
+                TextWrapping="Wrap"
+                TextAlignment="Justify"
+                Margin="5" />
+        </DockPanel>
     </StackPanel>
 </UserControl>
