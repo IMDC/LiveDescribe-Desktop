@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using LiveDescribe.Events;
+﻿using LiveDescribe.Events;
 using LiveDescribe.Extensions;
 using LiveDescribe.Model;
 using LiveDescribe.Utilities;
 using LiveDescribe.ViewModel;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -177,8 +177,6 @@ namespace LiveDescribe.Managers
                 foreach (Description d in args.OldItems)
                     RemoveDescriptionEventHandlers(d);
             }
-
-
         }
 
         /// <summary>
@@ -198,7 +196,7 @@ namespace LiveDescribe.Managers
 
         private void DescriptionDelete(object sender, EventArgs e)
         {
-            Description desc = (Description) sender;
+            Description desc = (Description)sender;
             RemoveDescriptionAndTrackForUndo(desc);
         }
         #endregion
@@ -212,12 +210,11 @@ namespace LiveDescribe.Managers
 
         public void AddDescriptionAndTrackForUndo(Description desc)
         {
-
-            AllDescriptions.Add(desc);
 #if ZAGGA
-                if (d.IsExtendedDescription)
-                    continue;
+            if (desc.IsExtendedDescription)
+                return;
 #endif
+            AllDescriptions.Add(desc);
 
             if (!desc.IsExtendedDescription)
             {
@@ -249,11 +246,12 @@ namespace LiveDescribe.Managers
 
         public void AddDescription(Description desc)
         {
-            AllDescriptions.Add(desc);
 #if ZAGGA
-                if (d.IsExtendedDescription)
-                    continue;
+            if (desc.IsExtendedDescription)
+                return;
 #endif
+            AllDescriptions.Add(desc);
+
             if (!desc.IsExtendedDescription)
                 RegularDescriptions.Add(desc);
             else
@@ -262,7 +260,7 @@ namespace LiveDescribe.Managers
 
         public void AddDescriptions(List<Description> descriptions)
         {
-            foreach(Description d in descriptions)
+            foreach (Description d in descriptions)
                 AddDescription(d);
         }
         #endregion
