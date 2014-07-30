@@ -8,12 +8,14 @@
     xmlns:controls="clr-namespace:LiveDescribe.Controls"
     xmlns:viewModel="clr-namespace:LiveDescribe.ViewModel"
     xmlns:controlViews="clr-namespace:LiveDescribe.View.Controls"
+    xmlns:controls1="clr-namespace:LiveDescribe.ViewModel.Controls"
     mc:Ignorable="d"
     Title="{x:Static s:UiStrings.Window_PreferencesTitle}"
     Height="500"
     Width="500"
     ResizeMode="NoResize"
-    d:DataContext="{d:DesignInstance viewModel:PreferencesViewModel}">
+    d:DataContext="{d:DesignInstance viewModel:PreferencesViewModel}"
+    Closed="PreferencesWindow_OnClosed">
     <Window.Resources>
         <Style
             x:Key="ButtonStyle"
@@ -58,7 +60,7 @@
                 <!--Colour Tab-->
                 <TabItem
                     Header="{x:Static s:UiStrings.Header_ColourSettings}">
-                    <controls:ColourSchemeSettingsControl
+                    <controls1:ColourSchemeSettingsControl
                         DataContext="{Binding ColourSchemeSettingsControlViewModel}" />
                 </TabItem>
 

@@ -137,9 +137,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Controls\ColourSchemeSettingsControl.xaml.cs">
-      <DependentUpon>ColourSchemeSettingsControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\CountdownControl.xaml.cs">
       <DependentUpon>CountdownControl.xaml</DependentUpon>
     </Compile>
@@ -242,6 +239,9 @@
     <Compile Include="ViewModel\AboutInfoViewModel.cs" />
     <Compile Include="ViewModel\AudioCanvasViewModel.cs" />
     <Compile Include="ViewModel\Controls\AudioSourceSettingsControlViewModel.cs" />
+    <Compile Include="ViewModel\Controls\ColourSchemeSettingsControl.xaml.cs">
+      <DependentUpon>ColourSchemeSettingsControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModel\Controls\ColourSchemeSettingsControlViewModel.cs" />
     <Compile Include="ViewModel\CountdownControlViewModel.cs" />
     <Compile Include="ViewModel\DescriptionCanvasViewModel.cs" />
@@ -271,10 +271,6 @@
       <DependentUpon>SpaceRecordingView.xaml</DependentUpon>
     </Compile>
     <Page Include="Controls\AudioCanvasControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\ColourSchemeSettingsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -317,6 +313,10 @@
     <Page Include="Controls\SpaceControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ViewModel\Controls\ColourSchemeSettingsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="View\AboutInfoView.xaml">
       <SubType>Designer</SubType>

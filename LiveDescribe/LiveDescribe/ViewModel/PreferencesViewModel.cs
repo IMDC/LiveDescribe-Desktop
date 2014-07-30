@@ -107,6 +107,11 @@ namespace LiveDescribe.ViewModel
 
             Log.Info("Application settings saved");
         }
+
+        public void CloseCleanup()
+        {
+            AudioSourceSettingsControlViewModel.StopForClose();
+        }
         #endregion
 
         #region Event Invokation
@@ -115,8 +120,6 @@ namespace LiveDescribe.ViewModel
         /// </summary>
         private void OnRequestClose()
         {
-            AudioSourceSettingsControlViewModel.StopForClose();
-
             var handler = RequestClose;
             if (handler != null) handler(this, EventArgs.Empty);
         }
