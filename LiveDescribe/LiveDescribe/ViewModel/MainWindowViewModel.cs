@@ -198,7 +198,7 @@ namespace LiveDescribe.ViewModel
 
             ShowPreferences = new RelayCommand(() =>
             {
-                _preferences.InitializeAudioSourceInfo();
+                _preferences.RetrieveApplicationSettings();
                 var preferencesWindow = new PreferencesWindow(_preferences);
                 preferencesWindow.ShowDialog();
             });

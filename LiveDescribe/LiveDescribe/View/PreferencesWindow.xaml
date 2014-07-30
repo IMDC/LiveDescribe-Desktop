@@ -7,8 +7,7 @@
     xmlns:s="clr-namespace:LiveDescribe.Resources.UiStrings"
     xmlns:controls="clr-namespace:LiveDescribe.Controls"
     xmlns:viewModel="clr-namespace:LiveDescribe.ViewModel"
-    xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-    xmlns:system="clr-namespace:System;assembly=mscorlib"
+    xmlns:controlViews="clr-namespace:LiveDescribe.View.Controls"
     mc:Ignorable="d"
     Title="{x:Static s:UiStrings.Window_PreferencesTitle}"
     Height="500"
@@ -66,41 +65,8 @@
                 <!--Mic Tab-->
                 <TabItem
                     Header="{x:Static s:UiStrings.Header_AudioSource}">
-                    <StackPanel>
-                        <GroupBox
-                            Header="{x:Static s:UiStrings.Header_Microphone}">
-                            <ComboBox
-                                Style="{StaticResource ComboBoxStyle}"
-                                ItemsSource="{Binding Sources}"
-                                SelectedItem="{Binding SelectedAudioSource,
-                                    Mode=TwoWay,
-                                    UpdateSourceTrigger=PropertyChanged,
-                                    ValidatesOnDataErrors=True}">
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock
-                                            Text="{Binding Name}" />
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
-                        </GroupBox>
-
-                        <GroupBox
-                            Header="{x:Static s:UiStrings.Header_VolumeLevel}">
-                            <ProgressBar
-                                Height="20"
-                                Margin="5"
-                                Minimum="0"
-                                Maximum="32767"
-                                Value="{Binding MicrophoneReceiveLevel}" />
-                        </GroupBox>
-
-                        <Button
-                            Style="{StaticResource ButtonStyle}"
-                            Command="{Binding TestMicrophone}"
-                            Content="{x:Static s:UiStrings.Command_TestMic}"
-                            HorizontalAlignment="Right" />
-                    </StackPanel>
+                    <controlViews:AudioSourceSettingsControl
+                        DataContext="{Binding AudioSourceSettingsControlViewModel}" />
                 </TabItem>
             </TabControl>
         </DockPanel>
