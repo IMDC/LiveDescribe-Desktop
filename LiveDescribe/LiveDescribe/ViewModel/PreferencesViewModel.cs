@@ -25,7 +25,9 @@ namespace LiveDescribe.ViewModel
         #region Instance Variables
         private readonly ObservableCollection<AudioSourceInfo> _sources;
         private AudioSourceInfo _selectedsource;
-        private WaveIn _microphoneStream;
+        private WaveIn _microphoneRecorder;
+        private BufferedWaveProvider _microphoneBuffer;
+        private WaveOut _microphonePlayer;
         private short _microphoneReceiveLevel;
         private ColourScheme _colourScheme;
         #endregion
@@ -76,25 +78,12 @@ namespace LiveDescribe.ViewModel
                 canExecute: () => SelectedAudioSource != null,
                 execute: () =>
                 {
-                    if (_microphoneStream != null)
-                    {
-                        _microphoneStream.StopRecording();
-                        _microphoneStream.Dispose();
-                        _microphoneStream = null;
-                    }
+                    if (_microphoneRecorder == null)
+                        StartMicrophoneTest();
                     else
-                    {
-                        _microphoneStream = new WaveIn
-                        {
-                            DeviceNumber = SelectedAudioSource.DeviceNumber,
-                            WaveFormat = new WaveFormat(44100, SelectedAudioSource.Source.Channels)
-                        };
-                        _microphoneStream.DataAvailable += MicrophoneStreamOnDataAvailable;
-                        _microphoneStream.StartRecording();
-                    }
+                        StopMicrophoneTest();
                 });
         }
-
         #endregion
 
         #region Commands
@@ -220,13 +209,48 @@ namespace LiveDescribe.ViewModel
             Settings.Default.Save();
         }
 
+        private void StopMicrophoneTest()
+        {
+            _microphoneRecorder.StopRecording();
+            _microphonePlayer.Stop();
+
+            _microphoneRecorder.Dispose();
+            _microphoneRecorder = null;
+
+            _microphonePlayer.Dispose();
+            _microphonePlayer = null;
+
+            MicrophoneReceiveLevel = 0;
+        }
+
+        private void StartMicrophoneTest()
+        {
+            var recordFormat = new WaveFormat(44100, SelectedAudioSource.Source.Channels);
+            _microphoneRecorder = new WaveIn
+            {
+                DeviceNumber = SelectedAudioSource.DeviceNumber,
+                WaveFormat = recordFormat,
+            };
+            _microphoneRecorder.DataAvailable += MicrophoneRecorderOnDataAvailable;
+
+            _microphoneBuffer = new BufferedWaveProvider(recordFormat);
+
+            _microphonePlayer = new WaveOut();
+            _microphonePlayer.Init(_microphoneBuffer);
+
+            _microphoneRecorder.StartRecording();
+            _microphonePlayer.Play();
+        }
+        #endregion
+
+        #region EventHandlers
         /// <summary>
         /// Collects sample information from the mic and sets the receive level to the max volume
         /// amount found.
         /// </summary>
         /// <param name="sender">Sender.</param>
         /// <param name="args">Args.</param>
-        private void MicrophoneStreamOnDataAvailable(object sender, WaveInEventArgs args)
+        private void MicrophoneRecorderOnDataAvailable(object sender, WaveInEventArgs args)
         {
             const int bytesPerSample = 40;
             short max = 0;
@@ -238,6 +262,7 @@ namespace LiveDescribe.ViewModel
                 max = Math.Max(max, Math.Max(leftValue, rightValue));
             }
             MicrophoneReceiveLevel = max;
+            _microphoneBuffer.AddSamples(args.Buffer, 0, args.BytesRecorded);
         }
         #endregion
 
