@@ -402,7 +402,7 @@ namespace LiveDescribe.Utilities
                                 #region progress update
                                 double local_progress = percentComplete / _operations;
                                 _progressWorker.ReportProgress((int)Math.Round(_progress + local_progress));
-                                //Console.WriteLine((int)Math.Round(_progress + local_progress));
+                                //((int)Math.Round(_progress + local_progress));
                                 #endregion
                             }
                         }

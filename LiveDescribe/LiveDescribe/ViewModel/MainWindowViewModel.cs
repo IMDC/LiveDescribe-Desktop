@@ -41,7 +41,6 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Instance Variables
-
         private readonly ProjectManager _projectManager;
         private readonly Timer _descriptiontimer;
         private readonly MediaControlViewModel _mediaControlViewModel;
@@ -53,6 +52,7 @@ namespace LiveDescribe.ViewModel
         private readonly AudioCanvasViewModel _audioCanvasViewModel;
         private readonly DescriptionCanvasViewModel _descriptionCanvasViewModel;
         private readonly DescriptionRecordingControlViewModel _descriptionRecordingControlViewModel;
+        private readonly UndoRedoManager _undoRedoManager;
         private Project _project;
         private string _windowTitle;
         private Description _lastRegularDescriptionPlayed;
@@ -72,9 +72,9 @@ namespace LiveDescribe.ViewModel
         {
             DispatcherHelper.Initialize();
 
-
+            _undoRedoManager = new UndoRedoManager();
             _loadingViewModel = new LoadingViewModel(100, null, 0, false);
-            _projectManager = new ProjectManager(_loadingViewModel);
+            _projectManager = new ProjectManager(_loadingViewModel, _undoRedoManager);
 
             _mediaControlViewModel = new MediaControlViewModel(mediaVideo, _projectManager);
             _preferences = new PreferencesViewModel();
@@ -469,6 +469,10 @@ namespace LiveDescribe.ViewModel
             get { return _descriptionRecordingControlViewModel; }
         }
 
+        public UndoRedoManager UndoRedoManager
+        {
+            get { return _undoRedoManager; }
+        }
         #endregion
 
         #region Methods

@@ -54,7 +54,7 @@ namespace LiveDescribe.ViewModel
                     var viewModel = DialogShower.SpawnSpaceRecordingView(SelectedSpace, _projectManager.Project);
 
                     if (viewModel.DialogResult == true)
-                        _projectManager.AllDescriptions.Add(viewModel.Description);
+                        _projectManager.AddDescriptionAndTrackForUndo(viewModel.Description);
                 });
 
             DeleteSelectedSpaceOrDescription = new RelayCommand(

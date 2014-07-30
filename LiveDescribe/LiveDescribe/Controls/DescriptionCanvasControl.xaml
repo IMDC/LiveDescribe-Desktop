@@ -35,8 +35,7 @@
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemContainerStyle>
-                        <Style
-                            d:DataContext="{d:DesignInstance model:Description}">
+                        <Style>
                             <Style.Triggers>
                                 <!--This controls the size and position of each rectangle element representing a description If it is not an extended description-->
                                 <DataTrigger

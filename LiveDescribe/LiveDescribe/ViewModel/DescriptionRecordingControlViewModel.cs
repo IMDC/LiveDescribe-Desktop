@@ -129,7 +129,7 @@ namespace LiveDescribe.ViewModel
         {
             var dr = new DescriptionRecorder();
             dr.DescriptionRecorded += (sender, args) =>
-                _projectManager.AllDescriptions.Add(args.Value);
+                _projectManager.AddDescriptionAndTrackForUndo(args.Value);
             return dr;
         }
         #endregion
