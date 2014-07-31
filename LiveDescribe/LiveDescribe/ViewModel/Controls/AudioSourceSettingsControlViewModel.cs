@@ -16,7 +16,7 @@ namespace LiveDescribe.ViewModel.Controls
     public class AudioSourceSettingsControlViewModel : ViewModelBase
     {
         #region Fields
-        private ObservableCollection<AudioSourceInfo> _sources;
+        private readonly ObservableCollection<AudioSourceInfo> _sources;
         private AudioSourceInfo _selectedsource;
         private short _microphoneReceiveLevel;
         private WaveIn _microphoneRecorder;
@@ -97,46 +97,6 @@ namespace LiveDescribe.ViewModel.Controls
         #endregion
 
         #region Methods
-        private void StopMicrophoneTest()
-        {
-            if (_microphonePlayer == null)
-                return;
-
-            _microphoneRecorder.StopRecording();
-            _microphonePlayer.Stop();
-
-            _microphoneRecorder.Dispose();
-            _microphoneRecorder = null;
-
-            _microphonePlayer.Dispose();
-            _microphonePlayer = null;
-
-            _microphoneBuffer.ClearBuffer();
-
-            MicrophoneReceiveLevel = 0;
-        }
-
-        private void StartMicrophoneTest()
-        {
-            var recordFormat = new WaveFormat(44100, SelectedAudioSource.Source.Channels);
-            _microphoneRecorder = new WaveIn
-            {
-                DeviceNumber = SelectedAudioSource.DeviceNumber,
-                WaveFormat = recordFormat,
-            };
-            _microphoneRecorder.DataAvailable += MicrophoneRecorderOnDataAvailable;
-
-            _microphoneBuffer = new BufferedWaveProvider(recordFormat);
-
-            _microphonePlayer = new WaveOut();
-            _microphonePlayer.Init(_microphoneBuffer);
-
-            _microphoneRecorder.StartRecording();
-            _microphonePlayer.Play();
-
-            TryGetVolumeControl();
-        }
-
         /// <summary>
         /// used to initialize the Collection of all the microphones available
         /// </summary>
@@ -162,22 +122,25 @@ namespace LiveDescribe.ViewModel.Controls
                 SelectedAudioSource = null;
         }
 
-        /// <summary>
-        /// used to save the selected microphone to the settings
-        /// </summary>
-        public void SaveAudioSourceInfo()
+        private void StartMicrophoneTest()
         {
-            if (SelectedAudioSource == null)
-                return;
-
-            var sourceStream = new WaveIn
+            var recordFormat = new WaveFormat(44100, SelectedAudioSource.Source.Channels);
+            _microphoneRecorder = new WaveIn
             {
                 DeviceNumber = SelectedAudioSource.DeviceNumber,
-                WaveFormat = new WaveFormat(44100, SelectedAudioSource.Source.Channels)
+                WaveFormat = recordFormat,
             };
+            _microphoneRecorder.DataAvailable += MicrophoneRecorderOnDataAvailable;
 
-            Settings.Default.Microphone = sourceStream;
-            Settings.Default.Save();
+            _microphoneBuffer = new BufferedWaveProvider(recordFormat);
+
+            _microphonePlayer = new WaveOut();
+            _microphonePlayer.Init(_microphoneBuffer);
+
+            _microphoneRecorder.StartRecording();
+            _microphonePlayer.Play();
+
+            TryGetVolumeControl();
         }
 
         /// <summary>
@@ -202,6 +165,43 @@ namespace LiveDescribe.ViewModel.Controls
                     break;
                 }
             }
+        }
+
+        private void StopMicrophoneTest()
+        {
+            if (_microphonePlayer == null)
+                return;
+
+            _microphoneRecorder.StopRecording();
+            _microphonePlayer.Stop();
+
+            _microphoneRecorder.Dispose();
+            _microphoneRecorder = null;
+
+            _microphonePlayer.Dispose();
+            _microphonePlayer = null;
+
+            _microphoneBuffer.ClearBuffer();
+
+            MicrophoneReceiveLevel = 0;
+        }
+
+        /// <summary>
+        /// used to save the selected microphone to the settings
+        /// </summary>
+        public void SaveAudioSourceInfo()
+        {
+            if (SelectedAudioSource == null)
+                return;
+
+            var sourceStream = new WaveIn
+            {
+                DeviceNumber = SelectedAudioSource.DeviceNumber,
+                WaveFormat = new WaveFormat(44100, SelectedAudioSource.Source.Channels)
+            };
+
+            Settings.Default.Microphone = sourceStream;
+            Settings.Default.Save();
         }
 
         /// <summary>
