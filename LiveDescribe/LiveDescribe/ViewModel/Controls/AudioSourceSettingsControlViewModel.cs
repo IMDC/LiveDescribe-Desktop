@@ -2,11 +2,13 @@
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Model;
 using LiveDescribe.Properties;
+using NAudio.Mixer;
 using NAudio.Wave;
 using System;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
 namespace LiveDescribe.ViewModel.Controls
@@ -20,6 +22,8 @@ namespace LiveDescribe.ViewModel.Controls
         private WaveIn _microphoneRecorder;
         private BufferedWaveProvider _microphoneBuffer;
         private WaveOut _microphonePlayer;
+        private UnsignedMixerControl _microphoneVolumeControl;
+        private double _microphoneVolume;
         #endregion
 
         #region Constructor
@@ -79,6 +83,17 @@ namespace LiveDescribe.ViewModel.Controls
             }
             get { return _microphoneReceiveLevel; }
         }
+
+        public double MicrophoneVolume
+        {
+            set
+            {
+                _microphoneVolume = value;
+                RaisePropertyChanged();
+            }
+            get { return _microphoneVolume; }
+        }
+
         #endregion
 
         #region Methods
@@ -118,6 +133,8 @@ namespace LiveDescribe.ViewModel.Controls
 
             _microphoneRecorder.StartRecording();
             _microphonePlayer.Play();
+
+            TryGetVolumeControl();
         }
 
         /// <summary>
@@ -125,6 +142,8 @@ namespace LiveDescribe.ViewModel.Controls
         /// </summary>
         public void InitializeAudioSourceInfo()
         {
+            Sources.Clear();
+
             for (int i = 0; i < WaveIn.DeviceCount; ++i)
             {
                 var capability = WaveIn.GetCapabilities(i);
@@ -162,12 +181,47 @@ namespace LiveDescribe.ViewModel.Controls
         }
 
         /// <summary>
+        /// Attempts to get a volume control for the current microphone and sets the volume.
+        /// </summary>
+        private void TryGetVolumeControl()
+        {
+            if (_microphoneRecorder == null)
+                return;
+            //Older than Vista
+            if (Environment.OSVersion.Version.Major < 6)
+                return;
+
+            var mixerLine = _microphoneRecorder.GetMixerLine();
+            foreach (var control in mixerLine.Controls)
+            {
+                if (control.ControlType == MixerControlType.Volume)
+                {
+                    _microphoneVolumeControl = control as UnsignedMixerControl;
+                    if (_microphoneVolumeControl != null)
+                        _microphoneVolume = _microphoneVolumeControl.Percent;
+                    break;
+                }
+            }
+        }
+
+        /// <summary>
         /// Stops any recorders/players for window closing.
         /// </summary>
         public void StopForClose()
         {
             StopMicrophoneTest();
         }
+
+        protected override void RaisePropertyChanged([CallerMemberName]string propertyName = null)
+        {
+            base.RaisePropertyChanged(propertyName);
+
+            if (propertyName == "SelectedAudioSource")
+                TryGetVolumeControl();
+            if (propertyName == "MicrophoneVolume" && _microphoneVolumeControl != null)
+                _microphoneVolumeControl.Percent = MicrophoneVolume;
+        }
+
         #endregion
 
         #region EventHandlers

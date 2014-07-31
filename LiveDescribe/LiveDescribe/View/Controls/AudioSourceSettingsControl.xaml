@@ -5,10 +5,15 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:s="clr-namespace:LiveDescribe.Resources.UiStrings"
+    xmlns:converters="clr-namespace:LiveDescribe.Converters"
+    xmlns:controls="clr-namespace:LiveDescribe.ViewModel.Controls"
     mc:Ignorable="d"
     d:DesignHeight="480"
-    d:DesignWidth="480">
+    d:DesignWidth="480"
+    d:DesignSource="{d:DesignInstance controls:AudioSourceSettingsControlViewModel}">
     <UserControl.Resources>
+        <converters:VarNotNullToBoolConverter
+            x:Key="VarNotNullToBoolConverter" />
         <Style
             x:Key="ButtonStyle"
             TargetType="Button">
@@ -48,12 +53,20 @@
 
         <GroupBox
             Header="{x:Static s:UiStrings.Header_VolumeLevel}">
-            <ProgressBar
-                Height="20"
-                Margin="5"
-                Minimum="0"
-                Maximum="32767"
-                Value="{Binding MicrophoneReceiveLevel}" />
+            <StackPanel
+                IsEnabled="{Binding SelectedAudioSource, Converter={StaticResource VarNotNullToBoolConverter}}">
+                <ProgressBar
+                    Height="20"
+                    Margin="5"
+                    Minimum="0"
+                    Maximum="32767"
+                    Value="{Binding MicrophoneReceiveLevel}" />
+                <Slider
+                    Margin="5"
+                    Minimum="0"
+                    Maximum="100"
+                    Value="{Binding MicrophoneVolume, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            </StackPanel>
         </GroupBox>
 
         <DockPanel
