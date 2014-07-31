@@ -610,6 +610,15 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Edit.
+        /// </summary>
+        public static string MenuItem_Edit {
+            get {
+                return ResourceManager.GetString("MenuItem_Edit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exit.
         /// </summary>
         public static string MenuItem_Exit {
@@ -700,6 +709,15 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Redo.
+        /// </summary>
+        public static string MenuItem_Redo {
+            get {
+                return ResourceManager.GetString("MenuItem_Redo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Save Project.
         /// </summary>
         public static string MenuItem_SaveProject {
@@ -714,6 +732,15 @@ namespace LiveDescribe.Resources.UiStrings {
         public static string MenuItem_ShowHelpWindow {
             get {
                 return ResourceManager.GetString("MenuItem_ShowHelpWindow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Undo.
+        /// </summary>
+        public static string MenuItem_Undo {
+            get {
+                return ResourceManager.GetString("MenuItem_Undo", resourceCulture);
             }
         }
         
