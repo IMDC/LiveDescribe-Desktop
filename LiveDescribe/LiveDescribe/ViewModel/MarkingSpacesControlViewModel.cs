@@ -1,4 +1,5 @@
-﻿using GalaSoft.MvvmLight;
+﻿using System;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Managers;
@@ -11,6 +12,8 @@ namespace LiveDescribe.ViewModel
     public class MarkingSpacesControlViewModel : ViewModelBase
     {
         #region Instance Variables
+
+        public const double Tolerance = 0.0001;
 
         private bool _editingEnabled;
         private Space _selectedSpace;
@@ -44,8 +47,12 @@ namespace LiveDescribe.ViewModel
                     double originalStartInVideo = SelectedSpace.StartInVideo;
                     double originalEndInVideo = SelectedSpace.EndInVideo;
                     SelectedSpace_StartInVideo = _player.Position.TotalMilliseconds;
-                    _undoRedoManager.InsertItemForMoveOrResizeUndoRedo(SelectedSpace, originalStartInVideo,
-                        originalEndInVideo, SelectedSpace.StartInVideo, SelectedSpace.EndInVideo);
+
+                    if (Math.Abs(SelectedSpace_StartInVideo - originalStartInVideo) > Tolerance)
+                    {
+                        _undoRedoManager.InsertItemForMoveOrResizeUndoRedo(SelectedSpace, originalStartInVideo,
+                            originalEndInVideo, SelectedSpace.StartInVideo, SelectedSpace.EndInVideo);
+                    }
                 });
 
             SetEndToMarker = new RelayCommand(
@@ -55,8 +62,12 @@ namespace LiveDescribe.ViewModel
                     double originalStartInVideo = SelectedSpace.StartInVideo;
                     double originalEndInVideo = SelectedSpace.EndInVideo;
                     SelectedSpace_EndInVideo = _player.Position.TotalMilliseconds;
-                    _undoRedoManager.InsertItemForMoveOrResizeUndoRedo(SelectedSpace, originalStartInVideo,
-                        originalEndInVideo, SelectedSpace.StartInVideo, SelectedSpace.EndInVideo);
+
+                    if (Math.Abs(SelectedSpace_EndInVideo - originalEndInVideo) > Tolerance)
+                    {
+                        _undoRedoManager.InsertItemForMoveOrResizeUndoRedo(SelectedSpace, originalStartInVideo,
+                            originalEndInVideo, SelectedSpace.StartInVideo, SelectedSpace.EndInVideo);
+                    }
                 });
         }
         #endregion
