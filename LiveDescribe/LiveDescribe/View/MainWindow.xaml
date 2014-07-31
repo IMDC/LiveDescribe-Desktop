@@ -109,7 +109,20 @@
                         Header="{x:Static s:UiStrings.MenuItem_Exit}"
                         Click="MenuItemExit_Click" />
                 </MenuItem>
-
+                
+                <!--Edit-->
+                <MenuItem
+                    Header="{x:Static s:UiStrings.MenuItem_Edit}">
+                    <MenuItem
+                        Header="{x:Static s:UiStrings.MenuItem_Undo}"
+                        Command="{Binding UndoRedoManager.UndoCommand}"
+                        InputGestureText="Ctrl+Z"/>
+                    <MenuItem
+                        Header="{x:Static s:UiStrings.MenuItem_Redo}"
+                        Command="{Binding UndoRedoManager.RedoCommand}"
+                        InputGestureText="Ctrl+Y"/>
+                </MenuItem>
+                
                 <!--Project-->
                 <MenuItem
                     Header="{x:Static s:UiStrings.MenuItem_Project}">

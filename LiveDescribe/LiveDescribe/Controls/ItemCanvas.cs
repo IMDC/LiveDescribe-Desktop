@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using LiveDescribe.Managers;
 
 namespace LiveDescribe.Controls
 {
@@ -8,7 +9,7 @@ namespace LiveDescribe.Controls
         public enum ActionState { None, Dragging, ResizingEndOfItem, ResizingBeginningOfItem };
 
         public static readonly DependencyProperty VideoDurationProperty =
-          DependencyProperty.Register("VideoDuration", typeof(double), typeof(SpaceControl));
+          DependencyProperty.Register("VideoDuration", typeof(double), typeof(ItemCanvas));
 
         public double VideoDuration
         {
@@ -17,5 +18,7 @@ namespace LiveDescribe.Controls
         }
 
         public ActionState CurrentActionState { get; set; }
+
+        public UndoRedoManager UndoRedoManager { get; set; }
     }
 }

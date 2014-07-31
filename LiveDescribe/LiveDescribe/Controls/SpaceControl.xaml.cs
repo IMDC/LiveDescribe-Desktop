@@ -1,4 +1,5 @@
-﻿using LiveDescribe.Model;
+﻿using System;
+using LiveDescribe.Model;
 using LiveDescribe.Resources;
 using LiveDescribe.Utilities;
 using System.Windows;
@@ -16,12 +17,17 @@ namespace LiveDescribe.Controls
             (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         #endregion
 
+        public const double Tolerance = 0.0001;
+
         public static DependencyProperty SpaceProperty =
             DependencyProperty.Register("Space", typeof(Space), typeof(SpaceControl));
 
         public const double MinSpaceLengthInMSecs = 333;
         private const int ResizeSpaceOffset = 10;
-        private double _originalPositionForDraggingSpace;
+        private double _originalMousePositionForDraggingSpace;
+
+        private double _originalStartInVideo;
+        private double _originalEndInVideo;
 
         public SpaceControl()
         {
@@ -45,7 +51,11 @@ namespace LiveDescribe.Controls
             if (Mouse.LeftButton == MouseButtonState.Pressed)
             {
                 double xPos = e.GetPosition(Container).X;
-                _originalPositionForDraggingSpace = xPos;
+
+                _originalMousePositionForDraggingSpace = xPos;
+                _originalStartInVideo = Space.StartInVideo;
+                _originalEndInVideo = Space.EndInVideo;
+
                 SpaceGraphic.CaptureMouse();
                 SetCursorUponMouseDown(xPos);
             }
@@ -78,8 +88,27 @@ namespace LiveDescribe.Controls
         private void FinishActionOnSpace()
         {
             SpaceGraphic.ReleaseMouseCapture();
+
+            if (Mouse.LeftButton == MouseButtonState.Released)
+                SetupUndoAndRedo();
+
             Container.CurrentActionState = ItemCanvas.ActionState.None;
             Container.Cursor = Cursors.Arrow;
+        }
+
+        private void SetupUndoAndRedo()
+        {
+            if (Container.CurrentActionState == ItemCanvas.ActionState.Dragging || 
+                Container.CurrentActionState == ItemCanvas.ActionState.ResizingBeginningOfItem ||
+                Container.CurrentActionState == ItemCanvas.ActionState.ResizingEndOfItem)
+            {
+                if (!(Math.Abs(_originalEndInVideo - Space.EndInVideo) < Tolerance && Math.Abs(_originalStartInVideo - Space.StartInVideo) < Tolerance))
+                {
+                    Container.UndoRedoManager.InsertItemForMoveOrResizeUndoRedo(Space, _originalStartInVideo,
+                        _originalEndInVideo,
+                        Space.StartInVideo, Space.EndInVideo);
+                }
+            }
         }
 
         private void SpaceGraphic_MouseMove(object sender, MouseEventArgs e)
@@ -118,7 +147,7 @@ namespace LiveDescribe.Controls
 
         private void ResizeEndOfSpace(double mouseXPosition)
         {
-            double newWidth = Space.Width + (mouseXPosition - _originalPositionForDraggingSpace);
+            double newWidth = Space.Width + (mouseXPosition - _originalMousePositionForDraggingSpace);
             double lengthInMillisecondsNewWidth = (Container.VideoDuration / Container.Width) * newWidth;
 
             //bounds checking
@@ -135,15 +164,14 @@ namespace LiveDescribe.Controls
                 FinishActionOnSpace();
             }
 
-            Space.Width = newWidth;
-            _originalPositionForDraggingSpace = mouseXPosition;
-            Space.EndInVideo = Space.StartInVideo + (Container.VideoDuration / Container.Width) * Space.Width;
+            _originalMousePositionForDraggingSpace = mouseXPosition;
+            Space.EndInVideo = Space.StartInVideo + (Container.VideoDuration / Container.Width) * newWidth;
         }
 
         private void ResizeBeginningOfSpace(double mouseXPosition)
         {
             //left side of space
-            double newPosition = Space.X + (mouseXPosition - _originalPositionForDraggingSpace);
+            double newPosition = Space.X + (mouseXPosition - _originalMousePositionForDraggingSpace);
             double newPositionMilliseconds = (Container.VideoDuration / Container.Width) * newPosition;
 
             //bounds checking
@@ -160,11 +188,8 @@ namespace LiveDescribe.Controls
                 FinishActionOnSpace();
             }
 
-            Space.X = newPosition;
             Space.StartInVideo = (Container.VideoDuration / Container.Width) * newPosition;
-            Space.Width = (Container.Width / Container.VideoDuration) * (Space.EndInVideo - Space.StartInVideo);
-
-            _originalPositionForDraggingSpace = mouseXPosition;
+            _originalMousePositionForDraggingSpace = mouseXPosition;
         }
 
         private void DragSpace(double mouseXPosition)
@@ -172,7 +197,7 @@ namespace LiveDescribe.Controls
             if (!CanContinueDraggingSpace(mouseXPosition))
                 return;
 
-            double newPosition = Space.X + (mouseXPosition - _originalPositionForDraggingSpace);
+            double newPosition = Space.X + (mouseXPosition - _originalMousePositionForDraggingSpace);
             double newPositionMilliseconds = (Container.VideoDuration / Container.Width) * newPosition;
             double lengthOfSpaceMilliseconds = Space.EndInVideo - Space.StartInVideo;
             //size in pixels of the space
@@ -183,9 +208,8 @@ namespace LiveDescribe.Controls
             else if ((newPositionMilliseconds + lengthOfSpaceMilliseconds) > Container.VideoDuration)
                 newPosition = (Container.Width / Container.VideoDuration) * (Container.VideoDuration - lengthOfSpaceMilliseconds);
 
-            Space.X = newPosition;
-            _originalPositionForDraggingSpace = mouseXPosition;
-            Space.StartInVideo = (Container.VideoDuration / Container.Width) * (Space.X);
+            _originalMousePositionForDraggingSpace = mouseXPosition;
+            Space.StartInVideo = (Container.VideoDuration / Container.Width) * (newPosition);
             Space.EndInVideo = Space.StartInVideo + (Container.VideoDuration / Container.Width) * size;
         }
 

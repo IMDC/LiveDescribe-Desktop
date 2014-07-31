@@ -2,6 +2,7 @@
 using LiveDescribe.Controls;
 using LiveDescribe.Converters;
 using LiveDescribe.Extensions;
+using LiveDescribe.Interfaces;
 using LiveDescribe.Managers;
 using LiveDescribe.Model;
 using LiveDescribe.Properties;
@@ -92,7 +93,11 @@ namespace LiveDescribe.View
             _descriptionInfoTabViewModel = mainWindowViewModel.DescriptionInfoTabViewModel;
 
             _audioCanvas = AudioCanvasControl.AudioCanvas;
+            _audioCanvas.UndoRedoManager = mainWindowViewModel.UndoRedoManager;
+
             _descriptionCanvas = DescriptionCanvasControl.DescriptionCanvas;
+            _descriptionCanvas.UndoRedoManager = mainWindowViewModel.UndoRedoManager;
+
             _marker = MarkerControl.Marker;
 
             _millisecondsTimeConverter = new MillisecondsTimeConverterFormatter();
@@ -179,10 +184,10 @@ namespace LiveDescribe.View
                     SetTimeline();
 
                     foreach (var desc in _projectManager.AllDescriptions)
-                        DrawDescription(desc);
+                        DrawDescribableInterval(desc);
 
                     foreach (var space in _projectManager.Spaces)
-                        SetSpaceLocation(space);
+                        DrawDescribableInterval(space);
                 };
 
             //captures the mouse when a mousedown request is sent to the Marker
@@ -413,7 +418,13 @@ namespace LiveDescribe.View
              * opened project.
              */
             if (_videoMedia.CurrentState != LiveDescribeVideoStates.VideoNotLoaded)
-                DrawDescription(description);
+                DrawDescribableInterval(description);
+
+            description.PropertyChanged += (o, args) =>
+            {
+                if (args.PropertyName.Equals("StartInVideo") || args.PropertyName.Equals("EndInVideo") || args.PropertyName.Equals("SetStartAndEndInVideo"))
+                    DrawDescribableInterval(description);
+            };
 
             description.DescriptionMouseDownEvent += (sender1, e1) =>
             {
@@ -460,7 +471,7 @@ namespace LiveDescribe.View
             //Adding a space depends on where you right clicked so we create and add it in the view
             //Set space only if the video is loaded/playing/recording/etc
             if (_videoMedia.CurrentState != LiveDescribeVideoStates.VideoNotLoaded)
-                SetSpaceLocation(space);
+                DrawDescribableInterval(space);
 
             space.SpaceMouseDownEvent += (sender1, e1) =>
             {
@@ -473,8 +484,8 @@ namespace LiveDescribe.View
 
             space.PropertyChanged += (o, args) =>
             {
-                if (args.PropertyName.Equals("StartInVideo") || args.PropertyName.Equals("EndInVideo"))
-                    SetSpaceLocation(space);
+                if (args.PropertyName.Equals("StartInVideo") || args.PropertyName.Equals("EndInVideo") || args.PropertyName.Equals("SetStartAndEndInVideo"))
+                    DrawDescribableInterval(space);
             };
 
             space.GoToThisSpaceEvent += (o, args) =>
@@ -665,14 +676,12 @@ namespace LiveDescribe.View
             _audioCanvas.Children.Add(AudioCanvasControl.SpacesItemControl);
         }
 
-        private void DrawDescription(Description description)
+        private void DrawDescribableInterval(IDescribableInterval interval)
         {
-            //set the Description values that are bound to the graphics in MainWindow.xaml
-            description.X = (description.StartInVideo / _videoDuration) * _audioCanvas.Width;
-            description.Y = 0;
-            description.Width = (_audioCanvas.Width / _videoDuration) * (description.EndWaveFileTime -
-                description.StartWaveFileTime);
-            description.Height = _descriptionCanvas.ActualHeight;
+            interval.X = (_audioCanvas.Width / _videoDuration) * interval.StartInVideo;
+            interval.Y = 0;
+            interval.Height = _audioCanvas.ActualHeight;
+            interval.Width = (_audioCanvas.Width / _videoDuration) * (interval.EndInVideo - interval.StartInVideo);
         }
 
         /// <summary>
@@ -761,17 +770,6 @@ namespace LiveDescribe.View
             ResizeSpaces();
         }
 
-        /// <summary>
-        /// Sets the location of the given space on the canvas.
-        /// </summary>
-        /// <param name="space"></param>
-        private void SetSpaceLocation(Space space)
-        {
-            space.X = (_audioCanvas.Width / _videoDuration) * space.StartInVideo;
-            space.Y = 0;
-            space.Height = _audioCanvas.ActualHeight;
-            space.Width = (_audioCanvas.Width / _videoDuration) * (space.EndInVideo - space.StartInVideo);
-        }
         #endregion
 
         #region Control Event Handlers

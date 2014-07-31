@@ -439,9 +439,18 @@
     <value>{0}. {1}</value>
     <comment>0: Number, 1: Project Name</comment>
   </data>
+  <data name="MenuItem_Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="MenuItem_Redo" xml:space="preserve">
+    <value>Redo</value>
+  </data>
+  <data name="MenuItem_Undo" xml:space="preserve">
+    <value>Undo</value>  
+  </data>
   <data name="Command_TestMic" xml:space="preserve">
     <value>Test Microphone</value>
-  </data>
+   </data>
   <data name="Header_Microphone" xml:space="preserve">
     <value>Microphone</value>
   </data>
