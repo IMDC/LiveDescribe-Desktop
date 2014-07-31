@@ -19,6 +19,9 @@ namespace LiveDescribe.Controls
         public static DependencyProperty DescriptionProperty =
             DependencyProperty.Register("Description", typeof (Description), typeof (DescriptionControl));
 
+        private double _originalStartInVideo;
+        private double _originalEndInVideo;
+
         private double _originalPositionForDraggingDescription;
 
         public DescriptionControl()
@@ -44,6 +47,10 @@ namespace LiveDescribe.Controls
             {
                 _originalPositionForDraggingDescription = e.GetPosition(Container).X;
                 DescriptionGraphic.CaptureMouse();
+
+                _originalStartInVideo = Description.StartInVideo;
+                _originalEndInVideo = Description.EndInVideo;
+
                 Container.Cursor = CustomResources.GrabbingCursor;
                 Container.CurrentActionState = ItemCanvas.ActionState.Dragging;
             }
@@ -103,8 +110,15 @@ namespace LiveDescribe.Controls
         private void OnFinishDescriptionActionState()
         {
             DescriptionGraphic.ReleaseMouseCapture();
+            SetupUndoAndRedo();
             Container.CurrentActionState = ItemCanvas.ActionState.None;
             Container.Cursor = Cursors.Arrow;
+        }
+
+        private void SetupUndoAndRedo()
+        {
+            Container.UndoRedoManager.InsertItemForMoveUndoRedo(Description, _originalStartInVideo,
+                _originalEndInVideo, Description.StartInVideo, Description.EndInVideo);
         }
     }
 }

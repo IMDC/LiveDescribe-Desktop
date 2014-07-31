@@ -24,7 +24,6 @@ namespace LiveDescribe.Controls
         private const int ResizeSpaceOffset = 10;
         private double _originalMousePositionForDraggingSpace;
 
-        private double _originalXPosition;
         private double _originalStartInVideo;
         private double _originalEndInVideo;
 
@@ -52,7 +51,6 @@ namespace LiveDescribe.Controls
                 double xPos = e.GetPosition(Container).X;
 
                 _originalMousePositionForDraggingSpace = xPos;
-                _originalXPosition = Space.X;
                 _originalStartInVideo = Space.StartInVideo;
                 _originalEndInVideo = Space.EndInVideo;
 
