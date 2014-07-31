@@ -65,7 +65,10 @@
                     Margin="5"
                     Minimum="0"
                     Maximum="100"
-                    Value="{Binding MicrophoneVolume, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    Value="{Binding MicrophoneVolume,
+                        Mode=TwoWay,
+                        UpdateSourceTrigger=PropertyChanged,
+                        ValidatesOnDataErrors=True}" />
             </StackPanel>
         </GroupBox>
 

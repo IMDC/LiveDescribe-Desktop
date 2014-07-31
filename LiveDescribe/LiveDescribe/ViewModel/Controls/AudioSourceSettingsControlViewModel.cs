@@ -198,7 +198,7 @@ namespace LiveDescribe.ViewModel.Controls
                 {
                     _microphoneVolumeControl = control as UnsignedMixerControl;
                     if (_microphoneVolumeControl != null)
-                        _microphoneVolume = _microphoneVolumeControl.Percent;
+                        MicrophoneVolume = _microphoneVolumeControl.Percent;
                     break;
                 }
             }
