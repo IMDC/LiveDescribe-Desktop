@@ -1,4 +1,5 @@
-﻿using LiveDescribe.Model;
+﻿using System;
+using LiveDescribe.Model;
 using LiveDescribe.Resources;
 using LiveDescribe.Utilities;
 using System.Windows;
@@ -15,6 +16,8 @@ namespace LiveDescribe.Controls
         private static readonly log4net.ILog Log = log4net.LogManager.GetLogger
             (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         #endregion
+
+        public const double Tolerance = 0.0001;
 
         public static DependencyProperty DescriptionProperty =
             DependencyProperty.Register("Description", typeof (Description), typeof (DescriptionControl));
@@ -117,8 +120,12 @@ namespace LiveDescribe.Controls
 
         private void SetupUndoAndRedo()
         {
-            Container.UndoRedoManager.InsertItemForMoveUndoRedo(Description, _originalStartInVideo,
-                _originalEndInVideo, Description.StartInVideo, Description.EndInVideo);
+            if (!(Math.Abs(_originalEndInVideo - Description.EndInVideo) < Tolerance &&
+                  Math.Abs(_originalStartInVideo - Description.StartInVideo) < Tolerance))
+            {
+                Container.UndoRedoManager.InsertItemForMoveOrResizeUndoRedo(Description, _originalStartInVideo,
+                    _originalEndInVideo, Description.StartInVideo, Description.EndInVideo);
+            }
         }
     }
 }

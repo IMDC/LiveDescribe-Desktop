@@ -4,7 +4,7 @@ using LiveDescribe.Model;
 
 namespace LiveDescribe.HistoryItems
 {
-    public class MoveHistoryItem : IHistoryItem
+    public class MoveOrResizeHistoryItem : IHistoryItem
     {
         private readonly IDescribableInterval _itemInterval;
 
@@ -14,7 +14,7 @@ namespace LiveDescribe.HistoryItems
         private readonly double _newStartInVideo;
         private readonly double _newEndInVideo;
 
-        public MoveHistoryItem(IDescribableInterval itemInterval, double originalStartInVideo, double originalEndInVideo, 
+        public MoveOrResizeHistoryItem(IDescribableInterval itemInterval, double originalStartInVideo, double originalEndInVideo, 
             double newStartInVideo, double newEndInVideo)
         {
             _itemInterval = itemInterval;

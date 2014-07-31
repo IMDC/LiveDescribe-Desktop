@@ -194,7 +194,7 @@
     <Compile Include="Factories\MessageBoxFactory.cs" />
     <Compile Include="HistoryItems\DeleteDescriptionHistoryItem.cs" />
     <Compile Include="HistoryItems\InsertDescriptionHistoryItem.cs" />
-    <Compile Include="HistoryItems\MoveHistoryItem.cs" />
+    <Compile Include="HistoryItems\MoveOrResizeHistoryItem.cs" />
     <Compile Include="Interfaces\ICopy.cs" />
     <Compile Include="Interfaces\IDescribableInterval.cs" />
     <Compile Include="Interfaces\IListIndexable.cs" />

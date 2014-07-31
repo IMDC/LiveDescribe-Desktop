@@ -17,6 +17,8 @@ namespace LiveDescribe.Controls
             (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         #endregion
 
+        public const double Tolerance = 0.0001;
+
         public static DependencyProperty SpaceProperty =
             DependencyProperty.Register("Space", typeof(Space), typeof(SpaceControl));
 
@@ -96,10 +98,16 @@ namespace LiveDescribe.Controls
 
         private void SetupUndoAndRedo()
         {
-            if (Container.CurrentActionState == ItemCanvas.ActionState.Dragging)
+            if (Container.CurrentActionState == ItemCanvas.ActionState.Dragging || 
+                Container.CurrentActionState == ItemCanvas.ActionState.ResizingBeginningOfItem ||
+                Container.CurrentActionState == ItemCanvas.ActionState.ResizingEndOfItem)
             {
-                Container.UndoRedoManager.InsertItemForMoveUndoRedo(Space, _originalStartInVideo, _originalEndInVideo,
-                    Space.StartInVideo, Space.EndInVideo);
+                if (!(Math.Abs(_originalEndInVideo - Space.EndInVideo) < Tolerance && Math.Abs(_originalStartInVideo - Space.StartInVideo) < Tolerance))
+                {
+                    Container.UndoRedoManager.InsertItemForMoveOrResizeUndoRedo(Space, _originalStartInVideo,
+                        _originalEndInVideo,
+                        Space.StartInVideo, Space.EndInVideo);
+                }
             }
         }
 

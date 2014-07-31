@@ -80,10 +80,10 @@ namespace LiveDescribe.Managers
             _undoStack.Push(cmd); _redoStack.Clear();
         }
 
-        public void InsertItemForMoveUndoRedo(IDescribableInterval item, double originalStartInVideo, double originalEndInVideo,
+        public void InsertItemForMoveOrResizeUndoRedo(IDescribableInterval item, double originalStartInVideo, double originalEndInVideo,
             double newStartInVideo, double newEndInVideo)
         {
-            var cmd = new MoveHistoryItem(item, originalStartInVideo, originalEndInVideo,
+            var cmd = new MoveOrResizeHistoryItem(item, originalStartInVideo, originalEndInVideo,
                 newStartInVideo, newEndInVideo);
             _undoStack.Push(cmd); _redoStack.Clear();
         }

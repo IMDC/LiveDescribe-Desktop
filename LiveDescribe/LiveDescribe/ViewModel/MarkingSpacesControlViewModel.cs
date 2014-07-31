@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Interfaces;
+using LiveDescribe.Managers;
 using LiveDescribe.Model;
 using System.ComponentModel;
 using System.Windows.Input;
@@ -14,10 +15,11 @@ namespace LiveDescribe.ViewModel
         private bool _editingEnabled;
         private Space _selectedSpace;
         private readonly ILiveDescribePlayer _player;
+        private readonly UndoRedoManager _undoRedoManager;
         #endregion
 
         #region Constructors
-        public MarkingSpacesControlViewModel(DescriptionInfoTabViewModel descriptionInfo, ILiveDescribePlayer player)
+        public MarkingSpacesControlViewModel(DescriptionInfoTabViewModel descriptionInfo, ILiveDescribePlayer player, UndoRedoManager undoRedoManager)
         {
             descriptionInfo.PropertyChanged += (sender, args) =>
             {
@@ -25,6 +27,7 @@ namespace LiveDescribe.ViewModel
                     SelectedSpace = descriptionInfo.SelectedSpace;
             };
 
+            _undoRedoManager = undoRedoManager;
             _player = player;
 
             EditingEnabled = false;
@@ -36,13 +39,25 @@ namespace LiveDescribe.ViewModel
         {
             SetBeginToMarker = new RelayCommand(
                 canExecute: () => EditingEnabled,
-                execute: () => SelectedSpace_StartInVideo = _player.Position.TotalMilliseconds
-                );
+                execute: () =>
+                {
+                    double originalStartInVideo = SelectedSpace.StartInVideo;
+                    double originalEndInVideo = SelectedSpace.EndInVideo;
+                    SelectedSpace_StartInVideo = _player.Position.TotalMilliseconds;
+                    _undoRedoManager.InsertItemForMoveOrResizeUndoRedo(SelectedSpace, originalStartInVideo,
+                        originalEndInVideo, SelectedSpace.StartInVideo, SelectedSpace.EndInVideo);
+                });
 
             SetEndToMarker = new RelayCommand(
                 canExecute: () => EditingEnabled,
-                execute: () => SelectedSpace_EndInVideo = _player.Position.TotalMilliseconds
-                );
+                execute: () =>
+                {
+                    double originalStartInVideo = SelectedSpace.StartInVideo;
+                    double originalEndInVideo = SelectedSpace.EndInVideo;
+                    SelectedSpace_EndInVideo = _player.Position.TotalMilliseconds;
+                    _undoRedoManager.InsertItemForMoveOrResizeUndoRedo(SelectedSpace, originalStartInVideo,
+                        originalEndInVideo, SelectedSpace.StartInVideo, SelectedSpace.EndInVideo);
+                });
         }
         #endregion
 
