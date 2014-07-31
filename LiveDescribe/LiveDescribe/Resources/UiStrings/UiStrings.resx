@@ -180,7 +180,7 @@
     <comment>Description Recording control</comment>
   </data>
   <data name="Header_AudioSource" xml:space="preserve">
-    <value>AudioSource</value>
+    <value>Microphone</value>
     <comment>Prefences Window</comment>
   </data>
   <data name="Header_Channels" xml:space="preserve">
@@ -446,6 +446,18 @@
     <value>Redo</value>
   </data>
   <data name="MenuItem_Undo" xml:space="preserve">
-    <value>Undo</value>
+    <value>Undo</value>  
+  </data>
+  <data name="Command_TestMic" xml:space="preserve">
+    <value>Test Microphone</value>
+   </data>
+  <data name="Header_Microphone" xml:space="preserve">
+    <value>Microphone</value>
+  </data>
+  <data name="Header_VolumeLevel" xml:space="preserve">
+    <value>Volume Level</value>
+  </data>
+  <data name="Label_MicTestWarning" xml:space="preserve">
+    <value>Warning: Testing the microphone while using speakers will result in a lot of reverberation. It is reccomended to use headphones while testing a microphone to avoid this.</value>
   </data>
 </root>

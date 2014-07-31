@@ -7,13 +7,15 @@
     xmlns:s="clr-namespace:LiveDescribe.Resources.UiStrings"
     xmlns:controls="clr-namespace:LiveDescribe.Controls"
     xmlns:viewModel="clr-namespace:LiveDescribe.ViewModel"
-    xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+    xmlns:controlViews="clr-namespace:LiveDescribe.View.Controls"
+    xmlns:controls1="clr-namespace:LiveDescribe.ViewModel.Controls"
     mc:Ignorable="d"
     Title="{x:Static s:UiStrings.Window_PreferencesTitle}"
     Height="500"
     Width="500"
     ResizeMode="NoResize"
-    d:DataContext="{d:DesignInstance viewModel:PreferencesViewModel}">
+    d:DataContext="{d:DesignInstance viewModel:PreferencesViewModel}"
+    Closed="PreferencesWindow_OnClosed">
     <Window.Resources>
         <Style
             x:Key="ButtonStyle"
@@ -26,8 +28,8 @@
                 Value="10" />
         </Style>
         <Style
-            x:Key="ColorPickerStyle"
-            TargetType="xctk:ColorPicker">
+            x:Key="ComboBoxStyle"
+            TargetType="ComboBox">
             <Setter
                 Property="Margin"
                 Value="5" />
@@ -58,82 +60,15 @@
                 <!--Colour Tab-->
                 <TabItem
                     Header="{x:Static s:UiStrings.Header_ColourSettings}">
-                    <StackPanel>
-                        <GroupBox
-                            Header="{x:Static s:UiStrings.Header_RegularDescriptions}">
-                            <xctk:ColorPicker
-                                Style="{StaticResource ColorPickerStyle}"
-                                SelectedColor="{Binding ColourScheme.RegularDescriptionColour}" />
-                        </GroupBox>
-                        <GroupBox
-                            Header="{x:Static s:UiStrings.Header_ExtendedDescriptions}">
-                            <xctk:ColorPicker
-                                Style="{StaticResource ColorPickerStyle}"
-                                SelectedColor="{Binding ColourScheme.ExtendedDescriptionColour}" />
-                        </GroupBox>
-                        <GroupBox
-                            Header="{x:Static s:UiStrings.Header_Spaces}">
-                            <xctk:ColorPicker
-                                Style="{StaticResource ColorPickerStyle}"
-                                SelectedColor="{Binding ColourScheme.SpaceColour}" />
-                        </GroupBox>
-                        <GroupBox
-                            Header="{x:Static s:UiStrings.Header_CompletedSpaces}">
-                            <xctk:ColorPicker
-                                Style="{StaticResource ColorPickerStyle}"
-                                SelectedColor="{Binding ColourScheme.CompletedSpaceColour}" />
-                        </GroupBox>
-                        <GroupBox
-                            Header="{x:Static s:UiStrings.Header_SelectedItem}">
-                            <xctk:ColorPicker
-                                Style="{StaticResource ColorPickerStyle}"
-                                SelectedColor="{Binding ColourScheme.SelectedItemColour}" />
-                        </GroupBox>
-                        <Button
-                            Style="{StaticResource ButtonStyle}"
-                            Content="{x:Static s:UiStrings.Command_ResetToDefault}"
-                            Command="{Binding ResetColourScheme}"
-                            HorizontalAlignment="Right" />
-                    </StackPanel>
+                    <controls1:ColourSchemeSettingsControl
+                        DataContext="{Binding ColourSchemeSettingsControlViewModel}" />
                 </TabItem>
 
                 <!--Mic Tab-->
                 <TabItem
                     Header="{x:Static s:UiStrings.Header_AudioSource}">
-                    <ListView
-                        ItemsSource="{Binding Sources}">
-                        <ListView.SelectedItem>
-                            <Binding
-                                Path="SelectedAudioSource"
-                                UpdateSourceTrigger="PropertyChanged"
-                                ValidatesOnDataErrors="True"
-                                Mode="TwoWay" />
-                        </ListView.SelectedItem>
-                        <ListView.View>
-                            <GridView>
-                                <GridViewColumn
-                                    Header="{x:Static s:UiStrings.Header_Name}"
-                                    Width="240">
-                                    <GridViewColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock
-                                                Text="{Binding Name}" />
-                                        </DataTemplate>
-                                    </GridViewColumn.CellTemplate>
-                                </GridViewColumn>
-                                <GridViewColumn
-                                    Header="{x:Static s:UiStrings.Header_Channels}"
-                                    Width="240">
-                                    <GridViewColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock
-                                                Text="{Binding Channels}" />
-                                        </DataTemplate>
-                                    </GridViewColumn.CellTemplate>
-                                </GridViewColumn>
-                            </GridView>
-                        </ListView.View>
-                    </ListView>
+                    <controlViews:AudioSourceSettingsControl
+                        DataContext="{Binding AudioSourceSettingsControlViewModel}" />
                 </TabItem>
             </TabControl>
         </DockPanel>

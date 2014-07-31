@@ -12,7 +12,6 @@ using LiveDescribe.Resources.UiStrings;
 using LiveDescribe.Utilities;
 using LiveDescribe.View;
 using Microsoft.Win32;
-using NAudio;
 using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
@@ -199,7 +198,7 @@ namespace LiveDescribe.ViewModel
 
             ShowPreferences = new RelayCommand(() =>
             {
-                _preferences.InitializeAudioSourceInfo();
+                _preferences.RetrieveApplicationSettings();
                 var preferencesWindow = new PreferencesWindow(_preferences);
                 preferencesWindow.ShowDialog();
             });
@@ -253,21 +252,6 @@ namespace LiveDescribe.ViewModel
             _descriptiontimer = new Timer(10);
             _descriptiontimer.Elapsed += Play_Tick;
             _descriptiontimer.AutoReset = true;
-
-            _preferences.ApplyRequested += (sender, e) =>
-            {
-                _descriptionRecordingControlViewModel.Recorder.MicrophoneDeviceNumber =
-                    Settings.Default.Microphone.DeviceNumber;
-                try
-                {
-                    Log.Info("Product Name of Apply Requested Microphone: " + NAudio.Wave.WaveIn.GetCapabilities(
-                        _descriptionRecordingControlViewModel.Recorder.MicrophoneDeviceNumber).ProductName);
-                }
-                catch (MmException)
-                {
-                    Log.Info("No Microphone is plugged in.");
-                }
-            };
 
             #region MediaControlViewModel Events
             _mediaControlViewModel.PlayRequested += (sender, e) =>

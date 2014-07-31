@@ -1,17 +1,10 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Extensions;
-using LiveDescribe.Factories;
 using LiveDescribe.Model;
 using LiveDescribe.Properties;
-using LiveDescribe.Resources.UiStrings;
-using NAudio.Wave;
+using LiveDescribe.ViewModel.Controls;
 using System;
-using System.Collections.ObjectModel;
-using System.Globalization;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Windows;
 using System.Windows.Input;
 
 namespace LiveDescribe.ViewModel
@@ -23,80 +16,20 @@ namespace LiveDescribe.ViewModel
             (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         #endregion
 
-        #region Inner Classes
-
-        public class AudioSourceInfo : ISerializable
-        {
-            public WaveInCapabilities Source { set; get; }
-            public string Name { set; get; }
-            public string Channels { set; get; }
-            public int DeviceNumber { set; get; }
-            public AudioSourceInfo(string name, string channels, WaveInCapabilities source, int deviceNumber)
-            {
-                Name = name;
-                Channels = channels;
-                Source = source;
-                DeviceNumber = deviceNumber;
-            }
-
-            public void GetObjectData(SerializationInfo info, StreamingContext context)
-            {
-                info.AddValue("source", Source, typeof(WaveInCapabilities));
-            }
-
-            public AudioSourceInfo(SerializationInfo info, StreamingContext context)
-            {
-                Source =
-                    (WaveInCapabilities)info.GetValue("source", typeof(WaveInCapabilities));
-            }
-
-            public override bool Equals(object obj)
-            {
-                if (obj == null)
-                    return false;
-
-                var info = obj as AudioSourceInfo;
-                if (info == null)
-                    return false;
-
-                return (Name == info.Name)
-                    && (Channels == info.Channels)
-                    && (DeviceNumber == info.DeviceNumber);
-            }
-
-            public bool Equals(AudioSourceInfo info)
-            {
-                if (info == null)
-                    return false;
-
-                return (Name == info.Name)
-                    && (Channels == info.Channels)
-                    && (DeviceNumber == info.DeviceNumber);
-            }
-
-            public override int GetHashCode()
-            {
-                String str = Name + Channels + DeviceNumber;
-                return str.GetHashCode();
-            }
-        }
-        #endregion
-
         #region Instance Variables
-        private ObservableCollection<AudioSourceInfo> _sources;
-        private AudioSourceInfo _selectedsource;
-        private ColourScheme _colourScheme;
+        private readonly AudioSourceSettingsControlViewModel _audioSourceSettingsControlViewModel;
+        private readonly ColourSchemeSettingsControlViewModel _colourSchemeSettingsControlViewModel;
         #endregion
 
         #region Events
-        public event EventHandler ApplyRequested;
         public event EventHandler RequestClose;
         #endregion
 
         #region Constructors
         public PreferencesViewModel()
         {
-            _sources = new ObservableCollection<AudioSourceInfo>();
+            _audioSourceSettingsControlViewModel = new AudioSourceSettingsControlViewModel();
+            _colourSchemeSettingsControlViewModel = new ColourSchemeSettingsControlViewModel();
 
             RetrieveApplicationSettings();
 
@@ -107,11 +40,7 @@ namespace LiveDescribe.ViewModel
         {
             AcceptChanges = new RelayCommand(
                 canExecute: () => true,
-                execute: () =>
-                {
-                    SaveApplicationSettings();
-                    OnApplyRequested();
-                });
+                execute: SaveApplicationSettings);
 
             AcceptChangesAndClose = new RelayCommand(
                 canExecute: () => AcceptChanges.CanExecute(),
@@ -124,18 +53,7 @@ namespace LiveDescribe.ViewModel
             CancelChanges = new RelayCommand(
                 canExecute: () => true,
                 execute: OnRequestClose);
-
-            ResetColourScheme = new RelayCommand(
-                canExecute: () => true,
-                execute: () =>
-                {
-                    var result = MessageBoxFactory.ShowWarningQuestion(UiStrings.MessageBox_ResetColourSchemeWarning);
-
-                    if (result == MessageBoxResult.Yes)
-                        ColourScheme = ColourScheme.DefaultColourScheme.DeepCopy();
-                });
         }
-
         #endregion
 
         #region Commands
@@ -146,45 +64,19 @@ namespace LiveDescribe.ViewModel
         public ICommand AcceptChanges { get; private set; }
         public ICommand AcceptChangesAndClose { get; private set; }
         public ICommand CancelChanges { get; private set; }
-        public ICommand ResetColourScheme { get; private set; }
         #endregion
 
         #region Properties
 
-        /// <summary>
-        /// Collection that holds all the AudioSourceInfo for every microphone available
-        /// </summary>
-        public ObservableCollection<AudioSourceInfo> Sources
+
+        public ColourSchemeSettingsControlViewModel ColourSchemeSettingsControlViewModel
         {
-            private set
-            {
-                _sources = value;
-                RaisePropertyChanged();
-            }
-            get { return _sources; }
+            get { return _colourSchemeSettingsControlViewModel; }
         }
 
-        /// <summary>
-        /// The object in the AudioSourceInfo Collection that is selected in the preferences window
-        /// </summary>
-        public AudioSourceInfo SelectedAudioSource
+        public AudioSourceSettingsControlViewModel AudioSourceSettingsControlViewModel
         {
-            set
-            {
-                _selectedsource = value;
-                RaisePropertyChanged();
-            }
-            get { return _selectedsource; }
-        }
-
-        public ColourScheme ColourScheme
-        {
-            get { return _colourScheme; }
-            set
-            {
-                _colourScheme = value;
-                RaisePropertyChanged();
-            }
+            get { return _audioSourceSettingsControlViewModel; }
         }
 
         #endregion
@@ -197,72 +89,32 @@ namespace LiveDescribe.ViewModel
         /// </summary>
         public void RetrieveApplicationSettings()
         {
-            ColourScheme = (Settings.Default.ColourScheme != null)
+            ColourSchemeSettingsControlViewModel.ColourScheme = (Settings.Default.ColourScheme != null)
                 ? Settings.Default.ColourScheme.DeepCopy()
                 : ColourScheme.DefaultColourScheme.DeepCopy();
+
+            AudioSourceSettingsControlViewModel.InitializeAudioSourceInfo();
 
             Log.Info("Application settings loaded");
         }
 
         public void SaveApplicationSettings()
         {
-            Settings.Default.ColourScheme = ColourScheme;
+            Settings.Default.ColourScheme = ColourSchemeSettingsControlViewModel.ColourScheme;
             Settings.Default.Save();
 
-            SaveAudioSourceInfo();
+            AudioSourceSettingsControlViewModel.SaveAudioSourceInfo();
 
             Log.Info("Application settings saved");
         }
 
-        /// <summary>
-        /// used to initialize the Collection of all the microphones available
-        /// </summary>
-        public void InitializeAudioSourceInfo()
+        public void CloseCleanup()
         {
-            for (int i = 0; i < WaveIn.DeviceCount; ++i)
-            {
-                var capability = WaveIn.GetCapabilities(i);
-                var audioSource = new AudioSourceInfo(capability.ProductName,
-                    capability.Channels.ToString(CultureInfo.InvariantCulture), capability, i);
-                if (!Sources.Contains(audioSource))
-                    Sources.Add(audioSource);
-            }
-
-            if (Settings.Default.Microphone != null && 0 < Sources.Count)
-                SelectedAudioSource = Sources.First(audioSourceInfo =>
-                    audioSourceInfo.DeviceNumber == Settings.Default.Microphone.DeviceNumber);
-            else if (0 < Sources.Count)
-                SelectedAudioSource = Sources[0];
-            else
-                SelectedAudioSource = null;
-        }
-
-        /// <summary>
-        /// used to save the selected microphone to the settings
-        /// </summary>
-        private void SaveAudioSourceInfo()
-        {
-            if (SelectedAudioSource == null)
-                return;
-
-            var sourceStream = new WaveIn
-            {
-                DeviceNumber = SelectedAudioSource.DeviceNumber,
-                WaveFormat = new WaveFormat(44100, SelectedAudioSource.Source.Channels)
-            };
-
-            Settings.Default.Microphone = sourceStream;
-            Settings.Default.Save();
+            AudioSourceSettingsControlViewModel.StopForClose();
         }
         #endregion
 
         #region Event Invokation
-        private void OnApplyRequested()
-        {
-            var handler = ApplyRequested;
-            if (handler != null) handler(this, EventArgs.Empty);
-        }
-
         /// <summary>
         /// Makes a request to the view to close itself.
         /// </summary>

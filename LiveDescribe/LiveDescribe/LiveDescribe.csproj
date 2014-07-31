@@ -202,6 +202,7 @@
     <Compile Include="LiveDescribeConstants.cs" />
     <Compile Include="Managers\ProjectLoader.cs" />
     <Compile Include="Managers\ProjectManager.cs" />
+    <Compile Include="Model\AudioScourceInfo.cs" />
     <Compile Include="Managers\UndoRedoManager.cs" />
     <Compile Include="Model\ColourScheme.cs" />
     <Compile Include="Model\ObservableDropoutCollection.cs" />
@@ -217,14 +218,14 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Resources\CustomResources.cs" />
+    <Compile Include="Properties\Settings.cs" />
+    <Compile Include="HistoryItems\DeleteSpaceHistoryItem.cs" />
+    <Compile Include="HistoryItems\InsertSpaceHistoryItem.cs" />
     <Compile Include="Resources\UiStrings\UiStrings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>UiStrings.resx</DependentUpon>
     </Compile>
-    <Compile Include="Properties\Settings.cs" />
-    <Compile Include="HistoryItems\DeleteSpaceHistoryItem.cs" />
-    <Compile Include="HistoryItems\InsertSpaceHistoryItem.cs" />
     <Compile Include="Utilities\AudioAnalyzer.cs" />
     <Compile Include="Utilities\DescriptionExportUtility.cs" />
     <Compile Include="Utilities\DescriptionPlayer.cs" />
@@ -239,6 +240,11 @@
     <Compile Include="Utilities\Time.cs" />
     <Compile Include="ViewModel\AboutInfoViewModel.cs" />
     <Compile Include="ViewModel\AudioCanvasViewModel.cs" />
+    <Compile Include="ViewModel\Controls\AudioSourceSettingsControlViewModel.cs" />
+    <Compile Include="ViewModel\Controls\ColourSchemeSettingsControl.xaml.cs">
+      <DependentUpon>ColourSchemeSettingsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModel\Controls\ColourSchemeSettingsControlViewModel.cs" />
     <Compile Include="ViewModel\CountdownControlViewModel.cs" />
     <Compile Include="ViewModel\DescriptionCanvasViewModel.cs" />
     <Compile Include="ViewModel\DescriptionInfoTabViewModel.cs" />
@@ -249,6 +255,9 @@
     <Compile Include="ViewModel\SpaceRecordingViewModel.cs" />
     <Compile Include="View\AboutInfoView.xaml.cs">
       <DependentUpon>AboutInfoView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Controls\AudioSourceSettingsControl.xaml.cs">
+      <DependentUpon>AudioSourceSettingsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\ExportWindow.xaml.cs">
       <DependentUpon>ExportWindow.xaml</DependentUpon>
@@ -307,7 +316,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="ViewModel\Controls\ColourSchemeSettingsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="View\AboutInfoView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Controls\AudioSourceSettingsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -365,8 +382,8 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\UiStrings\UiStrings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>UiStrings.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>UiStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="Log4Net.config">
       <SubType>Designer</SubType>
