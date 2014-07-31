@@ -134,6 +134,11 @@ namespace LiveDescribe.ViewModel
                 RaisePropertyChanged("SelectedSpace_StartInVideo");
             else if (e.PropertyName.Equals("EndInVideo"))
                 RaisePropertyChanged("SelectedSpace_EndInVideo");
+            else if (e.PropertyName.Equals("SetStartAndEndInVideo"))
+            {
+                RaisePropertyChanged("SelectedSpace_StartInVideo");
+                RaisePropertyChanged("SelectedSpace_EndInVideo");
+            }
         }
 
         public double SelectedSpace_StartInVideo
