@@ -56,6 +56,11 @@
                     Content="{x:Static s:UiStrings.Command_Apply}" />
             </StackPanel>
             <TabControl>
+                <TabItem
+                    Header="{x:Static s:UiStrings.Header_General}">
+                    <controlViews:GeneralSettingsControl
+                        DataContext="{Binding GeneralSettingsControlViewModel}"/>
+                </TabItem>
 
                 <!--Colour Tab-->
                 <TabItem

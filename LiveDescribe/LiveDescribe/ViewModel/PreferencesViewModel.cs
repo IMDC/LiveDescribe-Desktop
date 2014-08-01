@@ -21,6 +21,7 @@ namespace LiveDescribe.ViewModel
         private bool _settingsChanged;
         private readonly AudioSourceSettingsControlViewModel _audioSourceSettingsControlViewModel;
         private readonly ColourSchemeSettingsControlViewModel _colourSchemeSettingsControlViewModel;
+        private readonly GeneralSettingsControlViewModel _generalSettingsControlViewModel;
         #endregion
 
         #region Events
@@ -91,6 +92,11 @@ namespace LiveDescribe.ViewModel
         public AudioSourceSettingsControlViewModel AudioSourceSettingsControlViewModel
         {
             get { return _audioSourceSettingsControlViewModel; }
+        }
+
+        public GeneralSettingsControlViewModel GeneralSettingsControlViewModel
+        {
+            get { return _generalSettingsControlViewModel; }
         }
 
         #endregion
