@@ -5,6 +5,7 @@ using LiveDescribe.Model;
 using LiveDescribe.Properties;
 using LiveDescribe.ViewModel.Controls;
 using System;
+using System.ComponentModel;
 using System.Windows.Input;
 
 namespace LiveDescribe.ViewModel
@@ -17,6 +18,7 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Instance Variables
+        private bool _settingsChanged;
         private readonly AudioSourceSettingsControlViewModel _audioSourceSettingsControlViewModel;
         private readonly ColourSchemeSettingsControlViewModel _colourSchemeSettingsControlViewModel;
         #endregion
@@ -29,7 +31,10 @@ namespace LiveDescribe.ViewModel
         public PreferencesViewModel()
         {
             _audioSourceSettingsControlViewModel = new AudioSourceSettingsControlViewModel();
+            _audioSourceSettingsControlViewModel.PropertyChanged += CheckForViewModelSettingsChanged;
+
             _colourSchemeSettingsControlViewModel = new ColourSchemeSettingsControlViewModel();
+            _colourSchemeSettingsControlViewModel.PropertyChanged += CheckForViewModelSettingsChanged;
 
             RetrieveApplicationSettings();
 
@@ -39,14 +44,14 @@ namespace LiveDescribe.ViewModel
         private void InitCommands()
         {
             AcceptChanges = new RelayCommand(
-                canExecute: () => true,
+                canExecute: () => SettingsChanged,
                 execute: SaveApplicationSettings);
 
             AcceptChangesAndClose = new RelayCommand(
-                canExecute: () => AcceptChanges.CanExecute(),
+                canExecute: () => true,
                 execute: () =>
                 {
-                    AcceptChanges.Execute();
+                    AcceptChanges.ExecuteIfCan();
                     OnRequestClose();
                 });
 
@@ -68,6 +73,15 @@ namespace LiveDescribe.ViewModel
 
         #region Properties
 
+        public bool SettingsChanged
+        {
+            set
+            {
+                _settingsChanged = value;
+                RaisePropertyChanged();
+            }
+            get { return _settingsChanged; }
+        }
 
         public ColourSchemeSettingsControlViewModel ColourSchemeSettingsControlViewModel
         {
@@ -95,6 +109,7 @@ namespace LiveDescribe.ViewModel
 
             AudioSourceSettingsControlViewModel.InitializeAudioSourceInfo();
 
+            SettingsChanged = false;
             Log.Info("Application settings loaded");
         }
 
@@ -105,7 +120,26 @@ namespace LiveDescribe.ViewModel
 
             AudioSourceSettingsControlViewModel.SaveAudioSourceInfo();
 
+            SettingsChanged = false;
             Log.Info("Application settings saved");
+        }
+
+        private void CheckForViewModelSettingsChanged(object sender, PropertyChangedEventArgs args)
+        {
+            switch (args.PropertyName)
+            {
+                case "SelectedAudioSource":
+                case "MicrophoneVolume":
+                    SettingsChanged = true;
+                    break;
+                case "ColourScheme":
+                    ColourSchemeSettingsControlViewModel.ColourScheme.PropertyChanged += (csSender, csArgs) =>
+                    {
+                        if (args.PropertyName.Contains("Colour"))
+                            SettingsChanged = true;
+                    };
+                    break;
+            }
         }
 
         public void CloseCleanup()
