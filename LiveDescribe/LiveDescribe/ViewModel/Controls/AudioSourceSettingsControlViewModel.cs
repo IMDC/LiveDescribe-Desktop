@@ -40,7 +40,7 @@ namespace LiveDescribe.ViewModel.Controls
                 canExecute: () => SelectedAudioSource != null,
                 execute: () =>
                 {
-                    if (_microphoneRecorder == null)
+                    if (_microphonePlayer == null)
                         StartMicrophoneTest();
                     else
                         StopMicrophoneTest();
@@ -122,25 +122,35 @@ namespace LiveDescribe.ViewModel.Controls
                 SelectedAudioSource = null;
         }
 
-        private void StartMicrophoneTest()
+        private void SetMicrophoneRecorder()
         {
-            var recordFormat = new WaveFormat(44100, SelectedAudioSource.Source.Channels);
+            //Cleanup
+            if(_microphoneRecorder != null)
+            {
+                _microphoneRecorder.StopRecording();
+                _microphoneRecorder.Dispose();
+            }
+
             _microphoneRecorder = new WaveIn
             {
                 DeviceNumber = SelectedAudioSource.DeviceNumber,
-                WaveFormat = recordFormat,
+                WaveFormat = new WaveFormat(44100, SelectedAudioSource.Source.Channels),
             };
             _microphoneRecorder.DataAvailable += MicrophoneRecorderOnDataAvailable;
 
-            _microphoneBuffer = new BufferedWaveProvider(recordFormat);
+            _microphoneRecorder.StartRecording();
+
+            TryGetVolumeControl();
+        }
+
+        private void StartMicrophoneTest()
+        {
+            _microphoneBuffer = new BufferedWaveProvider(_microphoneRecorder.WaveFormat);
 
             _microphonePlayer = new WaveOut();
             _microphonePlayer.Init(_microphoneBuffer);
 
-            _microphoneRecorder.StartRecording();
             _microphonePlayer.Play();
-
-            TryGetVolumeControl();
         }
 
         /// <summary>
@@ -172,18 +182,12 @@ namespace LiveDescribe.ViewModel.Controls
             if (_microphonePlayer == null)
                 return;
 
-            _microphoneRecorder.StopRecording();
             _microphonePlayer.Stop();
-
-            _microphoneRecorder.Dispose();
-            _microphoneRecorder = null;
 
             _microphonePlayer.Dispose();
             _microphonePlayer = null;
 
-            _microphoneBuffer.ClearBuffer();
-
-            MicrophoneReceiveLevel = 0;
+            _microphoneBuffer = null;
         }
 
         /// <summary>
@@ -217,7 +221,7 @@ namespace LiveDescribe.ViewModel.Controls
             base.RaisePropertyChanged(propertyName);
 
             if (propertyName == "SelectedAudioSource")
-                TryGetVolumeControl();
+                SetMicrophoneRecorder();
             if (propertyName == "MicrophoneVolume" && _microphoneVolumeControl != null)
                 _microphoneVolumeControl.Percent = MicrophoneVolume;
         }
@@ -243,7 +247,9 @@ namespace LiveDescribe.ViewModel.Controls
                 max = Math.Max(max, Math.Max(leftValue, rightValue));
             }
             MicrophoneReceiveLevel = max;
-            _microphoneBuffer.AddSamples(args.Buffer, 0, args.BytesRecorded);
+
+            if (_microphoneBuffer != null)
+                _microphoneBuffer.AddSamples(args.Buffer, 0, args.BytesRecorded);
         }
         #endregion
     }
