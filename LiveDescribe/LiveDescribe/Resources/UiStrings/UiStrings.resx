@@ -460,6 +460,9 @@
   <data name="Label_MicTestWarning" xml:space="preserve">
     <value>Warning: Testing the microphone while using speakers will result in a lot of reverberation. It is reccomended to use headphones while testing a microphone to avoid this.</value>
   </data>
+  <data name="Command_ToggleFindSpaces" xml:space="preserve">
+    <value>Automatically find spaces in a new project</value>
+  </data>
   <data name="Header_General" xml:space="preserve">
     <value>General</value>
   </data>

@@ -9,7 +9,16 @@ namespace LiveDescribe.ViewModel.Controls
 {
     public class GeneralSettingsControlViewModel : ViewModelBase
     {
-        public GeneralSettingsControlViewModel()
-        { }
+        private bool _autoGenerateSpaces;
+
+        public bool AutoGenerateSpaces
+        {
+            set
+            {
+                _autoGenerateSpaces = value;
+                RaisePropertyChanged();
+            }
+            get { return _autoGenerateSpaces; }
+        }
     }
 }

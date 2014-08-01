@@ -286,6 +286,15 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Automatically find spaces in a new project.
+        /// </summary>
+        public static string Command_ToggleFindSpaces {
+            get {
+                return ResourceManager.GetString("Command_ToggleFindSpaces", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Record Extended Description.
         /// </summary>
         public static string Command_ToggleRecordExtended {

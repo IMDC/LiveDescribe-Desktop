@@ -37,6 +37,8 @@ namespace LiveDescribe.ViewModel
             _colourSchemeSettingsControlViewModel = new ColourSchemeSettingsControlViewModel();
             _colourSchemeSettingsControlViewModel.PropertyChanged += CheckForViewModelSettingsChanged;
 
+            _generalSettingsControlViewModel = new GeneralSettingsControlViewModel();
+
             RetrieveApplicationSettings();
 
             InitCommands();
@@ -115,6 +117,8 @@ namespace LiveDescribe.ViewModel
 
             AudioSourceSettingsControlViewModel.InitializeAudioSourceInfo();
 
+            GeneralSettingsControlViewModel.AutoGenerateSpaces = Settings.Default.AutoGenerateSpaces;
+
             SettingsChanged = false;
             Log.Info("Application settings loaded");
         }
@@ -122,10 +126,12 @@ namespace LiveDescribe.ViewModel
         public void SaveApplicationSettings()
         {
             Settings.Default.ColourScheme = ColourSchemeSettingsControlViewModel.ColourScheme;
-            Settings.Default.Save();
 
             AudioSourceSettingsControlViewModel.SaveAudioSourceInfo();
 
+            Settings.Default.AutoGenerateSpaces = GeneralSettingsControlViewModel.AutoGenerateSpaces;
+
+            Settings.Default.Save();
             SettingsChanged = false;
             Log.Info("Application settings saved");
         }
