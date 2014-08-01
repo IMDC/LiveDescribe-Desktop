@@ -199,6 +199,7 @@
     <Compile Include="Interfaces\IDescribableInterval.cs" />
     <Compile Include="Interfaces\IListIndexable.cs" />
     <Compile Include="Interfaces\IHistoryItem.cs" />
+    <Compile Include="Interfaces\ISettingsViewModel.cs" />
     <Compile Include="LiveDescribeConstants.cs" />
     <Compile Include="Managers\ProjectLoader.cs" />
     <Compile Include="Managers\ProjectManager.cs" />

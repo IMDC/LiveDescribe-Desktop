@@ -1,14 +1,16 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Factories;
+using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
+using LiveDescribe.Properties;
 using LiveDescribe.Resources.UiStrings;
 using System.Windows;
 using System.Windows.Input;
 
 namespace LiveDescribe.ViewModel.Controls
 {
-    public class ColourSchemeSettingsControlViewModel : ViewModelBase
+    public class ColourSchemeSettingsControlViewModel : ViewModelBase, ISettingsViewModel
     {
         #region Logger
         private static readonly log4net.ILog Log = log4net.LogManager.GetLogger
@@ -45,6 +47,16 @@ namespace LiveDescribe.ViewModel.Controls
                 RaisePropertyChanged();
             }
             get { return _colourScheme; }
+        }
+
+        public void RetrieveApplicationSettings()
+        {
+            ColourScheme = Settings.Default.ColourScheme.DeepCopy();
+        }
+
+        public void SetApplicationSettings()
+        {
+            Settings.Default.ColourScheme = ColourScheme;
         }
     }
 }

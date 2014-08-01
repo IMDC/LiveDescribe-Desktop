@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
 using LiveDescribe.Properties;
 using NAudio.Mixer;
@@ -13,7 +14,7 @@ using System.Windows.Input;
 
 namespace LiveDescribe.ViewModel.Controls
 {
-    public class AudioSourceSettingsControlViewModel : ViewModelBase
+    public class AudioSourceSettingsControlViewModel : ViewModelBase, ISettingsViewModel
     {
         #region Fields
         private readonly ObservableCollection<AudioSourceInfo> _sources;
@@ -97,10 +98,7 @@ namespace LiveDescribe.ViewModel.Controls
         #endregion
 
         #region Methods
-        /// <summary>
-        /// used to initialize the Collection of all the microphones available
-        /// </summary>
-        public void InitializeAudioSourceInfo()
+        public void RetrieveApplicationSettings()
         {
             Sources.Clear();
 
@@ -120,6 +118,20 @@ namespace LiveDescribe.ViewModel.Controls
                 SelectedAudioSource = Sources[0];
             else
                 SelectedAudioSource = null;
+        }
+
+        public void SetApplicationSettings()
+        {
+            if (SelectedAudioSource == null)
+                return;
+
+            var sourceStream = new WaveIn
+            {
+                DeviceNumber = SelectedAudioSource.DeviceNumber,
+                WaveFormat = new WaveFormat(44100, SelectedAudioSource.Source.Channels)
+            };
+
+            Settings.Default.Microphone = sourceStream;
         }
 
         private void SetMicrophoneRecorder()
@@ -188,24 +200,6 @@ namespace LiveDescribe.ViewModel.Controls
             _microphonePlayer = null;
 
             _microphoneBuffer = null;
-        }
-
-        /// <summary>
-        /// used to save the selected microphone to the settings
-        /// </summary>
-        public void SaveAudioSourceInfo()
-        {
-            if (SelectedAudioSource == null)
-                return;
-
-            var sourceStream = new WaveIn
-            {
-                DeviceNumber = SelectedAudioSource.DeviceNumber,
-                WaveFormat = new WaveFormat(44100, SelectedAudioSource.Source.Channels)
-            };
-
-            Settings.Default.Microphone = sourceStream;
-            Settings.Default.Save();
         }
 
         /// <summary>

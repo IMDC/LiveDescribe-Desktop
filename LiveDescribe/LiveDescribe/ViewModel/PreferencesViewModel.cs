@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Extensions;
+using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
 using LiveDescribe.Properties;
 using LiveDescribe.ViewModel.Controls;
@@ -10,7 +11,7 @@ using System.Windows.Input;
 
 namespace LiveDescribe.ViewModel
 {
-    public class PreferencesViewModel : ViewModelBase
+    public class PreferencesViewModel : ViewModelBase, ISettingsViewModel
     {
         #region Logger
         private static readonly log4net.ILog Log = log4net.LogManager.GetLogger
@@ -48,7 +49,7 @@ namespace LiveDescribe.ViewModel
         {
             AcceptChanges = new RelayCommand(
                 canExecute: () => SettingsChanged,
-                execute: SaveApplicationSettings);
+                execute: SetApplicationSettings);
 
             AcceptChangesAndClose = new RelayCommand(
                 canExecute: () => true,
@@ -111,25 +112,19 @@ namespace LiveDescribe.ViewModel
         /// </summary>
         public void RetrieveApplicationSettings()
         {
-            ColourSchemeSettingsControlViewModel.ColourScheme = (Settings.Default.ColourScheme != null)
-                ? Settings.Default.ColourScheme.DeepCopy()
-                : ColourScheme.DefaultColourScheme.DeepCopy();
-
-            AudioSourceSettingsControlViewModel.InitializeAudioSourceInfo();
-
-            GeneralSettingsControlViewModel.AutoGenerateSpaces = Settings.Default.AutoGenerateSpaces;
+            AudioSourceSettingsControlViewModel.RetrieveApplicationSettings();
+            ColourSchemeSettingsControlViewModel.RetrieveApplicationSettings();
+            GeneralSettingsControlViewModel.RetrieveApplicationSettings();
 
             SettingsChanged = false;
             Log.Info("Application settings loaded");
         }
 
-        public void SaveApplicationSettings()
+        public void SetApplicationSettings()
         {
-            Settings.Default.ColourScheme = ColourSchemeSettingsControlViewModel.ColourScheme;
-
-            AudioSourceSettingsControlViewModel.SaveAudioSourceInfo();
-
-            Settings.Default.AutoGenerateSpaces = GeneralSettingsControlViewModel.AutoGenerateSpaces;
+            AudioSourceSettingsControlViewModel.SetApplicationSettings();
+            ColourSchemeSettingsControlViewModel.SetApplicationSettings();
+            GeneralSettingsControlViewModel.SetApplicationSettings();
 
             Settings.Default.Save();
             SettingsChanged = false;
