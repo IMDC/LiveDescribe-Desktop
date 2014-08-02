@@ -39,6 +39,7 @@ namespace LiveDescribe.ViewModel
             _colourSchemeSettingsControlViewModel.PropertyChanged += CheckForViewModelSettingsChanged;
 
             _generalSettingsControlViewModel = new GeneralSettingsControlViewModel();
+            _generalSettingsControlViewModel.PropertyChanged += CheckForViewModelSettingsChanged;
 
             RetrieveApplicationSettings();
 
@@ -137,6 +138,7 @@ namespace LiveDescribe.ViewModel
             {
                 case "SelectedAudioSource":
                 case "MicrophoneVolume":
+                case "AutoGenerateSpaces":
                     SettingsChanged = true;
                     break;
                 case "ColourScheme":
@@ -145,6 +147,7 @@ namespace LiveDescribe.ViewModel
                         if (args.PropertyName.Contains("Colour"))
                             SettingsChanged = true;
                     };
+                    SettingsChanged = true;
                     break;
             }
         }
