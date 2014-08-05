@@ -215,13 +215,12 @@ namespace LiveDescribe.Managers
                 return;
 #endif
             AllDescriptions.Add(desc);
-
             if (!desc.IsExtendedDescription)
             {
                 RegularDescriptions.Add(desc);
                 _undoRedoManager.InsertDescriptionForInsertUndoRedo(AllDescriptions, RegularDescriptions, desc);
             }
-            else
+            else if (desc.IsExtendedDescription)
             {
                 ExtendedDescriptions.Add(desc);
                 _undoRedoManager.InsertDescriptionForInsertUndoRedo(AllDescriptions, ExtendedDescriptions, desc);
