@@ -25,6 +25,7 @@ namespace LiveDescribe.ViewModel.Controls
         private WaveOut _microphonePlayer;
         private UnsignedMixerControl _microphoneVolumeControl;
         private double _microphoneVolume;
+        private bool _isVisible;
         #endregion
 
         #region Constructor
@@ -95,6 +96,23 @@ namespace LiveDescribe.ViewModel.Controls
             get { return _microphoneVolume; }
         }
 
+        /// <summary>
+        /// Represents whether or not the control is visible to the user. This property should only
+        /// be set by the view using this viewmodel and nothing else.
+        /// </summary>
+        public bool IsVisible
+        {
+            set
+            {
+                if (value != _isVisible)
+                {
+                    _isVisible = value;
+                    RaisePropertyChanged();
+                }
+            }
+            get { return _isVisible; }
+        }
+
         #endregion
 
         #region Methods
@@ -134,14 +152,11 @@ namespace LiveDescribe.ViewModel.Controls
             Settings.Default.Microphone = sourceStream;
         }
 
-        private void SetMicrophoneRecorder()
+        private void InitializeMicrophoneRecorder()
         {
             //Cleanup
-            if(_microphoneRecorder != null)
-            {
-                _microphoneRecorder.StopRecording();
-                _microphoneRecorder.Dispose();
-            }
+            if (_microphoneRecorder != null)
+                ClearMicrophoneRecorder();
 
             _microphoneRecorder = new WaveIn
             {
@@ -153,6 +168,12 @@ namespace LiveDescribe.ViewModel.Controls
             _microphoneRecorder.StartRecording();
 
             TryGetVolumeControl();
+        }
+
+        private void ClearMicrophoneRecorder()
+        {
+            _microphoneRecorder.StopRecording();
+            _microphoneRecorder.Dispose();
         }
 
         private void StartMicrophoneTest()
@@ -207,6 +228,7 @@ namespace LiveDescribe.ViewModel.Controls
         /// </summary>
         public void StopForClose()
         {
+            ClearMicrophoneRecorder();
             StopMicrophoneTest();
         }
 
@@ -214,8 +236,15 @@ namespace LiveDescribe.ViewModel.Controls
         {
             base.RaisePropertyChanged(propertyName);
 
-            if (propertyName == "SelectedAudioSource")
-                SetMicrophoneRecorder();
+            if (propertyName == "IsVisible")
+            {
+                if (IsVisible)
+                    InitializeMicrophoneRecorder();
+                else
+                    StopForClose();
+            }
+            if (IsVisible && propertyName == "SelectedAudioSource")
+                InitializeMicrophoneRecorder();
             if (propertyName == "MicrophoneVolume" && _microphoneVolumeControl != null)
                 _microphoneVolumeControl.Percent = MicrophoneVolume;
         }
