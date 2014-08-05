@@ -446,11 +446,11 @@
     <value>Redo</value>
   </data>
   <data name="MenuItem_Undo" xml:space="preserve">
-    <value>Undo</value>  
+    <value>Undo</value>
   </data>
   <data name="Command_TestMic" xml:space="preserve">
     <value>Test Microphone</value>
-   </data>
+  </data>
   <data name="Header_Microphone" xml:space="preserve">
     <value>Microphone</value>
   </data>
@@ -459,5 +459,11 @@
   </data>
   <data name="Label_MicTestWarning" xml:space="preserve">
     <value>Warning: Testing the microphone while using speakers will result in a lot of reverberation. It is reccomended to use headphones while testing a microphone to avoid this.</value>
+  </data>
+  <data name="Header_OpenFileWinExplorer" xml:space="preserve">
+    <value>View File Location...</value>
+  </data>
+  <data name="MenuItem_ViewDescriptionFolder" xml:space="preserve">
+    <value>View Descriptions in Folder...</value>
   </data>
 </root>

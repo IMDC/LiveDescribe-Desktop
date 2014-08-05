@@ -5,6 +5,7 @@ using LiveDescribe.Properties;
 using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
@@ -74,9 +75,17 @@ namespace LiveDescribe.Model
             GoToThisDescriptionCommand = new RelayCommand(GoTothisDescription, () => true);
             DescriptionMouseUpCommand = new RelayCommand(DescriptionMouseUp, () => true);
             DescriptionDeleteCommand = new RelayCommand(DescriptionDelete, () => true);
-            //called when mouse moves over description
             DescriptionMouseMoveCommand = new RelayCommand<MouseEventArgs>(DescriptionMouseMove, param => true);
 
+            OpenWinFileExplorerToFile = new RelayCommand(
+                canExecute: () => true,
+                execute: () =>
+                {
+                    string args = string.Format("/Select, {0}", AudioFile);
+                    ProcessStartInfo pfi = new ProcessStartInfo("Explorer.exe", args);
+                    System.Diagnostics.Process.Start(pfi); 
+                });
+            
             Settings.Default.PropertyChanged += (sender, args) =>
             {
                 if (args.PropertyName == "ColourScheme")
@@ -325,6 +334,9 @@ namespace LiveDescribe.Model
 
         [JsonIgnore]
         public RelayCommand GoToThisDescriptionCommand { get; private set; }
+
+        [JsonIgnore]
+        public ICommand OpenWinFileExplorerToFile { get; private set; }
         #endregion
 
         #region Methods
