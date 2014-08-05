@@ -152,11 +152,15 @@ namespace LiveDescribe.ViewModel.Controls
             Settings.Default.Microphone = sourceStream;
         }
 
+        /// <summary>
+        /// Creates a new microphone recorder based off of the currently selected audio device.
+        /// </summary>
         private void InitializeMicrophoneRecorder()
         {
-            //Cleanup
-            if (_microphoneRecorder != null)
-                ClearMicrophoneRecorder();
+            if (SelectedAudioSource == null)
+                return;
+
+            ClearMicrophoneRecorder();
 
             _microphoneRecorder = new WaveIn
             {
@@ -170,12 +174,22 @@ namespace LiveDescribe.ViewModel.Controls
             TryGetVolumeControl();
         }
 
+        /// <summary>
+        /// Disposes of the current microphone recorder, if any and sets it to null.
+        /// </summary>
         private void ClearMicrophoneRecorder()
         {
-            _microphoneRecorder.StopRecording();
-            _microphoneRecorder.Dispose();
+            if (_microphoneRecorder != null)
+            {
+                _microphoneRecorder.StopRecording();
+                _microphoneRecorder.Dispose();
+                _microphoneRecorder = null;
+            }
         }
 
+        /// <summary>
+        /// Starts a microphone volume test by playing the microphone back through the speakers.
+        /// </summary>
         private void StartMicrophoneTest()
         {
             _microphoneBuffer = new BufferedWaveProvider(_microphoneRecorder.WaveFormat);
@@ -210,6 +224,9 @@ namespace LiveDescribe.ViewModel.Controls
             }
         }
 
+        /// <summary>
+        /// Stops playing the microphone through the speakers.
+        /// </summary>
         private void StopMicrophoneTest()
         {
             if (_microphonePlayer == null)
