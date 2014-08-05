@@ -132,6 +132,9 @@
                     <MenuItem
                         Header="{x:Static s:UiStrings.MenuItem_ClearCache}"
                         Command="{Binding ClearCache}" />
+                    <MenuItem 
+                        Header="{x:Static s:UiStrings.MenuItem_ViewDescriptionFolder}"
+                        Command="{Binding ShowDescriptionFolder}"/>
                 </MenuItem>
 
                 <!--Help-->

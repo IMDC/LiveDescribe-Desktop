@@ -7,6 +7,8 @@
     xmlns:converters="clr-namespace:LiveDescribe.Converters"
     xmlns:s="clr-namespace:LiveDescribe.Resources.UiStrings"
     xmlns:u="clr-namespace:LiveDescribe.Resources"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:command="http://www.galasoft.ch/mvvmlight"
     mc:Ignorable="d"
     d:DesignWidth="300">
     <UserControl.Resources>
@@ -65,22 +67,24 @@
             Command="{Binding SetBeginToMarker}" />
 
         <TextBox
+            Name="StartInVideoTextBox"
             Style="{StaticResource TextBoxStyle}"
             Grid.Row="1"
             Grid.Column="0"
             Grid.ColumnSpan="5"
             IsEnabled="{Binding EditingEnabled}"
-            Text="{Binding Path=SelectedSpace_StartInVideo, Converter={StaticResource MillisecondsTimeConverter}, UpdateSourceTrigger=LostFocus}"
-            KeyDown="Textbox_KeyDown"/>
+            Text="{Binding Path=SelectedSpace_StartInVideo, Converter={StaticResource MillisecondsTimeConverter}, UpdateSourceTrigger=Explicit}"
+            KeyDown="Textbox_KeyDown"
+            IsUndoEnabled="False"/>
         <!-- End -->
         <TextBlock
-            Name="StartInVideoTextBox"
+            Name="StartInVideoTextBlock"
             Grid.Row="2"
             Grid.Column="0"
             Grid.ColumnSpan="3"
             Text="{x:Static s:UiStrings.Label_End}"
             VerticalAlignment="Center"
-            HorizontalAlignment="Center" />
+            HorizontalAlignment="Center"/>
 
         <Button
             Grid.Row="2"
@@ -97,8 +101,10 @@
             Grid.Column="0"
             Grid.ColumnSpan="5"
             IsEnabled="{Binding EditingEnabled}"
-            Text="{Binding Path=SelectedSpace_EndInVideo, Converter={StaticResource MillisecondsTimeConverter}, UpdateSourceTrigger=LostFocus}"
-            KeyDown="Textbox_KeyDown" />
+            Text="{Binding Path=SelectedSpace_EndInVideo, Converter={StaticResource MillisecondsTimeConverter}, UpdateSourceTrigger=Explicit}"
+            KeyDown="Textbox_KeyDown"
+            IsUndoEnabled="False"
+            />
 
     </Grid>
 </UserControl>

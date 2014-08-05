@@ -69,6 +69,7 @@ namespace LiveDescribe.ViewModel
                             originalEndInVideo, SelectedSpace.StartInVideo, SelectedSpace.EndInVideo);
                     }
                 });
+
         }
         #endregion
 
@@ -172,6 +173,10 @@ namespace LiveDescribe.ViewModel
             get { return SelectedSpace != null ? SelectedSpace.EndInVideo : 0; }
         }
 
+        public UndoRedoManager UndoRedoManager
+        {
+            get { return _undoRedoManager; }
+        }
         #endregion
     }
 }

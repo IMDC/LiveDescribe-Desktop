@@ -457,6 +457,15 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to View File Location....
+        /// </summary>
+        public static string Header_OpenFileWinExplorer {
+            get {
+                return ResourceManager.GetString("Header_OpenFileWinExplorer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Descriptions.
         /// </summary>
         public static string Header_RegularDescriptions {
@@ -804,6 +813,15 @@ namespace LiveDescribe.Resources.UiStrings {
         public static string MenuItem_Undo {
             get {
                 return ResourceManager.GetString("MenuItem_Undo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to View Descriptions in Folder....
+        /// </summary>
+        public static string MenuItem_ViewDescriptionFolder {
+            get {
+                return ResourceManager.GetString("MenuItem_ViewDescriptionFolder", resourceCulture);
             }
         }
         

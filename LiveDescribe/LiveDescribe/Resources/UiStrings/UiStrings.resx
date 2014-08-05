@@ -469,4 +469,10 @@
   <data name="Command_StopTestMic" xml:space="preserve">
     <value>Stop</value>
   </data>
+  <data name="Header_OpenFileWinExplorer" xml:space="preserve">
+    <value>View File Location...</value>
+  </data>
+  <data name="MenuItem_ViewDescriptionFolder" xml:space="preserve">
+    <value>View Descriptions in Folder...</value>
+  </data>
 </root>

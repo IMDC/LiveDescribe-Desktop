@@ -15,6 +15,7 @@ using Microsoft.Win32;
 using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -243,6 +244,15 @@ namespace LiveDescribe.ViewModel
                 }
             );
 
+            ShowDescriptionFolder = new RelayCommand(
+                canExecute: () => _projectManager.HasProjectLoaded,
+                execute: () =>
+                {
+                    ProcessStartInfo pfi = new ProcessStartInfo("Explorer.exe", _project.Folders.Descriptions.AbsolutePath);
+                    System.Diagnostics.Process.Start(pfi);
+                }
+            );
+
             ShowAboutInfo = new RelayCommand(DialogShower.SpawnAboutInfoView);
             #endregion
 
@@ -389,6 +399,8 @@ namespace LiveDescribe.ViewModel
         /// Exports the text in all the spaces to an srt file
         /// </summary>
         public ICommand ExportSpacesTextToSrt { private set; get; }
+
+        public ICommand ShowDescriptionFolder { private set; get; }
         #endregion
 
         #region Properties

@@ -14,13 +14,13 @@ namespace LiveDescribe.Managers
 {
     public class UndoRedoManager
     {
-        private readonly Stack<IHistoryItem> _undoStack;
-        private readonly Stack<IHistoryItem> _redoStack;
+        private readonly List<IHistoryItem> _undoStack;
+        private readonly List<IHistoryItem> _redoStack;
 
         public UndoRedoManager() 
         {
-            _undoStack = new Stack<IHistoryItem>();
-            _redoStack = new Stack<IHistoryItem>();
+            _undoStack = new List<IHistoryItem>();
+            _redoStack = new List<IHistoryItem>();
             RedoCommand = new RelayCommand(Redo, CanRedo);
             UndoCommand = new RelayCommand(Undo, CanUndo);
         }
@@ -30,18 +30,31 @@ namespace LiveDescribe.Managers
 
         public void Redo()
         {
-            var cmd = _redoStack.Pop();
+            var cmd = Pop(_redoStack);
             cmd.Execute();
-            _undoStack.Push(cmd);
+            Push(_undoStack, cmd);
             CommandManager.InvalidateRequerySuggested();
         }
 
         public void Undo()
         {
-            var cmd = _undoStack.Pop();
+            var cmd = Pop(_undoStack);
             cmd.UnExecute();
-            _redoStack.Push(cmd);
+            Push(_redoStack, cmd);
             CommandManager.InvalidateRequerySuggested();
+        }
+
+        private IHistoryItem Pop(List<IHistoryItem> items)
+        {
+            var lastIndex = items.Count - 1;
+            var item = items[lastIndex];
+            items.RemoveAt(lastIndex);
+            return item;
+        }
+
+        private void Push(List<IHistoryItem> items, IHistoryItem item)
+        {
+            items.Add(item);
         }
 
         public bool CanRedo()
@@ -57,27 +70,27 @@ namespace LiveDescribe.Managers
         public void InsertSpaceForInsertUndoRedo(ObservableCollection<Space> collection, Space element)
         {
             var cmd = new InsertSpaceHistoryItem(collection, element);
-            _undoStack.Push(cmd); _redoStack.Clear();
+            Push(_undoStack, cmd); _redoStack.Clear();
         }
 
         public void InsertSpaceForDeleteUndoRedo(ObservableCollection<Space> collection, Space element)
         {
             var cmd = new DeleteSpaceHistoryItem(collection, element);
-            _undoStack.Push(cmd); _redoStack.Clear();
+            Push(_undoStack, cmd); _redoStack.Clear();
         }
 
         public void InsertDescriptionForDeleteUndoRedo(ObservableCollection<Description> allDescriptions, 
             ObservableCollection<Description> descriptions, Description element)
         {
             var cmd = new DeleteDescriptionHistoryItem(allDescriptions, descriptions, element);
-            _undoStack.Push(cmd); _redoStack.Clear();
+            Push(_undoStack, cmd); _redoStack.Clear();
         }
 
         public void InsertDescriptionForInsertUndoRedo(ObservableCollection<Description> allDescriptions,
             ObservableCollection<Description> descriptions, Description element)
         {
             var cmd = new InsertDescriptionHistoryItem(allDescriptions, descriptions, element);
-            _undoStack.Push(cmd); _redoStack.Clear();
+            Push(_undoStack, cmd); _redoStack.Clear();
         }
 
         public void InsertItemForMoveOrResizeUndoRedo(IDescribableInterval item, double originalStartInVideo, double originalEndInVideo,
@@ -85,7 +98,7 @@ namespace LiveDescribe.Managers
         {
             var cmd = new MoveOrResizeHistoryItem(item, originalStartInVideo, originalEndInVideo,
                 newStartInVideo, newEndInVideo);
-            _undoStack.Push(cmd); _redoStack.Clear();
+            Push(_undoStack, cmd); _redoStack.Clear();
         }
     }
 }

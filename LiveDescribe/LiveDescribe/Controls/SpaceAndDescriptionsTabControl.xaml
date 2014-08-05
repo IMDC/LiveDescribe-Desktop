@@ -172,6 +172,9 @@
                             <MenuItem
                                 Header="{x:Static s:UiStrings.Command_DeleteDescription}"
                                 Command="{Binding DescriptionDeleteCommand}" />
+                            <MenuItem
+                                Header="{x:Static s:UiStrings.Header_OpenFileWinExplorer}"
+                                Command="{Binding OpenWinFileExplorerToFile}"/>
                         </ContextMenu>
                     </ListView.Resources>
                     <ListView.ItemContainerStyle>
@@ -231,6 +234,9 @@
                             <MenuItem
                                 Header="{x:Static s:UiStrings.Command_DeleteDescription}"
                                 Command="{Binding DescriptionDeleteCommand}" />
+                            <MenuItem
+                                Header="{x:Static s:UiStrings.Header_OpenFileWinExplorer}"
+                                Command="{Binding OpenWinFileExplorerToFile}"/>
                         </ContextMenu>
                     </ListView.Resources>
                     <ListView.ItemContainerStyle>

@@ -113,18 +113,24 @@ namespace LiveDescribe.Controls
         private void OnFinishDescriptionActionState()
         {
             DescriptionGraphic.ReleaseMouseCapture();
-            SetupUndoAndRedo();
+
+            if (Mouse.LeftButton == MouseButtonState.Released)
+                SetupUndoAndRedo();
+
             Container.CurrentActionState = ItemCanvas.ActionState.None;
             Container.Cursor = Cursors.Arrow;
         }
 
         private void SetupUndoAndRedo()
         {
-            if (!(Math.Abs(_originalEndInVideo - Description.EndInVideo) < Tolerance &&
-                  Math.Abs(_originalStartInVideo - Description.StartInVideo) < Tolerance))
+            if (Container.CurrentActionState == ItemCanvas.ActionState.Dragging)
             {
-                Container.UndoRedoManager.InsertItemForMoveOrResizeUndoRedo(Description, _originalStartInVideo,
-                    _originalEndInVideo, Description.StartInVideo, Description.EndInVideo);
+                if (!(Math.Abs(_originalEndInVideo - Description.EndInVideo) < Tolerance &&
+                      Math.Abs(_originalStartInVideo - Description.StartInVideo) < Tolerance))
+                {
+                    Container.UndoRedoManager.InsertItemForMoveOrResizeUndoRedo(Description, _originalStartInVideo,
+                        _originalEndInVideo, Description.StartInVideo, Description.EndInVideo);
+                }
             }
         }
     }
