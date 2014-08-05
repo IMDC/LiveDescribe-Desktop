@@ -4,29 +4,29 @@ using System.Runtime.Serialization;
 
 namespace LiveDescribe.Model
 {
-    public class AudioSourceInfo : ISerializable
+    public class AudioSourceInfo
     {
-        public WaveInCapabilities Source { set; get; }
         public string Name { set; get; }
         public string Channels { set; get; }
         public int DeviceNumber { set; get; }
-        public AudioSourceInfo(string name, string channels, WaveInCapabilities source, int deviceNumber)
+        public WaveInCapabilities Capabilities { set; get; }
+
+        /// <summary>
+        /// Default constructor for serialization.
+        /// </summary>
+        public AudioSourceInfo() { }
+
+        public AudioSourceInfo(string name, string channels, WaveInCapabilities capabilities, int deviceNumber)
         {
             Name = name;
             Channels = channels;
-            Source = source;
+            Capabilities = capabilities;
             DeviceNumber = deviceNumber;
         }
 
-        public AudioSourceInfo(SerializationInfo info, StreamingContext context)
-        {
-            Source = (WaveInCapabilities)info.GetValue("source", typeof(WaveInCapabilities));
-        }
-
-
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("source", Source, typeof(WaveInCapabilities));
+            info.AddValue("source", Capabilities, typeof(WaveInCapabilities));
         }
 
         public override bool Equals(object obj)

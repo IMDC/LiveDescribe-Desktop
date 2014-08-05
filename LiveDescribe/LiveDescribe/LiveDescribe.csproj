@@ -203,7 +203,7 @@
     <Compile Include="LiveDescribeConstants.cs" />
     <Compile Include="Managers\ProjectLoader.cs" />
     <Compile Include="Managers\ProjectManager.cs" />
-    <Compile Include="Model\AudioScourceInfo.cs" />
+    <Compile Include="Model\AudioSourceInfo.cs" />
     <Compile Include="Managers\UndoRedoManager.cs" />
     <Compile Include="Model\ColourScheme.cs" />
     <Compile Include="Model\ObservableDropoutCollection.cs" />

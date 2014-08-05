@@ -140,27 +140,19 @@ namespace LiveDescribe.ViewModel.Controls
                     Sources.Add(audioSource);
             }
 
-            if (Settings.Default.Microphone != null && 0 < Sources.Count)
-                SelectedAudioSource = Sources.First(audioSourceInfo =>
-                    audioSourceInfo.DeviceNumber == Settings.Default.Microphone.DeviceNumber);
-            else if (0 < Sources.Count)
+            //Default is null
+            SelectedAudioSource = Sources.FirstOrDefault(audioSourceInfo =>
+                audioSourceInfo.Name == Settings.Default.Microphone.Name);
+
+            if (SelectedAudioSource == null && 0 < Sources.Count)
                 SelectedAudioSource = Sources[0];
-            else
-                SelectedAudioSource = null;
         }
 
         public void SetApplicationSettings()
         {
             if (SelectedAudioSource == null)
                 return;
-
-            var sourceStream = new WaveIn
-            {
-                DeviceNumber = SelectedAudioSource.DeviceNumber,
-                WaveFormat = new WaveFormat(44100, SelectedAudioSource.Source.Channels)
-            };
-
-            Settings.Default.Microphone = sourceStream;
+            Settings.Default.Microphone = SelectedAudioSource;
         }
 
         /// <summary>
@@ -176,7 +168,7 @@ namespace LiveDescribe.ViewModel.Controls
             _microphoneRecorder = new WaveIn
             {
                 DeviceNumber = SelectedAudioSource.DeviceNumber,
-                WaveFormat = new WaveFormat(44100, SelectedAudioSource.Source.Channels),
+                WaveFormat = new WaveFormat(44100, SelectedAudioSource.Capabilities.Channels),
             };
             _microphoneRecorder.DataAvailable += MicrophoneRecorderOnDataAvailable;
 
