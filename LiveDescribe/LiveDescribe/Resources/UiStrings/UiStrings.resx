@@ -466,4 +466,7 @@
   <data name="Header_General" xml:space="preserve">
     <value>General</value>
   </data>
+  <data name="Command_StopTestMic" xml:space="preserve">
+    <value>Stop</value>
+  </data>
 </root>

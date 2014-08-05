@@ -26,6 +26,7 @@ namespace LiveDescribe.ViewModel.Controls
         private UnsignedMixerControl _microphoneVolumeControl;
         private double _microphoneVolume;
         private bool _isVisible;
+        private bool _isTestingMicrophone;
         #endregion
 
         #region Constructor
@@ -113,6 +114,16 @@ namespace LiveDescribe.ViewModel.Controls
             get { return _isVisible; }
         }
 
+        public bool IsTestingMicrophone
+        {
+            set
+            {
+                _isTestingMicrophone = value;
+                RaisePropertyChanged();
+            }
+            get { return _isTestingMicrophone; }
+        }
+
         #endregion
 
         #region Methods
@@ -198,6 +209,7 @@ namespace LiveDescribe.ViewModel.Controls
             _microphonePlayer.Init(_microphoneBuffer);
 
             _microphonePlayer.Play();
+            IsTestingMicrophone = true;
         }
 
         /// <summary>
@@ -238,6 +250,7 @@ namespace LiveDescribe.ViewModel.Controls
             _microphonePlayer = null;
 
             _microphoneBuffer = null;
+            IsTestingMicrophone = false;
         }
 
         /// <summary>
@@ -261,7 +274,10 @@ namespace LiveDescribe.ViewModel.Controls
                     StopForClose();
             }
             if (IsVisible && propertyName == "SelectedAudioSource")
+            {
+                StopMicrophoneTest();
                 InitializeMicrophoneRecorder();
+            }
             if (propertyName == "MicrophoneVolume" && _microphoneVolumeControl != null)
                 _microphoneVolumeControl.Percent = MicrophoneVolume;
         }
