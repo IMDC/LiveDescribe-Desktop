@@ -1,5 +1,6 @@
 ﻿using NAudio.Wave;
 using System;
+using System.Globalization;
 using System.Runtime.Serialization;
 
 namespace LiveDescribe.Model
@@ -16,10 +17,10 @@ namespace LiveDescribe.Model
         /// </summary>
         public AudioSourceInfo() { }
 
-        public AudioSourceInfo(string name, string channels, WaveInCapabilities capabilities, int deviceNumber)
+        public AudioSourceInfo(WaveInCapabilities capabilities, int deviceNumber)
         {
-            Name = name;
-            Channels = channels;
+            Name = capabilities.ProductName;
+            Channels = capabilities.Channels.ToString(CultureInfo.InvariantCulture);
             Capabilities = capabilities;
             DeviceNumber = deviceNumber;
         }

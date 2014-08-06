@@ -7,7 +7,6 @@ using NAudio.Mixer;
 using NAudio.Wave;
 using System;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
@@ -133,19 +132,20 @@ namespace LiveDescribe.ViewModel.Controls
 
             for (int i = 0; i < WaveIn.DeviceCount; ++i)
             {
-                var capability = WaveIn.GetCapabilities(i);
-                var audioSource = new AudioSourceInfo(capability.ProductName,
-                    capability.Channels.ToString(CultureInfo.InvariantCulture), capability, i);
+                var capabilities = WaveIn.GetCapabilities(i);
+                var audioSource = new AudioSourceInfo(capabilities, i);
                 if (!Sources.Contains(audioSource))
                     Sources.Add(audioSource);
             }
 
-            //Default is null
-            SelectedAudioSource = Sources.FirstOrDefault(audioSourceInfo =>
-                audioSourceInfo.Name == Settings.Default.Microphone.Name);
+            if (Settings.Default.Microphone != null)
+                SelectedAudioSource = Sources.FirstOrDefault(audioSourceInfo =>
+                    audioSourceInfo.Name == Settings.Default.Microphone.Name);
 
             if (SelectedAudioSource == null && 0 < Sources.Count)
                 SelectedAudioSource = Sources[0];
+            else if (Sources.Count <= 0)
+                SelectedAudioSource = null;
         }
 
         public void SetApplicationSettings()
