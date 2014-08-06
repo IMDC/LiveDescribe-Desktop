@@ -1,4 +1,5 @@
-﻿using LiveDescribe.Model;
+﻿using System;
+using LiveDescribe.Model;
 using LiveDescribe.Resources;
 using LiveDescribe.Utilities;
 using System.Windows;
@@ -16,8 +17,13 @@ namespace LiveDescribe.Controls
             (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         #endregion
 
+        public const double Tolerance = 0.0001;
+
         public static DependencyProperty DescriptionProperty =
             DependencyProperty.Register("Description", typeof (Description), typeof (DescriptionControl));
+
+        private double _originalStartInVideo;
+        private double _originalEndInVideo;
 
         private double _originalPositionForDraggingDescription;
 
@@ -44,6 +50,10 @@ namespace LiveDescribe.Controls
             {
                 _originalPositionForDraggingDescription = e.GetPosition(Container).X;
                 DescriptionGraphic.CaptureMouse();
+
+                _originalStartInVideo = Description.StartInVideo;
+                _originalEndInVideo = Description.EndInVideo;
+
                 Container.Cursor = CustomResources.GrabbingCursor;
                 Container.CurrentActionState = ItemCanvas.ActionState.Dragging;
             }
@@ -90,9 +100,8 @@ namespace LiveDescribe.Controls
             else if ((newPositionMilliseconds + lengthOfDescriptionMilliseconds) > Container.VideoDuration)
                 newPosition = (Container.Width / Container.VideoDuration) * (Container.VideoDuration - lengthOfDescriptionMilliseconds);
 
-            Description.X = newPosition;
             _originalPositionForDraggingDescription = xPos;
-            Description.StartInVideo = (Container.VideoDuration / Container.Width) * (Description.X);
+            Description.StartInVideo = (Container.VideoDuration / Container.Width) * (newPosition);
             Description.EndInVideo = Description.StartInVideo + (Description.EndWaveFileTime - Description.StartWaveFileTime);
         }
 
@@ -104,8 +113,25 @@ namespace LiveDescribe.Controls
         private void OnFinishDescriptionActionState()
         {
             DescriptionGraphic.ReleaseMouseCapture();
+
+            if (Mouse.LeftButton == MouseButtonState.Released)
+                SetupUndoAndRedo();
+
             Container.CurrentActionState = ItemCanvas.ActionState.None;
             Container.Cursor = Cursors.Arrow;
+        }
+
+        private void SetupUndoAndRedo()
+        {
+            if (Container.CurrentActionState == ItemCanvas.ActionState.Dragging)
+            {
+                if (!(Math.Abs(_originalEndInVideo - Description.EndInVideo) < Tolerance &&
+                      Math.Abs(_originalStartInVideo - Description.StartInVideo) < Tolerance))
+                {
+                    Container.UndoRedoManager.InsertItemForMoveOrResizeUndoRedo(Description, _originalStartInVideo,
+                        _originalEndInVideo, Description.StartInVideo, Description.EndInVideo);
+                }
+            }
         }
     }
 }

@@ -17,5 +17,6 @@ namespace LiveDescribe.Interfaces
         double Duration { get; }
         Color Colour { set; get; }
         string Text { set; get; }
+        void SetStartAndEndInVideo(double startInVideo, double endInVideo);
     }
 }

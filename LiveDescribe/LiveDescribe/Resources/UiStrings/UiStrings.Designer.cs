@@ -277,6 +277,33 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Stop.
+        /// </summary>
+        public static string Command_StopTestMic {
+            get {
+                return ResourceManager.GetString("Command_StopTestMic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Test Microphone.
+        /// </summary>
+        public static string Command_TestMic {
+            get {
+                return ResourceManager.GetString("Command_TestMic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Automatically find spaces in a new project.
+        /// </summary>
+        public static string Command_ToggleFindSpaces {
+            get {
+                return ResourceManager.GetString("Command_ToggleFindSpaces", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Record Extended Description.
         /// </summary>
         public static string Command_ToggleRecordExtended {
@@ -322,7 +349,7 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to AudioSource.
+        ///   Looks up a localized string similar to Microphone.
         /// </summary>
         public static string Header_AudioSource {
             get {
@@ -394,6 +421,24 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to General.
+        /// </summary>
+        public static string Header_General {
+            get {
+                return ResourceManager.GetString("Header_General", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Microphone.
+        /// </summary>
+        public static string Header_Microphone {
+            get {
+                return ResourceManager.GetString("Header_Microphone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Name.
         /// </summary>
         public static string Header_Name {
@@ -408,6 +453,15 @@ namespace LiveDescribe.Resources.UiStrings {
         public static string Header_NumberColumn {
             get {
                 return ResourceManager.GetString("Header_NumberColumn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to View File Location....
+        /// </summary>
+        public static string Header_OpenFileWinExplorer {
+            get {
+                return ResourceManager.GetString("Header_OpenFileWinExplorer", resourceCulture);
             }
         }
         
@@ -466,6 +520,15 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Volume Level.
+        /// </summary>
+        public static string Header_VolumeLevel {
+            get {
+                return ResourceManager.GetString("Header_VolumeLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Begin.
         /// </summary>
         public static string Label_Begin {
@@ -498,6 +561,15 @@ namespace LiveDescribe.Resources.UiStrings {
         public static string Label_MakeCopy {
             get {
                 return ResourceManager.GetString("Label_MakeCopy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Warning: Testing the microphone while using speakers will result in a lot of reverberation. It is reccomended to use headphones while testing a microphone to avoid this..
+        /// </summary>
+        public static string Label_MicTestWarning {
+            get {
+                return ResourceManager.GetString("Label_MicTestWarning", resourceCulture);
             }
         }
         
@@ -610,6 +682,15 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Edit.
+        /// </summary>
+        public static string MenuItem_Edit {
+            get {
+                return ResourceManager.GetString("MenuItem_Edit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exit.
         /// </summary>
         public static string MenuItem_Exit {
@@ -700,6 +781,15 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Redo.
+        /// </summary>
+        public static string MenuItem_Redo {
+            get {
+                return ResourceManager.GetString("MenuItem_Redo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Save Project.
         /// </summary>
         public static string MenuItem_SaveProject {
@@ -714,6 +804,24 @@ namespace LiveDescribe.Resources.UiStrings {
         public static string MenuItem_ShowHelpWindow {
             get {
                 return ResourceManager.GetString("MenuItem_ShowHelpWindow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Undo.
+        /// </summary>
+        public static string MenuItem_Undo {
+            get {
+                return ResourceManager.GetString("MenuItem_Undo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to View Descriptions in Folder....
+        /// </summary>
+        public static string MenuItem_ViewDescriptionFolder {
+            get {
+                return ResourceManager.GetString("MenuItem_ViewDescriptionFolder", resourceCulture);
             }
         }
         

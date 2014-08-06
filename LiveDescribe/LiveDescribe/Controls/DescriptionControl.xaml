@@ -31,6 +31,9 @@
                     <MenuItem
                         Header="{x:Static s:UiStrings.Command_GoToDescription}"
                         Command="{Binding GoToThisDescriptionCommand}" />
+                    <MenuItem
+                        Header="{x:Static s:UiStrings.Header_OpenFileWinExplorer}"
+                        Command="{Binding OpenWinFileExplorerToFile}"/>
                 </ContextMenu>
             </Rectangle.ContextMenu>
             <Rectangle.Style>

@@ -25,9 +25,9 @@ namespace LiveDescribe.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::NAudio.Wave.WaveIn Microphone {
+        public global::LiveDescribe.Model.AudioSourceInfo Microphone {
             get {
-                return ((global::NAudio.Wave.WaveIn)(this["Microphone"]));
+                return ((global::LiveDescribe.Model.AudioSourceInfo)(this["Microphone"]));
             }
             set {
                 this["Microphone"] = value;
@@ -65,6 +65,18 @@ namespace LiveDescribe.Properties {
             }
             set {
                 this["RecentProjects"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AutoGenerateSpaces {
+            get {
+                return ((bool)(this["AutoGenerateSpaces"]));
+            }
+            set {
+                this["AutoGenerateSpaces"] = value;
             }
         }
     }

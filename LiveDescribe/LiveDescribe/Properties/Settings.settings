@@ -1,18 +1,21 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="LiveDescribe.Properties" GeneratedClassName="Settings">
-    <Profiles />
-    <Settings>
-        <Setting Name="Microphone" Type="NAudio.Wave.WaveIn" Scope="User">
-            <Value Profile="(Default)" />
-        </Setting>
-        <Setting Name="WorkingDirectory" Type="System.String" Scope="User">
-            <Value Profile="(Default)" />
-        </Setting>
-        <Setting Name="ColourScheme" Type="LiveDescribe.Model.ColourScheme" Scope="User">
-            <Value Profile="(Default)" />
-        </Setting>
-        <Setting Name="RecentProjects" Type="LiveDescribe.Model.ObservableDropoutCollection&lt;LiveDescribe.Model.NamedFilePath&gt;" Scope="User">
-            <Value Profile="(Default)" />
-        </Setting>
-    </Settings>
+  <Profiles />
+  <Settings>
+    <Setting Name="Microphone" Type="LiveDescribe.Model.AudioSourceInfo" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="WorkingDirectory" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ColourScheme" Type="LiveDescribe.Model.ColourScheme" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="RecentProjects" Type="LiveDescribe.Model.ObservableDropoutCollection&lt;LiveDescribe.Model.NamedFilePath&gt;" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="AutoGenerateSpaces" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+  </Settings>
 </SettingsFile>

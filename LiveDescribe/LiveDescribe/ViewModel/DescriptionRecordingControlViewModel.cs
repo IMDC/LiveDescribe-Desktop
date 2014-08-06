@@ -4,8 +4,10 @@ using LiveDescribe.Factories;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Managers;
 using LiveDescribe.Model;
+using LiveDescribe.Properties;
 using LiveDescribe.Utilities;
 using NAudio;
+using NAudio.Wave;
 using System.Windows.Input;
 
 namespace LiveDescribe.ViewModel
@@ -34,6 +36,20 @@ namespace LiveDescribe.ViewModel
             _recorder = GetDescriptionRecorder();
 
             InitCommands();
+
+            Settings.Default.PropertyChanged += (sender, args) =>
+            {
+                if (args.PropertyName != "Microphone")
+                    return;
+
+                Recorder.MicrophoneDeviceNumber = Settings.Default.Microphone.DeviceNumber;
+                try
+                {
+                    Log.Info("Product Name of Apply Requested Microphone: "
+                        + WaveIn.GetCapabilities(Recorder.MicrophoneDeviceNumber).ProductName);
+                }
+                catch (MmException) { Log.Info("No Microphone is plugged in."); }
+            };
         }
 
         private void InitCommands()

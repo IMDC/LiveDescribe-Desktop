@@ -1,6 +1,7 @@
 ﻿using LiveDescribe.Events;
 using LiveDescribe.Factories;
 using LiveDescribe.Model;
+using LiveDescribe.Properties;
 using LiveDescribe.Resources.UiStrings;
 using LiveDescribe.Utilities;
 using LiveDescribe.ViewModel;
@@ -158,15 +159,21 @@ namespace LiveDescribe.Managers
                 var waveFormData = audioOperator.ReadWavData(worker);
                 var audioHeader = audioOperator.Header;
                 waveform = new Waveform(audioHeader, waveFormData);
-                spaceData = AudioAnalyzer.FindSpaces(waveform);
+                Log.Info("Audio stripped");
             };
 
             worker.RunWorkerCompleted += (sender, args) =>
             {
                 project.Waveform = waveform;
 
-                OnSpacesAudioAnalysisCompleted(spaceData);
-                Log.Info("Audio stripped and spaces found.");
+                if (Settings.Default.AutoGenerateSpaces)
+                {
+                    spaceData = AudioAnalyzer.FindSpaces(waveform);
+                    OnSpacesAudioAnalysisCompleted(spaceData);
+                    Log.Info("Spaces found");
+                }
+                else
+                    Log.Info("Spaces not auto-generated");
 
                 ContinueLoadingProject(project);
             };

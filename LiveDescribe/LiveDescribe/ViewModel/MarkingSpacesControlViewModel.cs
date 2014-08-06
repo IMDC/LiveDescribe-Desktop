@@ -1,6 +1,8 @@
-﻿using GalaSoft.MvvmLight;
+﻿using System;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Interfaces;
+using LiveDescribe.Managers;
 using LiveDescribe.Model;
 using System.ComponentModel;
 using System.Windows.Input;
@@ -11,13 +13,16 @@ namespace LiveDescribe.ViewModel
     {
         #region Instance Variables
 
+        public const double Tolerance = 0.0001;
+
         private bool _editingEnabled;
         private Space _selectedSpace;
         private readonly ILiveDescribePlayer _player;
+        private readonly UndoRedoManager _undoRedoManager;
         #endregion
 
         #region Constructors
-        public MarkingSpacesControlViewModel(DescriptionInfoTabViewModel descriptionInfo, ILiveDescribePlayer player)
+        public MarkingSpacesControlViewModel(DescriptionInfoTabViewModel descriptionInfo, ILiveDescribePlayer player, UndoRedoManager undoRedoManager)
         {
             descriptionInfo.PropertyChanged += (sender, args) =>
             {
@@ -25,6 +30,7 @@ namespace LiveDescribe.ViewModel
                     SelectedSpace = descriptionInfo.SelectedSpace;
             };
 
+            _undoRedoManager = undoRedoManager;
             _player = player;
 
             EditingEnabled = false;
@@ -36,13 +42,34 @@ namespace LiveDescribe.ViewModel
         {
             SetBeginToMarker = new RelayCommand(
                 canExecute: () => EditingEnabled,
-                execute: () => SelectedSpace_StartInVideo = _player.Position.TotalMilliseconds
-                );
+                execute: () =>
+                {
+                    double originalStartInVideo = SelectedSpace.StartInVideo;
+                    double originalEndInVideo = SelectedSpace.EndInVideo;
+                    SelectedSpace_StartInVideo = _player.Position.TotalMilliseconds;
+
+                    if (Math.Abs(SelectedSpace_StartInVideo - originalStartInVideo) > Tolerance)
+                    {
+                        _undoRedoManager.InsertItemForMoveOrResizeUndoRedo(SelectedSpace, originalStartInVideo,
+                            originalEndInVideo, SelectedSpace.StartInVideo, SelectedSpace.EndInVideo);
+                    }
+                });
 
             SetEndToMarker = new RelayCommand(
                 canExecute: () => EditingEnabled,
-                execute: () => SelectedSpace_EndInVideo = _player.Position.TotalMilliseconds
-                );
+                execute: () =>
+                {
+                    double originalStartInVideo = SelectedSpace.StartInVideo;
+                    double originalEndInVideo = SelectedSpace.EndInVideo;
+                    SelectedSpace_EndInVideo = _player.Position.TotalMilliseconds;
+
+                    if (Math.Abs(SelectedSpace_EndInVideo - originalEndInVideo) > Tolerance)
+                    {
+                        _undoRedoManager.InsertItemForMoveOrResizeUndoRedo(SelectedSpace, originalStartInVideo,
+                            originalEndInVideo, SelectedSpace.StartInVideo, SelectedSpace.EndInVideo);
+                    }
+                });
+
         }
         #endregion
 
@@ -108,6 +135,11 @@ namespace LiveDescribe.ViewModel
                 RaisePropertyChanged("SelectedSpace_StartInVideo");
             else if (e.PropertyName.Equals("EndInVideo"))
                 RaisePropertyChanged("SelectedSpace_EndInVideo");
+            else if (e.PropertyName.Equals("SetStartAndEndInVideo"))
+            {
+                RaisePropertyChanged("SelectedSpace_StartInVideo");
+                RaisePropertyChanged("SelectedSpace_EndInVideo");
+            }
         }
 
         public double SelectedSpace_StartInVideo
@@ -141,6 +173,10 @@ namespace LiveDescribe.ViewModel
             get { return SelectedSpace != null ? SelectedSpace.EndInVideo : 0; }
         }
 
+        public UndoRedoManager UndoRedoManager
+        {
+            get { return _undoRedoManager; }
+        }
         #endregion
     }
 }

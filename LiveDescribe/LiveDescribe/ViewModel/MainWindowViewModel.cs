@@ -12,10 +12,10 @@ using LiveDescribe.Resources.UiStrings;
 using LiveDescribe.Utilities;
 using LiveDescribe.View;
 using Microsoft.Win32;
-using NAudio;
 using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -79,7 +79,7 @@ namespace LiveDescribe.ViewModel
             _mediaControlViewModel = new MediaControlViewModel(mediaVideo, _projectManager);
             _preferences = new PreferencesViewModel();
             _descriptionInfoTabViewModel = new DescriptionInfoTabViewModel(_projectManager);
-            _markingSpacesControlViewModel = new MarkingSpacesControlViewModel(_descriptionInfoTabViewModel, mediaVideo);
+            _markingSpacesControlViewModel = new MarkingSpacesControlViewModel(_descriptionInfoTabViewModel, mediaVideo, _undoRedoManager);
             _audioCanvasViewModel = new AudioCanvasViewModel(mediaVideo, _projectManager);
             _descriptionCanvasViewModel = new DescriptionCanvasViewModel(mediaVideo, _projectManager);
             _descriptionRecordingControlViewModel = new DescriptionRecordingControlViewModel(mediaVideo,
@@ -199,7 +199,7 @@ namespace LiveDescribe.ViewModel
 
             ShowPreferences = new RelayCommand(() =>
             {
-                _preferences.InitializeAudioSourceInfo();
+                _preferences.RetrieveApplicationSettings();
                 var preferencesWindow = new PreferencesWindow(_preferences);
                 preferencesWindow.ShowDialog();
             });
@@ -244,6 +244,15 @@ namespace LiveDescribe.ViewModel
                 }
             );
 
+            ShowDescriptionFolder = new RelayCommand(
+                canExecute: () => _projectManager.HasProjectLoaded,
+                execute: () =>
+                {
+                    ProcessStartInfo pfi = new ProcessStartInfo("Explorer.exe", _project.Folders.Descriptions.AbsolutePath);
+                    System.Diagnostics.Process.Start(pfi);
+                }
+            );
+
             ShowAboutInfo = new RelayCommand(DialogShower.SpawnAboutInfoView);
             #endregion
 
@@ -253,21 +262,6 @@ namespace LiveDescribe.ViewModel
             _descriptiontimer = new Timer(10);
             _descriptiontimer.Elapsed += Play_Tick;
             _descriptiontimer.AutoReset = true;
-
-            _preferences.ApplyRequested += (sender, e) =>
-            {
-                _descriptionRecordingControlViewModel.Recorder.MicrophoneDeviceNumber =
-                    Settings.Default.Microphone.DeviceNumber;
-                try
-                {
-                    Log.Info("Product Name of Apply Requested Microphone: " + NAudio.Wave.WaveIn.GetCapabilities(
-                        _descriptionRecordingControlViewModel.Recorder.MicrophoneDeviceNumber).ProductName);
-                }
-                catch (MmException)
-                {
-                    Log.Info("No Microphone is plugged in.");
-                }
-            };
 
             #region MediaControlViewModel Events
             _mediaControlViewModel.PlayRequested += (sender, e) =>
@@ -405,6 +399,8 @@ namespace LiveDescribe.ViewModel
         /// Exports the text in all the spaces to an srt file
         /// </summary>
         public ICommand ExportSpacesTextToSrt { private set; get; }
+
+        public ICommand ShowDescriptionFolder { private set; get; }
         #endregion
 
         #region Properties

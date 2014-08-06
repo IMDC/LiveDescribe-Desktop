@@ -18,7 +18,7 @@ namespace LiveDescribe.Converters
         {
             TimeSpan t;
             bool success = TimeSpan.TryParse(value.ToString(), out t);
-
+            
             return success ? t.TotalMilliseconds : Double.NaN;
         }
     }
