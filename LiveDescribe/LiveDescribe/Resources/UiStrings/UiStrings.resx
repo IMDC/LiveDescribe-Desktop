@@ -475,4 +475,12 @@
   <data name="MenuItem_ViewDescriptionFolder" xml:space="preserve">
     <value>View Descriptions in Folder...</value>
   </data>
+  <data name="MessageBox_DirectoryNotFoundError" xml:space="preserve">
+    <value>Unable to open project due to missing or moved directory.</value>
+    <comment>0: DirectoryNotFoundException.Message</comment>
+  </data>
+  <data name="MessageBox_Format_FileNotFoundError" xml:space="preserve">
+    <value>The file '{0}' could not be found.</value>
+    <comment>0: FileNotFoundException.FileName</comment>
+  </data>
 </root>
