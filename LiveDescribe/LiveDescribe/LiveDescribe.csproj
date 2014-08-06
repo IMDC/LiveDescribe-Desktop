@@ -213,6 +213,7 @@
     <Compile Include="Model\Space.cs" />
     <Compile Include="Model\Header.cs" />
     <Compile Include="Model\Waveform.cs" />
+    <Compile Include="Properties\Defines.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>

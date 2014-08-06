@@ -1,6 +1,7 @@
 ﻿using LiveDescribe.Events;
 using LiveDescribe.Extensions;
 using LiveDescribe.Model;
+using LiveDescribe.Properties;
 using LiveDescribe.Utilities;
 using LiveDescribe.ViewModel;
 using System;
@@ -210,10 +211,9 @@ namespace LiveDescribe.Managers
 
         public void AddDescriptionAndTrackForUndo(Description desc)
         {
-#if ZAGGA
-            if (desc.IsExtendedDescription)
+            if (Defines.Zagga && desc.IsExtendedDescription)
                 return;
-#endif
+
             AllDescriptions.Add(desc);
             if (!desc.IsExtendedDescription)
             {
@@ -245,10 +245,9 @@ namespace LiveDescribe.Managers
 
         public void AddDescription(Description desc)
         {
-#if ZAGGA
-            if (desc.IsExtendedDescription)
+            if (Defines.Zagga && desc.IsExtendedDescription)
                 return;
-#endif
+
             AllDescriptions.Add(desc);
 
             if (!desc.IsExtendedDescription)
