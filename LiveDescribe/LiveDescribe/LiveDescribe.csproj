@@ -72,6 +72,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>mic.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="GalaSoft.MvvmLight">
       <HintPath>..\packages\MvvmLightLibs.4.4.32.1\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
@@ -435,6 +438,7 @@
     <Resource Include="Resources\Icons\record.png" />
     <Resource Include="Resources\Icons\endspace.png" />
     <Resource Include="Resources\Icons\beginspace.png" />
+    <Resource Include="mic.ico" />
     <Content Include="Resources\SoundEffects\beep.wav" />
     <Content Include="Resources\SoundEffects\finished-beep.wav" />
     <Content Include="Utilities\_ffmpeg.exe">
