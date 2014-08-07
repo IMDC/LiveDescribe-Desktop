@@ -650,7 +650,7 @@ namespace LiveDescribe.View
             _audioCanvas.Children.Clear();
 
             int begin = (int)TimeLineScrollViewer.HorizontalOffset;
-            int ratio = _mediaControlViewModel.Waveform.Header.NumChannels == 2 ? 40 : 80;
+            int ratio = _mediaControlViewModel.Waveform.Header.Channels == 2 ? 40 : 80;
             double samplesPerSecond =
                 (_mediaControlViewModel.Waveform.Header.SampleRate * (_mediaControlViewModel.Waveform.Header.BlockAlign / (double)ratio));
 

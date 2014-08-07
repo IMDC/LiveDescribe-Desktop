@@ -1,4 +1,5 @@
-﻿using LiveDescribe.Factories;
+﻿using LiveDescribe.Extensions;
+using LiveDescribe.Factories;
 using LiveDescribe.Model;
 using LiveDescribe.Resources.UiStrings;
 using System;
@@ -7,7 +8,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
-using System.Windows;
 
 namespace LiveDescribe.Utilities
 {
@@ -179,38 +179,20 @@ namespace LiveDescribe.Utilities
 
             Log.Info("Opening .wav file for reading at " + _audioFile);
             using (var fs = new FileStream(_audioFile, FileMode.Open, FileAccess.Read))
-            using (var br = new BinaryReader(fs))
+            using (var r = new BinaryReader(fs))
             {
                 Log.Info("Reading header info from .wav file");
-                //RIFF chunk
-                _header.ChunkId = br.ReadBytes(4);
-                _header.ChunkSize = br.ReadUInt32();
-                _header.Fmt = br.ReadBytes(4);
 
-                //fmt sub chunk
-                _header.SubChunk1Id = br.ReadBytes(4);
-                _header.SubChunk1Size = br.ReadUInt32();
-                _header.AudioFormat = br.ReadUInt16();
-                _header.NumChannels = br.ReadUInt16();
-                _header.SampleRate = br.ReadUInt32();
-                _header.ByteRate = br.ReadUInt32();
-                _header.BlockAlign = br.ReadUInt16();
-                _header.BitsPerSample = br.ReadUInt16();
+                ReadHeaderData(r);
 
-                br.ReadBytes(2); //skip two bytes, this shouldn't need to happen
-
-                //data sub chunk
-                _header.SubChunk2Id = br.ReadBytes(4);
-                _header.SubChunk2Size = br.ReadUInt32();
-
-                int ratio = _header.NumChannels == 2 ? 40 : 80;
+                int ratio = _header.Channels == 2 ? 40 : 80;
 
                 Log.Info("Reading sound data from .wav file");
-                for (int i = 0; i < _header.SubChunk2Size; i += ratio)
+                for (int i = 0; i < _header.DataSize; i += ratio)
                 {
-                    data.Add(br.ReadInt16());
+                    data.Add(r.ReadInt16());
                     //Skip the next n-2 bytes
-                    br.ReadBytes(ratio - 2);
+                    r.ReadBytes(ratio - 2);
                 }
 
                 Log.Info("Sound data successfully read in from .wav file");
@@ -218,6 +200,58 @@ namespace LiveDescribe.Utilities
             }
         }
 
+        /// <summary>
+        /// Reads the wave header from the binary stream, and checks to see that the data is
+        /// correct and that the binary reader's stream is at the right position.
+        /// </summary>
+        /// <param name="r">The binary reader stream containing wave file data.</param>
+        private void ReadHeaderData(BinaryReader r)
+        {
+            var riffFileDescriptor = r.ReadChars(4);
+            ValidateHeaderData(riffFileDescriptor, Header.RiffFileDescriptor);
+
+            _header.FileSize = r.ReadUInt32();
+            var fileTypeHeader = r.ReadChars(4);
+            ValidateHeaderData(fileTypeHeader, Header.FileTypeHeader);
+
+            var formatChunkMarker = r.ReadChars(4);
+            ValidateHeaderData(formatChunkMarker, Header.FormatChunkMarker);
+
+            uint formatChunkSize = r.ReadUInt32();
+
+            ushort audioFormat = r.ReadUInt16();
+            if (audioFormat != Header.AudioFormat)
+                throw new InvalidDataException("Audio format is incorrect: " + audioFormat);
+
+            _header.Channels = r.ReadUInt16();
+            _header.SampleRate = r.ReadUInt32();
+            _header.ByteRate = r.ReadUInt32();
+            _header.BlockAlign = r.ReadUInt16();
+            _header.BitsPerSample = r.ReadUInt16();
+
+            /* There is a chance that the wave file will have a few extra bytes in its header. If
+             * it does, then calculate how many and skip over them.
+             */
+            int extaFormatBytes = (Header.DefaultFormatChunkSize < formatChunkSize)
+                ? (int)(formatChunkSize - Header.DefaultFormatChunkSize)
+                : 0;
+
+            r.ReadBytes(extaFormatBytes);
+
+            var dataChunkMarker = r.ReadChars(4);
+            ValidateHeaderData(dataChunkMarker, Header.DataChunkMarker);
+
+            _header.DataSize = r.ReadUInt32();
+
+            if (r.BaseStream.Position != Header.DefaultHeaderByteSize + extaFormatBytes)
+                throw new InvalidDataException("Stream is at the wrong position");
+        }
+
+        private static void ValidateHeaderData(char[] data, char[] other)
+        {
+            if (!data.ElementsEquals(other))
+                throw new InvalidDataException("Data is invalid: " + data);
+        }
 
         /// <summary>
         /// Will normalized the data using a linear transformation using the following formula: I(n)

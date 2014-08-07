@@ -57,9 +57,9 @@ namespace LiveDescribe.Utilities
         public static List<Space> FindSpaces(Waveform waveform)
         {
             var spaces = new List<Space>();
-            float duration = (float)(waveform.Header.ChunkSize * 8)
-                / (waveform.Header.SampleRate * waveform.Header.BitsPerSample * waveform.Header.NumChannels);
-            int ratio = waveform.Header.NumChannels == 2 ? 40 : 80;
+            float duration = (float)(waveform.Header.FileSize * 8)
+                / (waveform.Header.SampleRate * waveform.Header.BitsPerSample * waveform.Header.Channels);
+            int ratio = waveform.Header.Channels == 2 ? 40 : 80;
             double samplesPerSecond = waveform.Header.SampleRate * (waveform.Header.BlockAlign / (double)ratio);
 
             //Console.WriteLine("Duration: {0} samples_per_second: {1}, sample_rate: {2}, BlockAlign: {3} Data Size; {4}",
