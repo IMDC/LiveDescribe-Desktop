@@ -85,6 +85,8 @@ namespace LiveDescribe.ViewModel
             _descriptionRecordingControlViewModel = new DescriptionRecordingControlViewModel(mediaVideo,
                 _projectManager);
 
+            _mediaVideo = mediaVideo;
+
             DescriptionPlayer = new DescriptionPlayer();
             DescriptionPlayer.DescriptionFinishedPlaying += (sender, e) =>
             {
@@ -166,12 +168,12 @@ namespace LiveDescribe.ViewModel
                 Settings.Default.RecentProjects.Clear();
                 Settings.Default.Save();
             });
-
+            
             ShowImportAudioDescription = new RelayCommand(
                 canExecute: () => _projectManager.HasProjectLoaded,
                 execute: () =>
                 {
-                    var viewModel = DialogShower.SpawnImportAudioDescriptionView();
+                    var viewModel = DialogShower.SpawnImportAudioDescriptionView(_projectManager, _mediaVideo.DurationMilliseconds);
                 }
            );
 
@@ -263,8 +265,6 @@ namespace LiveDescribe.ViewModel
 
             ShowAboutInfo = new RelayCommand(DialogShower.SpawnAboutInfoView);
             #endregion
-
-            _mediaVideo = mediaVideo;
 
             //If apply requested happens  in the preferences use the new saved microphone in the settings
             _descriptiontimer = new Timer(10);

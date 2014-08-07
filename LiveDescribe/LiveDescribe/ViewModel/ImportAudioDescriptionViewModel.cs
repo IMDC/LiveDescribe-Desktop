@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using LiveDescribe.Managers;
+using LiveDescribe.Model;
 using log4net.Config;
 using Microsoft.Win32;
 using NAudio.Wave;
@@ -22,19 +24,29 @@ namespace LiveDescribe.ViewModel
 
         #region Fields
         private string _descriptionPath;
+        private double _videoDurationMilliseconds;
         private double _startInVideo;
         private double _endInVideo;
         private string _text;
         private bool _isStartInVideoTextBoxEnabled;
+        private readonly ProjectManager _projectManager;
 
         public bool? DialogResult { set; get; }
         private double DescriptionLengthInMilliseconds { set; get; }
         #endregion
 
-        public ImportAudioDescriptionViewModel()
+        #region Events
+
+        public EventHandler OnImportDescription;
+        #endregion
+
+        public ImportAudioDescriptionViewModel(ProjectManager projectManager, double videoDurationMilliseconds)
         {
             ChooseDescriptionWavFileCommand = new RelayCommand(ChooseDescriptionWavFile);
+            ImportAudioDescriptionCommand = new RelayCommand(ImportAudioDescription, CanImportDescription);
             IsStartInVideoTextBoxEnabled = false;
+            _projectManager = projectManager;
+            _videoDurationMilliseconds = videoDurationMilliseconds;
         }
 
         #region Properties
@@ -53,7 +65,8 @@ namespace LiveDescribe.ViewModel
         {
             set
             {
-                if (double.IsNaN(value))
+                if (double.IsNaN(value) || value > _videoDurationMilliseconds || 
+                    value + DescriptionLengthInMilliseconds > _videoDurationMilliseconds)
                     return;
                 _startInVideo = value;
                 EndInVideo = _startInVideo + DescriptionLengthInMilliseconds;
@@ -66,7 +79,8 @@ namespace LiveDescribe.ViewModel
         {
             set
             {
-                if (double.IsNaN(value))
+                if (double.IsNaN(value) || value > _videoDurationMilliseconds ||
+                    value + DescriptionLengthInMilliseconds > _videoDurationMilliseconds)
                     return;
                 _endInVideo = value;
                 RaisePropertyChanged();
@@ -121,6 +135,16 @@ namespace LiveDescribe.ViewModel
                 EndInVideo = DescriptionLengthInMilliseconds;
                 Log.Info("Description Path Chosen: " + DescriptionPath + " with length: " + DescriptionLengthInMilliseconds);
             }
+        }
+
+        private void ImportAudioDescription()
+        {
+            var desc = new Description(ProjectFile.FromAbsolutePath(DescriptionPath, _projectManager.Project.Folders.Project),
+                    0, DescriptionLengthInMilliseconds, StartInVideo, false) {Text = Text};
+
+            _projectManager.AddDescriptionAndTrackForUndo(desc);
+            var handler = OnImportDescription;
+            if (handler != null) handler(this, EventArgs.Empty);
         }
 
         private double GetDescriptionLengthInMilliseconds()

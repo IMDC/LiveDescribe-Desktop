@@ -20,12 +20,16 @@ namespace LiveDescribe.View
     /// </summary>
     public partial class ImportAudioDescriptionWindow : Window
     {
-        private readonly ImportAudioDescriptionViewModel _viewmodel;
 
         public ImportAudioDescriptionWindow(ImportAudioDescriptionViewModel dataContext)
         {
             DataContext = dataContext;
-            _viewmodel = dataContext;
+
+            dataContext.OnImportDescription += (sender, args) =>
+            {
+                DialogResult = true;
+                Close();
+            };
             InitializeComponent();
         }
 

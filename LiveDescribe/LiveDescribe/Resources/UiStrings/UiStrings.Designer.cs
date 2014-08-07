@@ -547,6 +547,15 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to File Name.
+        /// </summary>
+        public static string Label_FileName {
+            get {
+                return ResourceManager.GetString("Label_FileName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Time Left: {0}.
         /// </summary>
         public static string Label_Format_TimeLeft {

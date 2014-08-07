@@ -93,7 +93,7 @@
 
         <TextBlock
             Style="{StaticResource LabelStyle}"
-            Text="File Name"
+            Text="{x:Static s:UiStrings.Label_FileName}"
             Grid.Row="0"/>
 
         <TextBox
@@ -110,7 +110,7 @@
         <TextBlock
             Grid.Row="1"
             Style="{StaticResource LabelStyle}"
-            Text="Start In Video"/>
+            Text="{x:Static s:UiStrings.Header_StartTime}"/>
 
         <TextBox
             Style="{StaticResource TextBoxStyle}"
@@ -119,14 +119,15 @@
             Grid.Row="1"
             IsEnabled="{Binding IsStartInVideoTextBoxEnabled}"
             KeyDown="StartInVideoTextBox_OnKeyDown"
+            ToolTipService.ShowOnDisabled="True"
+            ToolTip="{x:Static s:UiStrings.ToolTip_MarkSpace}"
             Text="{Binding Path=StartInVideo, Converter={StaticResource MillisecondsTimeConverter}}"/>
 
         <TextBlock
             Grid.Row="1"
             Grid.Column="2"
-            Style="{StaticResource LabelStyle}"
-            Margin="15,10,10,12"
-            Text="End In Video"/>
+            Margin="10,11"
+            Text="{x:Static s:UiStrings.Header_EndTime}"/>
 
         <TextBlock
             Style="{StaticResource LabelStyle}" 
@@ -137,7 +138,7 @@
 
         <TextBlock
             Style="{StaticResource LabelStyle}"
-            Text="Description Text"
+            Text="{x:Static s:UiStrings.Header_DescriptionText}"
             Grid.Row="2"/>
 
         <TextBox
@@ -150,10 +151,11 @@
             Text="{Binding Text}"/>
 
         <StackPanel
+            HorizontalAlignment="Stretch"
             Orientation="Horizontal"
             Grid.Row="4"
             Grid.Column="2"
-            Grid.ColumnSpan="2" Margin="50,0,0,0">
+            Grid.ColumnSpan="3" Margin="50,0,10,0">
             <Button
                 Content="Import Description"
                 Style="{StaticResource ButtonStyle}"

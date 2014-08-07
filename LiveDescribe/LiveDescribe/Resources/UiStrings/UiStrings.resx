@@ -475,6 +475,9 @@
   <data name="MenuItem_ViewDescriptionFolder" xml:space="preserve">
     <value>View Descriptions in Folder...</value>
   </data>
+  <data name="Label_FileName" xml:space="preserve">
+    <value>File Name</value>
+  </data>
   <data name="MenuItem_Import" xml:space="preserve">
     <value>Import</value>
   </data>

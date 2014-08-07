@@ -1,4 +1,5 @@
-﻿using LiveDescribe.Model;
+﻿using LiveDescribe.Managers;
+using LiveDescribe.Model;
 using LiveDescribe.View;
 using LiveDescribe.ViewModel;
 using System.Collections.Generic;
@@ -65,9 +66,9 @@ namespace LiveDescribe.Factories
             return viewModel;
         }
 
-        public static ImportAudioDescriptionViewModel SpawnImportAudioDescriptionView()
+        public static ImportAudioDescriptionViewModel SpawnImportAudioDescriptionView(ProjectManager projectManager, double videoDurationMilliseconds)
         {
-            var viewModel = new ImportAudioDescriptionViewModel();
+            var viewModel = new ImportAudioDescriptionViewModel(projectManager, videoDurationMilliseconds);
             var view = new ImportAudioDescriptionWindow(viewModel);
             viewModel.DialogResult = view.ShowDialog();
 
