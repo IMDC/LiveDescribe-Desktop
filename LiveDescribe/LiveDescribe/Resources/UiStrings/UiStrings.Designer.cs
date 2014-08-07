@@ -853,11 +853,29 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to open project due to missing or moved directory..
+        /// </summary>
+        public static string MessageBox_DirectoryNotFoundError {
+            get {
+                return ResourceManager.GetString("MessageBox_DirectoryNotFoundError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The audio file for description could not be found at {0}.
         /// </summary>
         public static string MessageBox_Format_AudioFileNotFound {
             get {
                 return ResourceManager.GetString("MessageBox_Format_AudioFileNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The file &apos;{0}&apos; could not be found..
+        /// </summary>
+        public static string MessageBox_Format_FileNotFoundError {
+            get {
+                return ResourceManager.GetString("MessageBox_Format_FileNotFoundError", resourceCulture);
             }
         }
         

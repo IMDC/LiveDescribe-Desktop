@@ -161,6 +161,17 @@ namespace LiveDescribe.ViewModel
                 {
                     MessageBoxFactory.ShowError(UiStrings.MessageBox_OpenProjectFileMissingError);
                 }
+                catch (DirectoryNotFoundException e)
+                {
+                    Log.Warn("Directory not found while trying to open project", e);
+                    MessageBoxFactory.ShowError(UiStrings.MessageBox_DirectoryNotFoundError);
+                }
+                catch (FileNotFoundException e)
+                {
+                    Log.Warn("FileNotFound while trying to open project", e);
+                    MessageBoxFactory.ShowError(string.Format(UiStrings.MessageBox_Format_FileNotFoundError,
+                        e.FileName));
+                }
             });
 
             ClearRecentProjects = new RelayCommand(() =>
@@ -258,8 +269,8 @@ namespace LiveDescribe.ViewModel
                 canExecute: () => _projectManager.HasProjectLoaded,
                 execute: () =>
                 {
-                    ProcessStartInfo pfi = new ProcessStartInfo("Explorer.exe", _project.Folders.Descriptions.AbsolutePath);
-                    System.Diagnostics.Process.Start(pfi);
+                    var pfi = new ProcessStartInfo("Explorer.exe", _project.Folders.Descriptions.AbsolutePath);
+                    Process.Start(pfi);
                 }
             );
 

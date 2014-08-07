@@ -70,14 +70,18 @@ namespace LiveDescribe.View
             var splashscreen = new SplashScreen("../Resources/Images/LiveDescribe-Splashscreen.png");
             splashscreen.Show(true);
             CustomResources.LoadResources();
-#if !DEBUG
-            System.Threading.Thread.Sleep(2000);
-#endif
+
+            if (!Defines.Debug)
+                System.Threading.Thread.Sleep(2000);
+
             InitializeComponent();
-#if ZAGGA
-            DescriptionRecordingControl.ExtendedDescriptionCheckBox.Visibility = Visibility.Hidden;
-            SpaceAndDescriptionsTabControl.ExtendedDescriptionsTabItem.Visibility = Visibility.Hidden;
-#endif
+
+            if (Defines.Zagga)
+            {
+                DescriptionRecordingControl.ExtendedDescriptionCheckBox.Visibility = Visibility.Hidden;
+                SpaceAndDescriptionsTabControl.ExtendedDescriptionsTabItem.Visibility = Visibility.Hidden;
+            }
+
             Settings.Default.Upgrade();
             Settings.Default.InitializeDefaultValuesIfNull();
 
