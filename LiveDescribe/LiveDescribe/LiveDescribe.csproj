@@ -252,6 +252,7 @@
     <Compile Include="ViewModel\DescriptionInfoTabViewModel.cs" />
     <Compile Include="ViewModel\DescriptionRecordingControlViewModel.cs" />
     <Compile Include="ViewModel\ExportWindowViewModel.cs" />
+    <Compile Include="ViewModel\ImportAudioDescriptionViewModel.cs" />
     <Compile Include="ViewModel\LoadingViewModel.cs" />
     <Compile Include="ViewModel\MarkingSpacesControlViewModel.cs" />
     <Compile Include="ViewModel\SpaceRecordingViewModel.cs" />
@@ -266,6 +267,9 @@
     </Compile>
     <Compile Include="View\ExportWindow.xaml.cs">
       <DependentUpon>ExportWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ImportAudioDescriptionWindow.xaml.cs">
+      <DependentUpon>ImportAudioDescriptionWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\NewProjectView.xaml.cs">
       <DependentUpon>NewProjectView.xaml</DependentUpon>
@@ -338,6 +342,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\ExportWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ImportAudioDescriptionWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

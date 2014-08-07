@@ -64,5 +64,14 @@ namespace LiveDescribe.Factories
 
             return viewModel;
         }
+
+        public static ImportAudioDescriptionViewModel SpawnImportAudioDescriptionView()
+        {
+            var viewModel = new ImportAudioDescriptionViewModel();
+            var view = new ImportAudioDescriptionWindow(viewModel);
+            viewModel.DialogResult = view.ShowDialog();
+
+            return viewModel;
+        }
     }
 }

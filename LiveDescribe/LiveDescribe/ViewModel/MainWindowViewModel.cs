@@ -167,6 +167,14 @@ namespace LiveDescribe.ViewModel
                 Settings.Default.Save();
             });
 
+            ShowImportAudioDescription = new RelayCommand(
+                canExecute: () => _projectManager.HasProjectLoaded,
+                execute: () =>
+                {
+                    var viewModel = DialogShower.SpawnImportAudioDescriptionView();
+                }
+           );
+
             SaveProject = new RelayCommand(
                 canExecute: () => _projectManager.IsProjectModified,
                 execute: () => _projectManager.SaveProject()
@@ -401,6 +409,8 @@ namespace LiveDescribe.ViewModel
         public ICommand ExportSpacesTextToSrt { private set; get; }
 
         public ICommand ShowDescriptionFolder { private set; get; }
+
+        public ICommand ShowImportAudioDescription { private set; get; }
         #endregion
 
         #region Properties

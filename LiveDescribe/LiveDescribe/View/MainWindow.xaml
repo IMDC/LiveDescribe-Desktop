@@ -83,7 +83,13 @@
                         Command="{Binding SaveProject}"
                         InputGestureText="Ctrl+S" />
                     <Separator />
-
+                    
+                    <MenuItem
+                        Header="{x:Static s:UiStrings.MenuItem_Import}">
+                        <MenuItem
+                            Header="{x:Static s:UiStrings.MenuItem_ImportDescription}"
+                            Command="{Binding ShowImportAudioDescription}"/>
+                    </MenuItem>
                     <!--Exporting Options-->
                     <MenuItem
                         Header="Export">

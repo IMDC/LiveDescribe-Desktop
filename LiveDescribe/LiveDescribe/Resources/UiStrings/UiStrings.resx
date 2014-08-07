@@ -475,4 +475,10 @@
   <data name="MenuItem_ViewDescriptionFolder" xml:space="preserve">
     <value>View Descriptions in Folder...</value>
   </data>
+  <data name="MenuItem_Import" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="MenuItem_ImportDescription" xml:space="preserve">
+    <value>Import Description Audio File</value>
+  </data>
 </root>

@@ -86,7 +86,8 @@
             <ColumnDefinition
                 Width="Auto" />
             <ColumnDefinition
-                Width="*" />
+                Width="45*" />
+            <ColumnDefinition Width="68*"/>
             <ColumnDefinition
                 Width="Auto" />
         </Grid.ColumnDefinitions>
@@ -95,11 +96,11 @@
         <TextBlock
             Text="{x:Static s:UiStrings.Label_ProjectName}"
             Grid.Row="0"
-            Style="{StaticResource LabelStyle}" />
+            Style="{StaticResource LabelStyle}" Margin="5,8" />
         <TextBox
             x:Name="ProjectNameTextBox"
             Grid.Row="0"
-            Style="{StaticResource TextBoxStyle}">
+            Style="{StaticResource TextBoxStyle}" Grid.ColumnSpan="2">
             <TextBox.Text>
                 <Binding
                     Path="ProjectName"
@@ -111,11 +112,11 @@
         <TextBlock
             Text="{x:Static s:UiStrings.Label_Video}"
             Grid.Row="1"
-            Style="{StaticResource LabelStyle}" />
+            Style="{StaticResource LabelStyle}" Margin="5,9" />
         <TextBox
             x:Name="VideoTextBox"
             Grid.Row="1"
-            Style="{StaticResource TextBoxStyle}">
+            Style="{StaticResource TextBoxStyle}" Grid.ColumnSpan="2">
             <TextBox.Text>
                 <Binding
                     Path="VideoPath"
@@ -125,7 +126,7 @@
         <Button
             Grid.Row="1"
             Style="{StaticResource OpenButtonStyle}"
-            Command="{Binding ChooseVideoCommand}" />
+            Command="{Binding ChooseVideoCommand}" Grid.Column="3" />
 
         <!--Controls for Copy Confirmation-->
         <TextBlock
@@ -157,11 +158,11 @@
         <TextBlock
             Text="{x:Static s:UiStrings.Label_ProjectLocation}"
             Grid.Row="3"
-            Style="{StaticResource LabelStyle}" />
+            Style="{StaticResource LabelStyle}" Margin="5,9" />
         <TextBox
             x:Name="ProjectPathTextBox"
             Grid.Row="3"
-            Style="{StaticResource TextBoxStyle}">
+            Style="{StaticResource TextBoxStyle}" Grid.ColumnSpan="2">
             <TextBox.Text>
                 <Binding
                     Path="ProjectPath"
@@ -171,13 +172,13 @@
         <Button
             Grid.Row="3"
             Style="{StaticResource OpenButtonStyle}"
-            Command="{Binding ChoosePathCommand}" />
+            Command="{Binding ChoosePathCommand}" Grid.Column="3" />
 
         <!--Controls for Creating/Cancelling-->
         <StackPanel
             Orientation="Horizontal"
             Grid.Row="4"
-            Grid.Column="1"
+            Grid.Column="2"
             Grid.ColumnSpan="2"
             HorizontalAlignment="Right">
             <Button

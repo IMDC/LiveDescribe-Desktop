@@ -736,6 +736,24 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Import.
+        /// </summary>
+        public static string MenuItem_Import {
+            get {
+                return ResourceManager.GetString("MenuItem_Import", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import Description Audio File.
+        /// </summary>
+        public static string MenuItem_ImportDescription {
+            get {
+                return ResourceManager.GetString("MenuItem_ImportDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to New Project.
         /// </summary>
         public static string MenuItem_NewProject {
