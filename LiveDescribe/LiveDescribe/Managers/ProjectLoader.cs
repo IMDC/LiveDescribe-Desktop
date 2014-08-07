@@ -29,7 +29,7 @@ namespace LiveDescribe.Managers
         #region Events
         public event EventHandler<EventArgs<List<Description>>> DescriptionsLoaded;
         public event EventHandler<EventArgs<List<Space>>> SpacesLoaded;
-        public event EventHandler<EventArgs<List<Space>>> SpacesAudioAnalysisCompleted;
+        public event EventHandler<TwoTupleEventArgs<Project, List<Space>>> SpacesAudioAnalysisCompleted;
         public event EventHandler<EventArgs<Project>> ProjectLoaded;
         #endregion
 
@@ -169,11 +169,14 @@ namespace LiveDescribe.Managers
                 if (Settings.Default.AutoGenerateSpaces)
                 {
                     spaceData = AudioAnalyzer.FindSpaces(waveform);
-                    OnSpacesAudioAnalysisCompleted(spaceData);
+                    OnSpacesAudioAnalysisCompleted(project, spaceData);
                     Log.Info("Spaces found");
                 }
                 else
                     Log.Info("Spaces not auto-generated");
+
+                FileWriter.WriteWaveFormHeader(project, waveform.Header);
+                FileWriter.WriteWaveFormFile(project, waveform.Data);
 
                 ContinueLoadingProject(project);
             };
@@ -196,7 +199,7 @@ namespace LiveDescribe.Managers
 
         private void ContinueLoadingProject(Project project)
         {
-            Properties.Settings.Default.WorkingDirectory = project.Folders.Project + "\\";
+            Settings.Default.WorkingDirectory = project.Folders.Project + "\\";
 
             OnProjectLoaded(project);
             Log.InfoFormat("Project \"{0}\" loaded successfully", project.ProjectName);
@@ -218,10 +221,10 @@ namespace LiveDescribe.Managers
             if (handler != null) handler(this, spaces);
         }
 
-        private void OnSpacesAudioAnalysisCompleted(List<Space> spaces)
+        private void OnSpacesAudioAnalysisCompleted(Project project, List<Space> spaces)
         {
-            EventHandler<EventArgs<List<Space>>> handler = SpacesAudioAnalysisCompleted;
-            if (handler != null) handler(this, spaces);
+            EventHandler<TwoTupleEventArgs<Project, List<Space>>> handler = SpacesAudioAnalysisCompleted;
+            if (handler != null) handler(this, new TwoTupleEventArgs<Project, List<Space>>(project, spaces));
         }
 
         private void OnProjectLoaded(Project project)
