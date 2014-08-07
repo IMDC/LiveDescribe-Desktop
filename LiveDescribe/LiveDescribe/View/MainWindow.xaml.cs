@@ -318,6 +318,7 @@ namespace LiveDescribe.View
             #endregion
         }
 
+        #region Play_Tick
         /// <summary>
         /// Updates the Marker Position on the Timer
         /// </summary>
@@ -344,6 +345,7 @@ namespace LiveDescribe.View
                 Log.Warn("Task Cancelled exception", exception);
             }
         }
+        #endregion
 
         #region View Listeners
 
