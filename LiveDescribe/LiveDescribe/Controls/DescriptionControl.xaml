@@ -26,14 +26,14 @@
             <Rectangle.ContextMenu>
                 <ContextMenu>
                     <MenuItem
-                        Header="{x:Static s:UiStrings.Command_DeleteDescription}"
-                        Command="{Binding DescriptionDeleteCommand}" />
-                    <MenuItem
                         Header="{x:Static s:UiStrings.Command_GoToDescription}"
                         Command="{Binding GoToThisDescriptionCommand}" />
                     <MenuItem
                         Header="{x:Static s:UiStrings.Header_OpenFileWinExplorer}"
                         Command="{Binding OpenWinFileExplorerToFile}"/>
+                    <MenuItem
+                        Header="{x:Static s:UiStrings.Command_DeleteDescription}"
+                        Command="{Binding DescriptionDeleteCommand}" />
                 </ContextMenu>
             </Rectangle.ContextMenu>
             <Rectangle.Style>

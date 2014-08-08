@@ -24,11 +24,11 @@
             <Rectangle.ContextMenu>
                 <ContextMenu>
                     <MenuItem
-                        Header="{x:Static s:UiStrings.Command_DeleteSpace}"
-                        Command="{Binding DeleteSpaceCommand}" />
-                    <MenuItem
                         Header="{x:Static s:UiStrings.Command_GoToSpace}"
                         Command="{Binding GoToThisSpaceCommand}" />
+                    <MenuItem
+                        Header="{x:Static s:UiStrings.Command_DeleteSpace}"
+                        Command="{Binding DeleteSpaceCommand}" />
                 </ContextMenu>
             </Rectangle.ContextMenu>
             <Rectangle.Style>
