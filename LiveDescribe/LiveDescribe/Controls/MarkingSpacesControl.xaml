@@ -32,11 +32,11 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition
-                Height="Auto" />
+                Height="25" />
             <RowDefinition
                 Height="Auto" />
             <RowDefinition
-                Height="Auto" />
+                Height="25" />
             <RowDefinition
                 Height="Auto" />
             <RowDefinition
@@ -46,7 +46,8 @@
             <ColumnDefinition />
             <ColumnDefinition />
             <ColumnDefinition />
-            <ColumnDefinition />
+            <ColumnDefinition 
+                Width="40"/>
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
 
