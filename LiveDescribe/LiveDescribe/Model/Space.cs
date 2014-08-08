@@ -35,16 +35,11 @@ namespace LiveDescribe.Model
         #endregion
 
         #region Event Handlers
-        [JsonIgnore]
-        public EventHandler SpaceDeleteEvent;
-        [JsonIgnore]
-        public EventHandler<MouseEventArgs> SpaceMouseUpEvent;
-        [JsonIgnore]
-        public EventHandler<MouseEventArgs> SpaceMouseDownEvent;
-        [JsonIgnore]
-        public EventHandler<MouseEventArgs> SpaceMouseMoveEvent;
-        [JsonIgnore]
-        public EventHandler GoToThisSpaceEvent;
+        public event EventHandler SpaceDeleteEvent;
+        public event EventHandler<MouseEventArgs> SpaceMouseUpEvent;
+        public event EventHandler<MouseEventArgs> SpaceMouseDownEvent;
+        public event EventHandler<MouseEventArgs> SpaceMouseMoveEvent;
+        public event EventHandler GoToThisSpaceEvent;
         #endregion
 
         #region Constructors
