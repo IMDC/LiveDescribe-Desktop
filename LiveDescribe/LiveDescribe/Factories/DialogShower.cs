@@ -54,6 +54,7 @@ namespace LiveDescribe.Factories
             _aboutInfoView.Focus();
         }
 
+        /// <summary>
         /// Creates a ExportWindowView and attaches an instance of ExportWindowViewModel to it.
         /// </summary>
         /// <returns>The ViewModel of the Window.</returns>

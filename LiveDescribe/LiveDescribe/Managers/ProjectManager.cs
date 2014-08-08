@@ -197,7 +197,7 @@ namespace LiveDescribe.Managers
 
         private void DescriptionDelete(object sender, EventArgs e)
         {
-            Description desc = (Description)sender;
+            var desc = (Description)sender;
             RemoveDescriptionAndTrackForUndo(desc);
         }
         #endregion
@@ -271,8 +271,7 @@ namespace LiveDescribe.Managers
 
         private void SpaceDeleted(object sender, EventArgs e)
         {
-            Space s = (Space)sender;
-            Console.WriteLine("Space Deleted Event");
+            var s = (Space)sender;
             Spaces.Remove(s);
             _undoRedoManager.InsertSpaceForDeleteUndoRedo(Spaces, s);
         }

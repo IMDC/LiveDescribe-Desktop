@@ -148,7 +148,6 @@ namespace LiveDescribe.Managers
         {
             var worker = new BackgroundWorker { WorkerReportsProgress = true, };
             Waveform waveform = null;
-            List<Space> spaceData = null;
 
             //Strip the audio from the given project video
             worker.DoWork += (sender, args) =>
@@ -168,7 +167,7 @@ namespace LiveDescribe.Managers
 
                 if (Settings.Default.AutoGenerateSpaces)
                 {
-                    spaceData = AudioAnalyzer.FindSpaces(waveform);
+                    List<Space> spaceData = AudioAnalyzer.FindSpaces(waveform);
                     OnSpacesAudioAnalysisCompleted(spaceData);
                     Log.Info("Spaces found");
                 }
@@ -196,7 +195,7 @@ namespace LiveDescribe.Managers
 
         private void ContinueLoadingProject(Project project)
         {
-            Properties.Settings.Default.WorkingDirectory = project.Folders.Project + "\\";
+            Settings.Default.WorkingDirectory = project.Folders.Project + "\\";
 
             OnProjectLoaded(project);
             Log.InfoFormat("Project \"{0}\" loaded successfully", project.ProjectName);

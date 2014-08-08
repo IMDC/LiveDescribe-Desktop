@@ -1,6 +1,5 @@
 ﻿using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Interfaces;
-using LiveDescribe.Managers;
 using LiveDescribe.Properties;
 using Newtonsoft.Json;
 using System;
@@ -82,8 +81,8 @@ namespace LiveDescribe.Model
                 execute: () =>
                 {
                     string args = string.Format("/Select, {0}", AudioFile);
-                    ProcessStartInfo pfi = new ProcessStartInfo("Explorer.exe", args);
-                    System.Diagnostics.Process.Start(pfi); 
+                    var pfi = new ProcessStartInfo("Explorer.exe", args);
+                    Process.Start(pfi); 
                 });
             
             Settings.Default.PropertyChanged += (sender, args) =>

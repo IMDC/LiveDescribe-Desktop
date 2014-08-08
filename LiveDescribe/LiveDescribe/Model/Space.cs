@@ -1,6 +1,5 @@
 ﻿using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Interfaces;
-using LiveDescribe.Managers;
 using LiveDescribe.Properties;
 using Newtonsoft.Json;
 using System;

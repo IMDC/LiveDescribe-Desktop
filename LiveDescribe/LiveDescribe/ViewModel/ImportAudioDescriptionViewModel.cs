@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Managers;
 using LiveDescribe.Model;
-using log4net.Config;
 using Microsoft.Win32;
 using NAudio.Wave;
 
@@ -24,7 +18,7 @@ namespace LiveDescribe.ViewModel
 
         #region Fields
         private string _descriptionPath;
-        private double _videoDurationMilliseconds;
+        private readonly double _videoDurationMilliseconds;
         private double _startInVideo;
         private double _endInVideo;
         private string _text;
