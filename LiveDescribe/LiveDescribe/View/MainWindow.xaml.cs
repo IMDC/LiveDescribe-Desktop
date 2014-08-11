@@ -318,6 +318,7 @@ namespace LiveDescribe.View
             #endregion
         }
 
+        #region Play_Tick
         /// <summary>
         /// Updates the Marker Position on the Timer
         /// </summary>
@@ -344,6 +345,7 @@ namespace LiveDescribe.View
                 Log.Warn("Task Cancelled exception", exception);
             }
         }
+        #endregion
 
         #region View Listeners
 
@@ -648,7 +650,7 @@ namespace LiveDescribe.View
             _audioCanvas.Children.Clear();
 
             int begin = (int)TimeLineScrollViewer.HorizontalOffset;
-            int ratio = _mediaControlViewModel.Waveform.Header.NumChannels == 2 ? 40 : 80;
+            int ratio = _mediaControlViewModel.Waveform.Header.Channels == 2 ? 40 : 80;
             double samplesPerSecond =
                 (_mediaControlViewModel.Waveform.Header.SampleRate * (_mediaControlViewModel.Waveform.Header.BlockAlign / (double)ratio));
 

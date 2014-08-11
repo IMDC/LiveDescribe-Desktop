@@ -186,10 +186,10 @@
     <Compile Include="Converters\RecordingAndCountdownConverter.cs" />
     <Compile Include="Converters\VideoStateToBoolConverter.cs" />
     <Compile Include="Converters\VarNotNullToBoolConverter.cs" />
-    <Compile Include="Events\AddDescriptionEventArgs.cs" />
     <Compile Include="Events\CopyFileProgressChangedEventArgs.cs" />
     <Compile Include="Events\EventArgsT.cs" />
-    <Compile Include="Events\SpaceEventArgs.cs" />
+    <Compile Include="Events\TwoTupleEventArgs.cs" />
+    <Compile Include="Extensions\ArrayExtentions.cs" />
     <Compile Include="Extensions\CommandExtensions.cs" />
     <Compile Include="Extensions\ItemsControlExtensions.cs" />
     <Compile Include="Extensions\ObservableCollectionExtensions.cs" />

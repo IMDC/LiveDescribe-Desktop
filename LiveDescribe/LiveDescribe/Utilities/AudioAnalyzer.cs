@@ -57,23 +57,18 @@ namespace LiveDescribe.Utilities
         public static List<Space> FindSpaces(Waveform waveform)
         {
             var spaces = new List<Space>();
-            float duration = (float)(waveform.Header.ChunkSize * 8)
-                / (waveform.Header.SampleRate * waveform.Header.BitsPerSample * waveform.Header.NumChannels);
-            int ratio = waveform.Header.NumChannels == 2 ? 40 : 80;
+            float waveDurationSeconds = (waveform.Header.DataSize) / ((float)waveform.Header.ByteRate);
+            int ratio = waveform.Header.Channels == 2 ? 40 : 80;
             double samplesPerSecond = waveform.Header.SampleRate * (waveform.Header.BlockAlign / (double)ratio);
-
-            //Console.WriteLine("Duration: {0} samples_per_second: {1}, sample_rate: {2}, BlockAlign: {3} Data Size; {4}",
-            //    duration, samples_per_second, waveform.Header.SampleRate, waveform.Header.BlockAlign, waveform.Data.Count);
 
             //keeps track of sounds descriptors for each window
             var zcrHistogram = new List<float>();
             var energyHistogram = new List<float>();
 
             const int windowSize = 1; // 1 SECOND
-            int window = 0; //counter for the total number of windows
 
             //do through each window and calculate the audio descriptors
-            while (window < duration)
+            for (int window = 0; window < waveDurationSeconds; window++)
             {
                 var start = (int)Math.Round(window * (windowSize * samplesPerSecond));
 
@@ -83,7 +78,6 @@ namespace LiveDescribe.Utilities
                     zcrHistogram.Add(Zcr(bin));
                     energyHistogram.Add(Energy(bin));
                 }
-                window++;
             }
 
             const double zcrFactor = 0.80;
