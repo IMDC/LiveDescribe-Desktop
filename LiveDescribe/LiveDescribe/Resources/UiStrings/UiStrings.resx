@@ -187,7 +187,7 @@
     <value>Channels</value>
   </data>
   <data name="Header_DescriptionText" xml:space="preserve">
-    <value>Description Text</value>
+    <value>Transcript</value>
     <comment>InfoTab Header</comment>
   </data>
   <data name="Header_Duration" xml:space="preserve">
@@ -195,7 +195,7 @@
     <comment>InfoTab Header</comment>
   </data>
   <data name="Header_EndTime" xml:space="preserve">
-    <value>End In Video</value>
+    <value>End Time</value>
     <comment>InfoTab Header</comment>
   </data>
   <data name="Header_ExtendedDescriptions" xml:space="preserve">
@@ -221,10 +221,10 @@
     <value>Spaces</value>
   </data>
   <data name="Header_SpaceText" xml:space="preserve">
-    <value>Space Text</value>
+    <value>Transcript</value>
   </data>
   <data name="Header_StartTime" xml:space="preserve">
-    <value>Start In Video</value>
+    <value>Start Time</value>
     <comment>InfoTab Header</comment>
   </data>
   <data name="Label_Begin" xml:space="preserve">
@@ -491,5 +491,8 @@
   </data>
   <data name="MenuItem_ImportDescription" xml:space="preserve">
     <value>Import Description Audio File</value>
+  </data>
+  <data name="Header_LockMovement" xml:space="preserve">
+    <value>Lock Movement</value>
   </data>
 </root>

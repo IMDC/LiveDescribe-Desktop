@@ -73,6 +73,11 @@
                 IsChecked="{Binding Path=IsRecordedOver,
                     Mode=TwoWay}" />
         </DataTemplate>
+        <DataTemplate
+            x:Key="LockMovementCheckBoxTemplate">
+            <CheckBox
+                IsThreeState="False" />
+        </DataTemplate>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -150,6 +155,9 @@
                             <GridViewColumn
                                 Header="{x:Static s:UiStrings.Header_SpaceCompleted}"
                                 CellTemplate="{StaticResource CompleteCheckboxTemplate}" />
+                            <GridViewColumn
+                                Header="{x:Static s:UiStrings.Header_LockMovement}"
+                                CellTemplate="{StaticResource LockMovementCheckBoxTemplate}" />
                         </GridView>
                     </ListView.View>
                 </ListView>
@@ -171,7 +179,7 @@
                                 Command="{Binding GoToThisDescriptionCommand}" />
                             <MenuItem
                                 Header="{x:Static s:UiStrings.Header_OpenFileWinExplorer}"
-                                Command="{Binding OpenWinFileExplorerToFile}"/>
+                                Command="{Binding OpenWinFileExplorerToFile}" />
                             <MenuItem
                                 Header="{x:Static s:UiStrings.Command_DeleteDescription}"
                                 Command="{Binding DescriptionDeleteCommand}" />
@@ -212,6 +220,9 @@
                             <GridViewColumn
                                 Header="{x:Static s:UiStrings.Header_DescriptionText}"
                                 CellTemplate="{StaticResource TextDataTemplate}" />
+                            <GridViewColumn
+                                Header="{x:Static s:UiStrings.Header_LockMovement}"
+                                CellTemplate="{StaticResource LockMovementCheckBoxTemplate}" />
                         </GridView>
                     </ListView.View>
                 </ListView>
@@ -233,7 +244,7 @@
                                 Command="{Binding GoToThisDescriptionCommand}" />
                             <MenuItem
                                 Header="{x:Static s:UiStrings.Header_OpenFileWinExplorer}"
-                                Command="{Binding OpenWinFileExplorerToFile}"/>
+                                Command="{Binding OpenWinFileExplorerToFile}" />
                             <MenuItem
                                 Header="{x:Static s:UiStrings.Command_DeleteDescription}"
                                 Command="{Binding DescriptionDeleteCommand}" />
@@ -271,6 +282,9 @@
                             <GridViewColumn
                                 Header="{x:Static s:UiStrings.Header_DescriptionText}"
                                 CellTemplate="{StaticResource TextDataTemplate}" />
+                            <GridViewColumn
+                                Header="{x:Static s:UiStrings.Header_LockMovement}"
+                                CellTemplate="{StaticResource LockMovementCheckBoxTemplate}" />
                         </GridView>
                     </ListView.View>
                 </ListView>

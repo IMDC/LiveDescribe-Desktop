@@ -385,7 +385,7 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Description Text.
+        ///   Looks up a localized string similar to Transcript.
         /// </summary>
         public static string Header_DescriptionText {
             get {
@@ -403,7 +403,7 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to End In Video.
+        ///   Looks up a localized string similar to End Time.
         /// </summary>
         public static string Header_EndTime {
             get {
@@ -426,6 +426,15 @@ namespace LiveDescribe.Resources.UiStrings {
         public static string Header_General {
             get {
                 return ResourceManager.GetString("Header_General", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lock Movement.
+        /// </summary>
+        public static string Header_LockMovement {
+            get {
+                return ResourceManager.GetString("Header_LockMovement", resourceCulture);
             }
         }
         
@@ -502,7 +511,7 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Space Text.
+        ///   Looks up a localized string similar to Transcript.
         /// </summary>
         public static string Header_SpaceText {
             get {
@@ -511,7 +520,7 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Start In Video.
+        ///   Looks up a localized string similar to Start Time.
         /// </summary>
         public static string Header_StartTime {
             get {
