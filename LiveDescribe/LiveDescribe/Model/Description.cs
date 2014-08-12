@@ -1,18 +1,15 @@
 ﻿using GalaSoft.MvvmLight.Command;
-using LiveDescribe.Interfaces;
 using LiveDescribe.Properties;
 using Newtonsoft.Json;
 using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
-using System.Windows.Media;
 
 namespace LiveDescribe.Model
 {
-    public class Description : INotifyPropertyChanged, IDescribableInterval, IListIndexable
+    public class Description : DescribableInterval
     {
         #region Logger
         private static readonly log4net.ILog Log = log4net.LogManager.GetLogger
@@ -22,20 +19,10 @@ namespace LiveDescribe.Model
         //All units of time is in milliseconds
         #region Instance variables
         private ProjectFile _audioFile;
-        private string _text;
         private bool _isextendeddescription;
+        private bool _isPlaying;
         private double _startwavefiletime;
         private double _endwavefiletime;
-        private double _startinvideo;
-        private double _endinvideo;
-        private double _x;
-        private double _y;
-        private double _width;
-        private double _height;
-        private bool _isSelected;
-        private bool _isPlaying;
-        private int _index;
-        private Color _colour;
         #endregion
 
         #region Events
@@ -60,12 +47,12 @@ namespace LiveDescribe.Model
             //leading to an uneeded amount of changes to the description graphics
             _startwavefiletime = startwavefiletime;
             _endwavefiletime = endwavefiletime;
-            _startinvideo = startinvideo;
+            StartInVideo = startinvideo;
 
             if (!extendedDescription)
-                _endinvideo = startinvideo + (endwavefiletime - startwavefiletime);
+                EndInVideo = startinvideo + (endwavefiletime - startwavefiletime);
             else
-                _endinvideo = startinvideo;
+                EndInVideo = startinvideo;
         }
 
         public Description()
@@ -82,9 +69,9 @@ namespace LiveDescribe.Model
                 {
                     string args = string.Format("/Select, {0}", AudioFile);
                     var pfi = new ProcessStartInfo("Explorer.exe", args);
-                    Process.Start(pfi); 
+                    Process.Start(pfi);
                 });
-            
+
             Settings.Default.PropertyChanged += (sender, args) =>
             {
                 if (args.PropertyName == "ColourScheme")
@@ -93,59 +80,15 @@ namespace LiveDescribe.Model
         }
 
         #region Properties
-        /// <summary>
-        /// Keeps track of the description's X values
-        /// </summary>
         [JsonIgnore]
-        public double X
+        public override double Duration
         {
-            set
-            {
-                _x = value;
-                NotifyPropertyChanged();
-            }
-            get { return _x; }
-        }
-
-        /// <summary>
-        /// Keeps track of the description's Y value
-        /// </summary>
-        [JsonIgnore]
-        public double Y
-        {
-            set
-            {
-                _y = value;
-                NotifyPropertyChanged();
-            }
-            get { return _y; }
-        }
-        /// <summary>
-        /// Keeps track of the height of the description
-        /// </summary>
-        [JsonIgnore]
-        public double Height
-        {
-            set
-            {
-                _height = value;
-                NotifyPropertyChanged();
-            }
-            get { return _height; }
-        }
-
-        /// <summary>
-        /// Keeps track of the Width of the description
-        /// </summary>
-        [JsonIgnore]
-        public double Width
-        {
-            set
-            {
-                _width = value;
-                NotifyPropertyChanged();
-            }
-            get { return _width; }
+            get { return EndInVideo - StartInVideo; }
+            /* You should not be able to change the Duration of a description because it is based
+             * on the length of the audio file. This might be changed later with description audio
+             * trimming.
+             */
+            set { throw new NotImplementedException(); }
         }
 
         /// <summary>
@@ -201,59 +144,6 @@ namespace LiveDescribe.Model
             get { return _endwavefiletime; }
         }
 
-        /// <summary>
-        /// The time in the video that the description starts
-        /// </summary>
-        public double StartInVideo
-        {
-            set
-            {
-                _startinvideo = value;
-                NotifyPropertyChanged();
-            }
-            get { return _startinvideo; }
-        }
-        /// <summary>
-        /// The time in the video that the description ends
-        /// </summary>
-        public double EndInVideo
-        {
-            set
-            {
-                _endinvideo = value;
-                NotifyPropertyChanged();
-            }
-            get { return _endinvideo; }
-        }
-
-        [JsonIgnore]
-        public bool IsSelected
-        {
-            set
-            {
-                _isSelected = value;
-                NotifyPropertyChanged();
-            }
-            get { return _isSelected; }
-        }
-
-        public string Text
-        {
-            set
-            {
-                _text = value;
-                NotifyPropertyChanged();
-            }
-            get { return _text; }
-        }
-
-        public void SetStartAndEndInVideo(double startInVideo, double endInVideo)
-        {
-            _startinvideo = startInVideo;
-            _endinvideo = endInVideo;
-            NotifyPropertyChanged();
-        }
-
         [JsonIgnore]
         public bool IsPlaying
         {
@@ -266,43 +156,12 @@ namespace LiveDescribe.Model
         }
 
         /// <summary>
-        /// The length of the span the description is set to play in the video.
-        /// </summary>
-        [JsonIgnore]
-        public double Duration
-        {
-            get { return _endinvideo - _startinvideo; }
-        }
-
-        /// <summary>
         /// The length of time the wave file is set to play for.
         /// </summary>
         [JsonIgnore]
         public double WaveFileDuration
         {
             get { return _endwavefiletime - _startwavefiletime; }
-        }
-
-        [JsonIgnore]
-        public int Index
-        {
-            set
-            {
-                _index = value;
-                NotifyPropertyChanged();
-            }
-            get { return _index; }
-        }
-
-        [JsonIgnore]
-        public Color Colour
-        {
-            set
-            {
-                _colour = value;
-                NotifyPropertyChanged();
-            }
-            get { return _colour; }
         }
         #endregion
 
@@ -340,7 +199,7 @@ namespace LiveDescribe.Model
 
         #region Methods
 
-        private void SetColour()
+        public override void SetColour()
         {
             if (IsSelected)
                 Colour = Settings.Default.ColourScheme.SelectedItemColour;
@@ -400,25 +259,13 @@ namespace LiveDescribe.Model
         }
         #endregion
 
-        #region PropertyChanged
-        /// <summary>
-        /// An event that notifies a subscriber that a property in this class has been changed.
-        /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        /// <summary>
-        /// Raises the PropertyChanged event.
-        /// </summary>
-        /// <param name="propertyName">The name of the property changed.</param>
-        private void NotifyPropertyChanged([CallerMemberName]string propertyName = "")
+        #region Property Changed
+        protected override void NotifyPropertyChanged([CallerMemberName]string propertyName = "")
         {
-            var handler = PropertyChanged;
-            if (handler != null) { handler(this, new PropertyChangedEventArgs(propertyName)); }
+            base.NotifyPropertyChanged(propertyName);
 
             if (propertyName == "IsExtendedDescription" || propertyName == "IsSelected")
-            {
                 SetColour();
-            }
         }
         #endregion
     }

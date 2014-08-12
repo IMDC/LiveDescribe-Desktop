@@ -18,5 +18,6 @@ namespace LiveDescribe.Interfaces
         Color Colour { set; get; }
         string Text { set; get; }
         void SetStartAndEndInVideo(double startInVideo, double endInVideo);
+        void SetColour();
     }
 }

@@ -1,16 +1,13 @@
 ﻿using GalaSoft.MvvmLight.Command;
-using LiveDescribe.Interfaces;
 using LiveDescribe.Properties;
 using Newtonsoft.Json;
 using System;
-using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
-using System.Windows.Media;
 
 namespace LiveDescribe.Model
 {
-    public class Space : INotifyPropertyChanged, IDescribableInterval, IListIndexable
+    public class Space : DescribableInterval
     {
         #region Logger
         private static readonly log4net.ILog Log = log4net.LogManager.GetLogger
@@ -18,19 +15,7 @@ namespace LiveDescribe.Model
         #endregion
 
         #region Instance Variables
-        private double _startInVideo;
-        private string _text;
-        private double _endInVideo;
-        private double _duration;
-        private double _length;
-        private double _x;
-        private double _y;
-        private double _height;
-        private double _width;
-        private bool _isSelected;
         private bool _isRecordedOver;
-        private int _index;
-        private Color _colour;
         #endregion
 
         #region Event Handlers
@@ -86,136 +71,6 @@ namespace LiveDescribe.Model
         #endregion
 
         #region Properties
-        /// <summary>
-        /// Sets the text for the space
-        /// </summary>
-        public String Text
-        {
-            set
-            {
-                _text = value;
-                NotifyPropertyChanged();
-            }
-            get
-            {
-                return _text;
-            }
-        }
-
-        public void SetStartAndEndInVideo(double startInVideo, double endInVideo)
-        {
-            _startInVideo = startInVideo;
-            _endInVideo = endInVideo;
-            NotifyPropertyChanged();
-        }
-
-        /// <summary>
-        /// The start in video where the space starts
-        /// </summary>
-        public double StartInVideo
-        {
-            set
-            {
-                _startInVideo = value;
-                UpdateDuration();
-                NotifyPropertyChanged();
-            }
-            get { return _startInVideo; }
-        }
-
-        /// <summary>
-        /// The the time in the video where the space ends
-        /// </summary>
-        public double EndInVideo
-        {
-            set
-            {
-                _endInVideo = value;
-                UpdateDuration();
-                NotifyPropertyChanged();
-            }
-            get { return _endInVideo; }
-        }
-
-        /// <summary>
-        /// Duration of Space in Milliseconds
-        /// </summary>
-        [JsonIgnore]
-        public double Duration
-        {
-            set
-            {
-                _duration = value;
-                NotifyPropertyChanged();
-            }
-            get { return _duration; }
-        }
-
-        [JsonIgnore]
-        public double Length
-        {
-            set
-            {
-                _length = value;
-                NotifyPropertyChanged();
-            }
-            get { return _length; }
-        }
-
-        [JsonIgnore]
-        public double X
-        {
-            set
-            {
-                _x = value;
-                NotifyPropertyChanged();
-            }
-            get { return _x; }
-        }
-
-        [JsonIgnore]
-        public double Y
-        {
-            set
-            {
-                _y = value;
-                NotifyPropertyChanged();
-            }
-            get { return _y; }
-        }
-
-        [JsonIgnore]
-        public double Height
-        {
-            set
-            {
-                _height = value;
-                NotifyPropertyChanged();
-            }
-            get { return _height; }
-        }
-
-        [JsonIgnore]
-        public double Width
-        {
-            set
-            {
-                _width = value;
-                NotifyPropertyChanged();
-            }
-            get { return _width; }
-        }
-
-        [JsonIgnore]
-        public bool IsSelected
-        {
-            set
-            {
-                _isSelected = value;
-                NotifyPropertyChanged();
-            }
-            get { return _isSelected; }
-        }
 
         /// <summary>
         /// Represents whether a description has been recorded in the duration of this space.
@@ -228,31 +83,6 @@ namespace LiveDescribe.Model
                 NotifyPropertyChanged();
             }
             get { return _isRecordedOver; }
-        }
-
-        /// <summary>
-        /// The 1-based ndex of this space in a collection.
-        /// </summary>
-        [JsonIgnore]
-        public int Index
-        {
-            set
-            {
-                _index = value;
-                NotifyPropertyChanged();
-            }
-            get { return _index; }
-        }
-
-        [JsonIgnore]
-        public Color Colour
-        {
-            set
-            {
-                _colour = value;
-                NotifyPropertyChanged();
-            }
-            get { return _colour; }
         }
         #endregion
 
@@ -311,7 +141,7 @@ namespace LiveDescribe.Model
             Duration = EndInVideo - StartInVideo;
         }
 
-        private void SetColour()
+        public override void SetColour()
         {
             if (IsSelected)
                 Colour = Settings.Default.ColourScheme.SelectedItemColour;
@@ -322,20 +152,10 @@ namespace LiveDescribe.Model
         }
         #endregion
 
-        #region PropertyChanged
-        /// <summary>
-        /// An event that notifies a subscriber that a property in this class has been changed.
-        /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        /// <summary>
-        /// Raises the PropertyChanged event.
-        /// </summary>
-        /// <param name="propertyName">The name of the property changed.</param>
-        private void NotifyPropertyChanged([CallerMemberName]string propertyName = "")
+        #region Property Changed
+        protected override void NotifyPropertyChanged([CallerMemberName]string propertyName = "")
         {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null) { handler(this, new PropertyChangedEventArgs(propertyName)); }
+            base.NotifyPropertyChanged(propertyName);
 
             if (propertyName == "IsSelected" || propertyName == "IsRecordedOver")
                 SetColour();

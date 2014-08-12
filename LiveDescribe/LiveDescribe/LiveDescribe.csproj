@@ -209,6 +209,7 @@
     <Compile Include="Model\AudioSourceInfo.cs" />
     <Compile Include="Managers\UndoRedoManager.cs" />
     <Compile Include="Model\ColourScheme.cs" />
+    <Compile Include="Model\DescribableInterval.cs" />
     <Compile Include="Model\ObservableDropoutCollection.cs" />
     <Compile Include="Model\NamedFilePath.cs" />
     <Compile Include="Model\Project.cs" />
