@@ -447,8 +447,12 @@
     <Resource Include="Resources\Icons\endspace.png" />
     <Resource Include="Resources\Icons\beginspace.png" />
     <Resource Include="mic.ico" />
-    <Content Include="Resources\SoundEffects\beep.wav" />
-    <Content Include="Resources\SoundEffects\finished-beep.wav" />
+    <Content Include="Resources\SoundEffects\beep.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\SoundEffects\finished-beep.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Utilities\_ffmpeg.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

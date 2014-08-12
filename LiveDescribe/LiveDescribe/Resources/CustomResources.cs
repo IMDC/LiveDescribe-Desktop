@@ -1,9 +1,9 @@
-﻿using System;
+﻿using NAudio.Wave;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using NAudio.Wave;
 
 namespace LiveDescribe.Resources
 {
@@ -17,29 +17,30 @@ namespace LiveDescribe.Resources
 
         private static void LoadIcons()
         {
-            Play = new Image();
-            Play.Source = new BitmapImage(new Uri("pack://application:,,,/Resources/Icons/play.png"));
+            Play = new Image {Source = new BitmapImage(new Uri("pack://application:,,,/Resources/Icons/play.png"))};
 
-            Pause = new Image();
-            Pause.Source = new BitmapImage(new Uri("pack://application:,,,/Resources/Icons/pause.png"));
+            Pause = new Image {Source = new BitmapImage(new Uri("pack://application:,,,/Resources/Icons/pause.png"))};
 
-            Mute = new Image();
-            Mute.Source = new BitmapImage(new Uri("pack://application:,,,/Resources/Icons/mute.png"));
+            Mute = new Image {Source = new BitmapImage(new Uri("pack://application:,,,/Resources/Icons/mute.png"))};
 
-            UnMute = new Image();
-            UnMute.Source = new BitmapImage(new Uri("pack://application:,,,/Resources/Icons/unmute.png"));
+            UnMute = new Image {Source = new BitmapImage(new Uri("pack://application:,,,/Resources/Icons/unmute.png"))};
 
-            Record = new Image();
-            Record.Source = new BitmapImage(new Uri("pack://application:,,,/Resources/Icons/record.png"));
+            Record = new Image {Source = new BitmapImage(new Uri("pack://application:,,,/Resources/Icons/record.png"))};
 
-            StopRecord = new Image();
-            StopRecord.Source = new BitmapImage(new Uri("pack://application:,,,/Resources/Icons/stop.png"));
+            StopRecord = new Image
+            {
+                Source = new BitmapImage(new Uri("pack://application:,,,/Resources/Icons/stop.png"))
+            };
 
-            BeginSpace = new Image();
-            BeginSpace.Source = new BitmapImage(new Uri("pack://application:,,,/Resources/Icons/beginspace.png"));
+            BeginSpace = new Image
+            {
+                Source = new BitmapImage(new Uri("pack://application:,,,/Resources/Icons/beginspace.png"))
+            };
 
-            EndSpace = new Image();
-            EndSpace.Source = new BitmapImage(new Uri("pack://application:,,,/Resources/Icons/endspace.png"));
+            EndSpace = new Image
+            {
+                Source = new BitmapImage(new Uri("pack://application:,,,/Resources/Icons/endspace.png"))
+            };
         }
 
         private static void LoadCursors()
@@ -61,12 +62,13 @@ namespace LiveDescribe.Resources
         public static Image BeginSpace { get; private set; }
         public static Image EndSpace { get; private set; }
 
+        /* Note: Make sure to set the "Copy to Output Folder" when using sound effects.
+         */
         public static WaveOut Beep
         {
             get
             {
-                var readerBeep =
-                   new WaveFileReader("../../Resources/SoundEffects/beep.wav");
+                var readerBeep = new WaveFileReader("Resources/SoundEffects/beep.wav");
                 var beep = new WaveOut();
                 beep.Init(readerBeep);
                 return beep;
@@ -77,8 +79,7 @@ namespace LiveDescribe.Resources
         {
             get
             {
-                var readerEndBeep =
-                    new WaveFileReader("../../Resources/SoundEffects/finished-beep.wav");
+                var readerEndBeep = new WaveFileReader("../../Resources/SoundEffects/finished-beep.wav");
                 var longbeep = new WaveOut();
                 longbeep.Init(readerEndBeep);
                 return longbeep;
