@@ -1,7 +1,6 @@
 ﻿using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Properties;
 using Newtonsoft.Json;
-using System;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
@@ -18,14 +17,6 @@ namespace LiveDescribe.Model
         private bool _isRecordedOver;
         #endregion
 
-        #region Event Handlers
-        public event EventHandler SpaceDeleteEvent;
-        public event EventHandler<MouseEventArgs> SpaceMouseUpEvent;
-        public event EventHandler<MouseEventArgs> SpaceMouseDownEvent;
-        public event EventHandler<MouseEventArgs> SpaceMouseMoveEvent;
-        public event EventHandler GoToThisSpaceEvent;
-        #endregion
-
         #region Constructors
         public Space(double starttime, double endtime)
             : this()
@@ -38,13 +29,14 @@ namespace LiveDescribe.Model
         public Space()
         {
             IsSelected = false;
+            LockedInPlace = false;
 
-            DeleteSpaceCommand = new RelayCommand(DeleteSpace, () => true);
-            GoToThisSpaceCommand = new RelayCommand(GoToThisSpace, () => true);
+            DeleteSpaceCommand = new RelayCommand(OnDeleteRequested, () => true);
+            GoToThisSpaceCommand = new RelayCommand(OnNavigateToDescriptionRequested, () => true);
 
-            SpaceMouseUpCommand = new RelayCommand<MouseEventArgs>(SpaceMouseUp, param => true);
-            SpaceMouseDownCommand = new RelayCommand<MouseEventArgs>(SpaceMouseDown, param => true);
-            SpaceMouseMoveCommand = new RelayCommand<MouseEventArgs>(SpaceMouseMove, param => true);
+            SpaceMouseUpCommand = new RelayCommand<MouseEventArgs>(OnMouseUp, param => true);
+            SpaceMouseDownCommand = new RelayCommand<MouseEventArgs>(OnMouseDown, param => true);
+            SpaceMouseMoveCommand = new RelayCommand<MouseEventArgs>(OnMouseMove, param => true);
 
             Settings.Default.PropertyChanged += (sender, args) =>
             {
@@ -83,54 +75,6 @@ namespace LiveDescribe.Model
                 NotifyPropertyChanged();
             }
             get { return _isRecordedOver; }
-        }
-        #endregion
-
-        #region Command Methods
-
-        /// <summary>
-        /// Called when a delete space command is executed
-        /// </summary>
-        private void DeleteSpace()
-        {
-            Log.Info("Space deleted");
-            EventHandler handler = SpaceDeleteEvent;
-            if (handler != null) handler(this, EventArgs.Empty);
-        }
-
-        /// <summary>
-        /// Called when the mouse is down on the space
-        /// </summary>
-        /// <param name="e"></param>
-        private void SpaceMouseDown(MouseEventArgs e)
-        {
-            EventHandler<MouseEventArgs> handler = SpaceMouseDownEvent;
-            if (handler != null) handler(this, e);
-        }
-
-        /// <summary>
-        /// Called when the mouse moves over the space
-        /// </summary>
-        /// <param name="e"></param>
-        private void SpaceMouseMove(MouseEventArgs e)
-        {
-            EventHandler<MouseEventArgs> handler = SpaceMouseMoveEvent;
-            if (handler != null) handler(this, e);
-        }
-
-        /// <summary>
-        /// Called when the mouse is up over a space
-        /// </summary>
-        private void SpaceMouseUp(MouseEventArgs e)
-        {
-            EventHandler<MouseEventArgs> handler = SpaceMouseUpEvent;
-            if (handler != null) handler(this, e);
-        }
-
-        private void GoToThisSpace()
-        {
-            EventHandler handler = GoToThisSpaceEvent;
-            if (handler != null) handler(this, EventArgs.Empty);
         }
         #endregion
 

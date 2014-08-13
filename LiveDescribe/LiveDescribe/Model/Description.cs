@@ -50,6 +50,8 @@ namespace LiveDescribe.Model
 
         public Description()
         {
+            LockedInPlace = false;
+
             MouseDownCommand = new RelayCommand<MouseEventArgs>(OnMouseDown, param => true);
             NavigateToCommand = new RelayCommand(OnNavigateToDescriptionRequested, () => true);
             MouseUpCommand = new RelayCommand<MouseEventArgs>(OnMouseUp, param => true);

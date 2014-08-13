@@ -435,7 +435,6 @@ namespace LiveDescribe.View
             description.MouseDown += (sender1, e1) =>
             {
                 //Add mouse down event on every description here
-                var e2 = (MouseEventArgs)e1;
                 if (Mouse.LeftButton == MouseButtonState.Pressed)
                 {
                     if (description.IsExtendedDescription)
@@ -479,7 +478,7 @@ namespace LiveDescribe.View
             if (_videoMedia.CurrentState != LiveDescribeVideoStates.VideoNotLoaded)
                 DrawDescribableInterval(space);
 
-            space.SpaceMouseDownEvent += (sender1, e1) =>
+            space.MouseDown += (sender1, e1) =>
             {
                 if (Mouse.LeftButton == MouseButtonState.Pressed)
                 {
@@ -494,7 +493,7 @@ namespace LiveDescribe.View
                     DrawDescribableInterval(space);
             };
 
-            space.GoToThisSpaceEvent += (o, args) =>
+            space.NavigateToRequested += (o, args) =>
             {
                 UpdateMarkerPosition((space.StartInVideo / _videoDuration) * (_audioCanvas.Width) - MarkerOffset);
                 UpdateVideoPosition((int)space.StartInVideo);

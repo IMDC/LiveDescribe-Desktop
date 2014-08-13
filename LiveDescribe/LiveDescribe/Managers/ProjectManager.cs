@@ -271,7 +271,7 @@ namespace LiveDescribe.Managers
         #region Add And Remove SpaceEventHandlers
         private void AddSpaceEventHandlers(Space s)
         {
-            s.SpaceDeleteEvent += SpaceDeleted;
+            s.DeleteRequested += SpaceDeleted;
         }
 
         private void SpaceDeleted(object sender, EventArgs e)
@@ -297,7 +297,7 @@ namespace LiveDescribe.Managers
 
         private void RemoveSpaceEventHandlers(Space space)
         {
-            space.SpaceDeleteEvent -= SpaceDeleted;
+            space.DeleteRequested -= SpaceDeleted;
         }
 
         #endregion
