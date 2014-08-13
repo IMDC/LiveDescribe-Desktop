@@ -60,6 +60,9 @@ namespace LiveDescribe.Controls
 
         private void DescriptionGraphic_MouseMove(object sender, MouseEventArgs e)
         {
+            if (Description.LockedInPlace)
+                return;
+
             Description.MouseMoveCommand.Execute(e);
             double xPos = e.GetPosition(Container).X;
             if (DescriptionGraphic.IsMouseCaptured)

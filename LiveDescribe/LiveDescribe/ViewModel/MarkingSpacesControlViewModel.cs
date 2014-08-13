@@ -1,9 +1,9 @@
-﻿using System;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Managers;
 using LiveDescribe.Model;
+using System;
 using System.ComponentModel;
 using System.Windows.Input;
 
@@ -69,7 +69,6 @@ namespace LiveDescribe.ViewModel
                             originalEndInVideo, SelectedSpace.StartInVideo, SelectedSpace.EndInVideo);
                     }
                 });
-
         }
         #endregion
 
@@ -115,7 +114,7 @@ namespace LiveDescribe.ViewModel
                 if (value != null)
                 {
                     value.PropertyChanged += SelectedSpaceOnPropertyChanged;
-                    EditingEnabled = true;
+                    EditingEnabled = !value.LockedInPlace;
                 }
                 else
                     EditingEnabled = false;
@@ -140,6 +139,9 @@ namespace LiveDescribe.ViewModel
                 RaisePropertyChanged("SelectedSpace_StartInVideo");
                 RaisePropertyChanged("SelectedSpace_EndInVideo");
             }
+
+            if (e.PropertyName == "LockedInPlace")
+                EditingEnabled = !SelectedSpace.LockedInPlace;
         }
 
         public double SelectedSpace_StartInVideo

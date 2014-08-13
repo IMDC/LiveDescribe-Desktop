@@ -1,7 +1,6 @@
-﻿using System;
-using LiveDescribe.Model;
+﻿using LiveDescribe.Model;
 using LiveDescribe.Resources;
-using LiveDescribe.Utilities;
+using System;
 using System.Windows;
 using System.Windows.Input;
 
@@ -98,7 +97,7 @@ namespace LiveDescribe.Controls
 
         private void SetupUndoAndRedo()
         {
-            if (Container.CurrentActionState == ItemCanvas.ActionState.Dragging || 
+            if (Container.CurrentActionState == ItemCanvas.ActionState.Dragging ||
                 Container.CurrentActionState == ItemCanvas.ActionState.ResizingBeginningOfItem ||
                 Container.CurrentActionState == ItemCanvas.ActionState.ResizingEndOfItem)
             {
@@ -113,6 +112,9 @@ namespace LiveDescribe.Controls
 
         private void SpaceGraphic_MouseMove(object sender, MouseEventArgs e)
         {
+            if (Space.LockedInPlace)
+                return;
+
             Space.SpaceMouseMoveCommand.Execute(e);
             double xPos = e.GetPosition(Container).X;
 
