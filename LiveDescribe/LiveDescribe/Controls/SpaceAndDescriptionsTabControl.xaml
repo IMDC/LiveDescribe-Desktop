@@ -76,7 +76,9 @@
         <DataTemplate
             x:Key="LockMovementCheckBoxTemplate">
             <CheckBox
-                IsThreeState="False" />
+                IsThreeState="False"
+                IsChecked="{Binding Path=LockedInPlace,
+                    Mode=TwoWay}" />
         </DataTemplate>
     </UserControl.Resources>
     <Grid>

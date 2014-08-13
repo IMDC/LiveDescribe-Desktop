@@ -1,4 +1,6 @@
-﻿using System.Windows.Media;
+﻿using System;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace LiveDescribe.Interfaces
 {
@@ -8,6 +10,7 @@ namespace LiveDescribe.Interfaces
     public interface IDescribableInterval
     {
         bool IsSelected { set; get; }
+        bool LockedInPlace { set; get; }
         double X { set; get; }
         double Y { set; get; }
         double Height { set; get; }
@@ -17,6 +20,13 @@ namespace LiveDescribe.Interfaces
         double Duration { get; }
         Color Colour { set; get; }
         string Text { set; get; }
+
+        event EventHandler DeleteRequested;
+        event EventHandler<MouseEventArgs> MouseDown;
+        event EventHandler<MouseEventArgs> MouseUp;
+        event EventHandler<MouseEventArgs> MouseMove;
+        event EventHandler NavigateToRequested;
+
         void SetStartAndEndInVideo(double startInVideo, double endInVideo);
         void SetColour();
     }

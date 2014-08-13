@@ -192,15 +192,15 @@ namespace LiveDescribe.Managers
         /// <param name="desc">The description to setup the events on</param>
         private void AddDescriptionEventHandlers(Description desc)
         {
-            desc.DescriptionDeleteEvent += DescriptionDelete;
+            desc.DeleteRequested += DeleteDescription;
         }
 
         private void RemoveDescriptionEventHandlers(Description desc)
         {
-            desc.DescriptionDeleteEvent -= DescriptionDelete;
+            desc.DeleteRequested -= DeleteDescription;
         }
 
-        private void DescriptionDelete(object sender, EventArgs e)
+        private void DeleteDescription(object sender, EventArgs e)
         {
             var desc = (Description)sender;
             RemoveDescriptionAndTrackForUndo(desc);

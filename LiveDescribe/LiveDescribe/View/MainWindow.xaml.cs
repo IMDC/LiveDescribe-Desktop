@@ -432,7 +432,7 @@ namespace LiveDescribe.View
                     DrawDescribableInterval(description);
             };
 
-            description.DescriptionMouseDownEvent += (sender1, e1) =>
+            description.MouseDown += (sender1, e1) =>
             {
                 //Add mouse down event on every description here
                 var e2 = (MouseEventArgs)e1;
@@ -451,7 +451,7 @@ namespace LiveDescribe.View
                 }
             };
 
-            description.GoToThisDescriptionEvent += (sender1, e1) =>
+            description.NavigateToRequested += (sender1, e1) =>
             {
                 UpdateMarkerPosition((description.StartInVideo / _videoDuration) * (_audioCanvas.Width) - MarkerOffset);
                 UpdateVideoPosition((int)description.StartInVideo);

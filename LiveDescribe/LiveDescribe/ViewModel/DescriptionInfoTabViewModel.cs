@@ -67,10 +67,10 @@ namespace LiveDescribe.ViewModel
                         SelectedSpace.DeleteSpaceCommand.ExecuteIfCan();
 
                     if (SelectedRegularDescription != null)
-                        SelectedRegularDescription.DescriptionDeleteCommand.ExecuteIfCan();
+                        SelectedRegularDescription.DeleteCommand.ExecuteIfCan();
 
                     if (SelectedExtendedDescription != null)
-                        SelectedExtendedDescription.DescriptionDeleteCommand.ExecuteIfCan();
+                        SelectedExtendedDescription.DeleteCommand.ExecuteIfCan();
                 }
             );
         }

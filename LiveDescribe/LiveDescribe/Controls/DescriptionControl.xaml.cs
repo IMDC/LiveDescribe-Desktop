@@ -1,6 +1,6 @@
-﻿using System;
-using LiveDescribe.Model;
+﻿using LiveDescribe.Model;
 using LiveDescribe.Resources;
+using System;
 using System.Windows;
 using System.Windows.Input;
 
@@ -19,7 +19,7 @@ namespace LiveDescribe.Controls
         public const double Tolerance = 0.0001;
 
         public static DependencyProperty DescriptionProperty =
-            DependencyProperty.Register("Description", typeof (Description), typeof (DescriptionControl));
+            DependencyProperty.Register("Description", typeof(Description), typeof(DescriptionControl));
 
         private double _originalStartInVideo;
         private double _originalEndInVideo;
@@ -44,7 +44,7 @@ namespace LiveDescribe.Controls
 
         private void DescriptionGraphic_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            Description.DescriptionMouseDownCommand.Execute(e);
+            Description.MouseDownCommand.Execute(e);
             if (Mouse.LeftButton == MouseButtonState.Pressed)
             {
                 _originalPositionForDraggingDescription = e.GetPosition(Container).X;
@@ -60,7 +60,7 @@ namespace LiveDescribe.Controls
 
         private void DescriptionGraphic_MouseMove(object sender, MouseEventArgs e)
         {
-            Description.DescriptionMouseMoveCommand.Execute(e);
+            Description.MouseMoveCommand.Execute(e);
             double xPos = e.GetPosition(Container).X;
             if (DescriptionGraphic.IsMouseCaptured)
                 HandleDescriptionMouseCapturedState(xPos);

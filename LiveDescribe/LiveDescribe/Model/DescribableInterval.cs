@@ -1,7 +1,9 @@
 ﻿using LiveDescribe.Interfaces;
 using Newtonsoft.Json;
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace LiveDescribe.Model
@@ -21,10 +23,60 @@ namespace LiveDescribe.Model
         private int _index;
         private Color _colour;
         private double _duration;
+        private bool _lockedInPlace;
 
         #endregion
 
+        #region Events
+        /// <summary>
+        /// Requests to handlers that the program deletes this interval from the program.
+        /// </summary>
+        public event EventHandler DeleteRequested;
+        /// <summary>
+        /// Invoked when the user clicks down on this interval
+        /// </summary>
+        public event EventHandler<MouseEventArgs> MouseDown;
+        public event EventHandler<MouseEventArgs> MouseUp;
+        public event EventHandler<MouseEventArgs> MouseMove;
+        /// <summary>
+        /// Requests to handlers that the program moves the marker over to the beginning of the
+        /// interval.
+        /// </summary>
+        public event EventHandler NavigateToRequested;
+        #endregion
+
+        #region Commands
+        [JsonIgnore]
+        public ICommand MouseDownCommand { get; protected set; }
+
+        [JsonIgnore]
+        public ICommand MouseUpCommand { get; protected set; }
+
+        [JsonIgnore]
+        public ICommand MouseMoveCommand { get; protected set; }
+
+        [JsonIgnore]
+        public ICommand DeleteCommand { get; protected set; }
+
+        [JsonIgnore]
+        public ICommand NavigateToCommand { get; protected set; }
+        #endregion
+
         #region Properties
+
+        /// <summary>
+        /// Gets or Sets a value that determines if the Interval is moveable/adjustable or not.
+        /// </summary>
+        public bool LockedInPlace
+        {
+            set
+            {
+                _lockedInPlace = value;
+                NotifyPropertyChanged();
+            }
+            get { return _lockedInPlace; }
+        }
+
         /// <summary>
         /// Keeps track of the description's X values
         /// </summary>
@@ -172,6 +224,38 @@ namespace LiveDescribe.Model
 
         #region Methods
         public abstract void SetColour();
+        #endregion
+
+        #region Event Invokation
+        protected void OnMouseUp(MouseEventArgs e)
+        {
+            var handler = MouseUp;
+            if (handler != null) handler(this, e);
+        }
+
+        protected void OnMouseDown(MouseEventArgs e)
+        {
+            var handler = MouseDown;
+            if (handler != null) handler(this, e);
+        }
+
+        protected void OnMouseMove(MouseEventArgs e)
+        {
+            var handler = MouseMove;
+            if (handler != null) handler(this, e);
+        }
+
+        protected void OnDeleteRequested()
+        {
+            var handler = DeleteRequested;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
+        protected void OnNavigateToDescriptionRequested()
+        {
+            var handler = NavigateToRequested;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
         #endregion
 
         #region PropertyChanged

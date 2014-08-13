@@ -25,14 +25,7 @@ namespace LiveDescribe.Model
         private double _endwavefiletime;
         #endregion
 
-        #region Events
-        public event EventHandler DescriptionDeleteEvent;
-        public event EventHandler DescriptionMouseDownEvent;
-        public event EventHandler DescriptionMouseUpEvent;
-        public event EventHandler DescriptionMouseMoveEvent;
-        public event EventHandler GoToThisDescriptionEvent;
-        #endregion
-
+        #region Constructors
         public Description(ProjectFile filepath, double startwavefiletime, double endwavefiletime,
             double startinvideo, bool extendedDescription)
             : this()
@@ -57,11 +50,11 @@ namespace LiveDescribe.Model
 
         public Description()
         {
-            DescriptionMouseDownCommand = new RelayCommand<MouseEventArgs>(DescriptionMouseDown, param => true);
-            GoToThisDescriptionCommand = new RelayCommand(GoTothisDescription, () => true);
-            DescriptionMouseUpCommand = new RelayCommand(DescriptionMouseUp, () => true);
-            DescriptionDeleteCommand = new RelayCommand(DescriptionDelete, () => true);
-            DescriptionMouseMoveCommand = new RelayCommand<MouseEventArgs>(DescriptionMouseMove, param => true);
+            MouseDownCommand = new RelayCommand<MouseEventArgs>(OnMouseDown, param => true);
+            NavigateToCommand = new RelayCommand(OnNavigateToDescriptionRequested, () => true);
+            MouseUpCommand = new RelayCommand<MouseEventArgs>(OnMouseUp, param => true);
+            DeleteCommand = new RelayCommand(OnDeleteRequested, () => true);
+            MouseMoveCommand = new RelayCommand<MouseEventArgs>(OnMouseMove, param => true);
 
             OpenWinFileExplorerToFile = new RelayCommand(
                 canExecute: () => true,
@@ -78,6 +71,11 @@ namespace LiveDescribe.Model
                     SetColour();
             };
         }
+        #endregion
+
+        #region Commands
+        public ICommand OpenWinFileExplorerToFile { get; private set; }
+        #endregion
 
         #region Properties
         [JsonIgnore]
@@ -165,38 +163,6 @@ namespace LiveDescribe.Model
         }
         #endregion
 
-        #region Commands
-        /// <summary>
-        /// Setter and getter for the DescriptionMouseDown Command
-        /// </summary>
-        [JsonIgnore]
-        public RelayCommand<MouseEventArgs> DescriptionMouseDownCommand { get; private set; }
-
-        /// <summary>
-        /// Setter and getter for the DescriptionMouseUp Command
-        /// </summary>
-        [JsonIgnore]
-        public RelayCommand DescriptionMouseUpCommand { get; private set; }
-
-        /// <summary>
-        /// Setter and getter for the DescriptionMouseMove Command
-        /// </summary>
-        [JsonIgnore]
-        public RelayCommand<MouseEventArgs> DescriptionMouseMoveCommand { get; private set; }
-
-        /// <summary>
-        /// Setter and getter for DescriptionDeletecommand
-        /// </summary>
-        [JsonIgnore]
-        public RelayCommand DescriptionDeleteCommand { get; private set; }
-
-        [JsonIgnore]
-        public RelayCommand GoToThisDescriptionCommand { get; private set; }
-
-        [JsonIgnore]
-        public ICommand OpenWinFileExplorerToFile { get; private set; }
-        #endregion
-
         #region Methods
 
         public override void SetColour()
@@ -207,55 +173,6 @@ namespace LiveDescribe.Model
                 Colour = Settings.Default.ColourScheme.ExtendedDescriptionColour;
             else
                 Colour = Settings.Default.ColourScheme.RegularDescriptionColour;
-        }
-        #endregion
-
-        #region Binding Functions
-
-        /// <summary>
-        /// Called when the mouse is up on this description
-        /// </summary>
-        private void DescriptionMouseUp()
-        {
-            EventHandler handler = DescriptionMouseUpEvent;
-            if (handler == null) return;
-            handler(this, EventArgs.Empty);
-        }
-
-        /// <summary>
-        /// Called when the mouse is down on this description
-        /// </summary>
-        /// <param name="e">the MouseEventArgs from the mouse down event</param>
-        private void DescriptionMouseDown(MouseEventArgs e)
-        {
-            EventHandler handler = DescriptionMouseDownEvent;
-            if (handler != null) handler(this, e);
-        }
-
-        /// <summary>
-        /// Called when the mouse is moving over a description
-        /// </summary>
-        /// <param name="e">the MouseEventArgs from the mouse move event</param>
-        private void DescriptionMouseMove(MouseEventArgs e)
-        {
-            EventHandler handler = DescriptionMouseMoveEvent;
-            if (handler != null) handler(this, e);
-        }
-
-        /// <summary>
-        /// Called when a description is deleted
-        /// </summary>
-        private void DescriptionDelete()
-        {
-            Log.Info("Description deleted");
-            EventHandler handler = DescriptionDeleteEvent;
-            if (handler != null) handler(this, EventArgs.Empty);
-        }
-
-        private void GoTothisDescription()
-        {
-            EventHandler handler = GoToThisDescriptionEvent;
-            if (handler != null) handler(this, EventArgs.Empty);
         }
         #endregion
 
