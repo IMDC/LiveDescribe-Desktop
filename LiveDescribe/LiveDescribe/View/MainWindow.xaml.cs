@@ -13,7 +13,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -42,7 +41,7 @@ namespace LiveDescribe.View
         private const double PageScrollPercentAmount = 0.90;
         /// <summary>30 seconds page time before audiocanvas & descriptioncanvas scroll</summary>
         private const double PageTimeBeforeCanvasScrolls = 30;
-        private const double LineTime = 1; //each line in the NumberTimeline appears every 1 second
+        private const double LineTime = 1; //each line in the NumberLineCanvas appears every 1 second
         private const int LongLineTime = 5; // every 5 LineTimes, you get a Longer Line
         #endregion
 
@@ -112,7 +111,7 @@ namespace LiveDescribe.View
             TimeLineScrollViewer.ScrollChanged += (sender, e) =>
             {
                 DrawWaveForm();
-                AddLinesToNumberTimeLine();
+                NumberLineCanvas.AddLinesToNumberTimeLine(_canvasWidth, TimeLineScrollViewer.HorizontalOffset);
             };
             #endregion
 
@@ -306,7 +305,7 @@ namespace LiveDescribe.View
             _projectManager.ProjectClosed += (sender, e) =>
             {
                 _audioCanvas.Children.Clear();
-                NumberTimeline.Children.Clear();
+                NumberLineCanvas.Children.Clear();
 
                 UpdateMarkerPosition(-MarkerOffset);
                 _marker.IsEnabled = false;
@@ -394,7 +393,7 @@ namespace LiveDescribe.View
         }
 
         /// <summary>
-        /// Gets executed when the area in the NumberTimeline canvas gets clicked It changes the
+        /// Gets executed when the area in the NumberLineCanvas canvas gets clicked It changes the
         /// position of the video then redraws the marker in the correct spot
         /// </summary>
         /// <param name="sender"></param>
@@ -405,7 +404,7 @@ namespace LiveDescribe.View
             {
                 //execute the pause command because we want to pause the video when someone is clicking through the video
                 _mediaControlViewModel.PauseCommand.Execute();
-                var xPosition = e.GetPosition(NumberTimeline).X;
+                var xPosition = e.GetPosition(NumberLineCanvas).X;
                 var newValue = (xPosition / _canvasWidth) * _videoDuration;
 
                 UpdateMarkerPosition(xPosition - MarkerOffset);
@@ -699,61 +698,12 @@ namespace LiveDescribe.View
         }
 
         /// <summary>
-        /// Resizes all the Spaces to fit the AudioCanvas and not overlap the NumberTimeline
+        /// Resizes all the Spaces to fit the AudioCanvas and not overlap the NumberLineCanvas
         /// </summary>
         private void ResizeSpaces()
         {
             foreach (var space in _projectManager.Spaces)
                 space.Height = _audioCanvas.ActualHeight;
-        }
-
-        private void AddLinesToNumberTimeLine()
-        {
-            if (_videoMedia.CurrentState == LiveDescribeVideoStates.VideoNotLoaded || _canvasWidth == 0)
-                return;
-
-            //Number of lines in the amount of time that the video plays for
-            int numlines = (int)(_videoDuration / (LineTime * 1000));
-            int beginLine = (int)((numlines / _canvasWidth) * TimeLineScrollViewer.HorizontalOffset);
-            int endLine = beginLine + (int)((numlines / _canvasWidth) * TimeLineScrollViewer.ActualWidth) + 1;
-            //Clear the canvas because we don't want the remaining lines due to importing a new video
-            //or resizing the window
-            NumberTimeline.Children.Clear();
-
-            for (int i = beginLine; i <= endLine; ++i)
-            {
-                if (i % LongLineTime == 0)
-                {
-                    NumberTimeline.Children.Add(new Line
-                    {
-                        Stroke = System.Windows.Media.Brushes.Blue,
-                        StrokeThickness = 1.5,
-                        Y1 = 0,
-                        Y2 = NumberTimeline.ActualHeight / 1.2,
-                        X1 = _canvasWidth / numlines * i,
-                        X2 = _canvasWidth / numlines * i,
-                    });
-
-                    var timestamp = new TextBlock
-                    {
-                        Text = (string)_millisecondsTimeConverter.Convert((i * LineTime) * 1000, typeof(int), null,
-                            CultureInfo.CurrentCulture)
-                    };
-                    Canvas.SetLeft(timestamp, ((_canvasWidth / numlines * i) - 24));
-                    NumberTimeline.Children.Add(timestamp);
-                }
-                else
-                {
-                    NumberTimeline.Children.Add(new Line
-                    {
-                        Stroke = System.Windows.Media.Brushes.Black,
-                        Y1 = 0,
-                        Y2 = NumberTimeline.ActualHeight / 2,
-                        X1 = _canvasWidth / numlines * i,
-                        X2 = _canvasWidth / numlines * i
-                    });
-                }
-            }
         }
 
         /// <summary>
@@ -765,12 +715,12 @@ namespace LiveDescribe.View
         private void SetTimeline()
         {
             Log.Info("Setting timeline");
-            NumberTimeline.Width = _canvasWidth;
+            NumberLineCanvas.Width = _canvasWidth;
             _audioCanvas.Width = _canvasWidth;
             _descriptionCanvas.Width = _canvasWidth;
 
             DrawWaveForm();
-            AddLinesToNumberTimeLine();
+            NumberLineCanvas.AddLinesToNumberTimeLine(_canvasWidth, TimeLineScrollViewer.HorizontalOffset);
             ResizeDescriptions();
             ResizeSpaces();
         }

@@ -52,6 +52,7 @@ namespace LiveDescribe.ViewModel
         private readonly AudioCanvasViewModel _audioCanvasViewModel;
         private readonly DescriptionCanvasViewModel _descriptionCanvasViewModel;
         private readonly DescriptionRecordingControlViewModel _descriptionRecordingControlViewModel;
+        private readonly NumberLineCanvasViewModel _numberLineCanvasViewModel;
         private readonly UndoRedoManager _undoRedoManager;
         private Project _project;
         private string _windowTitle;
@@ -84,6 +85,7 @@ namespace LiveDescribe.ViewModel
             _descriptionCanvasViewModel = new DescriptionCanvasViewModel(mediaVideo, _projectManager);
             _descriptionRecordingControlViewModel = new DescriptionRecordingControlViewModel(mediaVideo,
                 _projectManager);
+            _numberLineCanvasViewModel = new NumberLineCanvasViewModel(mediaVideo);
 
             _mediaVideo = mediaVideo;
 
@@ -179,7 +181,7 @@ namespace LiveDescribe.ViewModel
                 Settings.Default.RecentProjects.Clear();
                 Settings.Default.Save();
             });
-            
+
             ShowImportAudioDescription = new RelayCommand(
                 canExecute: () => _projectManager.HasProjectLoaded,
                 execute: () =>
@@ -490,6 +492,12 @@ namespace LiveDescribe.ViewModel
         {
             get { return _undoRedoManager; }
         }
+
+        public NumberLineCanvasViewModel NumberLineCanvasViewModel
+        {
+            get { return _numberLineCanvasViewModel; }
+        }
+
         #endregion
 
         #region Methods

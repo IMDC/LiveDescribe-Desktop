@@ -169,6 +169,7 @@
     <Compile Include="Controls\MediaControl.xaml.cs">
       <DependentUpon>MediaControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\NumberLineCanvas.cs" />
     <Compile Include="Controls\SpaceAndDescriptionsTabControl.xaml.cs">
       <DependentUpon>SpaceAndDescriptionsTabControl.xaml</DependentUpon>
     </Compile>
@@ -260,6 +261,7 @@
     <Compile Include="ViewModel\ImportAudioDescriptionViewModel.cs" />
     <Compile Include="ViewModel\LoadingViewModel.cs" />
     <Compile Include="ViewModel\MarkingSpacesControlViewModel.cs" />
+    <Compile Include="ViewModel\NumberLineCanvasViewModel.cs" />
     <Compile Include="ViewModel\SpaceRecordingViewModel.cs" />
     <Compile Include="View\AboutInfoView.xaml.cs">
       <DependentUpon>AboutInfoView.xaml</DependentUpon>
