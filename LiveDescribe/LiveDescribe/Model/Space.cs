@@ -23,7 +23,6 @@ namespace LiveDescribe.Model
         {
             StartInVideo = starttime;
             EndInVideo = endtime;
-            UpdateDuration();
         }
 
         public Space()
