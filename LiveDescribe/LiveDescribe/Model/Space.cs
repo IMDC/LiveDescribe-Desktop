@@ -30,7 +30,6 @@ namespace LiveDescribe.Model
         {
             IsSelected = false;
             LockedInPlace = false;
-
             DeleteSpaceCommand = new RelayCommand(OnDeleteRequested, () => true);
             GoToThisSpaceCommand = new RelayCommand(OnNavigateToDescriptionRequested, () => true);
 
@@ -103,6 +102,9 @@ namespace LiveDescribe.Model
 
             if (propertyName == "IsSelected" || propertyName == "IsRecordedOver")
                 SetColour();
+
+            if (propertyName == "EndInVideo" || propertyName == "StartInVideo")
+                UpdateDuration();
         }
         #endregion
     }
