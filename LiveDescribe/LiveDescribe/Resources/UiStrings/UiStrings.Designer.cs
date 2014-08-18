@@ -61,6 +61,15 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Record Menu.
+        /// </summary>
+        public static string Button_RecordMenu {
+            get {
+                return ResourceManager.GetString("Button_RecordMenu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Accept.
         /// </summary>
         public static string Command_Accept {
@@ -214,7 +223,7 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Record Menu.
+        ///   Looks up a localized string similar to Record.
         /// </summary>
         public static string Command_Record {
             get {

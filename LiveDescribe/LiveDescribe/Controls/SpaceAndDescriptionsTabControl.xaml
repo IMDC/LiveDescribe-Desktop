@@ -365,7 +365,7 @@
             <Button
                 Margin="5,20,5,20"
                 Command="{Binding RecordInSpace}"
-                Content="{x:Static s:UiStrings.Command_Record}" />
+                Content="{x:Static s:UiStrings.Button_RecordMenu}" />
 
         </StackPanel>
     </Grid>

@@ -160,7 +160,7 @@
     <value>Play</value>
   </data>
   <data name="Command_Record" xml:space="preserve">
-    <value>Record Menu</value>
+    <value>Record</value>
     <comment>For record buttons</comment>
   </data>
   <data name="Command_Save" xml:space="preserve">
@@ -497,5 +497,8 @@
   </data>
   <data name="Header_Title" xml:space="preserve">
     <value>Title</value>
+  </data>
+  <data name="Button_RecordMenu" xml:space="preserve">
+    <value>Record Menu</value>
   </data>
 </root>
