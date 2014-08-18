@@ -1,21 +1,31 @@
 ﻿using LiveDescribe.Converters;
+using LiveDescribe.Utilities;
 using LiveDescribe.ViewModel;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using Point = System.Windows.Point;
 
 namespace LiveDescribe.Controls
 {
     public class NumberLineCanvas : Canvas
     {
-        private const double LineTime = 1; //each line in the NumberLineCanvas appears every 1 second
-        private const int LongLineTime = 5; // every 5 LineTimes, you get a Longer Line
+        /// <summary>The time interval between two lines.</summary>
+        private const double LineTimeSeconds = 1;
+        /// <summary>The number of lines that need to be drawn before drawing a long line.</summary>
+        private const int LongLineDivisor = 5;
+
+        /// <summary>The length of a short line as a percent of the height of the canvas.</summary>
+        private const double ShortLineLengthPercent = 0.5;
+        /// <summary>The length of a long line as a percent of the height of the canvas.</summary>
+        private const double LongLineLengthPercent = 0.8;
 
         private NumberLineCanvasViewModel _viewModel;
         private readonly MillisecondsTimeConverterFormatter _millisecondsTimeConverter;
         private readonly Pen _shortLinePen;
+        private readonly Pen _longLinePen;
 
         public NumberLineCanvas()
             : base()
@@ -24,10 +34,13 @@ namespace LiveDescribe.Controls
             _shortLinePen = new Pen(Brushes.Black, 1);
             _shortLinePen.Freeze();
 
+            _longLinePen = new Pen(Brushes.Blue, 1);
+            _longLinePen.Freeze();
+
             DataContextChanged += OnDataContextChanged;
         }
 
-        public void AddLinesToNumberTimeLine(double canvasWidth, double horizontalOffset)
+        public void AddLinesToNumberTimeLine(double canvasWidth, double horizontalOffset, double parentActualWidth)
         {
             if (_viewModel == null || _viewModel.Player.CurrentState == LiveDescribeVideoStates.VideoNotLoaded
                 || canvasWidth == 0)
@@ -37,54 +50,52 @@ namespace LiveDescribe.Controls
             var longLineGroup = new GeometryGroup();
 
             //Number of lines in the amount of time that the video plays for
-            int numlines = (int)(_viewModel.Player.DurationMilliseconds / (LineTime * 1000));
-            int beginLine = (int)((numlines / canvasWidth) * horizontalOffset);
-            int endLine = beginLine + (int)((numlines / canvasWidth) * ActualWidth) + 1;
+            int numLines = (int)(_viewModel.Player.DurationMilliseconds / (LineTimeSeconds * Milliseconds.PerSecond));
+            int beginLine = (int)((numLines / canvasWidth) * horizontalOffset);
+            int endLine = beginLine + (int)((numLines / canvasWidth) * parentActualWidth) + 1;
             //Clear the canvas because we don't want the remaining lines due to importing a new video
             //or resizing the window
             Children.Clear();
 
-            for (int i = beginLine; i <= endLine; ++i)
+            double widthPerLine = canvasWidth / numLines;
+
+            //Keep track of which line each group begins on
+            int firstShortLine = -1;
+            int firstLongLine = -1;
+
+            for (int i = beginLine; i <= endLine; i++)
             {
-                double xPos = canvasWidth / numlines * i;
+                double xPos = widthPerLine * i;
 
-                var p1 = new Point(xPos, 0);
-                Point p2;
-
-                if (i % LongLineTime == 0)
+                if (i % LongLineDivisor == 0)
                 {
-                    p2 = new Point(xPos, ActualHeight / 1.2);
-                    longLineGroup.Children.Add(new LineGeometry(p1, p2));
-                    /*Children.Add(new Line
+                    if (firstLongLine == -1)
+                        firstLongLine = i;
+
+                    longLineGroup.Children.Add(new LineGeometry
                     {
-                        Stroke = System.Windows.Media.Brushes.Blue,
-                        StrokeThickness = 1.5,
-                        Y1 = 0,
-                        Y2 = ActualHeight / 1.2,
-                        X1 = canvasWidth / numlines * i,
-                        X2 = canvasWidth / numlines * i,
-                    });*/
+                        StartPoint = new Point(xPos, 0),
+                        EndPoint = new Point(xPos, ActualHeight * LongLineLengthPercent),
+                    });
 
                     var timestamp = new TextBlock
                     {
-                        Text = (string)_millisecondsTimeConverter.Convert((i * LineTime) * 1000, typeof(int), null,
-                            CultureInfo.CurrentCulture)
+                        Text = (string)_millisecondsTimeConverter.Convert((i * LineTimeSeconds) * 1000, typeof(int), null,
+                        CultureInfo.CurrentCulture)
                     };
-                    SetLeft(timestamp, ((canvasWidth / numlines * i) - 24));
+                    Canvas.SetLeft(timestamp, ((widthPerLine * i) - 24));
                     Children.Add(timestamp);
                 }
                 else
                 {
-                    p2 = new Point(xPos, ActualHeight / 2);
-                    shortLineGroup.Children.Add(new LineGeometry(p1, p2));
-                    /*Children.Add(new Line
+                    if (firstShortLine == -1)
+                        firstShortLine = i;
+
+                    shortLineGroup.Children.Add(new LineGeometry
                     {
-                        Stroke = System.Windows.Media.Brushes.Black,
-                        Y1 = 0,
-                        Y2 = ActualHeight / 2,
-                        X1 = canvasWidth / numlines * i,
-                        X2 = canvasWidth / numlines * i
-                    });*/
+                        StartPoint = new Point(xPos, 0),
+                        EndPoint = new Point(xPos, ActualHeight * ShortLineLengthPercent), //* 0.5
+                    });
                 }
             }
 
@@ -97,10 +108,25 @@ namespace LiveDescribe.Controls
 
             var shortLineImage = new Image { Source = shortLineDrawingImage };
 
-            SetLeft(shortLineImage, 0);
+            SetLeft(shortLineImage, widthPerLine * firstShortLine);
             SetTop(shortLineImage, 0);
 
             Children.Add(shortLineImage);
+
+
+            longLineGroup.Freeze();
+            var longLineDrawing = new GeometryDrawing(Brushes.Black, _longLinePen, longLineGroup);
+            longLineDrawing.Freeze();
+
+            var longLineDrawingImage = new DrawingImage(longLineDrawing);
+            longLineDrawingImage.Freeze();
+
+            var longLineImage = new Image { Source = longLineDrawingImage };
+
+            SetLeft(longLineImage, widthPerLine * firstLongLine);
+            SetTop(longLineImage, 0);
+
+            Children.Add(longLineImage);
         }
 
         private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)

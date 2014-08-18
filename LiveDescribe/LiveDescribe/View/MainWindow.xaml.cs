@@ -111,7 +111,8 @@ namespace LiveDescribe.View
             TimeLineScrollViewer.ScrollChanged += (sender, e) =>
             {
                 DrawWaveForm();
-                NumberLineCanvas.AddLinesToNumberTimeLine(_canvasWidth, TimeLineScrollViewer.HorizontalOffset);
+                NumberLineCanvas.AddLinesToNumberTimeLine(_canvasWidth, TimeLineScrollViewer.HorizontalOffset,
+                    TimeLineScrollViewer.ActualWidth);
             };
             #endregion
 
@@ -720,7 +721,8 @@ namespace LiveDescribe.View
             _descriptionCanvas.Width = _canvasWidth;
 
             DrawWaveForm();
-            NumberLineCanvas.AddLinesToNumberTimeLine(_canvasWidth, TimeLineScrollViewer.HorizontalOffset);
+            NumberLineCanvas.AddLinesToNumberTimeLine(_canvasWidth, TimeLineScrollViewer.HorizontalOffset,
+                TimeLineScrollViewer.ActualWidth);
             ResizeDescriptions();
             ResizeSpaces();
         }
