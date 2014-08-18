@@ -29,10 +29,10 @@ namespace LiveDescribe.ViewModel
         private IDescribableInterval _selectedItem;
         #endregion
 
-        public DescriptionInfoTabViewModel(ProjectManager projectManager)
+        public DescriptionInfoTabViewModel(ProjectManager projectManager, DescriptionRecordingControlViewModel descriptionRecordingControlViewModel)
         {
             _projectManager = projectManager;
-
+            DescriptionRecordingControlViewModel = descriptionRecordingControlViewModel;
             InitCommands();
 
             SelectedRegularDescription = null;
@@ -85,6 +85,8 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Binding Properties
+
+        public DescriptionRecordingControlViewModel DescriptionRecordingControlViewModel { get; private set; }
 
         public bool CanChangeText
         {
@@ -167,7 +169,6 @@ namespace LiveDescribe.ViewModel
         {
             get { return _projectManager.Spaces; }
         }
-
         #endregion
 
         #region Methods

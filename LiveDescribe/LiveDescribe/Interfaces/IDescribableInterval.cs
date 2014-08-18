@@ -20,6 +20,7 @@ namespace LiveDescribe.Interfaces
         double Duration { get; }
         Color Colour { set; get; }
         string Text { set; get; }
+        string Title { set; get; }
 
         event EventHandler DeleteRequested;
         event EventHandler<MouseEventArgs> MouseDown;

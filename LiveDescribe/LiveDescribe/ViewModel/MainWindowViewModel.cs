@@ -75,15 +75,14 @@ namespace LiveDescribe.ViewModel
             _undoRedoManager = new UndoRedoManager();
             _loadingViewModel = new LoadingViewModel(100, null, 0, false);
             _projectManager = new ProjectManager(_loadingViewModel, _undoRedoManager);
-
+            _descriptionRecordingControlViewModel = new DescriptionRecordingControlViewModel(mediaVideo,
+                _projectManager);
             _mediaControlViewModel = new MediaControlViewModel(mediaVideo, _projectManager);
             _preferences = new PreferencesViewModel();
-            _descriptionInfoTabViewModel = new DescriptionInfoTabViewModel(_projectManager);
+            _descriptionInfoTabViewModel = new DescriptionInfoTabViewModel(_projectManager, _descriptionRecordingControlViewModel);
             _markingSpacesControlViewModel = new MarkingSpacesControlViewModel(_descriptionInfoTabViewModel, mediaVideo, _undoRedoManager);
             _audioCanvasViewModel = new AudioCanvasViewModel(mediaVideo, _projectManager);
             _descriptionCanvasViewModel = new DescriptionCanvasViewModel(mediaVideo, _projectManager);
-            _descriptionRecordingControlViewModel = new DescriptionRecordingControlViewModel(mediaVideo,
-                _projectManager);
 
             _mediaVideo = mediaVideo;
 

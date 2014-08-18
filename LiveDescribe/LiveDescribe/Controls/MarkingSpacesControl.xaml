@@ -19,7 +19,7 @@
             TargetType="Control">
             <Setter
                 Property="Margin"
-                Value="5" />
+                Value="5,10,5,10" />
             <Setter
                 Property="ToolTip"
                 Value="{x:Static s:UiStrings.ToolTip_MarkSpace}" />

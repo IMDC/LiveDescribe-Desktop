@@ -76,12 +76,6 @@ namespace LiveDescribe.View
 
             InitializeComponent();
 
-            if (Defines.Zagga)
-            {
-                DescriptionRecordingControl.ExtendedDescriptionCheckBox.Visibility = Visibility.Hidden;
-                SpaceAndDescriptionsTabControl.ExtendedDescriptionsTabItem.Visibility = Visibility.Hidden;
-            }
-
             Settings.Default.Upgrade();
             Settings.Default.InitializeDefaultValuesIfNull();
 

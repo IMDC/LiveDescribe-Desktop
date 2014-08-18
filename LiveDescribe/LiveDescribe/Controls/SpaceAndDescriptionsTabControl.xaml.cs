@@ -1,7 +1,9 @@
 ﻿using LiveDescribe.Extensions;
 using LiveDescribe.Model;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using LiveDescribe.Properties;
 
 namespace LiveDescribe.Controls
 {
@@ -13,6 +15,8 @@ namespace LiveDescribe.Controls
         public SpaceAndDescriptionsTabControl()
         {
             InitializeComponent();
+            if (Defines.Zagga)
+                ExtendedDescriptionsTabItem.Visibility = Visibility.Collapsed;
         }
 
         public void Item_DoubleClick(object sender, MouseButtonEventArgs e)

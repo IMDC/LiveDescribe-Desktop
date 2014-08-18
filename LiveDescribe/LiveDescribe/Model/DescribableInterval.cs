@@ -12,6 +12,8 @@ namespace LiveDescribe.Model
     {
         //All units of time is in milliseconds
         #region Instance variables
+
+        private string _title;
         private string _text;
         private double _startinvideo;
         private double _endinvideo;
@@ -63,6 +65,18 @@ namespace LiveDescribe.Model
         #endregion
 
         #region Properties
+        /// <summary>
+        /// Gets or Sets the value that determines the title of the DescribableInterval
+        /// </summary>
+        public string Title
+        {
+            set
+            {
+                _title = value;
+                NotifyPropertyChanged();
+            }
+            get { return _title; }
+        }
 
         /// <summary>
         /// Gets or Sets a value that determines if the Interval is moveable/adjustable or not.

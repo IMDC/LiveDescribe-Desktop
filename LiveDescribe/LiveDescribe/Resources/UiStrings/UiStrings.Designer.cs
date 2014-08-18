@@ -214,7 +214,7 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Record.
+        ///   Looks up a localized string similar to Record Menu.
         /// </summary>
         public static string Command_Record {
             get {
@@ -304,7 +304,7 @@ namespace LiveDescribe.Resources.UiStrings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Record Extended Description.
+        ///   Looks up a localized string similar to Extended Description.
         /// </summary>
         public static string Command_ToggleRecordExtended {
             get {
@@ -525,6 +525,15 @@ namespace LiveDescribe.Resources.UiStrings {
         public static string Header_StartTime {
             get {
                 return ResourceManager.GetString("Header_StartTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Title.
+        /// </summary>
+        public static string Header_Title {
+            get {
+                return ResourceManager.GetString("Header_Title", resourceCulture);
             }
         }
         

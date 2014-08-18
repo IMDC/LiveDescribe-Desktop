@@ -160,7 +160,7 @@
     <value>Play</value>
   </data>
   <data name="Command_Record" xml:space="preserve">
-    <value>Record</value>
+    <value>Record Menu</value>
     <comment>For record buttons</comment>
   </data>
   <data name="Command_Save" xml:space="preserve">
@@ -176,7 +176,7 @@
     <value>Stop Recording</value>
   </data>
   <data name="Command_ToggleRecordExtended" xml:space="preserve">
-    <value>Record Extended Description</value>
+    <value>Extended Description</value>
     <comment>Description Recording control</comment>
   </data>
   <data name="Header_AudioSource" xml:space="preserve">
@@ -494,5 +494,8 @@
   </data>
   <data name="Header_LockMovement" xml:space="preserve">
     <value>Lock Movement</value>
+  </data>
+  <data name="Header_Title" xml:space="preserve">
+    <value>Title</value>
   </data>
 </root>
