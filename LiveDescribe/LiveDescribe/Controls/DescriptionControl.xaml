@@ -49,19 +49,19 @@
                     EventName="MouseDown">
                     <!--   <i:InvokeCommandAction Command="{Binding DescriptionMouseDownCommand}" /> -->
                     <command:EventToCommand
-                        Command="{Binding DescriptionMouseDownCommand, Mode=OneWay}"
+                        Command="{Binding MouseDownCommand, Mode=OneWay}"
                         PassEventArgsToCommand="True" />
                 </i:EventTrigger>
                 <i:EventTrigger
                     EventName="MouseUp">
                     <i:InvokeCommandAction
-                        Command="{Binding DescriptionMouseUpCommand}" />
+                        Command="{Binding MouseUpCommand}" />
                 </i:EventTrigger>
                 <i:EventTrigger
                     EventName="MouseMove">
                     <!-- <i:InvokeCommandAction Command="{Binding DescriptionMouseMoveCommand}" />-->
                     <command:EventToCommand
-                        Command="{Binding DescriptionMouseMoveCommand, Mode=OneWay}"
+                        Command="{Binding MouseMoveCommand, Mode=OneWay}"
                         PassEventArgsToCommand="True" />
                 </i:EventTrigger>
             </i:Interaction.Triggers>
