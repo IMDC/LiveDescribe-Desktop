@@ -255,11 +255,18 @@
                                     x:Name="NumberLineCanvas" />
                             </Border>
 
-                            <controls:AudioCanvasControl
+                            <Border
+                                Grid.Row="1"
+                                Grid.RowSpan="2">
+                                <controls:AudioCanvas
+                                    x:Name="AudioCanvas"
+                                    DataContext="{Binding AudioCanvasViewModel}" />
+                            </Border>
+                            <!--<controls:AudioCanvasControl
                                 x:Name="AudioCanvasControl"
                                 Grid.Row="1"
                                 Grid.RowSpan="2"
-                                DataContext="{Binding AudioCanvasViewModel}" />
+                                DataContext="{Binding AudioCanvasViewModel}" />-->
 
                             <!--Description Canvas Constrol that holds all the descriptions-->
                             <controls:DescriptionCanvasControl

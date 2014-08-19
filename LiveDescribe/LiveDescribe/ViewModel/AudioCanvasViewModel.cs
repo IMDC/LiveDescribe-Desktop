@@ -13,7 +13,9 @@ namespace LiveDescribe.ViewModel
     class AudioCanvasViewModel : ViewModelBase
     {
         private readonly ProjectManager _projectManager;
+        private readonly ILiveDescribePlayer _player;
         private LiveDescribeVideoStates _currentState;
+        private Waveform _waveform;
 
         #region Events
         public EventHandler<MouseEventArgs> AudioCanvasMouseDownEvent;
@@ -28,14 +30,19 @@ namespace LiveDescribe.ViewModel
         public AudioCanvasViewModel(ILiveDescribePlayer mediaPlayer, ProjectManager projectManager)
         {
             _projectManager = projectManager;
+            _player = mediaPlayer;
 
             AudioCanvasMouseDownCommand = new RelayCommand<MouseEventArgs>(AudioCanvasMouseDown, param => true);
             AudioCanvasMouseRightButtonDownCommand = new RelayCommand<MouseEventArgs>(AudioCanvasMouseRightButtonDown, param => true);
+
+            //TODO: Just refer to MediaPlayer?
             mediaPlayer.PropertyChanged += (sender, args) =>
             {
                 if (args.PropertyName.Equals("CurrentState"))
                     CurrentVideoState = mediaPlayer.CurrentState;
             };
+
+            _projectManager.ProjectLoaded += (sender, args) => Waveform = args.Value.Waveform;
 
             GetNewSpaceTime = new RelayCommand(
             canExecute: () => CurrentVideoState != LiveDescribeVideoStates.VideoNotLoaded,
@@ -68,6 +75,22 @@ namespace LiveDescribe.ViewModel
             }
             get { return _currentState; }
         }
+
+        public Waveform Waveform
+        {
+            get { return _waveform; }
+            set
+            {
+                _waveform = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public ILiveDescribePlayer Player
+        {
+            get { return _player; }
+        }
+
         #endregion
 
         #region Binding Functions

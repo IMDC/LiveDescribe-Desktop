@@ -5,7 +5,6 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Shapes;
 using Point = System.Windows.Point;
 
 namespace LiveDescribe.Controls
@@ -28,7 +27,6 @@ namespace LiveDescribe.Controls
         private readonly Pen _longLinePen;
 
         public NumberLineCanvas()
-            : base()
         {
             _millisecondsTimeConverter = new MillisecondsTimeConverterFormatter();
             _shortLinePen = new Pen(Brushes.Black, 1);
