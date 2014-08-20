@@ -106,8 +106,10 @@ namespace LiveDescribe.View
             {
                 AudioCanvas.DrawWaveForm(_canvasWidth, TimeLineScrollViewer.HorizontalOffset,
                     TimeLineScrollViewer.ActualWidth, _videoDuration);
+                AudioCanvas.DrawSpaces(_canvasWidth, TimeLineScrollViewer.HorizontalOffset,
+                    TimeLineScrollViewer.ActualWidth, _videoDuration);
                 NumberLineCanvas.AddLinesToNumberTimeLine(_canvasWidth, TimeLineScrollViewer.HorizontalOffset,
-                    TimeLineScrollViewer.ActualWidth);
+                    TimeLineScrollViewer.ActualWidth, _videoDuration);
             };
             #endregion
 
@@ -663,11 +665,14 @@ namespace LiveDescribe.View
             Log.Info("Setting timeline");
             NumberLineCanvas.Width = _canvasWidth;
             _descriptionCanvas.Width = _canvasWidth;
+            AudioCanvas.Width = _canvasWidth;
 
             AudioCanvas.DrawWaveForm(_canvasWidth, TimeLineScrollViewer.HorizontalOffset,
                 TimeLineScrollViewer.ActualWidth, _videoDuration);
+            AudioCanvas.DrawSpaces(_canvasWidth, TimeLineScrollViewer.HorizontalOffset,
+                TimeLineScrollViewer.ActualWidth, _videoDuration);
             NumberLineCanvas.AddLinesToNumberTimeLine(_canvasWidth, TimeLineScrollViewer.HorizontalOffset,
-                TimeLineScrollViewer.ActualWidth);
+                TimeLineScrollViewer.ActualWidth, _videoDuration);
             ResizeDescriptions();
             ResizeSpaces();
         }

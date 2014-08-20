@@ -1,4 +1,5 @@
-﻿using LiveDescribe.Utilities;
+﻿using LiveDescribe.Interfaces;
+using LiveDescribe.Utilities;
 using LiveDescribe.ViewModel;
 using System;
 using System.Linq;
@@ -96,6 +97,81 @@ namespace LiveDescribe.Controls
             SetTop(waveformImage, middle + absMin * yscale);
 
             Children.Add(waveformImage);
+        }
+
+        public void DrawSpaces(double canvasWidth, double horizontalOffset, double parentActualWidth,
+            double videoDuration)
+        {
+            if (_viewModel == null || _viewModel.Spaces == null || canvasWidth == 0 || parentActualWidth == 0
+                || _viewModel.Player.CurrentState == LiveDescribeVideoStates.VideoNotLoaded)
+                return;
+
+            var backgroundGroup = new GeometryGroup();
+            var selectedGroup = new GeometryGroup();
+
+            double beginPixel = horizontalOffset;
+            double endPixel = beginPixel + parentActualWidth;
+
+            double beginTimeMsec = (videoDuration / (canvasWidth))
+                    * beginPixel;
+            double endTimeMsec = (videoDuration / (canvasWidth))
+                    * endPixel;
+
+            foreach (var space in _viewModel.Spaces)
+            {
+                if (IsIntervalVisible(space, beginTimeMsec, endTimeMsec))
+                {
+                    var rect = new RectangleGeometry(new Rect(space.X, space.Y, space.Width, space.Height));
+
+                    if (space.IsSelected)
+                        selectedGroup.Children.Add(rect);
+                    else
+                        backgroundGroup.Children.Add(rect);
+                }
+            }
+
+            if (0 < backgroundGroup.Children.Count)
+            {
+                backgroundGroup.Freeze();
+
+                var backgroundDrawing = new GeometryDrawing(Brushes.DodgerBlue, _linePen, backgroundGroup);
+                backgroundDrawing.Freeze();
+
+                var backgroundDrawingImage = new DrawingImage(backgroundDrawing);
+                backgroundDrawingImage.Freeze();
+
+                var backgroundImage = new Image { Source = backgroundDrawingImage };
+
+                Children.Add(backgroundImage);
+
+                SetLeft(backgroundImage, backgroundGroup.Children[0].Bounds.X);
+                SetTop(backgroundImage, 0);
+            }
+
+            if (0 < selectedGroup.Children.Count)
+            {
+                selectedGroup.Freeze();
+
+                var selectedDrawing = new GeometryDrawing(Brushes.Black, _linePen, selectedGroup);
+                selectedDrawing.Freeze();
+
+                var selectedDrawingImage = new DrawingImage(selectedDrawing);
+                selectedDrawingImage.Freeze();
+
+                var selectedImage = new Image { Source = selectedDrawingImage };
+
+                Children.Add(selectedImage);
+
+                SetLeft(selectedImage, selectedGroup.Children[0].Bounds.X);
+                SetTop(selectedImage, 0);
+            }
+        }
+
+        private bool IsIntervalVisible(IDescribableInterval interval, double visibleBeginMsec, double visibleEndMsec)
+        {
+            return (visibleBeginMsec <= interval.StartInVideo && interval.StartInVideo <= visibleEndMsec)
+                    || (visibleBeginMsec <= interval.EndInVideo && interval.EndInVideo <= visibleEndMsec)
+                    || (interval.StartInVideo <= visibleBeginMsec && visibleEndMsec <= interval.EndInVideo);
         }
 
         #region Event Handlers

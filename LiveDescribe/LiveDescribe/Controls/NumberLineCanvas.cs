@@ -38,7 +38,8 @@ namespace LiveDescribe.Controls
             DataContextChanged += OnDataContextChanged;
         }
 
-        public void AddLinesToNumberTimeLine(double canvasWidth, double horizontalOffset, double parentActualWidth)
+        public void AddLinesToNumberTimeLine(double canvasWidth, double horizontalOffset, double parentActualWidth,
+            double videoDuration)
         {
             if (_viewModel == null || _viewModel.Player.CurrentState == LiveDescribeVideoStates.VideoNotLoaded
                 || canvasWidth == 0)
@@ -48,7 +49,7 @@ namespace LiveDescribe.Controls
             var longLineGroup = new GeometryGroup();
 
             //Number of lines in the amount of time that the video plays for
-            int numLines = (int)(_viewModel.Player.DurationMilliseconds / (LineTimeSeconds * Milliseconds.PerSecond));
+            int numLines = (int)(videoDuration / (LineTimeSeconds * Milliseconds.PerSecond));
             int beginLine = (int)((numLines / canvasWidth) * horizontalOffset);
             int endLine = beginLine + (int)((numLines / canvasWidth) * parentActualWidth) + 1;
             //Clear the canvas because we don't want the remaining lines due to importing a new video
