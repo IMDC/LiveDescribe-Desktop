@@ -4,9 +4,11 @@ using LiveDescribe.Properties;
 using LiveDescribe.Utilities;
 using LiveDescribe.ViewModel;
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace LiveDescribe.Controls
@@ -26,7 +28,11 @@ namespace LiveDescribe.Controls
             _linePen = new Pen(Brushes.Black, 1);
             _linePen.Freeze();
 
-            SetBrushes();
+            /* This method contains a null reference in the designer, causing an exception and not
+             * rendering the canvas. This check guards against it.
+             */
+            if (!DesignerProperties.GetIsInDesignMode(this))
+                SetBrushes();
 
             InitEventHandlers();
         }
@@ -53,7 +59,14 @@ namespace LiveDescribe.Controls
         }
         #endregion
 
+        #region Events
+
+        public event EventHandler CanvasRedrawRequested;
+        #endregion
+
+        #region Properties
         public ItemCanvas.ActionState CurrentActionState { get; set; }
+        #endregion
 
         /// <summary>
         /// Draws the waveform for the current window of sound and adds it to the AudioCanvas.
@@ -191,13 +204,41 @@ namespace LiveDescribe.Controls
             _selectedItemBrush = new SolidColorBrush(Settings.Default.ColourScheme.SelectedItemColour);
             _selectedItemBrush.Freeze();
 
-            //TODO: Redraw canvas
+            OnCanvasRedrawRequested();
+        }
+
+        protected override void OnMouseDown(MouseButtonEventArgs e)
+        {
+            base.OnMouseDown(e);
+
+            if (_viewModel == null)
+                return;
+
+            var point = e.GetPosition(this);
+
+            foreach (var space in _viewModel.Spaces)
+            {
+                if (space.X <= point.X && point.X <= space.X + space.Width)
+                    space.IsSelected = true;
+                else
+                    space.IsSelected = false;
+            }
+
+            OnCanvasRedrawRequested();
         }
 
         #region Event Handlers
         private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             _viewModel = e.NewValue as AudioCanvasViewModel;
+        }
+        #endregion
+
+        #region Event Invokation
+        protected virtual void OnCanvasRedrawRequested()
+        {
+            var handler = CanvasRedrawRequested;
+            if (handler != null) handler(this, EventArgs.Empty);
         }
         #endregion
     }

@@ -298,6 +298,8 @@ namespace LiveDescribe.View
             #region Event Handlers for Settings
             Settings.Default.RecentProjects.CollectionChanged += (sender, args) => SetRecentDocumentsList();
             #endregion
+
+            AudioCanvas.CanvasRedrawRequested += (sender, args) => DrawTimeline();
         }
 
         #region Play_Tick

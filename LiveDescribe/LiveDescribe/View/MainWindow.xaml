@@ -257,13 +257,9 @@
                                 Grid.RowSpan="2">
                                 <controls:AudioCanvas
                                     x:Name="AudioCanvas"
+                                    Background="Transparent"
                                     DataContext="{Binding AudioCanvasViewModel}" />
                             </Border>
-                            <!--<controls:AudioCanvasControl
-                                x:Name="AudioCanvasControl"
-                                Grid.Row="1"
-                                Grid.RowSpan="2"
-                                DataContext="{Binding AudioCanvasViewModel}" />-->
 
                             <!--Description Canvas Constrol that holds all the descriptions-->
                             <controls:DescriptionCanvasControl
