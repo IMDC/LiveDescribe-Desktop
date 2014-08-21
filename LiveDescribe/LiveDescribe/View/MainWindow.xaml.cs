@@ -96,15 +96,7 @@ namespace LiveDescribe.View
             SetRecentDocumentsList();
 
             #region TimeLineScrollViewer Event Listeners
-            TimeLineScrollViewer.ScrollChanged += (sender, e) =>
-            {
-                AudioCanvas.DrawWaveForm(_canvasWidth, TimeLineScrollViewer.HorizontalOffset,
-                    TimeLineScrollViewer.ActualWidth, _videoDuration);
-                AudioCanvas.DrawSpaces(_canvasWidth, TimeLineScrollViewer.HorizontalOffset,
-                    TimeLineScrollViewer.ActualWidth, _videoDuration);
-                NumberLineCanvas.AddLinesToNumberTimeLine(_canvasWidth, TimeLineScrollViewer.HorizontalOffset,
-                    TimeLineScrollViewer.ActualWidth, _videoDuration);
-            };
+            TimeLineScrollViewer.ScrollChanged += (sender, e) => DrawTimeline();
             #endregion
 
             #region Event Listeners for VideoMedia
@@ -651,13 +643,18 @@ namespace LiveDescribe.View
             _descriptionCanvas.Width = _canvasWidth;
             AudioCanvas.Width = _canvasWidth;
 
-            AudioCanvas.DrawWaveForm(_canvasWidth, TimeLineScrollViewer.HorizontalOffset,
-                TimeLineScrollViewer.ActualWidth, _videoDuration);
-            AudioCanvas.DrawSpaces(_canvasWidth, TimeLineScrollViewer.HorizontalOffset,
-                TimeLineScrollViewer.ActualWidth, _videoDuration);
-            NumberLineCanvas.AddLinesToNumberTimeLine(_canvasWidth, TimeLineScrollViewer.HorizontalOffset,
-                TimeLineScrollViewer.ActualWidth, _videoDuration);
+            DrawTimeline();
             ResizeDescriptions();
+        }
+
+        private void DrawTimeline()
+        {
+            AudioCanvas.DrawWaveForm(TimeLineScrollViewer.HorizontalOffset,
+                TimeLineScrollViewer.ActualWidth, _videoDuration);
+            AudioCanvas.DrawSpaces(TimeLineScrollViewer.HorizontalOffset,
+                TimeLineScrollViewer.ActualWidth, _videoDuration);
+            NumberLineCanvas.DrawNumberTimeLine(TimeLineScrollViewer.HorizontalOffset,
+                TimeLineScrollViewer.ActualWidth, _videoDuration);
         }
 
         #endregion

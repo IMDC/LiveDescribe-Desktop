@@ -47,26 +47,24 @@ namespace LiveDescribe.Controls
         /// <summary>
         /// Draws the waveform for the current window of sound and adds it to the AudioCanvas.
         /// </summary>
-        /// <param name="canvasWidth">The width of the canvas.</param>
-        /// <param name="horizontalOffset">The horizontal offset from the beginning of the canvas.</param>
-        /// <param name="parentActualWidth">The ActualWidth of the parent container.</param>
+        /// <param name="visibleStartPoint">The horizontal offset from the beginning of the canvas.</param>
+        /// <param name="visibleWidth">The ActualWidth of the parent container.</param>
         /// <param name="videoDuration">The duration of the video.</param>
-        public void DrawWaveForm(double canvasWidth, double horizontalOffset, double parentActualWidth,
-            double videoDuration)
+        public void DrawWaveForm(double visibleStartPoint, double visibleWidth, double videoDuration)
         {
-            if (_viewModel == null || _viewModel.Waveform == null || canvasWidth == 0 || parentActualWidth == 0
+            if (_viewModel == null || _viewModel.Waveform == null || Width == 0 || visibleWidth == 0
                 || _viewModel.Player.CurrentState == LiveDescribeVideoStates.VideoNotLoaded)
                 return;
 
             var data = _viewModel.Waveform.Data;
-            double samplesPerPixel = Math.Max(data.Count / canvasWidth, 1);
+            double samplesPerPixel = Math.Max(data.Count / Width, 1);
             double middle = ActualHeight / 2;
             double yscale = middle;
 
             Children.Clear();
 
-            int beginPixel = (int)horizontalOffset;
-            int endPixel = beginPixel + (int)parentActualWidth;
+            int beginPixel = (int)visibleStartPoint;
+            int endPixel = beginPixel + (int)visibleWidth;
 
             int ratio = _viewModel.Waveform.Header.Channels == 2 ? 40 : 80;
             double samplesPerSecond =
@@ -78,7 +76,7 @@ namespace LiveDescribe.Controls
 
             for (int pixel = beginPixel; pixel <= endPixel; pixel++)
             {
-                double offsetTime = (videoDuration / (canvasWidth * Milliseconds.PerSecond))
+                double offsetTime = (videoDuration / (Width * Milliseconds.PerSecond))
                     * pixel;
                 double sampleStart = samplesPerSecond * offsetTime;
 
@@ -107,29 +105,26 @@ namespace LiveDescribe.Controls
             Children.Add(waveformImage);
         }
 
-        public void DrawSpaces(double canvasWidth, double horizontalOffset, double parentActualWidth,
-            double videoDuration)
+        public void DrawSpaces(double visibleStartPoint, double visibleWidth, double videoDuration)
         {
-            if (_viewModel == null || _viewModel.Spaces == null || canvasWidth == 0 || parentActualWidth == 0
+            if (_viewModel == null || _viewModel.Spaces == null || Width == 0 || visibleWidth == 0
                 || _viewModel.Player.CurrentState == LiveDescribeVideoStates.VideoNotLoaded)
                 return;
 
             var backgroundGroup = new GeometryGroup();
             var selectedGroup = new GeometryGroup();
 
-            double beginPixel = horizontalOffset;
-            double endPixel = beginPixel + parentActualWidth;
+            double beginPixel = visibleStartPoint;
+            double endPixel = beginPixel + visibleWidth;
 
-            double beginTimeMsec = (videoDuration / (canvasWidth))
-                    * beginPixel;
-            double endTimeMsec = (videoDuration / (canvasWidth))
-                    * endPixel;
+            double beginTimeMsec = (videoDuration / (Width)) * beginPixel;
+            double endTimeMsec = (videoDuration / (Width)) * endPixel;
 
             foreach (var space in _viewModel.Spaces)
             {
                 if (IsIntervalVisible(space, beginTimeMsec, endTimeMsec))
                 {
-                    var rect = new RectangleGeometry(new Rect(space.X, space.Y, space.Width, space.Height));
+                    var rect = new RectangleGeometry(new Rect(space.X, space.Y, (space).Width, space.Height));
 
                     if (space.IsSelected)
                         selectedGroup.Children.Add(rect);
@@ -170,8 +165,8 @@ namespace LiveDescribe.Controls
         private bool IsIntervalVisible(IDescribableInterval interval, double visibleBeginMsec, double visibleEndMsec)
         {
             return (visibleBeginMsec <= interval.StartInVideo && interval.StartInVideo <= visibleEndMsec)
-                    || (visibleBeginMsec <= interval.EndInVideo && interval.EndInVideo <= visibleEndMsec)
-                    || (interval.StartInVideo <= visibleBeginMsec && visibleEndMsec <= interval.EndInVideo);
+                || (visibleBeginMsec <= interval.EndInVideo && interval.EndInVideo <= visibleEndMsec)
+                || (interval.StartInVideo <= visibleBeginMsec && visibleEndMsec <= interval.EndInVideo);
         }
 
         #region Event Handlers

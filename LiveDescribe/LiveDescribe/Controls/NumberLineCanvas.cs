@@ -39,11 +39,10 @@ namespace LiveDescribe.Controls
             DataContextChanged += OnDataContextChanged;
         }
 
-        public void AddLinesToNumberTimeLine(double canvasWidth, double horizontalOffset, double parentActualWidth,
-            double videoDuration)
+        public void DrawNumberTimeLine(double visibleStartPoint, double visibleWidth, double videoDuration)
         {
             if (_viewModel == null || _viewModel.Player.CurrentState == LiveDescribeVideoStates.VideoNotLoaded
-                || canvasWidth == 0)
+                || Width == 0)
                 return;
 
             var shortLineGroup = new GeometryGroup();
@@ -51,13 +50,13 @@ namespace LiveDescribe.Controls
 
             //Number of lines in the amount of time that the video plays for
             int numLines = (int)(videoDuration / (LineTimeSeconds * Milliseconds.PerSecond));
-            int beginLine = (int)((numLines / canvasWidth) * horizontalOffset);
-            int endLine = beginLine + (int)((numLines / canvasWidth) * parentActualWidth) + 1;
+            int beginLine = (int)((numLines / Width) * visibleStartPoint);
+            int endLine = beginLine + (int)((numLines / Width) * visibleWidth) + 1;
             //Clear the canvas because we don't want the remaining lines due to importing a new video
             //or resizing the window
             Children.Clear();
 
-            double widthPerLine = canvasWidth / numLines;
+            double widthPerLine = Width / numLines;
 
             //Keep track of which line each group begins on
             int firstShortLine = -1;
@@ -80,10 +79,10 @@ namespace LiveDescribe.Controls
 
                     var timestamp = new TextBlock
                     {
-                        Text = (string)_millisecondsTimeConverter.Convert((i * LineTimeSeconds) * 1000, typeof(int), null,
-                        CultureInfo.CurrentCulture)
+                        Text = (string)_millisecondsTimeConverter.Convert((i * LineTimeSeconds) * 1000, typeof(int),
+                        null, CultureInfo.CurrentCulture)
                     };
-                    Canvas.SetLeft(timestamp, ((widthPerLine * i) - 24));
+                    SetLeft(timestamp, ((widthPerLine * i) - 24));
                     Children.Add(timestamp);
                 }
                 else
