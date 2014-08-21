@@ -176,7 +176,7 @@
     <value>Stop Recording</value>
   </data>
   <data name="Command_ToggleRecordExtended" xml:space="preserve">
-    <value>Record Extended Description</value>
+    <value>Extended Description</value>
     <comment>Description Recording control</comment>
   </data>
   <data name="Header_AudioSource" xml:space="preserve">
@@ -494,5 +494,11 @@
   </data>
   <data name="Header_LockMovement" xml:space="preserve">
     <value>Lock Movement</value>
+  </data>
+  <data name="Header_Title" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="Button_RecordMenu" xml:space="preserve">
+    <value>Record Menu</value>
   </data>
 </root>

@@ -131,6 +131,8 @@ namespace LiveDescribe.ViewModel
                     if (SpaceHasText)
                         _description.Text = _space.Text;
 
+                    _description.Title = _space.Title;
+
                     _space.IsRecordedOver = true;
                     OnCloseRequested();
                 });

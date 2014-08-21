@@ -1,4 +1,6 @@
 ﻿using System.Windows.Controls;
+using System.Windows;
+using LiveDescribe.Properties;
 
 namespace LiveDescribe.Controls
 {
@@ -10,6 +12,11 @@ namespace LiveDescribe.Controls
         public DescriptionRecordingControl()
         {
             InitializeComponent();
+            if (Defines.Zagga)
+            {
+                ExtendedDescriptionCheckBox.Visibility = Visibility.Collapsed;
+                RecordButton.Margin = new Thickness(10,30,10,10);
+            }
         }
     }
 }

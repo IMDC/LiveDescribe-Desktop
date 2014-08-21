@@ -38,6 +38,7 @@
             </CheckBox>
 
             <Button
+                Name="RecordButton"
                 Command="{Binding RecordButtonClickCommand}"
                 Style="{StaticResource ControlPanelStyle}"
                 Content="{Binding Path=Recorder.IsRecording, Converter={StaticResource IsRecordingConverter}}"

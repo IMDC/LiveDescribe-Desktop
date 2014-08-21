@@ -8,7 +8,8 @@
     d:DesignHeight="400"
     d:DesignWidth="300"
     xmlns:converters="clr-namespace:LiveDescribe.Converters"
-    xmlns:s="clr-namespace:LiveDescribe.Resources.UiStrings">
+    xmlns:s="clr-namespace:LiveDescribe.Resources.UiStrings"
+    xmlns:controls="clr-namespace:LiveDescribe.Controls">
 
     <UserControl.InputBindings>
         <KeyBinding
@@ -36,6 +37,11 @@
                 Style="{StaticResource InfoTabTextBlockStyle}"
                 Text="{Binding Path=Index}"
                 Width="30" />
+        </DataTemplate>
+        <DataTemplate
+            x:Key="TitleTemplate">
+            <TextBlock
+                Text="{Binding Title}"/>
         </DataTemplate>
         <DataTemplate
             x:Key="StartInVideoTemplate">
@@ -84,20 +90,22 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition />
+            <RowDefinition Height="Auto"/>
             <RowDefinition
-                Height="Auto" />
+                Height="0.5*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition />
             <ColumnDefinition
-                Width="80" />
+                Width="88" />
         </Grid.ColumnDefinitions>
 
         <TabControl
             Name="TabControl"
             Grid.Row="0"
             Grid.Column="0"
-            Grid.ColumnSpan="2"
+            Grid.ColumnSpan="3"
             SelectedIndex="{Binding TabSelectedIndex}">
 
             <!--Space Tab-->
@@ -142,6 +150,9 @@
                             <GridViewColumn
                                 Header="{x:Static s:UiStrings.Header_NumberColumn}"
                                 CellTemplate="{StaticResource ItemIndexTemplate}" />
+                            <GridViewColumn 
+                                Header="{x:Static s:UiStrings.Header_Title}"
+                                CellTemplate="{StaticResource TitleTemplate}"/>
                             <GridViewColumn
                                 Header="{x:Static s:UiStrings.Header_StartTime}"
                                 CellTemplate="{StaticResource StartInVideoTemplate}" />
@@ -178,13 +189,13 @@
                             x:Key="RegularDescriptionContextMenu">
                             <MenuItem
                                 Header="{x:Static s:UiStrings.Command_GoToDescription}"
-                                Command="{Binding GoToThisDescriptionCommand}" />
+                                Command="{Binding NavigateToCommand}" />
                             <MenuItem
                                 Header="{x:Static s:UiStrings.Header_OpenFileWinExplorer}"
                                 Command="{Binding OpenWinFileExplorerToFile}" />
                             <MenuItem
                                 Header="{x:Static s:UiStrings.Command_DeleteDescription}"
-                                Command="{Binding DescriptionDeleteCommand}" />
+                                Command="{Binding DeleteCommand}" />
                         </ContextMenu>
                     </ListView.Resources>
                     <ListView.ItemContainerStyle>
@@ -210,6 +221,9 @@
                             <GridViewColumn
                                 Header="{x:Static s:UiStrings.Header_NumberColumn}"
                                 CellTemplate="{StaticResource ItemIndexTemplate}" />
+                            <GridViewColumn 
+                                Header="{x:Static s:UiStrings.Header_Title}"
+                                CellTemplate="{StaticResource TitleTemplate}" />
                             <GridViewColumn
                                 Header="{x:Static s:UiStrings.Header_StartTime}"
                                 CellTemplate="{StaticResource StartInVideoTemplate}" />
@@ -275,6 +289,9 @@
                             <GridViewColumn
                                 Header="{x:Static s:UiStrings.Header_NumberColumn}"
                                 CellTemplate="{StaticResource ItemIndexTemplate}" />
+                            <GridViewColumn 
+                                Header="{x:Static s:UiStrings.Header_Title}"
+                                CellTemplate="{StaticResource TitleTemplate}" />
                             <GridViewColumn
                                 Header="{x:Static s:UiStrings.Header_StartTime}"
                                 CellTemplate="{StaticResource StartInVideoTemplate}" />
@@ -292,11 +309,40 @@
                 </ListView>
             </TabItem>
         </TabControl>
+        
+        <!--Name Textbox -->
+        <TextBox
+            Grid.Column="1"
+            Grid.Row="1"
+            Margin="10"
+            MaxLength="50"
+            IsEnabled="{Binding Path=SelectedItem, Converter={StaticResource VarNotNullToBoolConverter}}">
+            <TextBox.Text>
+                <Binding
+                    Path="SelectedItem.Title"
+                    UpdateSourceTrigger="PropertyChanged"/>
+            </TextBox.Text>
+        </TextBox>
+        
+
+        
+        <TextBlock
+            Grid.Column="0"
+            Grid.Row="1"
+            Text="{x:Static s:UiStrings.Header_Title}"
+            Margin="5,10,0,10"/>
+        
+        <TextBlock 
+            Grid.Column="0"
+            Grid.Row="2"
+            Text="{x:Static s:UiStrings.Header_DescriptionText}"
+            Margin="5,10,0,10"/>
 
         <!--Description Text Box-->
         <TextBox
-            Grid.Column="0"
-            Grid.Row="1"
+            Grid.Column="1"
+            Grid.Row="2"
+            Margin="10"
             ScrollViewer.VerticalScrollBarVisibility="Auto"
             TextWrapping="Wrap"
             IsEnabled="{Binding Path=SelectedItem, Converter={StaticResource VarNotNullToBoolConverter}}">
@@ -309,16 +355,18 @@
 
         <!--Text Controls-->
         <StackPanel
-            Grid.Column="1"
-            Grid.Row="1">
+            Grid.Column="2"
+            Grid.Row="1"
+            Grid.RowSpan="2">
+
+            <controls:DescriptionRecordingControl
+                DataContext="{Binding DescriptionRecordingControlViewModel}"/>
+            
             <Button
-                Margin="5"
+                Margin="5,20,5,20"
                 Command="{Binding RecordInSpace}"
-                Content="{x:Static s:UiStrings.Command_Record}" />
-            <Button
-                Margin="5"
-                Command="{Binding ClearSelectedItemText}"
-                Content="{x:Static s:UiStrings.Command_Clear}" />
+                Content="{x:Static s:UiStrings.Button_RecordMenu}" />
+
         </StackPanel>
     </Grid>
 </UserControl>

@@ -9,10 +9,10 @@
     xmlns:viewModel="clr-namespace:LiveDescribe.ViewModel"
     mc:Ignorable="d"
     Title="{Binding WindowTitle}"
-    Height="600"
+    Height="650"
     Width="960"
-    MinHeight="600"
-    MinWidth="960"
+    MinHeight="650"
+    MinWidth="980"
     Closing="MainWindow_OnClosing"
     d:DataContext="{d:DesignInstance viewModel:MainWindowViewModel}">
 
@@ -193,11 +193,8 @@
                     Grid.RowSpan="5">
 
                     <controls:MarkingSpacesControl
+                        Margin="0,20,0,0"
                         DataContext="{Binding MarkingSpacesControlViewModel}" />
-
-                    <controls:DescriptionRecordingControl
-                        x:Name="DescriptionRecordingControl"
-                        DataContext="{Binding DescriptionRecordingControlViewModel}" />
                 </StackPanel>
 
                 <controls:MediaControl
