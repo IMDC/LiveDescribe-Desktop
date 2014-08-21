@@ -144,7 +144,14 @@ namespace LiveDescribe.Controls
 
                 Children.Add(backgroundImage);
 
-                SetLeft(backgroundImage, backgroundGroup.Children[0].Bounds.X);
+                //The Image has to be set to the smallest X value of the visible spaces.
+                double minX = backgroundGroup.Children[0].Bounds.X;
+                for (int i = 1; i < backgroundGroup.Children.Count; i++)
+                {
+                    minX = Math.Min(minX, backgroundGroup.Children[i].Bounds.X);
+                }
+
+                SetLeft(backgroundImage, minX);
                 SetTop(backgroundImage, 0);
             }
 
