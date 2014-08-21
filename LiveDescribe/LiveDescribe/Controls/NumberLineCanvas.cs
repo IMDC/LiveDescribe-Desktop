@@ -1,4 +1,5 @@
 ﻿using LiveDescribe.Converters;
+using LiveDescribe.Extensions;
 using LiveDescribe.Utilities;
 using LiveDescribe.ViewModel;
 using System.Globalization;
@@ -98,29 +99,14 @@ namespace LiveDescribe.Controls
                 }
             }
 
-            shortLineGroup.Freeze();
-            var shortLineDrawing = new GeometryDrawing(Brushes.Black, _shortLinePen, shortLineGroup);
-            shortLineDrawing.Freeze();
-
-            var shortLineDrawingImage = new DrawingImage(shortLineDrawing);
-            shortLineDrawingImage.Freeze();
-
-            var shortLineImage = new Image { Source = shortLineDrawingImage };
+            var shortLineImage = shortLineGroup.CreateImage(Brushes.Black, _shortLinePen);
 
             SetLeft(shortLineImage, widthPerLine * firstShortLine);
             SetTop(shortLineImage, 0);
 
             Children.Add(shortLineImage);
 
-
-            longLineGroup.Freeze();
-            var longLineDrawing = new GeometryDrawing(Brushes.Black, _longLinePen, longLineGroup);
-            longLineDrawing.Freeze();
-
-            var longLineDrawingImage = new DrawingImage(longLineDrawing);
-            longLineDrawingImage.Freeze();
-
-            var longLineImage = new Image { Source = longLineDrawingImage };
+            var longLineImage = longLineGroup.CreateImage(Brushes.Black, _longLinePen);
 
             SetLeft(longLineImage, widthPerLine * firstLongLine);
             SetTop(longLineImage, 0);

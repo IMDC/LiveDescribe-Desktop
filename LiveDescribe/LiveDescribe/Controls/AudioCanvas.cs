@@ -1,4 +1,5 @@
-﻿using LiveDescribe.Interfaces;
+﻿using LiveDescribe.Extensions;
+using LiveDescribe.Interfaces;
 using LiveDescribe.Utilities;
 using LiveDescribe.ViewModel;
 using System;
@@ -83,15 +84,7 @@ namespace LiveDescribe.Controls
                 }
             }
 
-            waveformLineGroup.Freeze();
-
-            var waveformDrawing = new GeometryDrawing(Brushes.Black, _linePen, waveformLineGroup);
-            waveformDrawing.Freeze();
-
-            var waveformDrawingImage = new DrawingImage(waveformDrawing);
-            waveformDrawingImage.Freeze();
-
-            var waveformImage = new Image { Source = waveformDrawingImage };
+            var waveformImage = waveformLineGroup.CreateImage(Brushes.Black, _linePen);
 
             SetLeft(waveformImage, beginPixel);
             SetTop(waveformImage, middle + absMin * yscale);
@@ -132,15 +125,7 @@ namespace LiveDescribe.Controls
 
             if (0 < backgroundGroup.Children.Count)
             {
-                backgroundGroup.Freeze();
-
-                var backgroundDrawing = new GeometryDrawing(Brushes.DodgerBlue, _linePen, backgroundGroup);
-                backgroundDrawing.Freeze();
-
-                var backgroundDrawingImage = new DrawingImage(backgroundDrawing);
-                backgroundDrawingImage.Freeze();
-
-                var backgroundImage = new Image { Source = backgroundDrawingImage };
+                var backgroundImage = backgroundGroup.CreateImage(Brushes.DodgerBlue, _linePen);
 
                 Children.Add(backgroundImage);
 
@@ -157,18 +142,11 @@ namespace LiveDescribe.Controls
 
             if (0 < selectedGroup.Children.Count)
             {
-                selectedGroup.Freeze();
-
-                var selectedDrawing = new GeometryDrawing(Brushes.Black, _linePen, selectedGroup);
-                selectedDrawing.Freeze();
-
-                var selectedDrawingImage = new DrawingImage(selectedDrawing);
-                selectedDrawingImage.Freeze();
-
-                var selectedImage = new Image { Source = selectedDrawingImage };
+                var selectedImage = selectedGroup.CreateImage(Brushes.Black, _linePen);
 
                 Children.Add(selectedImage);
 
+                //There can only be one selected item
                 SetLeft(selectedImage, selectedGroup.Children[0].Bounds.X);
                 SetTop(selectedImage, 0);
             }
