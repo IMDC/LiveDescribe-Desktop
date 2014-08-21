@@ -1,5 +1,6 @@
 ﻿using LiveDescribe.Extensions;
 using LiveDescribe.Interfaces;
+using LiveDescribe.Properties;
 using LiveDescribe.Utilities;
 using LiveDescribe.ViewModel;
 using System;
@@ -15,6 +16,8 @@ namespace LiveDescribe.Controls
         #region Fields
         private AudioCanvasViewModel _viewModel;
         private readonly Pen _linePen;
+        private Brush _spaceBrush;
+        private Brush _selectedItemBrush;
         #endregion
 
         #region Constructor
@@ -22,6 +25,8 @@ namespace LiveDescribe.Controls
         {
             _linePen = new Pen(Brushes.Black, 1);
             _linePen.Freeze();
+
+            SetBrushes();
 
             InitEventHandlers();
         }
@@ -38,6 +43,12 @@ namespace LiveDescribe.Controls
 
                 foreach (var space in _viewModel.Spaces)
                     space.Height = ActualHeight;
+            };
+
+            Settings.Default.PropertyChanged += (sender, args) =>
+            {
+                if (args.PropertyName == "ColourScheme")
+                    SetBrushes();
             };
         }
         #endregion
@@ -135,7 +146,7 @@ namespace LiveDescribe.Controls
 
             if (0 < backgroundGroup.Children.Count)
             {
-                var backgroundImage = backgroundGroup.CreateImage(Brushes.DodgerBlue, _linePen);
+                var backgroundImage = backgroundGroup.CreateImage(_spaceBrush, _linePen);
 
                 Children.Add(backgroundImage);
 
@@ -152,7 +163,7 @@ namespace LiveDescribe.Controls
 
             if (0 < selectedGroup.Children.Count)
             {
-                var selectedImage = selectedGroup.CreateImage(Brushes.Black, _linePen);
+                var selectedImage = selectedGroup.CreateImage(_selectedItemBrush, _linePen);
 
                 Children.Add(selectedImage);
 
@@ -167,6 +178,20 @@ namespace LiveDescribe.Controls
             return (visibleBeginMsec <= interval.StartInVideo && interval.StartInVideo <= visibleEndMsec)
                 || (visibleBeginMsec <= interval.EndInVideo && interval.EndInVideo <= visibleEndMsec)
                 || (interval.StartInVideo <= visibleBeginMsec && visibleEndMsec <= interval.EndInVideo);
+        }
+
+        /// <summary>
+        /// Sets the brushes based off of ColourScheme settings.
+        /// </summary>
+        private void SetBrushes()
+        {
+            _spaceBrush = new SolidColorBrush(Settings.Default.ColourScheme.SpaceColour);
+            _spaceBrush.Freeze();
+
+            _selectedItemBrush = new SolidColorBrush(Settings.Default.ColourScheme.SelectedItemColour);
+            _selectedItemBrush.Freeze();
+
+            //TODO: Redraw canvas
         }
 
         #region Event Handlers
