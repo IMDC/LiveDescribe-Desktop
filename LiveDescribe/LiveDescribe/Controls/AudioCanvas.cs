@@ -23,7 +23,22 @@ namespace LiveDescribe.Controls
             _linePen = new Pen(Brushes.Black, 1);
             _linePen.Freeze();
 
+            InitEventHandlers();
+        }
+
+        private void InitEventHandlers()
+        {
             DataContextChanged += OnDataContextChanged;
+
+            //Resize all spaces to fit the height of this canvas.
+            SizeChanged += (sender, args) =>
+            {
+                if (_viewModel == null || Math.Abs(args.PreviousSize.Height - args.NewSize.Height) < 0.01)
+                    return;
+
+                foreach (var space in _viewModel.Spaces)
+                    space.Height = ActualHeight;
+            };
         }
         #endregion
 

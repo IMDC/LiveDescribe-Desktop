@@ -640,15 +640,6 @@ namespace LiveDescribe.View
         }
 
         /// <summary>
-        /// Resizes all the Spaces to fit the AudioCanvas and not overlap the NumberLineCanvas
-        /// </summary>
-        private void ResizeSpaces()
-        {
-            foreach (var space in _projectManager.Spaces)
-                space.Height = AudioCanvas.ActualHeight;
-        }
-
-        /// <summary>
         /// Update's the instance variables that keep track of the timeline height and width, and
         /// calculates the size of the timeline if the width of the audio canvas is greater then the
         /// timeline width it automatically overflows and scrolls due to the scrollview then update
@@ -656,7 +647,6 @@ namespace LiveDescribe.View
         /// </summary>
         private void SetTimeline()
         {
-            Log.Info("Setting timeline");
             NumberLineCanvas.Width = _canvasWidth;
             _descriptionCanvas.Width = _canvasWidth;
             AudioCanvas.Width = _canvasWidth;
@@ -668,7 +658,6 @@ namespace LiveDescribe.View
             NumberLineCanvas.AddLinesToNumberTimeLine(_canvasWidth, TimeLineScrollViewer.HorizontalOffset,
                 TimeLineScrollViewer.ActualWidth, _videoDuration);
             ResizeDescriptions();
-            ResizeSpaces();
         }
 
         #endregion
