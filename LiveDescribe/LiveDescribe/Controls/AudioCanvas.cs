@@ -65,7 +65,7 @@ namespace LiveDescribe.Controls
         #endregion
 
         #region Properties
-        public ItemCanvas.ActionState CurrentActionState { get; set; }
+        public IntervalMouseAction CurrentIntervalMouseAction { get; set; }
         #endregion
 
         /// <summary>
@@ -207,9 +207,9 @@ namespace LiveDescribe.Controls
             OnCanvasRedrawRequested();
         }
 
-        protected override void OnMouseDown(MouseButtonEventArgs e)
+        protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {
-            base.OnMouseDown(e);
+            base.OnMouseLeftButtonDown(e);
 
             if (_viewModel == null)
                 return;
@@ -219,7 +219,10 @@ namespace LiveDescribe.Controls
             foreach (var space in _viewModel.Spaces)
             {
                 if (space.X <= point.X && point.X <= space.X + space.Width)
+                {
                     space.IsSelected = true;
+                    space.SpaceMouseDownCommand.Execute();
+                }
                 else
                     space.IsSelected = false;
             }

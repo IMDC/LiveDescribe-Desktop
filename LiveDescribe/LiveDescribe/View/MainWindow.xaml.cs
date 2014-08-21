@@ -356,16 +356,16 @@ namespace LiveDescribe.View
         private void AudioCanvas_OnMouseDown(object sender, MouseEventArgs e)
         {
             //if we aren't dragging a description or space, we want to unselect them out of the list
-            if (AudioCanvas.CurrentActionState == ItemCanvas.ActionState.None &&
-                _descriptionCanvas.CurrentActionState == ItemCanvas.ActionState.None)
+            if (AudioCanvas.CurrentIntervalMouseAction == IntervalMouseAction.None &&
+                _descriptionCanvas.CurrentIntervalMouseAction == IntervalMouseAction.None)
                 _descriptionInfoTabViewModel.ClearSelection();
         }
 
         private void DescriptionCanvas_MouseDown(object sender, MouseEventArgs e)
         {
             //if we aren't dragging a description or space, we want to unselect them out of the list
-            if (AudioCanvas.CurrentActionState == ItemCanvas.ActionState.None &&
-                _descriptionCanvas.CurrentActionState == ItemCanvas.ActionState.None)
+            if (AudioCanvas.CurrentIntervalMouseAction == IntervalMouseAction.None &&
+                _descriptionCanvas.CurrentIntervalMouseAction == IntervalMouseAction.None)
                 _descriptionInfoTabViewModel.ClearSelection();
         }
 

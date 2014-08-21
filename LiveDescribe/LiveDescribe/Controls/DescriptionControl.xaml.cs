@@ -39,7 +39,7 @@ namespace LiveDescribe.Controls
 
         private void DescriptionGraphic_Loaded(object sender, RoutedEventArgs e)
         {
-            Container.CurrentActionState = ItemCanvas.ActionState.None;
+            Container.CurrentIntervalMouseAction = IntervalMouseAction.None;
         }
 
         private void DescriptionGraphic_MouseDown(object sender, MouseButtonEventArgs e)
@@ -54,7 +54,7 @@ namespace LiveDescribe.Controls
                 _originalEndInVideo = Description.EndInVideo;
 
                 Container.Cursor = CustomResources.GrabbingCursor;
-                Container.CurrentActionState = ItemCanvas.ActionState.Dragging;
+                Container.CurrentIntervalMouseAction = IntervalMouseAction.Dragging;
             }
         }
 
@@ -83,7 +83,7 @@ namespace LiveDescribe.Controls
 
         private void HandleDescriptionMouseCapturedState(double xPos)
         {
-            if (Container.CurrentActionState == ItemCanvas.ActionState.Dragging)
+            if (Container.CurrentIntervalMouseAction == IntervalMouseAction.Dragging)
                 DragDescription(xPos);
         }
 
@@ -119,13 +119,13 @@ namespace LiveDescribe.Controls
             if (Mouse.LeftButton == MouseButtonState.Released)
                 SetupUndoAndRedo();
 
-            Container.CurrentActionState = ItemCanvas.ActionState.None;
+            Container.CurrentIntervalMouseAction = IntervalMouseAction.None;
             Container.Cursor = Cursors.Arrow;
         }
 
         private void SetupUndoAndRedo()
         {
-            if (Container.CurrentActionState == ItemCanvas.ActionState.Dragging)
+            if (Container.CurrentIntervalMouseAction == IntervalMouseAction.Dragging)
             {
                 if (!(Math.Abs(_originalEndInVideo - Description.EndInVideo) < Tolerance &&
                       Math.Abs(_originalStartInVideo - Description.StartInVideo) < Tolerance))

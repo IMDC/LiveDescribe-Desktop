@@ -41,7 +41,7 @@ namespace LiveDescribe.Controls
 
         private void SpaceGraphic_Loaded(object sender, RoutedEventArgs e)
         {
-            Container.CurrentActionState = ItemCanvas.ActionState.None;
+            Container.CurrentIntervalMouseAction = IntervalMouseAction.None;
         }
 
         private void SpaceGraphic_MouseDown(object sender, MouseButtonEventArgs e)
@@ -65,17 +65,17 @@ namespace LiveDescribe.Controls
             if (xPos > (Space.X + Space.Width - ResizeSpaceOffset))
             {
                 Container.Cursor = Cursors.SizeWE;
-                Container.CurrentActionState = ItemCanvas.ActionState.ResizingEndOfItem;
+                Container.CurrentIntervalMouseAction = IntervalMouseAction.ResizingEndOfItem;
             }
             else if (xPos < (Space.X + ResizeSpaceOffset))
             {
                 Container.Cursor = Cursors.SizeWE;
-                Container.CurrentActionState = ItemCanvas.ActionState.ResizingBeginningOfItem;
+                Container.CurrentIntervalMouseAction = IntervalMouseAction.ResizingBeginningOfItem;
             }
             else
             {
                 Container.Cursor = CustomResources.GrabbingCursor;
-                Container.CurrentActionState = ItemCanvas.ActionState.Dragging;
+                Container.CurrentIntervalMouseAction = IntervalMouseAction.Dragging;
             }
         }
 
@@ -91,15 +91,15 @@ namespace LiveDescribe.Controls
             if (Mouse.LeftButton == MouseButtonState.Released)
                 SetupUndoAndRedo();
 
-            Container.CurrentActionState = ItemCanvas.ActionState.None;
+            Container.CurrentIntervalMouseAction = IntervalMouseAction.None;
             Container.Cursor = Cursors.Arrow;
         }
 
         private void SetupUndoAndRedo()
         {
-            if (Container.CurrentActionState == ItemCanvas.ActionState.Dragging ||
-                Container.CurrentActionState == ItemCanvas.ActionState.ResizingBeginningOfItem ||
-                Container.CurrentActionState == ItemCanvas.ActionState.ResizingEndOfItem)
+            if (Container.CurrentIntervalMouseAction == IntervalMouseAction.Dragging ||
+                Container.CurrentIntervalMouseAction == IntervalMouseAction.ResizingBeginningOfItem ||
+                Container.CurrentIntervalMouseAction == IntervalMouseAction.ResizingEndOfItem)
             {
                 if (!(Math.Abs(_originalEndInVideo - Space.EndInVideo) < Tolerance && Math.Abs(_originalStartInVideo - Space.StartInVideo) < Tolerance))
                 {
@@ -126,11 +126,11 @@ namespace LiveDescribe.Controls
 
         private void HandleSpaceMouseCapturedStates(double xPos)
         {
-            if (Container.CurrentActionState == ItemCanvas.ActionState.ResizingEndOfItem)
+            if (Container.CurrentIntervalMouseAction == IntervalMouseAction.ResizingEndOfItem)
                 ResizeEndOfSpace(xPos);
-            else if (Container.CurrentActionState == ItemCanvas.ActionState.ResizingBeginningOfItem)
+            else if (Container.CurrentIntervalMouseAction == IntervalMouseAction.ResizingBeginningOfItem)
                 ResizeBeginningOfSpace(xPos);
-            else if (Container.CurrentActionState == ItemCanvas.ActionState.Dragging)
+            else if (Container.CurrentIntervalMouseAction == IntervalMouseAction.Dragging)
                 DragSpace(xPos);
 
             SetAppropriateCursorUponMouseCaptured();
@@ -222,11 +222,11 @@ namespace LiveDescribe.Controls
 
         private void SetAppropriateCursorUponMouseCaptured()
         {
-            if (Container.Cursor != CustomResources.GrabbingCursor && Container.CurrentActionState == ItemCanvas.ActionState.Dragging)
+            if (Container.Cursor != CustomResources.GrabbingCursor && Container.CurrentIntervalMouseAction == IntervalMouseAction.Dragging)
                 Container.Cursor = CustomResources.GrabbingCursor;
 
-            if (Container.Cursor != Cursors.SizeWE && (Container.CurrentActionState == ItemCanvas.ActionState.ResizingBeginningOfItem ||
-                Container.CurrentActionState == ItemCanvas.ActionState.ResizingEndOfItem))
+            if (Container.Cursor != Cursors.SizeWE && (Container.CurrentIntervalMouseAction == IntervalMouseAction.ResizingBeginningOfItem ||
+                Container.CurrentIntervalMouseAction == IntervalMouseAction.ResizingEndOfItem))
                 Container.Cursor = Cursors.SizeWE;
         }
     }

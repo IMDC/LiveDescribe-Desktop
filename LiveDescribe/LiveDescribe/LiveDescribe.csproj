@@ -140,6 +140,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\IntervalMouseAction.cs" />
     <Compile Include="Controls\AudioCanvas.cs" />
     <Compile Include="Controls\CountdownControl.xaml.cs">
       <DependentUpon>CountdownControl.xaml</DependentUpon>
