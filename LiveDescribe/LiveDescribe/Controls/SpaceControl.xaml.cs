@@ -46,7 +46,7 @@ namespace LiveDescribe.Controls
 
         private void SpaceGraphic_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            Space.SpaceMouseDownCommand.Execute(e);
+            Space.MouseDownCommand.Execute(e);
             if (Mouse.LeftButton == MouseButtonState.Pressed)
             {
                 double xPos = e.GetPosition(Container).X;
@@ -115,7 +115,7 @@ namespace LiveDescribe.Controls
             if (Space.LockedInPlace)
                 return;
 
-            Space.SpaceMouseMoveCommand.Execute(e);
+            Space.MouseMoveCommand.Execute(e);
             double xPos = e.GetPosition(Container).X;
 
             if (SpaceGraphic.IsMouseCaptured)

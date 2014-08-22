@@ -267,7 +267,7 @@ namespace LiveDescribe.Controls
         private void SelectSpace(Space space)
         {
             space.IsSelected = true;
-            space.SpaceMouseDownCommand.Execute();
+            space.MouseDownCommand.Execute();
 
             _mouseSelection = new CanvasMouseSelection(IntervalMouseAction.Dragging, space);
 

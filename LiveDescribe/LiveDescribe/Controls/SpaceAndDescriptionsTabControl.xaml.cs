@@ -1,16 +1,16 @@
 ﻿using LiveDescribe.Extensions;
 using LiveDescribe.Model;
+using LiveDescribe.Properties;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using LiveDescribe.Properties;
 
 namespace LiveDescribe.Controls
 {
     /// <summary>
     /// Interaction logic for SpaceAndDescriptionsTabControl.xaml
     /// </summary>
-    public partial class SpaceAndDescriptionsTabControl : System.Windows.Controls.UserControl
+    public partial class SpaceAndDescriptionsTabControl : UserControl
     {
         public SpaceAndDescriptionsTabControl()
         {
@@ -23,7 +23,7 @@ namespace LiveDescribe.Controls
         {
             var item = ((ListViewItem)sender).Content;
             if (item is Space)
-                ((Space)item).GoToThisSpaceCommand.Execute();
+                ((Space)item).NavigateToCommand.Execute();
             else if (item is Description)
                 ((Description)item).NavigateToCommand.Execute();
         }

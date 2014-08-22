@@ -1,6 +1,5 @@
 ﻿using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Properties;
-using Newtonsoft.Json;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
@@ -29,12 +28,12 @@ namespace LiveDescribe.Model
         {
             IsSelected = false;
             LockedInPlace = false;
-            DeleteSpaceCommand = new RelayCommand(OnDeleteRequested, () => true);
-            GoToThisSpaceCommand = new RelayCommand(OnNavigateToDescriptionRequested, () => true);
+            DeleteCommand = new RelayCommand(OnDeleteRequested, () => true);
+            NavigateToCommand = new RelayCommand(OnNavigateToDescriptionRequested, () => true);
 
-            SpaceMouseUpCommand = new RelayCommand<MouseEventArgs>(OnMouseUp, param => true);
-            SpaceMouseDownCommand = new RelayCommand<MouseEventArgs>(OnMouseDown, param => true);
-            SpaceMouseMoveCommand = new RelayCommand<MouseEventArgs>(OnMouseMove, param => true);
+            MouseUpCommand = new RelayCommand<MouseEventArgs>(OnMouseUp, param => true);
+            MouseDownCommand = new RelayCommand<MouseEventArgs>(OnMouseDown, param => true);
+            MouseMoveCommand = new RelayCommand<MouseEventArgs>(OnMouseMove, param => true);
 
             Settings.Default.PropertyChanged += (sender, args) =>
             {
@@ -42,22 +41,6 @@ namespace LiveDescribe.Model
                     SetColour();
             };
         }
-        #endregion
-
-        #region Commands
-        /// <summary>
-        /// Setter and Getters for all Commands related to a Space
-        /// </summary>
-        [JsonIgnore]
-        public RelayCommand DeleteSpaceCommand { get; private set; }
-        [JsonIgnore]
-        public RelayCommand<MouseEventArgs> SpaceMouseDownCommand { get; private set; }
-        [JsonIgnore]
-        public RelayCommand<MouseEventArgs> SpaceMouseMoveCommand { get; private set; }
-        [JsonIgnore]
-        public RelayCommand<MouseEventArgs> SpaceMouseUpCommand { get; private set; }
-        [JsonIgnore]
-        public RelayCommand GoToThisSpaceCommand { get; private set; }
         #endregion
 
         #region Properties

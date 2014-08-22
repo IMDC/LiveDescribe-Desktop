@@ -1,4 +1,4 @@
-﻿using LiveDescribe.Model;
+﻿using LiveDescribe.Interfaces;
 
 namespace LiveDescribe.Controls
 {
@@ -13,7 +13,7 @@ namespace LiveDescribe.Controls
         public static readonly CanvasMouseSelection NoSelection =
             new CanvasMouseSelection(IntervalMouseAction.None, null);
 
-        public CanvasMouseSelection(IntervalMouseAction action, Space item)
+        public CanvasMouseSelection(IntervalMouseAction action, IDescribableInterval item)
         {
             Action = action;
             Item = item;
@@ -21,6 +21,6 @@ namespace LiveDescribe.Controls
 
         public IntervalMouseAction Action { private set; get; }
 
-        public Space Item { private set; get; }
+        public IDescribableInterval Item { private set; get; }
     }
 }
