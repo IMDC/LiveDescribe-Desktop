@@ -1,5 +1,6 @@
 ﻿using LiveDescribe.Extensions;
 using LiveDescribe.Interfaces;
+using LiveDescribe.Model;
 using LiveDescribe.Properties;
 using LiveDescribe.Utilities;
 using LiveDescribe.ViewModel;
@@ -20,6 +21,7 @@ namespace LiveDescribe.Controls
         private readonly Pen _linePen;
         private Brush _spaceBrush;
         private Brush _selectedItemBrush;
+        private CanvasMouseSelection _mouseSelection;
         #endregion
 
         #region Constructor
@@ -33,6 +35,8 @@ namespace LiveDescribe.Controls
              */
             if (!DesignerProperties.GetIsInDesignMode(this))
                 SetBrushes();
+
+            _mouseSelection = CanvasMouseSelection.NoSelection;
 
             InitEventHandlers();
         }
@@ -220,14 +224,54 @@ namespace LiveDescribe.Controls
             {
                 if (space.X <= point.X && point.X <= space.X + space.Width)
                 {
-                    space.IsSelected = true;
-                    space.SpaceMouseDownCommand.Execute();
+                    SelectSpace(space);
                 }
                 else
                     space.IsSelected = false;
             }
 
             OnCanvasRedrawRequested();
+        }
+
+        protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
+        {
+            base.OnMouseLeftButtonUp(e);
+
+            if (_mouseSelection.Action != IntervalMouseAction.None)
+            {
+                _mouseSelection.Item.IsSelected = false;
+                _mouseSelection = CanvasMouseSelection.NoSelection;
+                Mouse.Capture(null);
+            }
+        }
+
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            base.OnMouseMove(e);
+            var mousePos = e.GetPosition(this);
+
+            switch (_mouseSelection.Action)
+            {
+                case IntervalMouseAction.Dragging:
+                    double startTime = Math.Max(0, (_viewModel.Player.DurationMilliseconds / (Width)) * mousePos.X);
+                    _mouseSelection.Item.EndInVideo = startTime + _mouseSelection.Item.Duration;
+                    _mouseSelection.Item.StartInVideo = startTime;
+
+                    break;
+                case IntervalMouseAction.None: return;
+            }
+
+            OnCanvasRedrawRequested();
+        }
+
+        private void SelectSpace(Space space)
+        {
+            space.IsSelected = true;
+            space.SpaceMouseDownCommand.Execute();
+
+            _mouseSelection = new CanvasMouseSelection(IntervalMouseAction.Dragging, space);
+
+            CaptureMouse();
         }
 
         #region Event Handlers

@@ -1,4 +1,10 @@
 ﻿namespace LiveDescribe.Controls
 {
-    public enum IntervalMouseAction { None, Dragging, ResizingEndOfItem, ResizingBeginningOfItem };
+    public enum IntervalMouseAction
+    {
+        None,
+        Dragging,
+        ResizingEndOfItem,
+        ResizingBeginningOfItem
+    };
 }
