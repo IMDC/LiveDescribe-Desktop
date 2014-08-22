@@ -96,7 +96,13 @@ namespace LiveDescribe.View
             SetRecentDocumentsList();
 
             #region TimeLineScrollViewer Event Listeners
-            TimeLineScrollViewer.ScrollChanged += (sender, e) => DrawTimeline();
+            TimeLineScrollViewer.ScrollChanged += (sender, e) =>
+            {
+                //Update visible canvas boundaries
+                AudioCanvas.SetVisibleBoundaries(TimeLineScrollViewer.HorizontalOffset, TimeLineScrollViewer.ActualWidth);
+
+                DrawTimeline();
+            };
             #endregion
 
             #region Event Listeners for VideoMedia
@@ -159,6 +165,7 @@ namespace LiveDescribe.View
             mainWindowViewModel.MediaControlViewModel.VideoOpenedRequested += (sender, e) =>
                 {
                     _videoDuration = _videoMedia.NaturalDuration.TimeSpan.TotalMilliseconds;
+                    AudioCanvas.VideoDurationMsec = _videoDuration;
                     DescriptionCanvasControl.DescriptionCanvas.VideoDuration = _videoDuration;
                     _canvasWidth = CalculateWidth();
                     _marker.IsEnabled = true;
@@ -298,8 +305,6 @@ namespace LiveDescribe.View
             #region Event Handlers for Settings
             Settings.Default.RecentProjects.CollectionChanged += (sender, args) => SetRecentDocumentsList();
             #endregion
-
-            AudioCanvas.CanvasRedrawRequested += (sender, args) => DrawTimeline();
         }
 
         #region Play_Tick
@@ -651,10 +656,7 @@ namespace LiveDescribe.View
 
         private void DrawTimeline()
         {
-            AudioCanvas.DrawWaveForm(TimeLineScrollViewer.HorizontalOffset,
-                TimeLineScrollViewer.ActualWidth, _videoDuration);
-            AudioCanvas.DrawSpaces(TimeLineScrollViewer.HorizontalOffset,
-                TimeLineScrollViewer.ActualWidth, _videoDuration);
+            AudioCanvas.Draw();
             NumberLineCanvas.DrawNumberTimeLine(TimeLineScrollViewer.HorizontalOffset,
                 TimeLineScrollViewer.ActualWidth, _videoDuration);
         }

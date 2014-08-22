@@ -22,6 +22,20 @@ namespace LiveDescribe.Controls
         private Brush _spaceBrush;
         private Brush _selectedItemBrush;
         private CanvasMouseSelection _mouseSelection;
+        private Image _waveformImage;
+        private Image _backgroundImage;
+        private Image _selectedImage;
+
+        /// <summary>
+        /// The leftmost pixel of the canvas is visible to the user.
+        /// </summary>
+        private double _visibleX;
+
+        /// <summary>
+        /// How many pixels wide the viewable area of the canvas is.
+        /// </summary>
+        private double _visibleWidth;
+
         #endregion
 
         #region Constructor
@@ -63,37 +77,39 @@ namespace LiveDescribe.Controls
         }
         #endregion
 
-        #region Events
-
-        public event EventHandler CanvasRedrawRequested;
-        #endregion
-
         #region Properties
         public IntervalMouseAction CurrentIntervalMouseAction { get; set; }
+
+        public double VideoDurationMsec { get; set; }
         #endregion
 
         #region Canvas Drawing
+
+        public void Draw()
+        {
+            DrawWaveForm();
+            DrawSpaces();
+        }
+
         /// <summary>
         /// Draws the waveform for the current window of sound and adds it to the AudioCanvas.
         /// </summary>
-        /// <param name="visibleStartPoint">The horizontal offset from the beginning of the canvas.</param>
-        /// <param name="visibleWidth">The ActualWidth of the parent container.</param>
-        /// <param name="videoDuration">The duration of the video.</param>
-        public void DrawWaveForm(double visibleStartPoint, double visibleWidth, double videoDuration)
+        public void DrawWaveForm()
         {
-            if (_viewModel == null || _viewModel.Waveform == null || Width == 0 || visibleWidth == 0
+            if (_viewModel == null || _viewModel.Waveform == null || Width == 0 || _visibleWidth == 0
                 || _viewModel.Player.CurrentState == LiveDescribeVideoStates.VideoNotLoaded)
                 return;
+
+            if (Children.Contains(_waveformImage))
+                Children.Remove(_waveformImage);
 
             var data = _viewModel.Waveform.Data;
             double samplesPerPixel = Math.Max(data.Count / Width, 1);
             double middle = ActualHeight / 2;
             double yscale = middle;
 
-            Children.Clear();
-
-            int beginPixel = (int)visibleStartPoint;
-            int endPixel = beginPixel + (int)visibleWidth;
+            int beginPixel = (int)_visibleX;
+            int endPixel = beginPixel + (int)_visibleWidth;
 
             int ratio = _viewModel.Waveform.Header.Channels == 2 ? 40 : 80;
             double samplesPerSecond =
@@ -105,7 +121,7 @@ namespace LiveDescribe.Controls
 
             for (int pixel = beginPixel; pixel <= endPixel; pixel++)
             {
-                double offsetTime = (videoDuration / (Width * Milliseconds.PerSecond))
+                double offsetTime = (VideoDurationMsec / (Width * Milliseconds.PerSecond))
                     * pixel;
                 double sampleStart = samplesPerSecond * offsetTime;
 
@@ -126,28 +142,33 @@ namespace LiveDescribe.Controls
                 }
             }
 
-            var waveformImage = waveformLineGroup.CreateImage(Brushes.Black, _linePen);
+            _waveformImage = waveformLineGroup.CreateImage(Brushes.Black, _linePen);
 
-            SetLeft(waveformImage, beginPixel);
-            SetTop(waveformImage, middle + absMin * yscale);
+            SetLeft(_waveformImage, beginPixel);
+            SetTop(_waveformImage, middle + absMin * yscale);
 
-            Children.Add(waveformImage);
+            Children.Add(_waveformImage);
         }
 
-        public void DrawSpaces(double visibleStartPoint, double visibleWidth, double videoDuration)
+        public void DrawSpaces()
         {
-            if (_viewModel == null || _viewModel.Spaces == null || Width == 0 || visibleWidth == 0
+            if (_viewModel == null || _viewModel.Spaces == null || Width == 0 || _visibleWidth == 0
                 || _viewModel.Player.CurrentState == LiveDescribeVideoStates.VideoNotLoaded)
                 return;
+
+            if (Children.Contains(_backgroundImage))
+                Children.Remove(_backgroundImage);
+            if (Children.Contains(_selectedImage))
+                Children.Remove(_selectedImage);
 
             var backgroundGroup = new GeometryGroup();
             var selectedGroup = new GeometryGroup();
 
-            double beginPixel = visibleStartPoint;
-            double endPixel = beginPixel + visibleWidth;
+            double beginPixel = _visibleX;
+            double endPixel = beginPixel + _visibleWidth;
 
-            double beginTimeMsec = (videoDuration / (Width)) * beginPixel;
-            double endTimeMsec = (videoDuration / (Width)) * endPixel;
+            double beginTimeMsec = (VideoDurationMsec / (Width)) * beginPixel;
+            double endTimeMsec = (VideoDurationMsec / (Width)) * endPixel;
 
             foreach (var space in _viewModel.Spaces)
             {
@@ -164,9 +185,9 @@ namespace LiveDescribe.Controls
 
             if (0 < backgroundGroup.Children.Count)
             {
-                var backgroundImage = backgroundGroup.CreateImage(_spaceBrush, _linePen);
+                _backgroundImage = backgroundGroup.CreateImage(_spaceBrush, _linePen);
 
-                Children.Add(backgroundImage);
+                Children.Add(_backgroundImage);
 
                 //The Image has to be set to the smallest X value of the visible spaces.
                 double minX = backgroundGroup.Children[0].Bounds.X;
@@ -175,20 +196,49 @@ namespace LiveDescribe.Controls
                     minX = Math.Min(minX, backgroundGroup.Children[i].Bounds.X);
                 }
 
-                SetLeft(backgroundImage, minX);
-                SetTop(backgroundImage, 0);
+                SetLeft(_backgroundImage, minX);
+                SetTop(_backgroundImage, 0);
             }
 
             if (0 < selectedGroup.Children.Count)
             {
-                var selectedImage = selectedGroup.CreateImage(_selectedItemBrush, _linePen);
+                _selectedImage = selectedGroup.CreateImage(_selectedItemBrush, _linePen);
 
-                Children.Add(selectedImage);
+                Children.Add(_selectedImage);
 
                 //There can only be one selected item
-                SetLeft(selectedImage, selectedGroup.Children[0].Bounds.X);
-                SetTop(selectedImage, 0);
+                SetLeft(_selectedImage, selectedGroup.Children[0].Bounds.X);
+                SetTop(_selectedImage, 0);
             }
+        }
+
+        /// <summary>
+        /// Draws the selectedItem image based off of mouse selection. Call this method to only
+        /// draw the currently selected space.
+        /// </summary>
+        public void DrawMouseSelection()
+        {
+            if (_mouseSelection.Action == IntervalMouseAction.None)
+                return;
+
+            if (Children.Contains(_selectedImage))
+                Children.Remove(_selectedImage);
+
+            var selectedGroup = new GeometryGroup();
+            selectedGroup.Children.Add(new RectangleGeometry(new Rect
+            {
+                X = _mouseSelection.Item.X,
+                Y = _mouseSelection.Item.Y,
+                Width = _mouseSelection.Item.Width,
+                Height = _mouseSelection.Item.Height,
+            }));
+
+            _selectedImage = selectedGroup.CreateImage(_selectedItemBrush, _linePen);
+
+            Children.Add(_selectedImage);
+
+            SetLeft(_selectedImage, selectedGroup.Children[0].Bounds.X);
+            SetTop(_selectedImage, 0);
         }
 
         private bool IsIntervalVisible(IDescribableInterval interval, double visibleBeginMsec, double visibleEndMsec)
@@ -209,7 +259,7 @@ namespace LiveDescribe.Controls
             _selectedItemBrush = new SolidColorBrush(Settings.Default.ColourScheme.SelectedItemColour);
             _selectedItemBrush.Freeze();
 
-            OnCanvasRedrawRequested();
+            Draw();
         }
         #endregion
 
@@ -233,7 +283,7 @@ namespace LiveDescribe.Controls
                     space.IsSelected = false;
             }
 
-            OnCanvasRedrawRequested();
+            DrawSpaces();
         }
 
         private void SelectSpace(Space space, Point clickPoint)
@@ -246,7 +296,6 @@ namespace LiveDescribe.Controls
 
             CaptureMouse();
         }
-
 
         protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
         {
@@ -267,36 +316,36 @@ namespace LiveDescribe.Controls
 
             switch (_mouseSelection.Action)
             {
+                case IntervalMouseAction.None:
+                    return;
                 case IntervalMouseAction.Dragging:
                     double startTime = Math.Max(0, XPosToMilliseconds(mousePos.X) - _mouseSelection.MouseClickTimeDifference);
                     _mouseSelection.Item.EndInVideo = startTime + _mouseSelection.Item.Duration;
                     _mouseSelection.Item.StartInVideo = startTime;
-
+                    DrawMouseSelection();
                     break;
-                case IntervalMouseAction.None: return;
+                default:
+                    DrawSpaces();
+                    break;
             }
-
-            OnCanvasRedrawRequested();
         }
         #endregion
 
         private double XPosToMilliseconds(double x)
         {
-            return (_viewModel.Player.DurationMilliseconds / (Width)) * x;
+            return (VideoDurationMsec / (Width)) * x;
+        }
+
+        public void SetVisibleBoundaries(double visibleX, double visibleWidth)
+        {
+            _visibleX = visibleX;
+            _visibleWidth = visibleWidth;
         }
 
         #region Event Handlers
         private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             _viewModel = e.NewValue as AudioCanvasViewModel;
-        }
-        #endregion
-
-        #region Event Invokation
-        protected virtual void OnCanvasRedrawRequested()
-        {
-            var handler = CanvasRedrawRequested;
-            if (handler != null) handler(this, EventArgs.Empty);
         }
         #endregion
     }
