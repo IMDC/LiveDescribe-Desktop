@@ -72,6 +72,7 @@ namespace LiveDescribe.Controls
         public IntervalMouseAction CurrentIntervalMouseAction { get; set; }
         #endregion
 
+        #region Canvas Drawing
         /// <summary>
         /// Draws the waveform for the current window of sound and adds it to the AudioCanvas.
         /// </summary>
@@ -210,7 +211,9 @@ namespace LiveDescribe.Controls
 
             OnCanvasRedrawRequested();
         }
+        #endregion
 
+        #region Mouse Interaction
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {
             base.OnMouseLeftButtonDown(e);
@@ -224,7 +227,7 @@ namespace LiveDescribe.Controls
             {
                 if (space.X <= point.X && point.X <= space.X + space.Width)
                 {
-                    SelectSpace(space);
+                    SelectSpace(space, point);
                 }
                 else
                     space.IsSelected = false;
@@ -232,6 +235,18 @@ namespace LiveDescribe.Controls
 
             OnCanvasRedrawRequested();
         }
+
+        private void SelectSpace(Space space, Point clickPoint)
+        {
+            space.IsSelected = true;
+            space.MouseDownCommand.Execute();
+
+            _mouseSelection = new CanvasMouseSelection(IntervalMouseAction.Dragging, space,
+                XPosToMilliseconds(clickPoint.X) - space.StartInVideo);
+
+            CaptureMouse();
+        }
+
 
         protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
         {
@@ -253,7 +268,7 @@ namespace LiveDescribe.Controls
             switch (_mouseSelection.Action)
             {
                 case IntervalMouseAction.Dragging:
-                    double startTime = Math.Max(0, (_viewModel.Player.DurationMilliseconds / (Width)) * mousePos.X);
+                    double startTime = Math.Max(0, XPosToMilliseconds(mousePos.X) - _mouseSelection.MouseClickTimeDifference);
                     _mouseSelection.Item.EndInVideo = startTime + _mouseSelection.Item.Duration;
                     _mouseSelection.Item.StartInVideo = startTime;
 
@@ -263,15 +278,11 @@ namespace LiveDescribe.Controls
 
             OnCanvasRedrawRequested();
         }
+        #endregion
 
-        private void SelectSpace(Space space)
+        private double XPosToMilliseconds(double x)
         {
-            space.IsSelected = true;
-            space.MouseDownCommand.Execute();
-
-            _mouseSelection = new CanvasMouseSelection(IntervalMouseAction.Dragging, space);
-
-            CaptureMouse();
+            return (_viewModel.Player.DurationMilliseconds / (Width)) * x;
         }
 
         #region Event Handlers
