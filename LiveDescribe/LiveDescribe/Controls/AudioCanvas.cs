@@ -319,7 +319,9 @@ namespace LiveDescribe.Controls
                 case IntervalMouseAction.None:
                     return;
                 case IntervalMouseAction.Dragging:
-                    double startTime = Math.Max(0, XPosToMilliseconds(mousePos.X) - _mouseSelection.MouseClickTimeDifference);
+                    //Ensure that the space can not be moved to an invalid time.
+                    double startTime = Bound(0, XPosToMilliseconds(mousePos.X) - _mouseSelection.MouseClickTimeDifference,
+                        VideoDurationMsec - _mouseSelection.Item.Duration);
                     _mouseSelection.Item.EndInVideo = startTime + _mouseSelection.Item.Duration;
                     _mouseSelection.Item.StartInVideo = startTime;
                     DrawMouseSelection();
@@ -340,6 +342,18 @@ namespace LiveDescribe.Controls
         {
             _visibleX = visibleX;
             _visibleWidth = visibleWidth;
+        }
+
+        /// <summary>
+        /// Ensures that the given value is bounded within the given lower and upper bounds.
+        /// </summary>
+        /// <param name="lowerBound">The lowest number that the value can be.</param>
+        /// <param name="value">The value to bounds check.</param>
+        /// <param name="upperBound">The highest number that the value can be.</param>
+        /// <returns></returns>
+        public double Bound(double lowerBound, double value, double upperBound)
+        {
+            return Math.Min(upperBound, Math.Max(lowerBound, value));
         }
 
         #region Event Handlers
