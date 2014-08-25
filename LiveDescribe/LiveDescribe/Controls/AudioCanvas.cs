@@ -16,6 +16,16 @@ namespace LiveDescribe.Controls
 {
     public class AudioCanvas : Canvas
     {
+        #region Constants
+        /// <summary>
+        /// The distance away from the beginning or ending of an interval in pixels that the user
+        /// has to click on to be able to move the caption.
+        /// </summary>
+        private const double SelectionPixelWidth = 10;
+
+        private const double MinIntervalDurationMsec = 300;
+        #endregion
+
         #region Fields
         private AudioCanvasViewModel _viewModel;
         private readonly Pen _linePen;
@@ -275,10 +285,8 @@ namespace LiveDescribe.Controls
 
             foreach (var space in _viewModel.Spaces)
             {
-                if (space.X <= point.X && point.X <= space.X + space.Width)
-                {
+                if (space.X - SelectionPixelWidth <= point.X && point.X <= space.X + space.Width + SelectionPixelWidth)
                     SelectSpace(space, point);
-                }
                 else
                     space.IsSelected = false;
             }
@@ -291,8 +299,22 @@ namespace LiveDescribe.Controls
             space.IsSelected = true;
             space.MouseDownCommand.Execute();
 
-            _mouseSelection = new CanvasMouseSelection(IntervalMouseAction.Dragging, space,
-                XPosToMilliseconds(clickPoint.X) - space.StartInVideo);
+            if (space.X - SelectionPixelWidth <= clickPoint.X && clickPoint.X <= space.X + SelectionPixelWidth)
+            {
+                _mouseSelection = new CanvasMouseSelection(IntervalMouseAction.ChangeStartTime, space,
+                    XPosToMilliseconds(clickPoint.X) - space.StartInVideo);
+            }
+            else if (space.X + space.Width - SelectionPixelWidth <= clickPoint.X
+                && clickPoint.X <= space.X + space.Width + SelectionPixelWidth)
+            {
+                _mouseSelection = new CanvasMouseSelection(IntervalMouseAction.ChangeEndTime, space,
+                    XPosToMilliseconds(clickPoint.X) - space.EndInVideo);
+            }
+            else
+            {
+                _mouseSelection = new CanvasMouseSelection(IntervalMouseAction.Dragging, space,
+                    XPosToMilliseconds(clickPoint.X) - space.StartInVideo);
+            }
 
             CaptureMouse();
         }
@@ -313,6 +335,7 @@ namespace LiveDescribe.Controls
         {
             base.OnMouseMove(e);
             var mousePos = e.GetPosition(this);
+            double startTime;
 
             switch (_mouseSelection.Action)
             {
@@ -320,14 +343,23 @@ namespace LiveDescribe.Controls
                     return;
                 case IntervalMouseAction.Dragging:
                     //Ensure that the space can not be moved to an invalid time.
-                    double startTime = Bound(0, XPosToMilliseconds(mousePos.X) - _mouseSelection.MouseClickTimeDifference,
+                    startTime = Bound(0, XPosToMilliseconds(mousePos.X) - _mouseSelection.MouseClickTimeDifference,
                         VideoDurationMsec - _mouseSelection.Item.Duration);
                     _mouseSelection.Item.EndInVideo = startTime + _mouseSelection.Item.Duration;
                     _mouseSelection.Item.StartInVideo = startTime;
                     DrawMouseSelection();
                     break;
-                default:
-                    DrawSpaces();
+                case IntervalMouseAction.ChangeStartTime:
+                    startTime = Bound(0, XPosToMilliseconds(mousePos.X) - _mouseSelection.MouseClickTimeDifference,
+                        _mouseSelection.Item.EndInVideo - MinIntervalDurationMsec);
+                    _mouseSelection.Item.StartInVideo = startTime;
+                    DrawMouseSelection();
+                    break;
+                case IntervalMouseAction.ChangeEndTime:
+                    double endTime = Bound(_mouseSelection.Item.StartInVideo + MinIntervalDurationMsec,
+                        XPosToMilliseconds(mousePos.X) - _mouseSelection.MouseClickTimeDifference, VideoDurationMsec);
+                    _mouseSelection.Item.EndInVideo = endTime;
+                    DrawMouseSelection();
                     break;
             }
         }

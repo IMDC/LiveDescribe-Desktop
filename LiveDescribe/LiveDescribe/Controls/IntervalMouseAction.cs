@@ -4,7 +4,7 @@
     {
         None,
         Dragging,
-        ResizingEndOfItem,
-        ResizingBeginningOfItem
+        ChangeEndTime,
+        ChangeStartTime
     };
 }

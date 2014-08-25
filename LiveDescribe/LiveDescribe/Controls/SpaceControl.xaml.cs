@@ -65,12 +65,12 @@ namespace LiveDescribe.Controls
             if (xPos > (Space.X + Space.Width - ResizeSpaceOffset))
             {
                 Container.Cursor = Cursors.SizeWE;
-                Container.CurrentIntervalMouseAction = IntervalMouseAction.ResizingEndOfItem;
+                Container.CurrentIntervalMouseAction = IntervalMouseAction.ChangeEndTime;
             }
             else if (xPos < (Space.X + ResizeSpaceOffset))
             {
                 Container.Cursor = Cursors.SizeWE;
-                Container.CurrentIntervalMouseAction = IntervalMouseAction.ResizingBeginningOfItem;
+                Container.CurrentIntervalMouseAction = IntervalMouseAction.ChangeStartTime;
             }
             else
             {
@@ -98,8 +98,8 @@ namespace LiveDescribe.Controls
         private void SetupUndoAndRedo()
         {
             if (Container.CurrentIntervalMouseAction == IntervalMouseAction.Dragging ||
-                Container.CurrentIntervalMouseAction == IntervalMouseAction.ResizingBeginningOfItem ||
-                Container.CurrentIntervalMouseAction == IntervalMouseAction.ResizingEndOfItem)
+                Container.CurrentIntervalMouseAction == IntervalMouseAction.ChangeStartTime ||
+                Container.CurrentIntervalMouseAction == IntervalMouseAction.ChangeEndTime)
             {
                 if (!(Math.Abs(_originalEndInVideo - Space.EndInVideo) < Tolerance && Math.Abs(_originalStartInVideo - Space.StartInVideo) < Tolerance))
                 {
@@ -126,9 +126,9 @@ namespace LiveDescribe.Controls
 
         private void HandleSpaceMouseCapturedStates(double xPos)
         {
-            if (Container.CurrentIntervalMouseAction == IntervalMouseAction.ResizingEndOfItem)
+            if (Container.CurrentIntervalMouseAction == IntervalMouseAction.ChangeEndTime)
                 ResizeEndOfSpace(xPos);
-            else if (Container.CurrentIntervalMouseAction == IntervalMouseAction.ResizingBeginningOfItem)
+            else if (Container.CurrentIntervalMouseAction == IntervalMouseAction.ChangeStartTime)
                 ResizeBeginningOfSpace(xPos);
             else if (Container.CurrentIntervalMouseAction == IntervalMouseAction.Dragging)
                 DragSpace(xPos);
@@ -225,8 +225,8 @@ namespace LiveDescribe.Controls
             if (Container.Cursor != CustomResources.GrabbingCursor && Container.CurrentIntervalMouseAction == IntervalMouseAction.Dragging)
                 Container.Cursor = CustomResources.GrabbingCursor;
 
-            if (Container.Cursor != Cursors.SizeWE && (Container.CurrentIntervalMouseAction == IntervalMouseAction.ResizingBeginningOfItem ||
-                Container.CurrentIntervalMouseAction == IntervalMouseAction.ResizingEndOfItem))
+            if (Container.Cursor != Cursors.SizeWE && (Container.CurrentIntervalMouseAction == IntervalMouseAction.ChangeStartTime ||
+                Container.CurrentIntervalMouseAction == IntervalMouseAction.ChangeEndTime))
                 Container.Cursor = Cursors.SizeWE;
         }
     }
