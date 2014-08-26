@@ -171,7 +171,7 @@ namespace LiveDescribe.Controls
             if (Children.Contains(_selectedImage))
                 Children.Remove(_selectedImage);
 
-            var backgroundGroup = new GeometryGroup();
+            var backgroundGroup = new GeometryGroup { FillRule = FillRule.Nonzero };
             var selectedGroup = new GeometryGroup();
 
             double beginPixel = _visibleX;
