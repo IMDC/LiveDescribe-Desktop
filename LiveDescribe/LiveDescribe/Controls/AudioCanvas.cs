@@ -29,11 +29,13 @@ namespace LiveDescribe.Controls
         #region Fields
         private AudioCanvasViewModel _viewModel;
         private readonly Pen _linePen;
+        private Brush _completedSpaceBrush;
         private Brush _spaceBrush;
         private Brush _selectedItemBrush;
         private CanvasMouseSelection _mouseSelection;
         private Image _waveformImage;
-        private Image _backgroundImage;
+        private Image _completedSpaceImage;
+        private Image _spaceImage;
         private Image _selectedImage;
 
         /// <summary>
@@ -166,12 +168,21 @@ namespace LiveDescribe.Controls
                 || _viewModel.Player.CurrentState == LiveDescribeVideoStates.VideoNotLoaded)
                 return;
 
-            if (Children.Contains(_backgroundImage))
-                Children.Remove(_backgroundImage);
+            if (Children.Contains(_completedSpaceImage))
+                Children.Remove(_completedSpaceImage);
+            if (Children.Contains(_spaceImage))
+                Children.Remove(_spaceImage);
             if (Children.Contains(_selectedImage))
                 Children.Remove(_selectedImage);
 
-            var backgroundGroup = new GeometryGroup { FillRule = FillRule.Nonzero };
+            /* The way this method draws spaces is as follows: There are 3 different images drawn:
+             * 1 for the selected item if any, 1 for completed spaces, and one for any other spaces.
+             * They are drawn and overlayed on top of each other in the order: Completed -> Spaces
+             * -> SelectedSpace.
+             */
+
+            var spaceGroup = new GeometryGroup { FillRule = FillRule.Nonzero };
+            var completedSpaceGroup = new GeometryGroup { FillRule = FillRule.Nonzero };
             var selectedGroup = new GeometryGroup();
 
             double beginPixel = _visibleX;
@@ -188,26 +199,44 @@ namespace LiveDescribe.Controls
 
                     if (space.IsSelected)
                         selectedGroup.Children.Add(rect);
+                    else if (space.IsRecordedOver)
+                        completedSpaceGroup.Children.Add(rect);
                     else
-                        backgroundGroup.Children.Add(rect);
+                        spaceGroup.Children.Add(rect);
                 }
             }
 
-            if (0 < backgroundGroup.Children.Count)
+            if (0 < completedSpaceGroup.Children.Count)
             {
-                _backgroundImage = backgroundGroup.CreateImage(_spaceBrush, _linePen);
+                _completedSpaceImage = completedSpaceGroup.CreateImage(_completedSpaceBrush, _linePen);
 
-                Children.Add(_backgroundImage);
+                Children.Add(_completedSpaceImage);
 
-                //The Image has to be set to the smallest X value of the visible spaces.
-                double minX = backgroundGroup.Children[0].Bounds.X;
-                for (int i = 1; i < backgroundGroup.Children.Count; i++)
+                double minX = completedSpaceGroup.Children[0].Bounds.X;
+                for (int i = 1; i < completedSpaceGroup.Children.Count; i++)
                 {
-                    minX = Math.Min(minX, backgroundGroup.Children[i].Bounds.X);
+                    minX = Math.Min(minX, completedSpaceGroup.Children[i].Bounds.X);
                 }
 
-                SetLeft(_backgroundImage, minX);
-                SetTop(_backgroundImage, 0);
+                SetLeft(_completedSpaceImage, minX);
+                SetTop(_completedSpaceImage, 0);
+            }
+
+            if (0 < spaceGroup.Children.Count)
+            {
+                _spaceImage = spaceGroup.CreateImage(_spaceBrush, _linePen);
+
+                Children.Add(_spaceImage);
+
+                //The Image has to be set to the smallest X value of the visible spaces.
+                double minX = spaceGroup.Children[0].Bounds.X;
+                for (int i = 1; i < spaceGroup.Children.Count; i++)
+                {
+                    minX = Math.Min(minX, spaceGroup.Children[i].Bounds.X);
+                }
+
+                SetLeft(_spaceImage, minX);
+                SetTop(_spaceImage, 0);
             }
 
             if (0 < selectedGroup.Children.Count)
@@ -269,6 +298,9 @@ namespace LiveDescribe.Controls
             _selectedItemBrush = new SolidColorBrush(Settings.Default.ColourScheme.SelectedItemColour);
             _selectedItemBrush.Freeze();
 
+            _completedSpaceBrush = new SolidColorBrush(Settings.Default.ColourScheme.CompletedSpaceColour);
+            _completedSpaceBrush.Freeze();
+
             Draw();
         }
         #endregion
@@ -325,7 +357,6 @@ namespace LiveDescribe.Controls
 
             if (_mouseSelection.Action != IntervalMouseAction.None)
             {
-                _mouseSelection.Item.IsSelected = false;
                 _mouseSelection = CanvasMouseSelection.NoSelection;
                 Mouse.Capture(null);
             }

@@ -177,10 +177,10 @@ namespace LiveDescribe.View
                     SetTimeline();
 
                     foreach (var desc in _projectManager.AllDescriptions)
-                        DrawDescribableInterval(desc);
+                        SetIntervalLocation(desc);
 
                     foreach (var space in _projectManager.Spaces)
-                        DrawDescribableInterval(space);
+                        SetIntervalLocation(space);
                 };
 
             //captures the mouse when a mousedown request is sent to the Marker
@@ -413,7 +413,7 @@ namespace LiveDescribe.View
              * opened project.
              */
             if (_videoMedia.CurrentState != LiveDescribeVideoStates.VideoNotLoaded)
-                DrawDescribableInterval(description);
+                SetIntervalLocation(description);
 
             description.MouseDown += (sender1, e1) =>
             {
@@ -461,7 +461,7 @@ namespace LiveDescribe.View
             //Adding a space depends on where you right clicked so we create and add it in the view
             //Set space only if the video is loaded/playing/recording/etc
             if (_videoMedia.CurrentState != LiveDescribeVideoStates.VideoNotLoaded)
-                DrawDescribableInterval(space);
+                SetIntervalLocation(space);
 
             space.MouseDown += (sender1, e1) =>
             {
@@ -484,6 +484,12 @@ namespace LiveDescribe.View
                 SpaceAndDescriptionsTabControl.SpacesListView.ScrollToCenterOfView(space);
             };
 
+            space.PropertyChanged += (sender, args) =>
+            {
+                if (args.PropertyName == "IsSelected" || args.PropertyName == "IsRecordedOver")
+                    AudioCanvas.DrawSpaces();
+            };
+
             AddIntervalEventHandlers(space);
         }
 
@@ -494,7 +500,7 @@ namespace LiveDescribe.View
                 if (e.PropertyName == "StartInVideo"
                     || e.PropertyName == "EndInVideo"
                     || e.PropertyName == "SetStartAndEndInVideo")
-                    DrawDescribableInterval(interval);
+                    SetIntervalLocation(interval);
             };
         }
 
@@ -624,7 +630,7 @@ namespace LiveDescribe.View
 
         #region graphics Functions
 
-        private void DrawDescribableInterval(IDescribableInterval interval)
+        private void SetIntervalLocation(IDescribableInterval interval)
         {
             interval.X = (AudioCanvas.Width / _videoDuration) * interval.StartInVideo;
             interval.Y = 0;
