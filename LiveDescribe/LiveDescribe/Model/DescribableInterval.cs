@@ -198,7 +198,7 @@ namespace LiveDescribe.Model
         [JsonIgnore]
         public virtual double Duration
         {
-            set
+            protected set
             {
                 _duration = value;
                 NotifyPropertyChanged();

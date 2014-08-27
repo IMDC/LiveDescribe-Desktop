@@ -34,12 +34,6 @@ namespace LiveDescribe.Model
             MouseUpCommand = new RelayCommand<MouseEventArgs>(OnMouseUp, param => true);
             MouseDownCommand = new RelayCommand<MouseEventArgs>(OnMouseDown, param => true);
             MouseMoveCommand = new RelayCommand<MouseEventArgs>(OnMouseMove, param => true);
-
-            Settings.Default.PropertyChanged += (sender, args) =>
-            {
-                if (args.PropertyName == "ColourScheme")
-                    SetColour();
-            };
         }
         #endregion
 
@@ -81,9 +75,6 @@ namespace LiveDescribe.Model
         protected override void NotifyPropertyChanged([CallerMemberName]string propertyName = "")
         {
             base.NotifyPropertyChanged(propertyName);
-
-            if (propertyName == "IsSelected" || propertyName == "IsRecordedOver")
-                SetColour();
 
             if (propertyName == "EndInVideo" || propertyName == "StartInVideo")
                 UpdateDuration();
