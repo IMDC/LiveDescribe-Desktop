@@ -141,6 +141,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Controls\CanvasMouseSelection.cs" />
+    <Compile Include="Controls\GeometryImageCanvas.cs" />
     <Compile Include="Controls\IntervalMouseAction.cs" />
     <Compile Include="Controls\AudioCanvas.cs" />
     <Compile Include="Controls\CountdownControl.xaml.cs">

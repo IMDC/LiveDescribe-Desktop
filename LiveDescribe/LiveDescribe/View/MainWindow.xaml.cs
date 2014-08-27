@@ -99,7 +99,10 @@ namespace LiveDescribe.View
             TimeLineScrollViewer.ScrollChanged += (sender, e) =>
             {
                 //Update visible canvas boundaries
-                AudioCanvas.SetVisibleBoundaries(TimeLineScrollViewer.HorizontalOffset, TimeLineScrollViewer.ActualWidth);
+                AudioCanvas.SetVisibleBoundaries(TimeLineScrollViewer.HorizontalOffset,
+                    TimeLineScrollViewer.ActualWidth);
+                NumberLineCanvas.SetVisibleBoundaries(TimeLineScrollViewer.HorizontalOffset,
+                    TimeLineScrollViewer.ActualWidth);
 
                 DrawTimeline();
             };
@@ -166,6 +169,7 @@ namespace LiveDescribe.View
                 {
                     _videoDuration = _videoMedia.NaturalDuration.TimeSpan.TotalMilliseconds;
                     AudioCanvas.VideoDurationMsec = _videoDuration;
+                    NumberLineCanvas.VideoDurationMsec = _videoDuration;
                     DescriptionCanvasControl.DescriptionCanvas.VideoDuration = _videoDuration;
                     _canvasWidth = CalculateWidth();
                     _marker.IsEnabled = true;
@@ -666,8 +670,7 @@ namespace LiveDescribe.View
         private void DrawTimeline()
         {
             AudioCanvas.Draw();
-            NumberLineCanvas.DrawNumberTimeLine(TimeLineScrollViewer.HorizontalOffset,
-                TimeLineScrollViewer.ActualWidth, _videoDuration);
+            NumberLineCanvas.Draw();
         }
 
         #endregion

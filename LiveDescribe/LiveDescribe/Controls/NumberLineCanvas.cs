@@ -10,7 +10,7 @@ using Point = System.Windows.Point;
 
 namespace LiveDescribe.Controls
 {
-    public class NumberLineCanvas : Canvas
+    public class NumberLineCanvas : GeometryImageCanvas
     {
         /// <summary>The time interval between two lines.</summary>
         private const double LineTimeSeconds = 1;
@@ -26,6 +26,8 @@ namespace LiveDescribe.Controls
         private readonly MillisecondsTimeConverterFormatter _millisecondsTimeConverter;
         private readonly Pen _shortLinePen;
         private readonly Pen _longLinePen;
+        private readonly Brush _shortLineBrush;
+        private readonly Brush _longLineBrush;
 
         public NumberLineCanvas()
         {
@@ -36,10 +38,16 @@ namespace LiveDescribe.Controls
             _longLinePen = new Pen(Brushes.Blue, 1);
             _longLinePen.Freeze();
 
+            _shortLineBrush = new SolidColorBrush(Colors.Black);
+            _shortLineBrush.Freeze();
+
+            _longLineBrush = new SolidColorBrush(Colors.Black);
+            _longLineBrush.Freeze();
+
             DataContextChanged += OnDataContextChanged;
         }
 
-        public void DrawNumberTimeLine(double visibleStartPoint, double visibleWidth, double videoDuration)
+        public override void Draw()
         {
             if (_viewModel == null || _viewModel.Player.CurrentState == LiveDescribeVideoStates.VideoNotLoaded
                 || Width == 0)
@@ -49,9 +57,9 @@ namespace LiveDescribe.Controls
             var longLineGroup = new GeometryGroup();
 
             //Number of lines in the amount of time that the video plays for
-            int numLines = (int)(videoDuration / (LineTimeSeconds * Milliseconds.PerSecond));
-            int beginLine = (int)((numLines / Width) * visibleStartPoint);
-            int endLine = beginLine + (int)((numLines / Width) * visibleWidth) + 1;
+            int numLines = (int)(VideoDurationMsec / (LineTimeSeconds * Milliseconds.PerSecond));
+            int beginLine = (int)((numLines / Width) * VisibleX);
+            int endLine = beginLine + (int)((numLines / Width) * VisibleWidth) + 1;
             //Clear the canvas because we don't want the remaining lines due to importing a new video
             //or resizing the window
             Children.Clear();
@@ -77,6 +85,7 @@ namespace LiveDescribe.Controls
                         EndPoint = new Point(xPos, ActualHeight * LongLineLengthPercent),
                     });
 
+                    //TODO put into image?
                     var timestamp = new TextBlock
                     {
                         Text = (string)_millisecondsTimeConverter.Convert((i * LineTimeSeconds) * 1000, typeof(int),
@@ -98,19 +107,24 @@ namespace LiveDescribe.Controls
                 }
             }
 
-            var shortLineImage = shortLineGroup.CreateImage(Brushes.Black, _shortLinePen);
+            var shortLineImage = shortLineGroup.CreateImage(_shortLineBrush, _shortLinePen);
 
             SetLeft(shortLineImage, widthPerLine * firstShortLine);
             SetTop(shortLineImage, 0);
 
             Children.Add(shortLineImage);
 
-            var longLineImage = longLineGroup.CreateImage(Brushes.Black, _longLinePen);
+            var longLineImage = longLineGroup.CreateImage(_longLineBrush, _longLinePen);
 
             SetLeft(longLineImage, widthPerLine * firstLongLine);
             SetTop(longLineImage, 0);
 
             Children.Add(longLineImage);
+        }
+
+        protected override void SetBrushes()
+        {
+            throw new System.NotImplementedException();
         }
 
         private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)

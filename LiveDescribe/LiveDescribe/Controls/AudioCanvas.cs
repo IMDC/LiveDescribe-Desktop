@@ -1,5 +1,4 @@
 ﻿using LiveDescribe.Extensions;
-using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
 using LiveDescribe.Properties;
 using LiveDescribe.Utilities;
@@ -14,18 +13,8 @@ using System.Windows.Media;
 
 namespace LiveDescribe.Controls
 {
-    public class AudioCanvas : Canvas
+    public class AudioCanvas : GeometryImageCanvas
     {
-        #region Constants
-        /// <summary>
-        /// The distance away from the beginning or ending of an interval in pixels that the user
-        /// has to click on to be able to move the caption.
-        /// </summary>
-        private const double SelectionPixelWidth = 10;
-
-        private const double MinIntervalDurationMsec = 300;
-        #endregion
-
         #region Fields
         private AudioCanvasViewModel _viewModel;
         private readonly Pen _linePen;
@@ -37,16 +26,6 @@ namespace LiveDescribe.Controls
         private Image _completedSpaceImage;
         private Image _spaceImage;
         private Image _selectedImage;
-
-        /// <summary>
-        /// The leftmost pixel of the canvas is visible to the user.
-        /// </summary>
-        private double _visibleX;
-
-        /// <summary>
-        /// How many pixels wide the viewable area of the canvas is.
-        /// </summary>
-        private double _visibleWidth;
 
         #endregion
 
@@ -92,12 +71,11 @@ namespace LiveDescribe.Controls
         #region Properties
         public IntervalMouseAction CurrentIntervalMouseAction { get; set; }
 
-        public double VideoDurationMsec { get; set; }
         #endregion
 
         #region Canvas Drawing
 
-        public void Draw()
+        public override void Draw()
         {
             DrawWaveForm();
             DrawSpaces();
@@ -108,7 +86,7 @@ namespace LiveDescribe.Controls
         /// </summary>
         public void DrawWaveForm()
         {
-            if (_viewModel == null || _viewModel.Waveform == null || Width == 0 || _visibleWidth == 0
+            if (_viewModel == null || _viewModel.Waveform == null || Width == 0 || VisibleWidth == 0
                 || _viewModel.Player.CurrentState == LiveDescribeVideoStates.VideoNotLoaded)
                 return;
 
@@ -128,9 +106,9 @@ namespace LiveDescribe.Controls
 
             double absMin = 0;
 
-            int endPixel = (int)_visibleX + (int)_visibleWidth;
+            int endPixel = (int)VisibleX + (int)VisibleWidth;
 
-            for (int pixel = (int)_visibleX; pixel <= endPixel; pixel++)
+            for (int pixel = (int)VisibleX; pixel <= endPixel; pixel++)
             {
                 double offsetTime = (VideoDurationMsec / (Width * Milliseconds.PerSecond))
                     * pixel;
@@ -155,7 +133,7 @@ namespace LiveDescribe.Controls
 
             _waveformImage = waveformLineGroup.CreateImage(Brushes.Black, _linePen);
 
-            SetLeft(_waveformImage, (int)_visibleX);
+            SetLeft(_waveformImage, (int)VisibleX);
             SetTop(_waveformImage, middle + absMin * yscale);
 
             Children.Add(_waveformImage);
@@ -163,7 +141,7 @@ namespace LiveDescribe.Controls
 
         public void DrawSpaces()
         {
-            if (_viewModel == null || _viewModel.Spaces == null || Width == 0 || _visibleWidth == 0
+            if (_viewModel == null || _viewModel.Spaces == null || Width == 0 || VisibleWidth == 0
                 || _viewModel.Player.CurrentState == LiveDescribeVideoStates.VideoNotLoaded)
                 return;
 
@@ -184,8 +162,8 @@ namespace LiveDescribe.Controls
             var completedSpaceGroup = new GeometryGroup { FillRule = FillRule.Nonzero };
             var selectedGroup = new GeometryGroup();
 
-            double beginTimeMsec = XPosToMilliseconds(_visibleX);
-            double endTimeMsec = XPosToMilliseconds(_visibleX + _visibleWidth);
+            double beginTimeMsec = XPosToMilliseconds(VisibleX);
+            double endTimeMsec = XPosToMilliseconds(VisibleX + VisibleWidth);
 
             foreach (var space in _viewModel.Spaces)
             {
@@ -276,17 +254,10 @@ namespace LiveDescribe.Controls
             SetTop(_selectedImage, 0);
         }
 
-        private bool IsIntervalVisible(IDescribableInterval interval, double visibleBeginMsec, double visibleEndMsec)
-        {
-            return (visibleBeginMsec <= interval.StartInVideo && interval.StartInVideo <= visibleEndMsec)
-                || (visibleBeginMsec <= interval.EndInVideo && interval.EndInVideo <= visibleEndMsec)
-                || (interval.StartInVideo <= visibleBeginMsec && visibleEndMsec <= interval.EndInVideo);
-        }
-
         /// <summary>
         /// Sets the brushes based off of ColourScheme settings.
         /// </summary>
-        private void SetBrushes()
+        protected override sealed void SetBrushes()
         {
             _spaceBrush = new SolidColorBrush(Settings.Default.ColourScheme.SpaceColour);
             _spaceBrush.Freeze();
@@ -390,29 +361,6 @@ namespace LiveDescribe.Controls
             }
         }
         #endregion
-
-        private double XPosToMilliseconds(double x)
-        {
-            return (VideoDurationMsec / (Width)) * x;
-        }
-
-        public void SetVisibleBoundaries(double visibleX, double visibleWidth)
-        {
-            _visibleX = visibleX;
-            _visibleWidth = visibleWidth;
-        }
-
-        /// <summary>
-        /// Ensures that the given value is bounded within the given lower and upper bounds.
-        /// </summary>
-        /// <param name="lowerBound">The lowest number that the value can be.</param>
-        /// <param name="value">The value to bounds check.</param>
-        /// <param name="upperBound">The highest number that the value can be.</param>
-        /// <returns>The value bounded between the two bounds.</returns>
-        public double BoundBetween(double lowerBound, double value, double upperBound)
-        {
-            return Math.Min(upperBound, Math.Max(lowerBound, value));
-        }
 
         #region Event Handlers
         private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
