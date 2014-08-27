@@ -192,13 +192,6 @@ namespace LiveDescribe.Model
             get { return _text; }
         }
 
-        public void SetStartAndEndInVideo(double startInVideo, double endInVideo)
-        {
-            _startinvideo = startInVideo;
-            _endinvideo = endInVideo;
-            NotifyPropertyChanged();
-        }
-
         /// <summary>
         /// The length of the span the description is set to play in the video.
         /// </summary>
@@ -238,6 +231,30 @@ namespace LiveDescribe.Model
 
         #region Methods
         public abstract void SetColour();
+
+        /// <summary>
+        /// Moves the interval to a new start time while maintaining the same duration.
+        /// </summary>
+        /// <param name="startInVideo">The new start time.</param>
+        public void MoveInterval(double startInVideo)
+        {
+            //TODO: find way to avoid firing two PropertyChanged events?
+            EndInVideo = startInVideo + Duration;
+            StartInVideo = startInVideo;
+        }
+
+        /// <summary>
+        /// Sets both the StartInVideo and EndInVideo times, respectively. Only raises one property
+        /// changed event instead of two. The property name is the name of the method.
+        /// </summary>
+        /// <param name="startInVideo">The new StartInVideo value.</param>
+        /// <param name="endInVideo">The new EndInVideo value.</param>
+        public void SetStartAndEndInVideo(double startInVideo, double endInVideo)
+        {
+            _startinvideo = startInVideo;
+            _endinvideo = endInVideo;
+            NotifyPropertyChanged();
+        }
         #endregion
 
         #region Event Invokation

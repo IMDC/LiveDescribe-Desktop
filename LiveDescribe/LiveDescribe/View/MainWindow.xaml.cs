@@ -415,12 +415,6 @@ namespace LiveDescribe.View
             if (_videoMedia.CurrentState != LiveDescribeVideoStates.VideoNotLoaded)
                 DrawDescribableInterval(description);
 
-            description.PropertyChanged += (o, args) =>
-            {
-                if (args.PropertyName.Equals("StartInVideo") || args.PropertyName.Equals("EndInVideo") || args.PropertyName.Equals("SetStartAndEndInVideo"))
-                    DrawDescribableInterval(description);
-            };
-
             description.MouseDown += (sender1, e1) =>
             {
                 //Add mouse down event on every description here
@@ -458,6 +452,8 @@ namespace LiveDescribe.View
                     SpaceAndDescriptionsTabControl.DescriptionsListView.ScrollToCenterOfView(description);
                 }
             };
+
+            AddIntervalEventHandlers(description);
         }
 
         private void AddSpaceEventHandlers(Space space)
@@ -476,12 +472,6 @@ namespace LiveDescribe.View
                 }
             };
 
-            space.PropertyChanged += (o, args) =>
-            {
-                if (args.PropertyName.Equals("StartInVideo") || args.PropertyName.Equals("EndInVideo") || args.PropertyName.Equals("SetStartAndEndInVideo"))
-                    DrawDescribableInterval(space);
-            };
-
             space.NavigateToRequested += (o, args) =>
             {
                 UpdateMarkerPosition((space.StartInVideo / _videoDuration) * (AudioCanvas.Width) - MarkerOffset);
@@ -492,6 +482,19 @@ namespace LiveDescribe.View
 
                 _descriptionInfoTabViewModel.SelectedSpace = space;
                 SpaceAndDescriptionsTabControl.SpacesListView.ScrollToCenterOfView(space);
+            };
+
+            AddIntervalEventHandlers(space);
+        }
+
+        private void AddIntervalEventHandlers(IDescribableInterval interval)
+        {
+            interval.PropertyChanged += (o, e) =>
+            {
+                if (e.PropertyName == "StartInVideo"
+                    || e.PropertyName == "EndInVideo"
+                    || e.PropertyName == "SetStartAndEndInVideo")
+                    DrawDescribableInterval(interval);
             };
         }
 

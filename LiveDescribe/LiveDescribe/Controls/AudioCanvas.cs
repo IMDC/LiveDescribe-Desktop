@@ -343,20 +343,19 @@ namespace LiveDescribe.Controls
                     return;
                 case IntervalMouseAction.Dragging:
                     //Ensure that the space can not be moved to an invalid time.
-                    startTime = Bound(0, XPosToMilliseconds(mousePos.X) - _mouseSelection.MouseClickTimeDifference,
+                    startTime = BoundBetween(0, XPosToMilliseconds(mousePos.X) - _mouseSelection.MouseClickTimeDifference,
                         VideoDurationMsec - _mouseSelection.Item.Duration);
-                    _mouseSelection.Item.EndInVideo = startTime + _mouseSelection.Item.Duration;
-                    _mouseSelection.Item.StartInVideo = startTime;
+                    _mouseSelection.Item.MoveInterval(startTime);
                     DrawMouseSelection();
                     break;
                 case IntervalMouseAction.ChangeStartTime:
-                    startTime = Bound(0, XPosToMilliseconds(mousePos.X) - _mouseSelection.MouseClickTimeDifference,
+                    startTime = BoundBetween(0, XPosToMilliseconds(mousePos.X) - _mouseSelection.MouseClickTimeDifference,
                         _mouseSelection.Item.EndInVideo - MinIntervalDurationMsec);
                     _mouseSelection.Item.StartInVideo = startTime;
                     DrawMouseSelection();
                     break;
                 case IntervalMouseAction.ChangeEndTime:
-                    double endTime = Bound(_mouseSelection.Item.StartInVideo + MinIntervalDurationMsec,
+                    double endTime = BoundBetween(_mouseSelection.Item.StartInVideo + MinIntervalDurationMsec,
                         XPosToMilliseconds(mousePos.X) - _mouseSelection.MouseClickTimeDifference, VideoDurationMsec);
                     _mouseSelection.Item.EndInVideo = endTime;
                     DrawMouseSelection();
@@ -382,8 +381,8 @@ namespace LiveDescribe.Controls
         /// <param name="lowerBound">The lowest number that the value can be.</param>
         /// <param name="value">The value to bounds check.</param>
         /// <param name="upperBound">The highest number that the value can be.</param>
-        /// <returns></returns>
-        public double Bound(double lowerBound, double value, double upperBound)
+        /// <returns>The value bounded between the two bounds.</returns>
+        public double BoundBetween(double lowerBound, double value, double upperBound)
         {
             return Math.Min(upperBound, Math.Max(lowerBound, value));
         }

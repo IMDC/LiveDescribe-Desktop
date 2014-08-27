@@ -41,7 +41,7 @@
         <DataTemplate
             x:Key="TitleTemplate">
             <TextBlock
-                Text="{Binding Title}"/>
+                Text="{Binding Title}" />
         </DataTemplate>
         <DataTemplate
             x:Key="StartInVideoTemplate">
@@ -90,12 +90,14 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition />
-            <RowDefinition Height="Auto"/>
+            <RowDefinition
+                Height="Auto" />
             <RowDefinition
                 Height="0.5*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition
+                Width="Auto" />
             <ColumnDefinition />
             <ColumnDefinition
                 Width="88" />
@@ -150,9 +152,9 @@
                             <GridViewColumn
                                 Header="{x:Static s:UiStrings.Header_NumberColumn}"
                                 CellTemplate="{StaticResource ItemIndexTemplate}" />
-                            <GridViewColumn 
+                            <GridViewColumn
                                 Header="{x:Static s:UiStrings.Header_Title}"
-                                CellTemplate="{StaticResource TitleTemplate}"/>
+                                CellTemplate="{StaticResource TitleTemplate}" />
                             <GridViewColumn
                                 Header="{x:Static s:UiStrings.Header_StartTime}"
                                 CellTemplate="{StaticResource StartInVideoTemplate}" />
@@ -221,7 +223,7 @@
                             <GridViewColumn
                                 Header="{x:Static s:UiStrings.Header_NumberColumn}"
                                 CellTemplate="{StaticResource ItemIndexTemplate}" />
-                            <GridViewColumn 
+                            <GridViewColumn
                                 Header="{x:Static s:UiStrings.Header_Title}"
                                 CellTemplate="{StaticResource TitleTemplate}" />
                             <GridViewColumn
@@ -289,7 +291,7 @@
                             <GridViewColumn
                                 Header="{x:Static s:UiStrings.Header_NumberColumn}"
                                 CellTemplate="{StaticResource ItemIndexTemplate}" />
-                            <GridViewColumn 
+                            <GridViewColumn
                                 Header="{x:Static s:UiStrings.Header_Title}"
                                 CellTemplate="{StaticResource TitleTemplate}" />
                             <GridViewColumn
@@ -309,7 +311,7 @@
                 </ListView>
             </TabItem>
         </TabControl>
-        
+
         <!--Name Textbox -->
         <TextBox
             Grid.Column="1"
@@ -320,23 +322,23 @@
             <TextBox.Text>
                 <Binding
                     Path="SelectedItem.Title"
-                    UpdateSourceTrigger="PropertyChanged"/>
+                    UpdateSourceTrigger="PropertyChanged" />
             </TextBox.Text>
         </TextBox>
-        
 
-        
+
+
         <TextBlock
             Grid.Column="0"
             Grid.Row="1"
             Text="{x:Static s:UiStrings.Header_Title}"
-            Margin="5,10,0,10"/>
-        
-        <TextBlock 
+            Margin="5,10,0,10" />
+
+        <TextBlock
             Grid.Column="0"
             Grid.Row="2"
             Text="{x:Static s:UiStrings.Header_DescriptionText}"
-            Margin="5,10,0,10"/>
+            Margin="5,10,0,10" />
 
         <!--Description Text Box-->
         <TextBox
@@ -360,8 +362,8 @@
             Grid.RowSpan="2">
 
             <controls:DescriptionRecordingControl
-                DataContext="{Binding DescriptionRecordingControlViewModel}"/>
-            
+                DataContext="{Binding DescriptionRecordingControlViewModel}" />
+
             <Button
                 Margin="5,20,5,20"
                 Command="{Binding RecordInSpace}"
