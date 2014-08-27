@@ -120,9 +120,6 @@ namespace LiveDescribe.Controls
             double middle = ActualHeight / 2;
             double yscale = middle;
 
-            int beginPixel = (int)_visibleX;
-            int endPixel = beginPixel + (int)_visibleWidth;
-
             int ratio = _viewModel.Waveform.Header.Channels == 2 ? 40 : 80;
             double samplesPerSecond =
                 (_viewModel.Waveform.Header.SampleRate * (_viewModel.Waveform.Header.BlockAlign / (double)ratio));
@@ -131,7 +128,9 @@ namespace LiveDescribe.Controls
 
             double absMin = 0;
 
-            for (int pixel = beginPixel; pixel <= endPixel; pixel++)
+            int endPixel = (int)_visibleX + (int)_visibleWidth;
+
+            for (int pixel = (int)_visibleX; pixel <= endPixel; pixel++)
             {
                 double offsetTime = (VideoDurationMsec / (Width * Milliseconds.PerSecond))
                     * pixel;
@@ -156,7 +155,7 @@ namespace LiveDescribe.Controls
 
             _waveformImage = waveformLineGroup.CreateImage(Brushes.Black, _linePen);
 
-            SetLeft(_waveformImage, beginPixel);
+            SetLeft(_waveformImage, (int)_visibleX);
             SetTop(_waveformImage, middle + absMin * yscale);
 
             Children.Add(_waveformImage);
@@ -185,11 +184,8 @@ namespace LiveDescribe.Controls
             var completedSpaceGroup = new GeometryGroup { FillRule = FillRule.Nonzero };
             var selectedGroup = new GeometryGroup();
 
-            double beginPixel = _visibleX;
-            double endPixel = beginPixel + _visibleWidth;
-
-            double beginTimeMsec = (VideoDurationMsec / (Width)) * beginPixel;
-            double endTimeMsec = (VideoDurationMsec / (Width)) * endPixel;
+            double beginTimeMsec = XPosToMilliseconds(_visibleX);
+            double endTimeMsec = XPosToMilliseconds(_visibleX + _visibleWidth);
 
             foreach (var space in _viewModel.Spaces)
             {

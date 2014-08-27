@@ -93,7 +93,7 @@ namespace LiveDescribe.Controls
                     shortLineGroup.Children.Add(new LineGeometry
                     {
                         StartPoint = new Point(xPos, 0),
-                        EndPoint = new Point(xPos, ActualHeight * ShortLineLengthPercent), //* 0.5
+                        EndPoint = new Point(xPos, ActualHeight * ShortLineLengthPercent),
                     });
                 }
             }
