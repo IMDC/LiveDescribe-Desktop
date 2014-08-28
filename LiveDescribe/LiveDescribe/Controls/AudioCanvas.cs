@@ -31,6 +31,8 @@ namespace LiveDescribe.Controls
         private Image _completedSpaceImage;
         private Image _spaceImage;
         private Image _selectedImage;
+        private MenuItem _addSpaceMenuItem;
+        private Point _addSpaceMousePoint;
 
         #endregion
 
@@ -406,11 +408,8 @@ namespace LiveDescribe.Controls
 
             if (!spaceFound)
             {
-                ContextMenu.Items.Add(new MenuItem
-                {
-                    Header = UiStrings.Command_AddSpace,
-                    Command = _viewModel.GetNewSpaceTime,
-                });
+                _addSpaceMousePoint = point;
+                ContextMenu.Items.Add(_addSpaceMenuItem);
             }
         }
 
@@ -425,6 +424,11 @@ namespace LiveDescribe.Controls
             {
                 _viewModel.Spaces.CollectionChanged += Spaces_CollectionChanged;
                 _viewModel.RequestSpaceTime += ViewModelOnRequestSpaceTime;
+                _addSpaceMenuItem = new MenuItem
+                {
+                    Header = UiStrings.Command_AddSpace,
+                    Command = _viewModel.GetNewSpaceTime,
+                };
             }
 
             var oldViewModel = e.OldValue as AudioCanvasViewModel;
@@ -445,8 +449,7 @@ namespace LiveDescribe.Controls
         private void ViewModelOnRequestSpaceTime(object sender, EventArgs<Space> e)
         {
             var space = e.Value;
-            var point = Mouse.GetPosition(this);
-            double pointTime = XPosToMilliseconds(point.X);
+            double pointTime = XPosToMilliseconds(_addSpaceMousePoint.X);
 
             /* New spaces are inserted into the AudioCanvas such that the mouse point is in the
              * middle of the new space. However, it can not be inserted at a point where it either
