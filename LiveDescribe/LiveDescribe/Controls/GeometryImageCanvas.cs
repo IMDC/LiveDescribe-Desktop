@@ -76,6 +76,14 @@ namespace LiveDescribe.Controls
         }
 
         /// <summary>
+        /// Returns whether the given value is inclusively between two boundaries.
+        /// </summary>
+        protected bool IsBetweenBounds(double lowerBound, double value, double upperBound)
+        {
+            return lowerBound <= value && value <= upperBound;
+        }
+
+        /// <summary>
         /// Ensures that the given value is bounded within the given lower and upper bounds.
         /// </summary>
         /// <param name="lowerBound">The lowest number that the value can be.</param>

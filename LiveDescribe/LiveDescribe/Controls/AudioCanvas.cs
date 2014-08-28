@@ -293,7 +293,7 @@ namespace LiveDescribe.Controls
 
             foreach (var space in _viewModel.Spaces)
             {
-                if (space.X - SelectionPixelWidth <= point.X && point.X <= space.X + space.Width + SelectionPixelWidth)
+                if (IsBetweenBounds(space.X - SelectionPixelWidth, point.X, space.X + space.Width + SelectionPixelWidth))
                     SelectSpace(space, point);
                 else
                     space.IsSelected = false;
@@ -307,13 +307,13 @@ namespace LiveDescribe.Controls
             space.IsSelected = true;
             space.MouseDownCommand.Execute();
 
-            if (space.X - SelectionPixelWidth <= clickPoint.X && clickPoint.X <= space.X + SelectionPixelWidth)
+            if (IsBetweenBounds(space.X - SelectionPixelWidth, clickPoint.X, space.X + SelectionPixelWidth))
             {
                 _mouseSelection = new CanvasMouseSelection(IntervalMouseAction.ChangeStartTime, space,
                     XPosToMilliseconds(clickPoint.X) - space.StartInVideo);
             }
-            else if (space.X + space.Width - SelectionPixelWidth <= clickPoint.X
-                && clickPoint.X <= space.X + space.Width + SelectionPixelWidth)
+            else if (IsBetweenBounds(space.X + space.Width - SelectionPixelWidth, clickPoint.X,
+                space.X + space.Width + SelectionPixelWidth))
             {
                 _mouseSelection = new CanvasMouseSelection(IntervalMouseAction.ChangeEndTime, space,
                     XPosToMilliseconds(clickPoint.X) - space.EndInVideo);
@@ -389,7 +389,8 @@ namespace LiveDescribe.Controls
 
             foreach (var space in _viewModel.Spaces)
             {
-                if (space.X - SelectionPixelWidth <= point.X && point.X <= space.X + space.Width + SelectionPixelWidth)
+                if (IsBetweenBounds(space.X - SelectionPixelWidth, point.X,
+                    space.X + space.Width + SelectionPixelWidth))
                 {
                     ContextMenu.Items.Add(new MenuItem
                     {
