@@ -13,6 +13,7 @@ namespace LiveDescribe.ViewModel
     class AudioCanvasViewModel : ViewModelBase
     {
         private readonly ProjectManager _projectManager;
+        private readonly UndoRedoManager _undoRedoManager;
         private readonly ILiveDescribePlayer _player;
         private LiveDescribeVideoStates _currentState;
         private Waveform _waveform;
@@ -27,9 +28,11 @@ namespace LiveDescribe.ViewModel
         public event EventHandler<EventArgs<Space>> RequestSpaceTime;
         #endregion
 
-        public AudioCanvasViewModel(ILiveDescribePlayer mediaPlayer, ProjectManager projectManager)
+        public AudioCanvasViewModel(ILiveDescribePlayer mediaPlayer, ProjectManager projectManager,
+            UndoRedoManager undoRedoManager)
         {
             _projectManager = projectManager;
+            _undoRedoManager = undoRedoManager;
             _player = mediaPlayer;
 
             AudioCanvasMouseDownCommand = new RelayCommand<MouseEventArgs>(AudioCanvasMouseDown, param => true);
@@ -89,6 +92,11 @@ namespace LiveDescribe.ViewModel
         public ILiveDescribePlayer Player
         {
             get { return _player; }
+        }
+
+        public UndoRedoManager UndoRedoManager
+        {
+            get { return _undoRedoManager; }
         }
 
         #endregion
