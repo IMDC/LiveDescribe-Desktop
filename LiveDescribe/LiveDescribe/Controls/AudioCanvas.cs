@@ -1,9 +1,12 @@
-﻿using LiveDescribe.Extensions;
+﻿using LiveDescribe.Events;
+using LiveDescribe.Extensions;
 using LiveDescribe.Model;
 using LiveDescribe.Properties;
+using LiveDescribe.Resources.UiStrings;
 using LiveDescribe.Utilities;
 using LiveDescribe.ViewModel;
 using System;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
@@ -15,6 +18,8 @@ namespace LiveDescribe.Controls
 {
     public class AudioCanvas : GeometryImageCanvas
     {
+        private const int NewSpaceDurationMsec = 2000;
+
         #region Fields
         private AudioCanvasViewModel _viewModel;
         private readonly Pen _linePen;
@@ -42,6 +47,8 @@ namespace LiveDescribe.Controls
                 SetBrushes();
 
             _mouseSelection = CanvasMouseSelection.NoSelection;
+
+            ContextMenu = new ContextMenu();
 
             InitEventHandlers();
         }
@@ -360,12 +367,102 @@ namespace LiveDescribe.Controls
                     break;
             }
         }
+
+        /// <summary>
+        /// Opens the Context menu and generates options depending on where the canvas was clicked.
+        /// </summary>
+        /// <param name="e">Event Args.</param>
+        protected override void OnContextMenuOpening(ContextMenuEventArgs e)
+        {
+            base.OnContextMenuOpening(e);
+
+            if (_viewModel == null)
+                return;
+
+            ContextMenu.Items.Clear();
+
+            bool spaceFound = false;
+
+            var point = Mouse.GetPosition(this);
+
+            foreach (var space in _viewModel.Spaces)
+            {
+                if (space.X - SelectionPixelWidth <= point.X && point.X <= space.X + space.Width + SelectionPixelWidth)
+                {
+                    ContextMenu.Items.Add(new MenuItem
+                    {
+                        Header = UiStrings.Command_GoToSpace,
+                        Command = space.NavigateToCommand,
+                    });
+                    ContextMenu.Items.Add(new MenuItem
+                    {
+                        Header = UiStrings.Command_DeleteSpace,
+                        Command = space.DeleteCommand,
+                    });
+
+                    spaceFound = true;
+                }
+            }
+
+            if (!spaceFound)
+            {
+                ContextMenu.Items.Add(new MenuItem
+                {
+                    Header = UiStrings.Command_AddSpace,
+                    Command = _viewModel.GetNewSpaceTime,
+                });
+            }
+        }
+
         #endregion
 
         #region Event Handlers
         private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             _viewModel = e.NewValue as AudioCanvasViewModel;
+
+            if (_viewModel != null)
+            {
+                _viewModel.Spaces.CollectionChanged += Spaces_CollectionChanged;
+                _viewModel.RequestSpaceTime += ViewModelOnRequestSpaceTime;
+            }
+
+            var oldViewModel = e.OldValue as AudioCanvasViewModel;
+
+            if (oldViewModel != null)
+            {
+                oldViewModel.Spaces.CollectionChanged -= Spaces_CollectionChanged;
+                oldViewModel.RequestSpaceTime -= ViewModelOnRequestSpaceTime;
+            }
+        }
+
+        /// <summary>
+        /// Sets the start and end times for a newly added space based off of the mouse's position
+        /// on the Audio Canvas.
+        /// </summary>
+        /// <param name="sender">Sender.</param>
+        /// <param name="e">Event Args.</param>
+        private void ViewModelOnRequestSpaceTime(object sender, EventArgs<Space> e)
+        {
+            var space = e.Value;
+            var point = Mouse.GetPosition(this);
+            double pointTime = XPosToMilliseconds(point.X);
+
+            /* New spaces are inserted into the AudioCanvas such that the mouse point is in the
+             * middle of the new space. However, it can not be inserted at a point where it either
+             * starts before the video or ends after the video does.
+             */
+            double startTime = BoundBetween(0, pointTime - NewSpaceDurationMsec / 2,
+                VideoDurationMsec - NewSpaceDurationMsec);
+
+            space.StartInVideo = startTime;
+            space.EndInVideo = startTime + NewSpaceDurationMsec;
+        }
+
+        void Spaces_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            //Redraw the spaces when the collection gets changed to reflect changes.
+            DrawSpaces();
         }
         #endregion
     }

@@ -45,13 +45,13 @@ namespace LiveDescribe.ViewModel
             _projectManager.ProjectLoaded += (sender, args) => Waveform = args.Value.Waveform;
 
             GetNewSpaceTime = new RelayCommand(
-            canExecute: () => CurrentVideoState != LiveDescribeVideoStates.VideoNotLoaded,
-            execute: () =>
-            {
-                var s = new Space();
-                OnRequestSpaceTime(s);
-                projectManager.AddSpaceAndTrackForUndo(s);
-            });
+                canExecute: () => CurrentVideoState != LiveDescribeVideoStates.VideoNotLoaded,
+                execute: () =>
+                {
+                    var s = new Space();
+                    OnRequestSpaceTime(s);
+                    projectManager.AddSpaceAndTrackForUndo(s);
+                });
         }
 
         #region Commands

@@ -233,38 +233,6 @@ namespace LiveDescribe.View
             AudioCanvasViewModel audioCanvasViewModel = mainWindowViewModel.AudioCanvasViewModel;
             audioCanvasViewModel.AudioCanvasMouseDownEvent += AudioCanvas_OnMouseDown;
             audioCanvasViewModel.AudioCanvasMouseRightButtonDownEvent += AudioCanvas_RecordRightClickPosition;
-
-            _mainWindowViewModel.AudioCanvasViewModel.RequestSpaceTime += (sender, args) =>
-            {
-                var space = args.Value;
-
-                double middle = _rightClickPointOnAudioCanvas.X;  // going to be the middle of the space
-                double middleTime = (_videoDuration / AudioCanvas.Width) * middle;  // middle of the space in milliseconds
-                double starttime = middleTime - (DefaultSpaceLengthInMilliSeconds / 2);
-                double endtime = middleTime + (DefaultSpaceLengthInMilliSeconds / 2);
-
-                //Bounds checking when creating a space
-                if (starttime >= 0 && endtime <= _videoDuration)
-                {
-                    space.StartInVideo = starttime;
-                    space.EndInVideo = endtime;
-                }
-                else if (starttime < 0 && endtime > _videoDuration)
-                {
-                    space.StartInVideo = 0;
-                    space.EndInVideo = _videoDuration;
-                }
-                else if (starttime < 0)
-                {
-                    space.StartInVideo = 0;
-                    space.EndInVideo = endtime;
-                }
-                else if (endtime > _videoDuration)
-                {
-                    space.StartInVideo = starttime;
-                    space.EndInVideo = _videoDuration;
-                }
-            };
             #endregion
 
             #region Event Listeners For DescriptionCanvasViewModel
