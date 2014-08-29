@@ -31,6 +31,8 @@ namespace LiveDescribe.Controls
 
         public NumberLineCanvas()
         {
+            Background = Brushes.White;
+
             _millisecondsTimeConverter = new MillisecondsTimeConverterFormatter();
             _shortLinePen = new Pen(Brushes.Black, 1);
             _shortLinePen.Freeze();

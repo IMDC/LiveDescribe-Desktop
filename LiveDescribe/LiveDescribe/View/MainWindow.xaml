@@ -246,7 +246,6 @@
                                 BorderThickness="1">
                                 <controls:NumberLineCanvas
                                     HorizontalAlignment="Left"
-                                    Background="White"
                                     MouseDown="NumberTimeline_OnMouseDown"
                                     DataContext="{Binding NumberLineCanvasViewModel}"
                                     x:Name="NumberLineCanvas" />
@@ -259,7 +258,6 @@
                                 BorderBrush="Black">
                                 <controls:AudioCanvas
                                     x:Name="AudioCanvas"
-                                    Background="Transparent"
                                     DataContext="{Binding AudioCanvasViewModel}" />
                             </Border>
 

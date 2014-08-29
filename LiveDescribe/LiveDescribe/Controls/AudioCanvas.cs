@@ -37,6 +37,11 @@ namespace LiveDescribe.Controls
         #region Constructor
         public AudioCanvas()
         {
+            /* The background must be set for the canvas mouse interaction to work properly,
+             * otherwise the mouse events will fall through to the control "underneath" this one.
+             */
+            Background = Brushes.Transparent;
+
             /* This method contains a null reference in the designer, causing an exception and not
              * rendering the canvas. This check guards against it.
              */

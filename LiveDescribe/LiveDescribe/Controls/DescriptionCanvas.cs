@@ -28,6 +28,8 @@ namespace LiveDescribe.Controls
 
         public DescriptionCanvas()
         {
+            Background = Brushes.Transparent;
+
             if (!DesignerProperties.GetIsInDesignMode(this))
                 SetBrushes();
 

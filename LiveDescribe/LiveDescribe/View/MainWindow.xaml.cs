@@ -330,18 +330,14 @@ namespace LiveDescribe.View
         private void AudioCanvas_OnMouseDown(object sender, MouseEventArgs e)
         {
             //if we aren't dragging a description or space, we want to unselect them out of the list
-            if (AudioCanvas.CurrentIntervalMouseAction == IntervalMouseAction.None &&
-                DescriptionCanvas.CurrentIntervalMouseAction == IntervalMouseAction.None)
-                _descriptionInfoTabViewModel.ClearSelection();
+            _descriptionInfoTabViewModel.ClearSelection();
         }
 
         //TODO: Change these
         private void DescriptionCanvas_MouseDown(object sender, MouseEventArgs e)
         {
             //if we aren't dragging a description or space, we want to unselect them out of the list
-            if (AudioCanvas.CurrentIntervalMouseAction == IntervalMouseAction.None &&
-                DescriptionCanvas.CurrentIntervalMouseAction == IntervalMouseAction.None)
-                _descriptionInfoTabViewModel.ClearSelection();
+            _descriptionInfoTabViewModel.ClearSelection();
         }
 
         private void AudioCanvas_RecordRightClickPosition(object sender, EventArgs e)
@@ -421,6 +417,12 @@ namespace LiveDescribe.View
                     _descriptionInfoTabViewModel.SelectedRegularDescription = description;
                     SpaceAndDescriptionsTabControl.DescriptionsListView.ScrollToCenterOfView(description);
                 }
+            };
+
+            description.PropertyChanged += (sender, args) =>
+            {
+                if (args.PropertyName == "IsSelected")
+                    DescriptionCanvas.Draw();
             };
 
             AddIntervalEventHandlers(description);
