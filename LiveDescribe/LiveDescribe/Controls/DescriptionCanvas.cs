@@ -1,9 +1,12 @@
-﻿using LiveDescribe.Properties;
+﻿using LiveDescribe.Extensions;
+using LiveDescribe.Model;
+using LiveDescribe.Properties;
 using LiveDescribe.ViewModel;
 using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace LiveDescribe.Controls
@@ -12,7 +15,6 @@ namespace LiveDescribe.Controls
     {
         #region Fields
         private DescriptionCanvasViewModel _viewModel;
-        private CanvasMouseSelection _mouseSelection;
         private Brush _regularDescriptionBrush;
         private Brush _extendedDescriptionBrush;
         private Brush _selectedItemBrush;
@@ -29,7 +31,7 @@ namespace LiveDescribe.Controls
             if (!DesignerProperties.GetIsInDesignMode(this))
                 SetBrushes();
 
-            _mouseSelection = CanvasMouseSelection.NoSelection;
+            MouseSelection = CanvasMouseSelection.NoSelection;
 
             ContextMenu = new ContextMenu();
 
@@ -56,10 +58,9 @@ namespace LiveDescribe.Controls
                     SetBrushes();
             };
         }
-
-
         #endregion
 
+        #region Canvas Drawing
         public override void Draw()
         {
             if (_viewModel == null || Width == 0 || VisibleWidth == 0
@@ -98,6 +99,30 @@ namespace LiveDescribe.Controls
             AddImageToCanvas(ref _selectedImage, selectedItemGroup, _selectedItemBrush);
         }
 
+        public void DrawMouseSelection()
+        {
+            if (MouseSelection.Action == IntervalMouseAction.None)
+                return;
+
+            Children.Remove(_selectedImage);
+
+            var selectedGroup = new GeometryGroup();
+            selectedGroup.Children.Add(new RectangleGeometry(new Rect
+            {
+                X = MouseSelection.Item.X,
+                Y = MouseSelection.Item.Y,
+                Width = MouseSelection.Item.Width,
+                Height = MouseSelection.Item.Height,
+            }));
+
+            _selectedImage = selectedGroup.CreateImage(_selectedItemBrush, LinePen);
+
+            Children.Add(_selectedImage);
+
+            SetLeft(_selectedImage, selectedGroup.Children[0].Bounds.X);
+            SetTop(_selectedImage, 0);
+        }
+
         protected override sealed void SetBrushes()
         {
             _regularDescriptionBrush = new SolidColorBrush(Settings.Default.ColourScheme.RegularDescriptionColour);
@@ -111,6 +136,74 @@ namespace LiveDescribe.Controls
 
             Draw();
         }
+        #endregion
+
+        #region Mouse Interaction
+
+        protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
+        {
+            base.OnMouseLeftButtonDown(e);
+
+            if (_viewModel == null)
+                return;
+
+            var clickPoint = e.GetPosition(this);
+
+            foreach (var description in _viewModel.AllDescriptions)
+            {
+                if (IsBetweenBounds(description.X, clickPoint.X, description.X + description.Width))
+                    SelectDescription(description, clickPoint);
+                else
+                    description.IsSelected = false;
+            }
+
+            Draw();
+        }
+
+        public void SelectDescription(Description description, Point clickPoint)
+        {
+            description.IsSelected = true;
+            description.MouseDownCommand.Execute();
+
+            MouseSelection = new CanvasMouseSelection(IntervalMouseAction.Dragging, description,
+                XPosToMilliseconds(clickPoint.X) - description.StartInVideo);
+
+            CaptureMouse();
+        }
+
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            base.OnMouseMove(e);
+
+            if (MouseSelection.Action != IntervalMouseAction.Dragging)
+                return;
+
+            var mousePos = e.GetPosition(this);
+
+            double startTime = BoundBetween(0, XPosToMilliseconds(mousePos.X) - MouseSelection.MouseClickTimeDifference,
+                VideoDurationMsec - MouseSelection.Item.Duration);
+            MouseSelection.Item.MoveInterval(startTime);
+            DrawMouseSelection();
+        }
+
+        protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
+        {
+            base.OnMouseLeftButtonUp(e);
+
+            if (_viewModel == null)
+                return;
+
+            if (MouseSelection.Action != IntervalMouseAction.None)
+            {
+                /*if (MouseSelection.HasItemBeenModified())
+                    MouseSelection.AddChangesTo(_viewModel.UndoRedoManager);*/
+
+                MouseSelection = CanvasMouseSelection.NoSelection;
+                Mouse.Capture(null);
+            }
+        }
+
+        #endregion
 
         #region Event Handlers
         private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)

@@ -37,6 +37,10 @@ namespace LiveDescribe.Controls
         /// </summary>
         public double VideoDurationMsec { get; set; }
 
+        /// <summary>
+        /// The item, if any, currently selected by the mouse.
+        /// </summary>
+        protected CanvasMouseSelection MouseSelection { get; set; }
 
         public IntervalMouseAction CurrentIntervalMouseAction { get; set; }
         #endregion

@@ -25,7 +25,6 @@ namespace LiveDescribe.Controls
         private Brush _completedSpaceBrush;
         private Brush _spaceBrush;
         private Brush _selectedItemBrush;
-        private CanvasMouseSelection _mouseSelection;
         private Image _waveformImage;
         private Image _completedSpaceImage;
         private Image _spaceImage;
@@ -44,7 +43,7 @@ namespace LiveDescribe.Controls
             if (!DesignerProperties.GetIsInDesignMode(this))
                 SetBrushes();
 
-            _mouseSelection = CanvasMouseSelection.NoSelection;
+            MouseSelection = CanvasMouseSelection.NoSelection;
 
             ContextMenu = new ContextMenu();
 
@@ -138,6 +137,9 @@ namespace LiveDescribe.Controls
             Children.Add(_waveformImage);
         }
 
+        /// <summary>
+        /// Draws all spaces, including the currently selected item, if any.
+        /// </summary>
         public void DrawSpaces()
         {
             if (_viewModel == null || _viewModel.Spaces == null || Width == 0 || VisibleWidth == 0
@@ -188,7 +190,7 @@ namespace LiveDescribe.Controls
         /// </summary>
         public void DrawMouseSelection()
         {
-            if (_mouseSelection.Action == IntervalMouseAction.None)
+            if (MouseSelection.Action == IntervalMouseAction.None)
                 return;
 
             Children.Remove(_selectedImage);
@@ -196,10 +198,10 @@ namespace LiveDescribe.Controls
             var selectedGroup = new GeometryGroup();
             selectedGroup.Children.Add(new RectangleGeometry(new Rect
             {
-                X = _mouseSelection.Item.X,
-                Y = _mouseSelection.Item.Y,
-                Width = _mouseSelection.Item.Width,
-                Height = _mouseSelection.Item.Height,
+                X = MouseSelection.Item.X,
+                Y = MouseSelection.Item.Y,
+                Width = MouseSelection.Item.Width,
+                Height = MouseSelection.Item.Height,
             }));
 
             _selectedImage = selectedGroup.CreateImage(_selectedItemBrush, LinePen);
@@ -256,18 +258,18 @@ namespace LiveDescribe.Controls
 
             if (IsBetweenBounds(space.X - SelectionPixelWidth, clickPoint.X, space.X + SelectionPixelWidth))
             {
-                _mouseSelection = new CanvasMouseSelection(IntervalMouseAction.ChangeStartTime, space,
+                MouseSelection = new CanvasMouseSelection(IntervalMouseAction.ChangeStartTime, space,
                     XPosToMilliseconds(clickPoint.X) - space.StartInVideo);
             }
             else if (IsBetweenBounds(space.X + space.Width - SelectionPixelWidth, clickPoint.X,
                 space.X + space.Width + SelectionPixelWidth))
             {
-                _mouseSelection = new CanvasMouseSelection(IntervalMouseAction.ChangeEndTime, space,
+                MouseSelection = new CanvasMouseSelection(IntervalMouseAction.ChangeEndTime, space,
                     XPosToMilliseconds(clickPoint.X) - space.EndInVideo);
             }
             else
             {
-                _mouseSelection = new CanvasMouseSelection(IntervalMouseAction.Dragging, space,
+                MouseSelection = new CanvasMouseSelection(IntervalMouseAction.Dragging, space,
                     XPosToMilliseconds(clickPoint.X) - space.StartInVideo);
             }
 
@@ -281,12 +283,12 @@ namespace LiveDescribe.Controls
             if (_viewModel == null)
                 return;
 
-            if (_mouseSelection.Action != IntervalMouseAction.None)
+            if (MouseSelection.Action != IntervalMouseAction.None)
             {
-                if (_mouseSelection.HasItemBeenModified())
-                    _mouseSelection.AddChangesTo(_viewModel.UndoRedoManager);
+                if (MouseSelection.HasItemBeenModified())
+                    MouseSelection.AddChangesTo(_viewModel.UndoRedoManager);
 
-                _mouseSelection = CanvasMouseSelection.NoSelection;
+                MouseSelection = CanvasMouseSelection.NoSelection;
                 Mouse.Capture(null);
             }
         }
@@ -297,27 +299,27 @@ namespace LiveDescribe.Controls
             var mousePos = e.GetPosition(this);
             double startTime;
 
-            switch (_mouseSelection.Action)
+            switch (MouseSelection.Action)
             {
                 case IntervalMouseAction.None:
                     return;
                 case IntervalMouseAction.Dragging:
                     //Ensure that the space can not be moved to an invalid time.
-                    startTime = BoundBetween(0, XPosToMilliseconds(mousePos.X) - _mouseSelection.MouseClickTimeDifference,
-                        VideoDurationMsec - _mouseSelection.Item.Duration);
-                    _mouseSelection.Item.MoveInterval(startTime);
+                    startTime = BoundBetween(0, XPosToMilliseconds(mousePos.X) - MouseSelection.MouseClickTimeDifference,
+                        VideoDurationMsec - MouseSelection.Item.Duration);
+                    MouseSelection.Item.MoveInterval(startTime);
                     DrawMouseSelection();
                     break;
                 case IntervalMouseAction.ChangeStartTime:
-                    startTime = BoundBetween(0, XPosToMilliseconds(mousePos.X) - _mouseSelection.MouseClickTimeDifference,
-                        _mouseSelection.Item.EndInVideo - MinIntervalDurationMsec);
-                    _mouseSelection.Item.StartInVideo = startTime;
+                    startTime = BoundBetween(0, XPosToMilliseconds(mousePos.X) - MouseSelection.MouseClickTimeDifference,
+                        MouseSelection.Item.EndInVideo - MinIntervalDurationMsec);
+                    MouseSelection.Item.StartInVideo = startTime;
                     DrawMouseSelection();
                     break;
                 case IntervalMouseAction.ChangeEndTime:
-                    double endTime = BoundBetween(_mouseSelection.Item.StartInVideo + MinIntervalDurationMsec,
-                        XPosToMilliseconds(mousePos.X) - _mouseSelection.MouseClickTimeDifference, VideoDurationMsec);
-                    _mouseSelection.Item.EndInVideo = endTime;
+                    double endTime = BoundBetween(MouseSelection.Item.StartInVideo + MinIntervalDurationMsec,
+                        XPosToMilliseconds(mousePos.X) - MouseSelection.MouseClickTimeDifference, VideoDurationMsec);
+                    MouseSelection.Item.EndInVideo = endTime;
                     DrawMouseSelection();
                     break;
             }
