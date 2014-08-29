@@ -38,6 +38,8 @@ namespace LiveDescribe.View
         private const double PageScrollPercentAmount = 0.90;
         /// <summary>30 seconds page time before audiocanvas & descriptioncanvas scroll</summary>
         private const double PageTimeBeforeCanvasScrolls = 30;
+        /// <summary>The smallest possible width for an interval.</summary>
+        private const double MinIntervalWidth = 8;
         #endregion
 
         #region Instance Variables
@@ -603,7 +605,11 @@ namespace LiveDescribe.View
             interval.X = (AudioCanvas.Width / _videoDuration) * interval.StartInVideo;
             interval.Y = 0;
             interval.Height = AudioCanvas.ActualHeight;
-            interval.Width = (AudioCanvas.Width / _videoDuration) * (interval.EndInVideo - interval.StartInVideo);
+            /* Set interval to a minimum width so that all descriptions, even those with 0 duration
+             * (ie extended descriptions) are still visible.
+             */
+            interval.Width = Math.Max(MinIntervalWidth,
+                (AudioCanvas.Width / _videoDuration) * (interval.EndInVideo - interval.StartInVideo));
         }
 
         /// <summary>

@@ -1,5 +1,4 @@
-﻿using LiveDescribe.Extensions;
-using LiveDescribe.Properties;
+﻿using LiveDescribe.Properties;
 using LiveDescribe.ViewModel;
 using System;
 using System.ComponentModel;
@@ -13,7 +12,6 @@ namespace LiveDescribe.Controls
     {
         #region Fields
         private DescriptionCanvasViewModel _viewModel;
-        private readonly Pen _linePen;
         private CanvasMouseSelection _mouseSelection;
         private Brush _regularDescriptionBrush;
         private Brush _extendedDescriptionBrush;
@@ -28,9 +26,6 @@ namespace LiveDescribe.Controls
 
         public DescriptionCanvas()
         {
-            _linePen = new Pen(Brushes.Black, 1);
-            _linePen.Freeze();
-
             if (!DesignerProperties.GetIsInDesignMode(this))
                 SetBrushes();
 
@@ -71,16 +66,12 @@ namespace LiveDescribe.Controls
                 || _viewModel.Player.CurrentState == LiveDescribeVideoStates.VideoNotLoaded)
                 return;
 
-            if (Children.Contains(_regularDescriptionImage))
-                Children.Remove(_regularDescriptionImage);
-            if (Children.Contains(_extendedDescriptionImage))
-                Children.Remove(_extendedDescriptionImage);
-            if (Children.Contains(_selectedImage))
-                Children.Remove(_selectedImage);
+            Children.Remove(_regularDescriptionImage);
+            Children.Remove(_extendedDescriptionImage);
+            Children.Remove(_selectedImage);
 
-
-            var regularDescriptionGroup = new GeometryGroup();
-            var extendedDescriptionGroup = new GeometryGroup();
+            var regularDescriptionGroup = new GeometryGroup { FillRule = FillRule.Nonzero };
+            var extendedDescriptionGroup = new GeometryGroup { FillRule = FillRule.Nonzero };
             var selectedItemGroup = new GeometryGroup();
 
             double beginTimeMsec = XPosToMilliseconds(VisibleX);
@@ -102,22 +93,9 @@ namespace LiveDescribe.Controls
                 }
             }
 
-            if (0 < regularDescriptionGroup.Children.Count)
-            {
-                _regularDescriptionImage = regularDescriptionGroup.CreateImage(_regularDescriptionBrush, _linePen);
-
-                Children.Add(_regularDescriptionImage);
-
-                //The Image has to be set to the smallest X value of the visible regularDescriptions.
-                double minX = regularDescriptionGroup.Children[0].Bounds.X;
-                for (int i = 1; i < regularDescriptionGroup.Children.Count; i++)
-                {
-                    minX = Math.Min(minX, regularDescriptionGroup.Children[i].Bounds.X);
-                }
-
-                SetLeft(_regularDescriptionImage, minX);
-                SetTop(_regularDescriptionImage, 0);
-            }
+            AddImageToCanvas(ref _regularDescriptionImage, regularDescriptionGroup, _regularDescriptionBrush);
+            AddImageToCanvas(ref _extendedDescriptionImage, extendedDescriptionGroup, _extendedDescriptionBrush);
+            AddImageToCanvas(ref _selectedImage, selectedItemGroup, _selectedItemBrush);
         }
 
         protected override sealed void SetBrushes()

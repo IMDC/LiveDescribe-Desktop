@@ -1,11 +1,15 @@
+using LiveDescribe.Extensions;
 using LiveDescribe.Interfaces;
 using System;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace LiveDescribe.Controls
 {
     public abstract class GeometryImageCanvas : Canvas
     {
+        protected static readonly Pen LinePen = CreateLinePen();
+
         /// <summary>
         /// The distance away from the beginning or ending of an interval in pixels that the user
         /// has to click on to be able to move the caption.
@@ -17,6 +21,7 @@ namespace LiveDescribe.Controls
         /// </summary>
         protected const double MinIntervalDurationMsec = 300;
 
+        #region Properties
         /// <summary>
         /// The leftmost pixel of the canvas is visible to the user.
         /// </summary>
@@ -34,11 +39,45 @@ namespace LiveDescribe.Controls
 
 
         public IntervalMouseAction CurrentIntervalMouseAction { get; set; }
+        #endregion
+
+        private static Pen CreateLinePen()
+        {
+            var linePen = new Pen(Brushes.Black, 1);
+            linePen.Freeze();
+            return linePen;
+        }
 
         /// <summary>
         /// Draws all the contents of the canvas.
         /// </summary>
         public abstract void Draw();
+
+        /// <summary>
+        /// Adds a geometryGroup-based image to this canvas if it is not an empty shape.
+        /// </summary>
+        /// <param name="image">Image to add and then later reference.</param>
+        /// <param name="geometryGroup">GeometryGroup to turn into an image.</param>
+        /// <param name="geometryBrush">The colour of the GeometryImage.</param>
+        protected void AddImageToCanvas(ref Image image, GeometryGroup geometryGroup, Brush geometryBrush)
+        {
+            if (geometryGroup.Children.Count < 1)
+                return;
+
+            image = geometryGroup.CreateImage(geometryBrush, LinePen);
+
+            //The Image has to be set to the smallest X value of the visible spaces.
+            double minX = geometryGroup.Children[0].Bounds.X;
+            for (int i = 1; i < geometryGroup.Children.Count; i++)
+            {
+                minX = Math.Min(minX, geometryGroup.Children[i].Bounds.X);
+            }
+
+            Children.Add(image);
+
+            SetLeft(image, minX);
+            SetTop(image, 0);
+        }
 
         /// <summary>
         /// Tests whether the interval would be visible on the current canvas or not. It will be

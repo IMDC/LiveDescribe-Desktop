@@ -22,7 +22,6 @@ namespace LiveDescribe.Controls
 
         #region Fields
         private AudioCanvasViewModel _viewModel;
-        private readonly Pen _linePen;
         private Brush _completedSpaceBrush;
         private Brush _spaceBrush;
         private Brush _selectedItemBrush;
@@ -39,9 +38,6 @@ namespace LiveDescribe.Controls
         #region Constructor
         public AudioCanvas()
         {
-            _linePen = new Pen(Brushes.Black, 1);
-            _linePen.Freeze();
-
             /* This method contains a null reference in the designer, causing an exception and not
              * rendering the canvas. This check guards against it.
              */
@@ -94,8 +90,7 @@ namespace LiveDescribe.Controls
                 || _viewModel.Player.CurrentState == LiveDescribeVideoStates.VideoNotLoaded)
                 return;
 
-            if (Children.Contains(_waveformImage))
-                Children.Remove(_waveformImage);
+            Children.Remove(_waveformImage);
 
             var data = _viewModel.Waveform.Data;
             double samplesPerPixel = Math.Max(data.Count / Width, 1);
@@ -135,7 +130,7 @@ namespace LiveDescribe.Controls
                 }
             }
 
-            _waveformImage = waveformLineGroup.CreateImage(Brushes.Black, _linePen);
+            _waveformImage = waveformLineGroup.CreateImage(Brushes.Black, LinePen);
 
             SetLeft(_waveformImage, (int)VisibleX);
             SetTop(_waveformImage, middle + absMin * yscale);
@@ -149,12 +144,9 @@ namespace LiveDescribe.Controls
                 || _viewModel.Player.CurrentState == LiveDescribeVideoStates.VideoNotLoaded)
                 return;
 
-            if (Children.Contains(_completedSpaceImage))
-                Children.Remove(_completedSpaceImage);
-            if (Children.Contains(_spaceImage))
-                Children.Remove(_spaceImage);
-            if (Children.Contains(_selectedImage))
-                Children.Remove(_selectedImage);
+            Children.Remove(_completedSpaceImage);
+            Children.Remove(_spaceImage);
+            Children.Remove(_selectedImage);
 
             /* The way this method draws spaces is as follows: There are 3 different images drawn:
              * 1 for the selected item if any, 1 for completed spaces, and one for any other spaces.
@@ -184,49 +176,10 @@ namespace LiveDescribe.Controls
                 }
             }
 
-            if (0 < completedSpaceGroup.Children.Count)
-            {
-                _completedSpaceImage = completedSpaceGroup.CreateImage(_completedSpaceBrush, _linePen);
 
-                Children.Add(_completedSpaceImage);
-
-                double minX = completedSpaceGroup.Children[0].Bounds.X;
-                for (int i = 1; i < completedSpaceGroup.Children.Count; i++)
-                {
-                    minX = Math.Min(minX, completedSpaceGroup.Children[i].Bounds.X);
-                }
-
-                SetLeft(_completedSpaceImage, minX);
-                SetTop(_completedSpaceImage, 0);
-            }
-
-            if (0 < spaceGroup.Children.Count)
-            {
-                _spaceImage = spaceGroup.CreateImage(_spaceBrush, _linePen);
-
-                Children.Add(_spaceImage);
-
-                //The Image has to be set to the smallest X value of the visible spaces.
-                double minX = spaceGroup.Children[0].Bounds.X;
-                for (int i = 1; i < spaceGroup.Children.Count; i++)
-                {
-                    minX = Math.Min(minX, spaceGroup.Children[i].Bounds.X);
-                }
-
-                SetLeft(_spaceImage, minX);
-                SetTop(_spaceImage, 0);
-            }
-
-            if (0 < selectedGroup.Children.Count)
-            {
-                _selectedImage = selectedGroup.CreateImage(_selectedItemBrush, _linePen);
-
-                Children.Add(_selectedImage);
-
-                //There can only be one selected item
-                SetLeft(_selectedImage, selectedGroup.Children[0].Bounds.X);
-                SetTop(_selectedImage, 0);
-            }
+            AddImageToCanvas(ref _completedSpaceImage, completedSpaceGroup, _completedSpaceBrush);
+            AddImageToCanvas(ref _spaceImage, spaceGroup, _spaceBrush);
+            AddImageToCanvas(ref _selectedImage, selectedGroup, _selectedItemBrush);
         }
 
         /// <summary>
@@ -238,8 +191,7 @@ namespace LiveDescribe.Controls
             if (_mouseSelection.Action == IntervalMouseAction.None)
                 return;
 
-            if (Children.Contains(_selectedImage))
-                Children.Remove(_selectedImage);
+            Children.Remove(_selectedImage);
 
             var selectedGroup = new GeometryGroup();
             selectedGroup.Children.Add(new RectangleGeometry(new Rect
@@ -250,7 +202,7 @@ namespace LiveDescribe.Controls
                 Height = _mouseSelection.Item.Height,
             }));
 
-            _selectedImage = selectedGroup.CreateImage(_selectedItemBrush, _linePen);
+            _selectedImage = selectedGroup.CreateImage(_selectedItemBrush, LinePen);
 
             Children.Add(_selectedImage);
 
