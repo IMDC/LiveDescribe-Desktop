@@ -77,11 +77,6 @@ namespace LiveDescribe.Controls
         }
         #endregion
 
-        #region Properties
-        public IntervalMouseAction CurrentIntervalMouseAction { get; set; }
-
-        #endregion
-
         #region Canvas Drawing
 
         public override void Draw()
@@ -178,7 +173,7 @@ namespace LiveDescribe.Controls
             {
                 if (IsIntervalVisible(space, beginTimeMsec, endTimeMsec))
                 {
-                    var rect = new RectangleGeometry(new Rect(space.X, space.Y, (space).Width, space.Height));
+                    var rect = new RectangleGeometry(new Rect(space.X, space.Y, space.Width, space.Height));
 
                     if (space.IsSelected)
                         selectedGroup.Children.Add(rect);

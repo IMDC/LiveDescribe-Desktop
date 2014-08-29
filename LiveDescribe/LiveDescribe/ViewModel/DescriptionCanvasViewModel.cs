@@ -13,6 +13,8 @@ namespace LiveDescribe.ViewModel
     {
         private readonly ProjectManager _projectManager;
         private LiveDescribeVideoStates _currentVideoState;
+        private readonly ILiveDescribePlayer _player;
+
         #region Events
         public EventHandler<MouseEventArgs> DescriptionCanvasMouseUpEvent;
         public EventHandler<MouseEventArgs> DescriptionCanvasMouseMoveEvent;
@@ -22,6 +24,8 @@ namespace LiveDescribe.ViewModel
         public DescriptionCanvasViewModel(ILiveDescribePlayer videoMedia, ProjectManager projectManager)
         {
             _projectManager = projectManager;
+            _player = videoMedia;
+
             DescriptionCanvasMouseUpCommand = new RelayCommand<MouseEventArgs>(DescriptionCanvasMouseUp, param => true);
             DescriptionCanvasMouseMoveCommand = new RelayCommand<MouseEventArgs>(DescriptionCanvasMouseMove, param => true);
             DescriptionCanvasMouseDownCommand = new RelayCommand<MouseEventArgs>(DescriptionCanvasMouseDown, param => true);
@@ -52,6 +56,11 @@ namespace LiveDescribe.ViewModel
                 RaisePropertyChanged();
             }
             get { return _currentVideoState; }
+        }
+
+        public ILiveDescribePlayer Player
+        {
+            get { return _player; }
         }
         #endregion
 

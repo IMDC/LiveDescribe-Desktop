@@ -254,7 +254,9 @@
 
                             <Border
                                 Grid.Row="1"
-                                Grid.RowSpan="2">
+                                Grid.RowSpan="2"
+                                BorderThickness="1"
+                                BorderBrush="Black">
                                 <controls:AudioCanvas
                                     x:Name="AudioCanvas"
                                     Background="Transparent"
@@ -262,10 +264,14 @@
                             </Border>
 
                             <!--Description Canvas Constrol that holds all the descriptions-->
-                            <controls:DescriptionCanvasControl
-                                x:Name="DescriptionCanvasControl"
+                            <Border
                                 Grid.Row="3"
-                                DataContext="{Binding DescriptionCanvasViewModel}" />
+                                BorderThickness="1"
+                                BorderBrush="Black">
+                                <controls:DescriptionCanvas
+                                    x:Name="DescriptionCanvas"
+                                    DataContext="{Binding DescriptionCanvasViewModel}" />
+                            </Border>
 
                             <controls:MarkerControl
                                 x:Name="MarkerControl"

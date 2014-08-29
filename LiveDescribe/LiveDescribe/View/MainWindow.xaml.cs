@@ -30,7 +30,6 @@ namespace LiveDescribe.View
         #endregion
 
         #region Constants
-        private const double DefaultSpaceLengthInMilliSeconds = 3000;
         private const double MarkerOffset = 10.0;
         /// <summary>
         /// when the marker hits 95% of the page it scrolls
@@ -39,8 +38,6 @@ namespace LiveDescribe.View
         private const double PageScrollPercentAmount = 0.90;
         /// <summary>30 seconds page time before audiocanvas & descriptioncanvas scroll</summary>
         private const double PageTimeBeforeCanvasScrolls = 30;
-        private const double LineTime = 1; //each line in the NumberLineCanvas appears every 1 second
-        private const int LongLineTime = 5; // every 5 LineTimes, you get a Longer Line
         #endregion
 
         #region Instance Variables
@@ -57,7 +54,6 @@ namespace LiveDescribe.View
         private Point _rightClickPointOnAudioCanvas;
         private readonly LiveDescribeMediaPlayer _videoMedia;
 
-        private readonly ItemCanvas _descriptionCanvas;
         private readonly Polyline _marker;
         #endregion
 
@@ -86,9 +82,6 @@ namespace LiveDescribe.View
             _projectManager = mainWindowViewModel.ProjectManager;
             _descriptionInfoTabViewModel = mainWindowViewModel.DescriptionInfoTabViewModel;
 
-            _descriptionCanvas = DescriptionCanvasControl.DescriptionCanvas;
-            _descriptionCanvas.UndoRedoManager = mainWindowViewModel.UndoRedoManager;
-
             _marker = MarkerControl.Marker;
 
             _millisecondsTimeConverter = new MillisecondsTimeConverterFormatter();
@@ -100,6 +93,8 @@ namespace LiveDescribe.View
             {
                 //Update visible canvas boundaries
                 AudioCanvas.SetVisibleBoundaries(TimeLineScrollViewer.HorizontalOffset,
+                    TimeLineScrollViewer.ActualWidth);
+                DescriptionCanvas.SetVisibleBoundaries(TimeLineScrollViewer.HorizontalOffset,
                     TimeLineScrollViewer.ActualWidth);
                 NumberLineCanvas.SetVisibleBoundaries(TimeLineScrollViewer.HorizontalOffset,
                     TimeLineScrollViewer.ActualWidth);
@@ -169,8 +164,8 @@ namespace LiveDescribe.View
                 {
                     _videoDuration = _videoMedia.NaturalDuration.TimeSpan.TotalMilliseconds;
                     AudioCanvas.VideoDurationMsec = _videoDuration;
+                    DescriptionCanvas.VideoDurationMsec = _videoDuration;
                     NumberLineCanvas.VideoDurationMsec = _videoDuration;
-                    DescriptionCanvasControl.DescriptionCanvas.VideoDuration = _videoDuration;
                     _canvasWidth = CalculateWidth();
                     _marker.IsEnabled = true;
 
@@ -334,15 +329,16 @@ namespace LiveDescribe.View
         {
             //if we aren't dragging a description or space, we want to unselect them out of the list
             if (AudioCanvas.CurrentIntervalMouseAction == IntervalMouseAction.None &&
-                _descriptionCanvas.CurrentIntervalMouseAction == IntervalMouseAction.None)
+                DescriptionCanvas.CurrentIntervalMouseAction == IntervalMouseAction.None)
                 _descriptionInfoTabViewModel.ClearSelection();
         }
 
+        //TODO: Change these
         private void DescriptionCanvas_MouseDown(object sender, MouseEventArgs e)
         {
             //if we aren't dragging a description or space, we want to unselect them out of the list
             if (AudioCanvas.CurrentIntervalMouseAction == IntervalMouseAction.None &&
-                _descriptionCanvas.CurrentIntervalMouseAction == IntervalMouseAction.None)
+                DescriptionCanvas.CurrentIntervalMouseAction == IntervalMouseAction.None)
                 _descriptionInfoTabViewModel.ClearSelection();
         }
 
@@ -611,15 +607,6 @@ namespace LiveDescribe.View
         }
 
         /// <summary>
-        /// Resizes all the descriptions height to fit the description canvas
-        /// </summary>
-        private void ResizeDescriptions()
-        {
-            foreach (var description in _projectManager.AllDescriptions)
-                description.Height = _descriptionCanvas.ActualHeight;
-        }
-
-        /// <summary>
         /// Update's the instance variables that keep track of the timeline height and width, and
         /// calculates the size of the timeline if the width of the audio canvas is greater then the
         /// timeline width it automatically overflows and scrolls due to the scrollview then update
@@ -628,16 +615,16 @@ namespace LiveDescribe.View
         private void SetTimeline()
         {
             NumberLineCanvas.Width = _canvasWidth;
-            _descriptionCanvas.Width = _canvasWidth;
+            DescriptionCanvas.Width = _canvasWidth;
             AudioCanvas.Width = _canvasWidth;
 
             DrawTimeline();
-            ResizeDescriptions();
         }
 
         private void DrawTimeline()
         {
             AudioCanvas.Draw();
+            DescriptionCanvas.Draw();
             NumberLineCanvas.Draw();
         }
 

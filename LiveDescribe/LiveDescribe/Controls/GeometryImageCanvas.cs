@@ -32,6 +32,9 @@ namespace LiveDescribe.Controls
         /// </summary>
         public double VideoDurationMsec { get; set; }
 
+
+        public IntervalMouseAction CurrentIntervalMouseAction { get; set; }
+
         /// <summary>
         /// Draws all the contents of the canvas.
         /// </summary>
