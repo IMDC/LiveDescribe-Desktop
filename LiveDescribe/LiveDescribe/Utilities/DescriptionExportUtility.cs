@@ -229,7 +229,7 @@ namespace LiveDescribe.Utilities
             //outFileName = String.Join("\\", filePathSplit);
             outFileName = string.Format("{0}\\{1}.{2}", exportPath, exportName, ext);
  
-            string command = " -i \"" + videoPath + "\" -i \"" + audioPath + "\" -c:v copy  -map 0:1 -map 1:0 -y \"" + outFileName + "\"";
+            string command = " -i \"" + videoPath + "\" -i \"" + audioPath + "\" -c:v copy  -map 0:0 -map 1:0 -y \"" + outFileName + "\"";
             ffmpegCommand(command, true);
 
             return outFileName;
@@ -245,7 +245,7 @@ namespace LiveDescribe.Utilities
         private string muxAudioFiles(string videoAudio, string descriptionAudio)
         {
             string outFile = _project.Folders.Descriptions + "\\combined_description_audio.wav";
-            string command = string.Format(" -i {0} -i {1} -filter_complex amix=inputs=2:duration=first {2}",
+            string command = string.Format(" -i \"{0}\" -i \"{1}\" -filter_complex amix=inputs=2:duration=first \"{2}\"",
                                        videoAudio, descriptionAudio, outFile);
             ffmpegCommand(command, true);
 
@@ -269,7 +269,7 @@ namespace LiveDescribe.Utilities
             filePathSplit[filePathSplit.Length - 1] = "export_stripped_video.wav";
             outFileName = String.Join("\\", filePathSplit);
 
-            string command = string.Format(" -i {0} -ac 2 -ab 160k -ar 44100 -f wav -vn -y {1}", videoPath, outFileName);
+            string command = string.Format(" -i \"{0}\" -ac 2 -ab 160k -ar 44100 -f wav -vn -y \"{1}\"", videoPath, outFileName);
             ffmpegCommand(command, true);
 
             return outFileName;
@@ -302,7 +302,7 @@ namespace LiveDescribe.Utilities
             filePathSplit[filePathSplit.Length - 1] = filePathSplit[filePathSplit.Length - 1].Split(new string[] { "." }, StringSplitOptions.None)[0] + ".mp3";
             outFileName = String.Join("\\", filePathSplit);
 
-            string command = string.Format(" -i \"{0}\" -f mp3 {1}", audioPath, outFileName);
+            string command = string.Format(" -i \"{0}\" -f mp3 \"{1}\"", audioPath, outFileName);
             ffmpegCommand(command, true);
 
             try
