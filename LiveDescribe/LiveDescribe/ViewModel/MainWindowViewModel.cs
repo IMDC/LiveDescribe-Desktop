@@ -501,7 +501,7 @@ namespace LiveDescribe.ViewModel
         {
             OnGraphicsTick(sender, e);
             //I put this method in it's own timer in the MainWindowViewModel for now, because I believe it should be separate from the view
-            foreach (var description in _projectManager.AllDescriptions)
+            foreach (var description in _projectManager.AllDescriptions.ToList())
             {
                 double videoPosition = 0;
 
