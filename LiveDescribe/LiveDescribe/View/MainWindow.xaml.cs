@@ -228,14 +228,25 @@ namespace LiveDescribe.View
 
             #region Event Listeners For AudioCanvasViewModel
             AudioCanvasViewModel audioCanvasViewModel = mainWindowViewModel.AudioCanvasViewModel;
-            audioCanvasViewModel.AudioCanvasMouseDownEvent += AudioCanvas_OnMouseDown;
             audioCanvasViewModel.AudioCanvasMouseRightButtonDownEvent += AudioCanvas_RecordRightClickPosition;
             #endregion
 
             #region Event Listeners For DescriptionCanvasViewModel
             DescriptionCanvasViewModel descriptionCanvasViewModel = mainWindowViewModel.DescriptionCanvasViewModel;
-            descriptionCanvasViewModel.DescriptionCanvasMouseDownEvent += DescriptionCanvas_MouseDown;
             #endregion
+
+            //If one canvas is clicked, we want to unselect the other canvas' selection
+            DescriptionCanvas.MouseDown += (sender, args) =>
+            {
+                if (AudioCanvas.MouseAction == IntervalMouseAction.ItemSelected)
+                    AudioCanvas.ClearMouseSelection();
+            };
+
+            AudioCanvas.MouseDown += (sender, args) =>
+            {
+                if (DescriptionCanvas.MouseAction == IntervalMouseAction.ItemSelected)
+                    DescriptionCanvas.ClearMouseSelection();
+            };
 
             #region Event Handlers for ProjectManager
 
@@ -320,24 +331,6 @@ namespace LiveDescribe.View
 
             //update marker to fit the entire AudioCanvas even when there's no video loaded
             _marker.Points[4] = new Point(_marker.Points[4].X, TimeLineScrollViewer.ActualHeight);
-        }
-
-        /// <summary>
-        /// Gets called when the mouse is down on the audio canvas
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void AudioCanvas_OnMouseDown(object sender, MouseEventArgs e)
-        {
-            //if we aren't dragging a description or space, we want to unselect them out of the list
-            _descriptionInfoTabViewModel.ClearSelection();
-        }
-
-        //TODO: Change these
-        private void DescriptionCanvas_MouseDown(object sender, MouseEventArgs e)
-        {
-            //if we aren't dragging a description or space, we want to unselect them out of the list
-            _descriptionInfoTabViewModel.ClearSelection();
         }
 
         private void AudioCanvas_RecordRightClickPosition(object sender, EventArgs e)

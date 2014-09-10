@@ -200,7 +200,7 @@ namespace LiveDescribe.Controls
                 /*if (MouseSelection.HasItemBeenModified())
                     MouseSelection.AddChangesTo(_viewModel.UndoRedoManager);*/
 
-                MouseSelection = CanvasMouseSelection.NoSelection;
+                MouseSelection.CompleteModificationAction();
                 Mouse.Capture(null);
             }
         }

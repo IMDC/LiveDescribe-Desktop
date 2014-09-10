@@ -42,7 +42,11 @@ namespace LiveDescribe.Controls
         /// </summary>
         protected CanvasMouseSelection MouseSelection { get; set; }
 
-        public IntervalMouseAction CurrentIntervalMouseAction { get; set; }
+        public IntervalMouseAction MouseAction
+        {
+            get { return MouseSelection.Action; }
+        }
+
         #endregion
 
         private static Pen CreateLinePen()
@@ -139,6 +143,16 @@ namespace LiveDescribe.Controls
         public double BoundBetween(double lowerBound, double value, double upperBound)
         {
             return Math.Min(upperBound, Math.Max(lowerBound, value));
+        }
+
+
+        public void ClearMouseSelection()
+        {
+            if (MouseSelection.Action != IntervalMouseAction.None)
+            {
+                MouseSelection.Item.IsSelected = false;
+                MouseSelection = CanvasMouseSelection.NoSelection;
+            }
         }
     }
 }

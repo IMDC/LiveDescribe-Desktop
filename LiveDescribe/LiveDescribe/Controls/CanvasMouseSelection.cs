@@ -69,5 +69,21 @@ namespace LiveDescribe.Controls
             manager.InsertItemForMoveOrResizeUndoRedo(Item, OriginalStartInVideo, OriginalEndInVideo,
                 Item.StartInVideo, Item.EndInVideo);
         }
+
+        /// <summary>
+        /// Completes the modification of the currently selected interval if this MouseSelection's
+        /// involved modification (ie Change start/end time, dragging).
+        /// </summary>
+        public void CompleteModificationAction()
+        {
+            switch (Action)
+            {
+                case IntervalMouseAction.ChangeEndTime:
+                case IntervalMouseAction.ChangeStartTime:
+                case IntervalMouseAction.Dragging:
+                    Action = IntervalMouseAction.ItemSelected;
+                    break;
+            }
+        }
     }
 }
