@@ -12,6 +12,7 @@ namespace LiveDescribe.ViewModel
     public class DescriptionCanvasViewModel : ViewModelBase
     {
         private readonly ProjectManager _projectManager;
+        private readonly UndoRedoManager _undoRedoManager;
         private LiveDescribeVideoStates _currentVideoState;
         private readonly ILiveDescribePlayer _player;
 
@@ -21,9 +22,11 @@ namespace LiveDescribe.ViewModel
         public EventHandler<MouseEventArgs> DescriptionCanvasMouseDownEvent;
         #endregion
 
-        public DescriptionCanvasViewModel(ILiveDescribePlayer videoMedia, ProjectManager projectManager)
+        public DescriptionCanvasViewModel(ILiveDescribePlayer videoMedia, ProjectManager projectManager,
+            UndoRedoManager undoRedoManager)
         {
             _projectManager = projectManager;
+            _undoRedoManager = undoRedoManager;
             _player = videoMedia;
 
             DescriptionCanvasMouseUpCommand = new RelayCommand<MouseEventArgs>(DescriptionCanvasMouseUp, param => true);
@@ -62,6 +65,12 @@ namespace LiveDescribe.ViewModel
         {
             get { return _player; }
         }
+
+        public UndoRedoManager UndoRedoManager
+        {
+            get { return _undoRedoManager; }
+        }
+
         #endregion
 
         #region Binding Functions

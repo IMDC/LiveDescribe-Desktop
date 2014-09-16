@@ -6,7 +6,6 @@ using LiveDescribe.Resources.UiStrings;
 using LiveDescribe.Utilities;
 using LiveDescribe.ViewModel;
 using System;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
@@ -390,7 +389,7 @@ namespace LiveDescribe.Controls
 
             if (_viewModel != null)
             {
-                _viewModel.Spaces.CollectionChanged += Spaces_CollectionChanged;
+                _viewModel.Spaces.CollectionChanged += CollectionChanged_TrackPropertyListeners;
                 _viewModel.RequestSpaceTime += ViewModelOnRequestSpaceTime;
                 _addSpaceMenuItem = new MenuItem
                 {
@@ -403,7 +402,7 @@ namespace LiveDescribe.Controls
 
             if (oldViewModel != null)
             {
-                oldViewModel.Spaces.CollectionChanged -= Spaces_CollectionChanged;
+                oldViewModel.Spaces.CollectionChanged -= CollectionChanged_TrackPropertyListeners;
                 oldViewModel.RequestSpaceTime -= ViewModelOnRequestSpaceTime;
             }
         }
@@ -430,38 +429,13 @@ namespace LiveDescribe.Controls
             space.EndInVideo = startTime + NewSpaceDurationMsec;
         }
 
-        void Spaces_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.Action == NotifyCollectionChangedAction.Add)
-            {
-                foreach (var item in e.NewItems)
-                {
-                    var notifier = item as INotifyPropertyChanged;
-
-                    if (notifier != null)
-                        notifier.PropertyChanged += ObservableCollectionElement_PropertyChanged;
-                }
-            }
-            else if (e.Action == NotifyCollectionChangedAction.Remove)
-            {
-                foreach (var item in e.OldItems)
-                {
-                    var notifier = item as INotifyPropertyChanged;
-
-                    if (notifier != null)
-                        notifier.PropertyChanged -= ObservableCollectionElement_PropertyChanged;
-                }
-            }
-        }
-
-        private void ObservableCollectionElement_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        protected override void ObservableCollectionElement_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "StartInVideo"
                 || e.PropertyName == "EndInVideo"
                 || e.PropertyName == "SetStartAndEndInVideo")
                 DrawSpaces();
         }
-
         #endregion
     }
 }

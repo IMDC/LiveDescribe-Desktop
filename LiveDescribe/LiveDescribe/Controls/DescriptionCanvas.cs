@@ -204,8 +204,8 @@ namespace LiveDescribe.Controls
 
             if (MouseSelection.Action != IntervalMouseAction.None)
             {
-                /*if (MouseSelection.HasItemBeenModified())
-                    MouseSelection.AddChangesTo(_viewModel.UndoRedoManager);*/
+                if (MouseSelection.HasItemBeenModified())
+                    MouseSelection.AddChangesTo(_viewModel.UndoRedoManager);
 
                 MouseSelection.CompleteModificationAction();
                 Mouse.Capture(null);
@@ -221,14 +221,17 @@ namespace LiveDescribe.Controls
 
             if (_viewModel != null)
             {
+                _viewModel.AllDescriptions.CollectionChanged += CollectionChanged_TrackPropertyListeners;
             }
 
             var oldViewModel = e.OldValue as DescriptionCanvasViewModel;
 
             if (oldViewModel != null)
             {
+                _viewModel.AllDescriptions.CollectionChanged -= CollectionChanged_TrackPropertyListeners;
             }
         }
+
         #endregion
     }
 }

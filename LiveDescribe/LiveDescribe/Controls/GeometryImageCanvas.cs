@@ -1,6 +1,8 @@
 using LiveDescribe.Extensions;
 using LiveDescribe.Interfaces;
 using System;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Windows.Controls;
 using System.Windows.Media;
 
@@ -153,6 +155,38 @@ namespace LiveDescribe.Controls
                 MouseSelection.Item.IsSelected = false;
                 MouseSelection = CanvasMouseSelection.NoSelection;
             }
+        }
+
+        protected void CollectionChanged_TrackPropertyListeners(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (var item in e.NewItems)
+                {
+                    var notifier = item as INotifyPropertyChanged;
+
+                    if (notifier != null)
+                        notifier.PropertyChanged += ObservableCollectionElement_PropertyChanged;
+                }
+            }
+            else if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                foreach (var item in e.OldItems)
+                {
+                    var notifier = item as INotifyPropertyChanged;
+
+                    if (notifier != null)
+                        notifier.PropertyChanged -= ObservableCollectionElement_PropertyChanged;
+                }
+            }
+        }
+
+        protected virtual void ObservableCollectionElement_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "StartInVideo"
+                || e.PropertyName == "EndInVideo"
+                || e.PropertyName == "SetStartAndEndInVideo")
+                Draw();
         }
     }
 }
