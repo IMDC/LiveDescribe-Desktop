@@ -21,11 +21,10 @@ namespace LiveDescribe.Controls
 
         public void Item_DoubleClick(object sender, MouseButtonEventArgs e)
         {
-            var item = ((ListViewItem)sender).Content;
-            if (item is Space)
-                ((Space)item).NavigateToCommand.Execute();
-            else if (item is Description)
-                ((Description)item).NavigateToCommand.Execute();
+            var item = ((ListViewItem)sender).Content as DescribableInterval;
+
+            if (item != null)
+                item.NavigateToCommand.Execute();
         }
     }
 }

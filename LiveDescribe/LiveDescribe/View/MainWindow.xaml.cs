@@ -1,6 +1,5 @@
 ﻿using GalaSoft.MvvmLight.Threading;
 using LiveDescribe.Controls;
-using LiveDescribe.Converters;
 using LiveDescribe.Extensions;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Managers;
@@ -52,8 +51,6 @@ namespace LiveDescribe.View
         private readonly ProjectManager _projectManager;
         private readonly DescriptionInfoTabViewModel _descriptionInfoTabViewModel;
         private readonly MainWindowViewModel _mainWindowViewModel;
-        private readonly MillisecondsTimeConverterFormatter _millisecondsTimeConverter;
-        private Point _rightClickPointOnAudioCanvas;
         private readonly LiveDescribeMediaPlayer _videoMedia;
 
         private readonly Polyline _marker;
@@ -85,8 +82,6 @@ namespace LiveDescribe.View
             _descriptionInfoTabViewModel = mainWindowViewModel.DescriptionInfoTabViewModel;
 
             _marker = MarkerControl.Marker;
-
-            _millisecondsTimeConverter = new MillisecondsTimeConverterFormatter();
 
             SetRecentDocumentsList();
 
@@ -359,7 +354,6 @@ namespace LiveDescribe.View
                 UpdateVideoPosition((int)newValue);
             }
         }
-
         #endregion
 
         #region Methods
