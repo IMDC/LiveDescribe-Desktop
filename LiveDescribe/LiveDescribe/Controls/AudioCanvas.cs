@@ -244,14 +244,21 @@ namespace LiveDescribe.Controls
                 return;
 
             var point = e.GetPosition(this);
+            bool spaceFound = false;
 
             foreach (var space in _viewModel.Spaces)
             {
                 if (IsBetweenBounds(space.X - SelectionPixelWidth, point.X, space.X + space.Width + SelectionPixelWidth))
+                {
                     SelectSpace(space, point);
+                    spaceFound = true;
+                }
                 else
                     space.IsSelected = false;
             }
+
+            if (!spaceFound)
+                MouseSelection = CanvasMouseSelection.NoSelection;
 
             DrawSpaces();
         }
@@ -279,23 +286,6 @@ namespace LiveDescribe.Controls
             }
 
             CaptureMouse();
-        }
-
-        protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
-        {
-            base.OnMouseLeftButtonUp(e);
-
-            if (_viewModel == null)
-                return;
-
-            if (MouseSelection.Action != IntervalMouseAction.None)
-            {
-                if (MouseSelection.HasItemBeenModified())
-                    MouseSelection.AddChangesTo(_viewModel.UndoRedoManager);
-
-                MouseSelection.CompleteModificationAction();
-                Mouse.Capture(null);
-            }
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
@@ -327,6 +317,23 @@ namespace LiveDescribe.Controls
                     MouseSelection.Item.EndInVideo = endTime;
                     DrawMouseSelection();
                     break;
+            }
+        }
+
+        protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
+        {
+            base.OnMouseLeftButtonUp(e);
+
+            if (_viewModel == null)
+                return;
+
+            if (MouseSelection.Action != IntervalMouseAction.None)
+            {
+                if (MouseSelection.HasItemBeenModified())
+                    MouseSelection.AddChangesTo(_viewModel.UndoRedoManager);
+
+                MouseSelection.CompleteModificationAction();
+                Mouse.Capture(null);
             }
         }
 

@@ -242,11 +242,24 @@ namespace LiveDescribe.View
                     AudioCanvas.ClearMouseSelection();
             };
 
+            DescriptionCanvas.MouseUp += (sender, args) =>
+            {
+                if (DescriptionCanvas.MouseAction == IntervalMouseAction.None)
+                    _descriptionInfoTabViewModel.ClearSelection();
+            };
+
             AudioCanvas.MouseDown += (sender, args) =>
             {
                 if (DescriptionCanvas.MouseAction == IntervalMouseAction.ItemSelected)
                     DescriptionCanvas.ClearMouseSelection();
             };
+
+            AudioCanvas.MouseUp += (sender, args) =>
+            {
+                if (AudioCanvas.MouseAction == IntervalMouseAction.None)
+                    _descriptionInfoTabViewModel.ClearSelection();
+            };
+
 
             #region Event Handlers for ProjectManager
 

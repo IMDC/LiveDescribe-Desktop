@@ -150,14 +150,21 @@ namespace LiveDescribe.Controls
                 return;
 
             var clickPoint = e.GetPosition(this);
+            bool descriptionFound = false;
 
             foreach (var description in _viewModel.AllDescriptions)
             {
                 if (IsBetweenBounds(description.X, clickPoint.X, description.X + description.Width))
+                {
                     SelectDescription(description, clickPoint);
+                    descriptionFound = true;
+                }
                 else
                     description.IsSelected = false;
             }
+
+            if (!descriptionFound)
+                MouseSelection = CanvasMouseSelection.NoSelection;
 
             Draw();
         }
