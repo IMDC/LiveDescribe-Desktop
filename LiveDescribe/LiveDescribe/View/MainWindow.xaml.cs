@@ -226,15 +226,7 @@ namespace LiveDescribe.View
 
             #endregion
 
-            #region Event Listeners For AudioCanvasViewModel
-            AudioCanvasViewModel audioCanvasViewModel = mainWindowViewModel.AudioCanvasViewModel;
-            audioCanvasViewModel.AudioCanvasMouseRightButtonDownEvent += AudioCanvas_RecordRightClickPosition;
-            #endregion
-
-            #region Event Listeners For DescriptionCanvasViewModel
-            DescriptionCanvasViewModel descriptionCanvasViewModel = mainWindowViewModel.DescriptionCanvasViewModel;
-            #endregion
-
+            #region Event Handlers for DescriptionCanvas
             //If one canvas is clicked, we want to unselect the other canvas' selection
             DescriptionCanvas.MouseDown += (sender, args) =>
             {
@@ -247,19 +239,21 @@ namespace LiveDescribe.View
                 if (DescriptionCanvas.MouseAction == IntervalMouseAction.None)
                     _descriptionInfoTabViewModel.ClearSelection();
             };
+            #endregion
 
+            #region Event Handlers for AudioCanvas
             AudioCanvas.MouseDown += (sender, args) =>
-            {
-                if (DescriptionCanvas.MouseAction == IntervalMouseAction.ItemSelected)
-                    DescriptionCanvas.ClearMouseSelection();
-            };
+                {
+                    if (DescriptionCanvas.MouseAction == IntervalMouseAction.ItemSelected)
+                        DescriptionCanvas.ClearMouseSelection();
+                };
 
             AudioCanvas.MouseUp += (sender, args) =>
             {
                 if (AudioCanvas.MouseAction == IntervalMouseAction.None)
                     _descriptionInfoTabViewModel.ClearSelection();
             };
-
+            #endregion
 
             #region Event Handlers for ProjectManager
 
@@ -344,14 +338,6 @@ namespace LiveDescribe.View
 
             //update marker to fit the entire AudioCanvas even when there's no video loaded
             _marker.Points[4] = new Point(_marker.Points[4].X, TimeLineScrollViewer.ActualHeight);
-        }
-
-        private void AudioCanvas_RecordRightClickPosition(object sender, EventArgs e)
-        {
-            //record the position in which you right clicked on the canvas
-            //this position is used to calculate where on the audio canvas to draw a space
-            var e1 = (MouseEventArgs)e;
-            _rightClickPointOnAudioCanvas = e1.GetPosition(AudioCanvas);
         }
 
         /// <summary>

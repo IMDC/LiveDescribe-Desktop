@@ -19,8 +19,6 @@ namespace LiveDescribe.ViewModel
         private Waveform _waveform;
 
         #region Events
-        public EventHandler<MouseEventArgs> AudioCanvasMouseDownEvent;
-        public EventHandler<MouseEventArgs> AudioCanvasMouseRightButtonDownEvent;
         /// <summary>
         /// Requests to a handler what to set the StartInVideo and EndInVideo time values for the
         /// given space.
@@ -34,9 +32,6 @@ namespace LiveDescribe.ViewModel
             _projectManager = projectManager;
             _undoRedoManager = undoRedoManager;
             _player = mediaPlayer;
-
-            AudioCanvasMouseDownCommand = new RelayCommand<MouseEventArgs>(AudioCanvasMouseDown, param => true);
-            AudioCanvasMouseRightButtonDownCommand = new RelayCommand<MouseEventArgs>(AudioCanvasMouseRightButtonDown, param => true);
 
             //TODO: Just refer to MediaPlayer?
             mediaPlayer.PropertyChanged += (sender, args) =>
@@ -58,8 +53,6 @@ namespace LiveDescribe.ViewModel
         }
 
         #region Commands
-        public RelayCommand<MouseEventArgs> AudioCanvasMouseDownCommand { private set; get; }
-        public RelayCommand<MouseEventArgs> AudioCanvasMouseRightButtonDownCommand { private set; get; }
         public ICommand GetNewSpaceTime { get; private set; }
         #endregion
 
@@ -99,21 +92,6 @@ namespace LiveDescribe.ViewModel
             get { return _undoRedoManager; }
         }
 
-        #endregion
-
-        #region Binding Functions
-
-        private void AudioCanvasMouseDown(MouseEventArgs e)
-        {
-            EventHandler<MouseEventArgs> handler = AudioCanvasMouseDownEvent;
-            if (handler != null) handler(this, e);
-        }
-
-        private void AudioCanvasMouseRightButtonDown(MouseEventArgs e)
-        {
-            EventHandler<MouseEventArgs> handler = AudioCanvasMouseRightButtonDownEvent;
-            if (handler != null) handler(this, e);
-        }
         #endregion
 
         #region Event Invokation
