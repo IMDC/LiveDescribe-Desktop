@@ -23,11 +23,9 @@ namespace LiveDescribe.Controls
         private AudioCanvasViewModel _viewModel;
         private Brush _completedSpaceBrush;
         private Brush _spaceBrush;
-        private Brush _selectedItemBrush;
         private Image _waveformImage;
         private Image _completedSpaceImage;
         private Image _spaceImage;
-        private Image _selectedImage;
         private MenuItem _addSpaceMenuItem;
         private Point _addSpaceMousePoint;
 
@@ -152,7 +150,7 @@ namespace LiveDescribe.Controls
 
             Children.Remove(_completedSpaceImage);
             Children.Remove(_spaceImage);
-            Children.Remove(_selectedImage);
+            Children.Remove(SelectedImage);
 
             /* The way this method draws spaces is as follows: There are 3 different images drawn:
              * 1 for the selected item if any, 1 for completed spaces, and one for any other spaces.
@@ -185,7 +183,7 @@ namespace LiveDescribe.Controls
 
             AddImageToCanvas(ref _completedSpaceImage, completedSpaceGroup, _completedSpaceBrush);
             AddImageToCanvas(ref _spaceImage, spaceGroup, _spaceBrush);
-            AddImageToCanvas(ref _selectedImage, selectedGroup, _selectedItemBrush);
+            AddImageToCanvas(ref SelectedImage, selectedGroup, SelectedItemBrush);
         }
 
         /// <summary>
@@ -196,8 +194,8 @@ namespace LiveDescribe.Controls
             _spaceBrush = new SolidColorBrush(Settings.Default.ColourScheme.SpaceColour);
             _spaceBrush.Freeze();
 
-            _selectedItemBrush = new SolidColorBrush(Settings.Default.ColourScheme.SelectedItemColour);
-            _selectedItemBrush.Freeze();
+            SelectedItemBrush = new SolidColorBrush(Settings.Default.ColourScheme.SelectedItemColour);
+            SelectedItemBrush.Freeze();
 
             _completedSpaceBrush = new SolidColorBrush(Settings.Default.ColourScheme.CompletedSpaceColour);
             _completedSpaceBrush.Freeze();
@@ -405,6 +403,9 @@ namespace LiveDescribe.Controls
 
         protected override void ObservableCollectionElement_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
+            /* This function is overwritten because we only want to draw the spaces, not the
+             * waveform as well.
+             */
             if (e.PropertyName == "StartInVideo"
                 || e.PropertyName == "EndInVideo"
                 || e.PropertyName == "SetStartAndEndInVideo")
