@@ -17,10 +17,8 @@ namespace LiveDescribe.Controls
         private DescriptionCanvasViewModel _viewModel;
         private Brush _regularDescriptionBrush;
         private Brush _extendedDescriptionBrush;
-        private Brush _selectedItemBrush;
         private Image _regularDescriptionImage;
         private Image _extendedDescriptionImage;
-        private Image _selectedImage;
 
         #endregion
 
@@ -71,7 +69,7 @@ namespace LiveDescribe.Controls
 
             Children.Remove(_regularDescriptionImage);
             Children.Remove(_extendedDescriptionImage);
-            Children.Remove(_selectedImage);
+            Children.Remove(SelectedImage);
 
             var regularDescriptionGroup = new GeometryGroup { FillRule = FillRule.Nonzero };
             var extendedDescriptionGroup = new GeometryGroup { FillRule = FillRule.Nonzero };
@@ -98,32 +96,10 @@ namespace LiveDescribe.Controls
 
             AddImageToCanvas(ref _regularDescriptionImage, regularDescriptionGroup, _regularDescriptionBrush);
             AddImageToCanvas(ref _extendedDescriptionImage, extendedDescriptionGroup, _extendedDescriptionBrush);
-            AddImageToCanvas(ref _selectedImage, selectedItemGroup, _selectedItemBrush);
+            AddImageToCanvas(ref SelectedImage, selectedItemGroup, SelectedItemBrush);
         }
 
-        public void DrawMouseSelection()
-        {
-            if (MouseSelection.Action == IntervalMouseAction.None)
-                return;
 
-            Children.Remove(_selectedImage);
-
-            var selectedGroup = new GeometryGroup();
-            selectedGroup.Children.Add(new RectangleGeometry(new Rect
-            {
-                X = MouseSelection.Item.X,
-                Y = MouseSelection.Item.Y,
-                Width = MouseSelection.Item.Width,
-                Height = MouseSelection.Item.Height,
-            }));
-
-            _selectedImage = selectedGroup.CreateImage(_selectedItemBrush, LinePen);
-
-            Children.Add(_selectedImage);
-
-            SetLeft(_selectedImage, selectedGroup.Children[0].Bounds.X);
-            SetTop(_selectedImage, 0);
-        }
 
         protected override sealed void SetBrushes()
         {
@@ -133,8 +109,8 @@ namespace LiveDescribe.Controls
             _extendedDescriptionBrush = new SolidColorBrush(Settings.Default.ColourScheme.ExtendedDescriptionColour);
             _extendedDescriptionBrush.Freeze();
 
-            _selectedItemBrush = new SolidColorBrush(Settings.Default.ColourScheme.SelectedItemColour);
-            _selectedItemBrush.Freeze();
+            SelectedItemBrush = new SolidColorBrush(Settings.Default.ColourScheme.SelectedItemColour);
+            SelectedItemBrush.Freeze();
 
             Draw();
         }

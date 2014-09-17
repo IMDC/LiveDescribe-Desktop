@@ -189,34 +189,6 @@ namespace LiveDescribe.Controls
         }
 
         /// <summary>
-        /// Draws the selectedItem image based off of mouse selection. Call this method to only
-        /// draw the currently selected space.
-        /// </summary>
-        public void DrawMouseSelection()
-        {
-            if (MouseSelection.Action == IntervalMouseAction.None)
-                return;
-
-            Children.Remove(_selectedImage);
-
-            var selectedGroup = new GeometryGroup();
-            selectedGroup.Children.Add(new RectangleGeometry(new Rect
-            {
-                X = MouseSelection.Item.X,
-                Y = MouseSelection.Item.Y,
-                Width = MouseSelection.Item.Width,
-                Height = MouseSelection.Item.Height,
-            }));
-
-            _selectedImage = selectedGroup.CreateImage(_selectedItemBrush, LinePen);
-
-            Children.Add(_selectedImage);
-
-            SetLeft(_selectedImage, selectedGroup.Children[0].Bounds.X);
-            SetTop(_selectedImage, 0);
-        }
-
-        /// <summary>
         /// Sets the brushes based off of ColourScheme settings.
         /// </summary>
         protected override sealed void SetBrushes()

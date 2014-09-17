@@ -3,6 +3,7 @@ using LiveDescribe.Interfaces;
 using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
@@ -22,6 +23,7 @@ namespace LiveDescribe.Controls
         /// Smallest amound of time that an interval can be.
         /// </summary>
         protected const double MinIntervalDurationMsec = 300;
+
 
         #region Properties
         /// <summary>
@@ -44,6 +46,18 @@ namespace LiveDescribe.Controls
         /// </summary>
         protected CanvasMouseSelection MouseSelection { get; set; }
 
+        /// <summary>
+        /// The brush to paint the currently selected item with.
+        /// </summary>
+        protected Brush SelectedItemBrush { get; set; }
+
+        /// <summary>
+        /// The image that displays the currently selected image. This is implemented as a
+        /// reference variable and not a property so that it can be passed to the AddImageToCanvas
+        /// method using the ref keyword.
+        /// </summary>
+        protected Image SelectedImage;
+
         public IntervalMouseAction MouseAction
         {
             get { return MouseSelection.Action; }
@@ -62,6 +76,34 @@ namespace LiveDescribe.Controls
         /// Draws all the contents of the canvas.
         /// </summary>
         public abstract void Draw();
+
+        /// <summary>
+        /// Draws the selectedItem image based off of mouse selection. Call this method to only
+        /// draw the currently selected interval.
+        /// </summary>
+        public void DrawMouseSelection()
+        {
+            if (MouseSelection.Action == IntervalMouseAction.None)
+                return;
+
+            Children.Remove(SelectedImage);
+
+            var selectedGroup = new GeometryGroup();
+            selectedGroup.Children.Add(new RectangleGeometry(new Rect
+            {
+                X = MouseSelection.Item.X,
+                Y = MouseSelection.Item.Y,
+                Width = MouseSelection.Item.Width,
+                Height = MouseSelection.Item.Height,
+            }));
+
+            SelectedImage = selectedGroup.CreateImage(SelectedItemBrush, LinePen);
+
+            Children.Add(SelectedImage);
+
+            SetLeft(SelectedImage, selectedGroup.Children[0].Bounds.X);
+            SetTop(SelectedImage, 0);
+        }
 
         /// <summary>
         /// Adds a geometryGroup-based image to this canvas if it is not an empty shape.
