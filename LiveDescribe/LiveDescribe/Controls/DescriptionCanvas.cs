@@ -99,8 +99,6 @@ namespace LiveDescribe.Controls
             AddImageToCanvas(ref SelectedImage, selectedItemGroup, SelectedItemBrush);
         }
 
-
-
         protected override sealed void SetBrushes()
         {
             _regularDescriptionBrush = new SolidColorBrush(Settings.Default.ColourScheme.RegularDescriptionColour);
@@ -160,7 +158,7 @@ namespace LiveDescribe.Controls
         {
             base.OnMouseMove(e);
 
-            if (MouseSelection.Action != IntervalMouseAction.Dragging)
+            if (MouseSelection.Action != IntervalMouseAction.Dragging || MouseSelection.Item.LockedInPlace)
                 return;
 
             var mousePos = e.GetPosition(this);

@@ -262,13 +262,15 @@ namespace LiveDescribe.Controls
         protected override void OnMouseMove(MouseEventArgs e)
         {
             base.OnMouseMove(e);
+
+            if (MouseSelection.Action == IntervalMouseAction.None || MouseSelection.Item.LockedInPlace)
+                return;
+
             var mousePos = e.GetPosition(this);
             double startTime;
 
             switch (MouseSelection.Action)
             {
-                case IntervalMouseAction.None:
-                    return;
                 case IntervalMouseAction.Dragging:
                     //Ensure that the space can not be moved to an invalid time.
                     startTime = BoundBetween(0, XPosToMilliseconds(mousePos.X) - MouseSelection.MouseClickTimeDifference,

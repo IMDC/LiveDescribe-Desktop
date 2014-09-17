@@ -25,7 +25,15 @@ namespace LiveDescribe.Controls
         protected const double MinIntervalDurationMsec = 300;
 
 
-        #region Properties
+        #region Fields and Properties
+
+        /// <summary>
+        /// The image that displays the currently selected image. This is implemented as a
+        /// reference variable and not a property so that it can be passed to the AddImageToCanvas
+        /// method using the ref keyword.
+        /// </summary>
+        protected Image SelectedImage;
+
         /// <summary>
         /// The leftmost pixel of the canvas is visible to the user.
         /// </summary>
@@ -50,13 +58,6 @@ namespace LiveDescribe.Controls
         /// The brush to paint the currently selected item with.
         /// </summary>
         protected Brush SelectedItemBrush { get; set; }
-
-        /// <summary>
-        /// The image that displays the currently selected image. This is implemented as a
-        /// reference variable and not a property so that it can be passed to the AddImageToCanvas
-        /// method using the ref keyword.
-        /// </summary>
-        protected Image SelectedImage;
 
         public IntervalMouseAction MouseAction
         {
