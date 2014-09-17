@@ -87,7 +87,7 @@ namespace LiveDescribe.Controls
         /// Draws the selectedItem image based off of mouse selection. Call this method to only
         /// draw the currently selected interval.
         /// </summary>
-        public void DrawMouseSelection()
+        public virtual void DrawMouseSelection()
         {
             if (MouseSelection.Action == IntervalMouseAction.None)
                 return;
@@ -129,6 +129,29 @@ namespace LiveDescribe.Controls
             for (int i = 1; i < geometryGroup.Children.Count; i++)
             {
                 minX = Math.Min(minX, geometryGroup.Children[i].Bounds.X);
+            }
+
+            Children.Add(image);
+
+            SetLeft(image, minX);
+            SetTop(image, 0);
+        }
+
+        protected void AddImageToCanvas(ref Image image, DrawingVisual drawingVisual)
+        {
+            if (drawingVisual == null || drawingVisual.Drawing == null || drawingVisual.Drawing.Children.Count < 1)
+                return;
+
+            var drawingImage = new DrawingImage(drawingVisual.Drawing);
+            drawingImage.Freeze();
+
+            image = new Image { Source = drawingImage };
+
+            //The Image has to be set to the smallest X value of the visible spaces.
+            double minX = drawingVisual.Drawing.Children[0].Bounds.X;
+            for (int i = 1; i < drawingVisual.Drawing.Children.Count; i++)
+            {
+                minX = Math.Min(minX, drawingVisual.Drawing.Children[i].Bounds.X);
             }
 
             Children.Add(image);

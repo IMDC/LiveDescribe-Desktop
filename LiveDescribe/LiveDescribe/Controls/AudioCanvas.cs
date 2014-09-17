@@ -148,42 +148,42 @@ namespace LiveDescribe.Controls
                 || _viewModel.Player.CurrentState == LiveDescribeVideoStates.VideoNotLoaded)
                 return;
 
-            Children.Remove(_completedSpaceImage);
             Children.Remove(_spaceImage);
-            Children.Remove(SelectedImage);
 
-            /* The way this method draws spaces is as follows: There are 3 different images drawn:
-             * 1 for the selected item if any, 1 for completed spaces, and one for any other spaces.
-             * They are drawn and overlayed on top of each other in the order: Completed -> Spaces
-             * -> SelectedSpace.
-             */
+            var drawingVisual = new DrawingVisual();
 
-            var spaceGroup = new GeometryGroup { FillRule = FillRule.Nonzero };
-            var completedSpaceGroup = new GeometryGroup { FillRule = FillRule.Nonzero };
-            var selectedGroup = new GeometryGroup();
-
-            double beginTimeMsec = XPosToMilliseconds(VisibleX);
-            double endTimeMsec = XPosToMilliseconds(VisibleX + VisibleWidth);
-
-            foreach (var space in _viewModel.Spaces)
+            using (DrawingContext dc = drawingVisual.RenderOpen())
             {
-                if (IsIntervalVisible(space, beginTimeMsec, endTimeMsec))
-                {
-                    var rect = new RectangleGeometry(new Rect(space.X, space.Y, space.Width, space.Height));
+                double beginTimeMsec = XPosToMilliseconds(VisibleX);
+                double endTimeMsec = XPosToMilliseconds(VisibleX + VisibleWidth);
 
-                    if (space.IsSelected)
-                        selectedGroup.Children.Add(rect);
-                    else if (space.IsRecordedOver)
-                        completedSpaceGroup.Children.Add(rect);
-                    else
-                        spaceGroup.Children.Add(rect);
+                foreach (var space in _viewModel.Spaces)
+                {
+                    if (IsIntervalVisible(space, beginTimeMsec, endTimeMsec))
+                    {
+                        var rect = new Rect(space.X, space.Y, space.Width, space.Height);
+
+                        Brush rectBrush;
+
+                        if (space.IsSelected)
+                            rectBrush = SelectedItemBrush;
+                        else if (space.IsRecordedOver)
+                            rectBrush = _completedSpaceBrush;
+                        else
+                            rectBrush = _spaceBrush;
+
+                        dc.DrawRectangle(rectBrush, LinePen, rect);
+                    }
                 }
             }
 
+            AddImageToCanvas(ref _spaceImage, drawingVisual);
+        }
 
-            AddImageToCanvas(ref _completedSpaceImage, completedSpaceGroup, _completedSpaceBrush);
-            AddImageToCanvas(ref _spaceImage, spaceGroup, _spaceBrush);
-            AddImageToCanvas(ref SelectedImage, selectedGroup, SelectedItemBrush);
+        public override void DrawMouseSelection()
+        {
+            //For now, just redraw all the spaces again.
+            DrawSpaces();
         }
 
         /// <summary>
