@@ -408,7 +408,7 @@ namespace LiveDescribe.View
             description.PropertyChanged += (sender, args) =>
             {
                 if (args.PropertyName == "IsSelected")
-                    DescriptionCanvas.Draw();
+                    Dispatcher.Invoke(() => DescriptionCanvas.Draw());
             };
 
             AddIntervalEventHandlers(description);
@@ -445,7 +445,7 @@ namespace LiveDescribe.View
             space.PropertyChanged += (sender, args) =>
             {
                 if (args.PropertyName == "IsSelected" || args.PropertyName == "IsRecordedOver")
-                    AudioCanvas.DrawSpaces();
+                    Dispatcher.Invoke(() => AudioCanvas.DrawSpaces());
             };
 
             AddIntervalEventHandlers(space);
