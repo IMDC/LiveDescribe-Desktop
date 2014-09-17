@@ -6,6 +6,7 @@ using LiveDescribe.Resources.UiStrings;
 using LiveDescribe.Utilities;
 using LiveDescribe.ViewModel;
 using System;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
@@ -377,6 +378,13 @@ namespace LiveDescribe.Controls
                 oldViewModel.Spaces.CollectionChanged -= CollectionChanged_TrackPropertyListeners;
                 oldViewModel.RequestSpaceTime -= ViewModelOnRequestSpaceTime;
             }
+        }
+
+        protected override void CollectionChanged_TrackPropertyListeners(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            base.CollectionChanged_TrackPropertyListeners(sender, e);
+
+            DrawSpaces();
         }
 
         /// <summary>

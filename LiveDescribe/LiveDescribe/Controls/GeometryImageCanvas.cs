@@ -142,6 +142,8 @@ namespace LiveDescribe.Controls
             if (drawingVisual == null || drawingVisual.Drawing == null || drawingVisual.Drawing.Children.Count < 1)
                 return;
 
+            drawingVisual.Drawing.Freeze();
+
             var drawingImage = new DrawingImage(drawingVisual.Drawing);
             drawingImage.Freeze();
 
@@ -229,7 +231,7 @@ namespace LiveDescribe.Controls
             }
         }
 
-        protected void CollectionChanged_TrackPropertyListeners(object sender, NotifyCollectionChangedEventArgs e)
+        protected virtual void CollectionChanged_TrackPropertyListeners(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Add)
             {

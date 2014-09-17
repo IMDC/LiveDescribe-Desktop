@@ -3,6 +3,7 @@ using LiveDescribe.Model;
 using LiveDescribe.Properties;
 using LiveDescribe.ViewModel;
 using System;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -206,6 +207,12 @@ namespace LiveDescribe.Controls
             }
         }
 
+        protected override void CollectionChanged_TrackPropertyListeners(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            base.CollectionChanged_TrackPropertyListeners(sender, e);
+
+            Draw();
+        }
         #endregion
     }
 }
