@@ -11,6 +11,10 @@ namespace LiveDescribe.Controls
 {
     public abstract class GeometryImageCanvas : Canvas
     {
+        #region Constants
+        /// <summary>
+        /// The pen used to draw the borders of descriptions, spaces, etc.
+        /// </summary>
         protected static readonly Pen LinePen = CreateLinePen();
 
         /// <summary>
@@ -23,7 +27,7 @@ namespace LiveDescribe.Controls
         /// Smallest amound of time that an interval can be.
         /// </summary>
         protected const double MinIntervalDurationMsec = 300;
-
+        #endregion
 
         #region Fields and Properties
 
@@ -73,6 +77,7 @@ namespace LiveDescribe.Controls
             return linePen;
         }
 
+        #region Drawing Methods
         /// <summary>
         /// Draws all the contents of the canvas.
         /// </summary>
@@ -169,6 +174,7 @@ namespace LiveDescribe.Controls
             VisibleX = visibleX;
             VisibleWidth = visibleWidth;
         }
+        #endregion
 
         /// <summary>
         /// Returns whether the given value is inclusively between two boundaries.
