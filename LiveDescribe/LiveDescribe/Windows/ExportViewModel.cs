@@ -1,9 +1,9 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using LiveDescribe.Controls.UserControls;
 using LiveDescribe.Factories;
 using LiveDescribe.Model;
 using LiveDescribe.Utilities;
-using LiveDescribe.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

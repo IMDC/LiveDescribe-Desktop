@@ -7,8 +7,8 @@
     xmlns:s="clr-namespace:LiveDescribe.Resources.UiStrings"
     xmlns:controls="clr-namespace:LiveDescribe.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:viewModel="clr-namespace:LiveDescribe.ViewModel"
     xmlns:windows="clr-namespace:LiveDescribe.Windows"
+    xmlns:userControls="clr-namespace:LiveDescribe.Controls.UserControls"
     mc:Ignorable="d"
     Title="{x:Static s:UiStrings.Window_SpaceRecordingTitle}"
     Height="500"
@@ -68,9 +68,9 @@
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
 
-        <controls:CountdownControl
+        <userControls:CountdownControl
             x:Name="CountdownControl"
-            DataContext="{Binding CountdownControlViewModel}"
+            DataContext="{Binding CountdownViewModel}"
             Grid.ZIndex="-1"
             Grid.ColumnSpan="6"
             Grid.RowSpan="7" />
@@ -219,7 +219,7 @@
                     <Binding
                         Path="Recorder.IsRecording" />
                     <Binding
-                        Path="CountdownControlViewModel.IsCountingDown" />
+                        Path="CountdownViewModel.IsCountingDown" />
                 </MultiBinding>
             </Button.Content>
         </Button>

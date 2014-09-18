@@ -6,8 +6,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:s="clr-namespace:LiveDescribe.Resources.UiStrings"
     xmlns:controls="clr-namespace:LiveDescribe.Controls"
-    xmlns:viewModel="clr-namespace:LiveDescribe.ViewModel"
     xmlns:windows="clr-namespace:LiveDescribe.Windows"
+    xmlns:canvases="clr-namespace:LiveDescribe.Controls.Canvases"
+    xmlns:userControls="clr-namespace:LiveDescribe.Controls.UserControls"
     mc:Ignorable="d"
     Title="{Binding WindowTitle}"
     Height="650"
@@ -35,10 +36,10 @@
             Key="T"
             Modifiers="Control" />
         <KeyBinding
-            Command="{Binding MediaControlViewModel.PlayPauseButtonClickCommand}"
+            Command="{Binding MediaViewModel.PlayPauseButtonClickCommand}"
             Key="Space" />
         <KeyBinding
-            Command="{Binding DescriptionInfoTabViewModel.DeleteSelectedSpaceOrDescription}"
+            Command="{Binding IntervalInfoListViewModel.DeleteSelectedSpaceOrDescription}"
             Key="Delete" />
         <KeyBinding
             Command="{Binding UndoRedoManager.UndoCommand}"
@@ -51,7 +52,7 @@
     </Window.InputBindings>
 
     <Grid>
-        <controls:LoadingControl
+        <userControls:LoadingControl
             x:Name="LoadingControl"
             DataContext="{Binding LoadingViewModel}"
             Grid.ZIndex="-1" />
@@ -193,23 +194,23 @@
                     Grid.Row="8"
                     Grid.RowSpan="5">
 
-                    <controls:MarkingSpacesControl
+                    <userControls:MarkingSpacesControl
                         Margin="0,20,0,0"
-                        DataContext="{Binding MarkingSpacesControlViewModel}" />
+                        DataContext="{Binding MarkingSpacesViewModel}" />
                 </StackPanel>
 
-                <controls:MediaControl
+                <userControls:MediaControl
                     x:Name="MediaControl"
-                    DataContext="{Binding MediaControlViewModel}"
+                    DataContext="{Binding MediaViewModel}"
                     Grid.Row="0"
                     Grid.Column="0"
                     Grid.RowSpan="8"
                     Grid.ColumnSpan="4" />
 
                 <!--Description Information-->
-                <controls:SpaceAndDescriptionsTabControl
+                <userControls:IntervalInfoListControl
                     x:Name="SpaceAndDescriptionsTabControl"
-                    DataContext="{Binding DescriptionInfoTabViewModel}"
+                    DataContext="{Binding IntervalInfoListViewModel}"
                     Grid.Row="0"
                     Grid.Column="4"
                     Grid.ColumnSpan="3"
@@ -245,10 +246,10 @@
                                 Height="20"
                                 BorderBrush="Black"
                                 BorderThickness="1">
-                                <controls:NumberLineCanvas
+                                <canvases:NumberLineCanvas
                                     HorizontalAlignment="Left"
                                     MouseDown="NumberTimeline_OnMouseDown"
-                                    DataContext="{Binding NumberLineCanvasViewModel}"
+                                    DataContext="{Binding NumberLineViewModel}"
                                     x:Name="NumberLineCanvas" />
                             </Border>
 
@@ -257,7 +258,7 @@
                                 Grid.RowSpan="2"
                                 BorderThickness="1"
                                 BorderBrush="Black">
-                                <controls:AudioCanvas
+                                <canvases:AudioCanvas
                                     x:Name="AudioCanvas"
                                     DataContext="{Binding AudioCanvasViewModel}" />
                             </Border>
@@ -267,16 +268,16 @@
                                 Grid.Row="3"
                                 BorderThickness="1"
                                 BorderBrush="Black">
-                                <controls:DescriptionCanvas
+                                <canvases:DescriptionCanvas
                                     x:Name="DescriptionCanvas"
                                     DataContext="{Binding DescriptionCanvasViewModel}" />
                             </Border>
 
-                            <controls:MarkerControl
+                            <userControls:MarkerControl
                                 x:Name="MarkerControl"
                                 Grid.Row="0"
                                 Grid.RowSpan="4"
-                                DataContext="{Binding MediaControlViewModel}" />
+                                DataContext="{Binding MediaViewModel}" />
                         </Grid>
                     </ScrollViewer>
                 </Border>

@@ -1,5 +1,7 @@
 ﻿using GalaSoft.MvvmLight.Threading;
 using LiveDescribe.Controls;
+using LiveDescribe.Controls.Canvases;
+using LiveDescribe.Controls.UserControls;
 using LiveDescribe.Extensions;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Managers;
@@ -7,7 +9,6 @@ using LiveDescribe.Model;
 using LiveDescribe.Properties;
 using LiveDescribe.Resources;
 using LiveDescribe.Resources.UiStrings;
-using LiveDescribe.ViewModel;
 using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -47,9 +48,9 @@ namespace LiveDescribe.Windows
         /// </summary>
         private double _canvasWidth;
         private double _videoDuration = -1;
-        private readonly MediaControlViewModel _mediaControlViewModel;
+        private readonly MediaViewModel _mediaViewModel;
         private readonly ProjectManager _projectManager;
-        private readonly DescriptionInfoTabViewModel _descriptionInfoTabViewModel;
+        private readonly IntervalInfoListViewModel _intervalInfoListViewModel;
         private readonly MainViewModel _mainViewModel;
         private readonly LiveDescribeMediaPlayer _videoMedia;
 
@@ -77,9 +78,9 @@ namespace LiveDescribe.Windows
             DataContext = mainWindowViewModel;
             _mainViewModel = mainWindowViewModel;
 
-            _mediaControlViewModel = mainWindowViewModel.MediaControlViewModel;
+            _mediaViewModel = mainWindowViewModel.MediaViewModel;
             _projectManager = mainWindowViewModel.ProjectManager;
-            _descriptionInfoTabViewModel = mainWindowViewModel.DescriptionInfoTabViewModel;
+            _intervalInfoListViewModel = mainWindowViewModel.IntervalInfoListViewModel;
 
             _marker = MarkerControl.Marker;
 
@@ -152,12 +153,12 @@ namespace LiveDescribe.Windows
             };
             #endregion
 
-            #region Event Listeners For MediaControlViewModel
+            #region Event Listeners For MediaViewModel
 
             //listens for VideoOpenedRequested event
             //this event only gets thrown when if the MediaFailed event doesn't occur
             //and as soon as the video is loaded when play is pressed
-            mainWindowViewModel.MediaControlViewModel.VideoOpenedRequested += (sender, e) =>
+            mainWindowViewModel.MediaViewModel.VideoOpenedRequested += (sender, e) =>
                 {
                     _videoDuration = _videoMedia.NaturalDuration.TimeSpan.TotalMilliseconds;
                     AudioCanvas.VideoDurationMsec = _videoDuration;
@@ -180,13 +181,13 @@ namespace LiveDescribe.Windows
                 };
 
             //captures the mouse when a mousedown request is sent to the Marker
-            mainWindowViewModel.MediaControlViewModel.OnMarkerMouseDownRequested += (sender, e) => _marker.CaptureMouse();
+            mainWindowViewModel.MediaViewModel.OnMarkerMouseDownRequested += (sender, e) => _marker.CaptureMouse();
 
             //updates the video position when the mouse is released on the Marker
-            mainWindowViewModel.MediaControlViewModel.OnMarkerMouseUpRequested += (sender, e) => _marker.ReleaseMouseCapture();
+            mainWindowViewModel.MediaViewModel.OnMarkerMouseUpRequested += (sender, e) => _marker.ReleaseMouseCapture();
 
             //updates the canvas and video position when the Marker is moved
-            mainWindowViewModel.MediaControlViewModel.OnMarkerMouseMoveRequested += (sender, e) =>
+            mainWindowViewModel.MediaViewModel.OnMarkerMouseMoveRequested += (sender, e) =>
                 {
                     if (!_marker.IsMouseCaptured) return;
 
@@ -232,7 +233,7 @@ namespace LiveDescribe.Windows
             DescriptionCanvas.MouseLeftButtonUp += (sender, args) =>
             {
                 if (DescriptionCanvas.MouseAction == IntervalMouseAction.None)
-                    _descriptionInfoTabViewModel.ClearSelection();
+                    _intervalInfoListViewModel.ClearSelection();
             };
             #endregion
 
@@ -246,7 +247,7 @@ namespace LiveDescribe.Windows
             AudioCanvas.MouseLeftButtonUp += (sender, args) =>
             {
                 if (AudioCanvas.MouseAction == IntervalMouseAction.None)
-                    _descriptionInfoTabViewModel.ClearSelection();
+                    _intervalInfoListViewModel.ClearSelection();
             };
             #endregion
 
@@ -346,7 +347,7 @@ namespace LiveDescribe.Windows
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 //execute the pause command because we want to pause the video when someone is clicking through the video
-                _mediaControlViewModel.PauseCommand.Execute();
+                _mediaViewModel.PauseCommand.Execute();
                 var xPosition = e.GetPosition(NumberLineCanvas).X;
                 var newValue = (xPosition / _canvasWidth) * _videoDuration;
 
@@ -374,12 +375,12 @@ namespace LiveDescribe.Windows
                 {
                     if (description.IsExtendedDescription)
                     {
-                        _descriptionInfoTabViewModel.SelectedExtendedDescription = description;
+                        _intervalInfoListViewModel.SelectedExtendedDescription = description;
                         SpaceAndDescriptionsTabControl.ExtendedDescriptionsListView.ScrollToCenterOfView(description);
                     }
                     else
                     {
-                        _descriptionInfoTabViewModel.SelectedRegularDescription = description;
+                        _intervalInfoListViewModel.SelectedRegularDescription = description;
                         SpaceAndDescriptionsTabControl.DescriptionsListView.ScrollToCenterOfView(description);
                     }
                 }
@@ -395,12 +396,12 @@ namespace LiveDescribe.Windows
 
                 if (description.IsExtendedDescription)
                 {
-                    _descriptionInfoTabViewModel.SelectedExtendedDescription = description;
+                    _intervalInfoListViewModel.SelectedExtendedDescription = description;
                     SpaceAndDescriptionsTabControl.ExtendedDescriptionsListView.ScrollToCenterOfView(description);
                 }
                 else
                 {
-                    _descriptionInfoTabViewModel.SelectedRegularDescription = description;
+                    _intervalInfoListViewModel.SelectedRegularDescription = description;
                     SpaceAndDescriptionsTabControl.DescriptionsListView.ScrollToCenterOfView(description);
                 }
             };
@@ -425,7 +426,7 @@ namespace LiveDescribe.Windows
             {
                 if (Mouse.LeftButton == MouseButtonState.Pressed)
                 {
-                    _descriptionInfoTabViewModel.SelectedSpace = space;
+                    _intervalInfoListViewModel.SelectedSpace = space;
                     SpaceAndDescriptionsTabControl.SpacesListView.ScrollToCenterOfView(space);
                 }
             };
@@ -438,7 +439,7 @@ namespace LiveDescribe.Windows
                 TimeLineScrollViewer.ScrollToHorizontalOffset((AudioCanvas.Width / _videoDuration) *
                                                               (space.StartInVideo - 1000));
 
-                _descriptionInfoTabViewModel.SelectedSpace = space;
+                _intervalInfoListViewModel.SelectedSpace = space;
                 SpaceAndDescriptionsTabControl.SpacesListView.ScrollToCenterOfView(space);
             };
 
@@ -469,7 +470,7 @@ namespace LiveDescribe.Windows
         private void UpdateMarkerPosition(double xPos)
         {
             Canvas.SetLeft(_marker, xPos);
-            _mediaControlViewModel.PositionTimeLabel = _videoMedia.Position;
+            _mediaViewModel.PositionTimeLabel = _videoMedia.Position;
         }
 
         /// <summary>
@@ -479,7 +480,7 @@ namespace LiveDescribe.Windows
         private void UpdateVideoPosition(int vidPos)
         {
             _videoMedia.Position = new TimeSpan(0, 0, 0, 0, vidPos);
-            _mediaControlViewModel.PositionTimeLabel = _videoMedia.Position;
+            _mediaViewModel.PositionTimeLabel = _videoMedia.Position;
         }
 
         /// <summary>

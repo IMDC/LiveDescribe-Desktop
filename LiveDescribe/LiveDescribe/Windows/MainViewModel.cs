@@ -1,6 +1,8 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Threading;
+using LiveDescribe.Controls.Canvases;
+using LiveDescribe.Controls.UserControls;
 using LiveDescribe.Events;
 using LiveDescribe.Extensions;
 using LiveDescribe.Factories;
@@ -10,7 +12,6 @@ using LiveDescribe.Model;
 using LiveDescribe.Properties;
 using LiveDescribe.Resources.UiStrings;
 using LiveDescribe.Utilities;
-using LiveDescribe.ViewModel;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using System;
@@ -43,16 +44,16 @@ namespace LiveDescribe.Windows
         #region Instance Variables
         private readonly ProjectManager _projectManager;
         private readonly Timer _descriptiontimer;
-        private readonly MediaControlViewModel _mediaControlViewModel;
+        private readonly MediaViewModel _mediaViewModel;
         private readonly PreferencesViewModel _preferences;
         private readonly LoadingViewModel _loadingViewModel;
-        private readonly MarkingSpacesControlViewModel _markingSpacesControlViewModel;
+        private readonly MarkingSpacesViewModel _markingSpacesViewModel;
         private readonly ILiveDescribePlayer _mediaVideo;
-        private readonly DescriptionInfoTabViewModel _descriptionInfoTabViewModel;
+        private readonly IntervalInfoListViewModel _intervalInfoListViewModel;
         private readonly AudioCanvasViewModel _audioCanvasViewModel;
         private readonly DescriptionCanvasViewModel _descriptionCanvasViewModel;
-        private readonly DescriptionRecordingControlViewModel _descriptionRecordingControlViewModel;
-        private readonly NumberLineCanvasViewModel _numberLineCanvasViewModel;
+        private readonly DescriptionRecordingViewModel _descriptionRecordingViewModel;
+        private readonly NumberLineViewModel _numberLineViewModel;
         private readonly UndoRedoManager _undoRedoManager;
         private Project _project;
         private string _windowTitle;
@@ -76,15 +77,15 @@ namespace LiveDescribe.Windows
             _undoRedoManager = new UndoRedoManager();
             _loadingViewModel = new LoadingViewModel(100, null, 0, false);
             _projectManager = new ProjectManager(_loadingViewModel, _undoRedoManager);
-            _descriptionRecordingControlViewModel = new DescriptionRecordingControlViewModel(mediaVideo,
+            _descriptionRecordingViewModel = new DescriptionRecordingViewModel(mediaVideo,
                 _projectManager);
-            _mediaControlViewModel = new MediaControlViewModel(mediaVideo, _projectManager);
+            _mediaViewModel = new MediaViewModel(mediaVideo, _projectManager);
             _preferences = new PreferencesViewModel();
-            _descriptionInfoTabViewModel = new DescriptionInfoTabViewModel(_projectManager, _descriptionRecordingControlViewModel);
-            _markingSpacesControlViewModel = new MarkingSpacesControlViewModel(_descriptionInfoTabViewModel, mediaVideo, _undoRedoManager);
+            _intervalInfoListViewModel = new IntervalInfoListViewModel(_projectManager, _descriptionRecordingViewModel);
+            _markingSpacesViewModel = new MarkingSpacesViewModel(_intervalInfoListViewModel, mediaVideo, _undoRedoManager);
             _audioCanvasViewModel = new AudioCanvasViewModel(mediaVideo, _projectManager, _undoRedoManager);
             _descriptionCanvasViewModel = new DescriptionCanvasViewModel(mediaVideo, _projectManager, _undoRedoManager);
-            _numberLineCanvasViewModel = new NumberLineCanvasViewModel(mediaVideo);
+            _numberLineViewModel = new NumberLineViewModel(mediaVideo);
 
             _mediaVideo = mediaVideo;
 
@@ -94,7 +95,7 @@ namespace LiveDescribe.Windows
                 try
                 {
                     DispatcherHelper.UIDispatcher.Invoke(() =>
-                        _mediaControlViewModel.ResumeFromDescription(e.Value));
+                        _mediaViewModel.ResumeFromDescription(e.Value));
                 }
                 catch (TaskCanceledException exception)
                 {
@@ -230,7 +231,7 @@ namespace LiveDescribe.Windows
                 canExecute: () => _projectManager.HasProjectLoaded,
                 execute: () =>
                 {
-                    var spaces = AudioAnalyzer.FindSpaces(_mediaControlViewModel.Waveform);
+                    var spaces = AudioAnalyzer.FindSpaces(_mediaViewModel.Waveform);
                     _projectManager.Spaces.AddRange(spaces);
                 }
             );
@@ -241,7 +242,7 @@ namespace LiveDescribe.Windows
                 {
                     var saveFileDialog = new SaveFileDialog
                     {
-                        FileName = Path.GetFileNameWithoutExtension(_mediaControlViewModel.Path),
+                        FileName = Path.GetFileNameWithoutExtension(_mediaViewModel.Path),
                         Filter = UiStrings.SaveFileDialog_ExportToSrt
                     };
 
@@ -257,7 +258,7 @@ namespace LiveDescribe.Windows
                 {
                     var saveFileDialog = new SaveFileDialog
                     {
-                        FileName = Path.GetFileNameWithoutExtension(_mediaControlViewModel.Path),
+                        FileName = Path.GetFileNameWithoutExtension(_mediaViewModel.Path),
                         Filter = UiStrings.SaveFileDialog_ExportToSrt
                     };
 
@@ -283,8 +284,8 @@ namespace LiveDescribe.Windows
             _descriptiontimer.Elapsed += Play_Tick;
             _descriptiontimer.AutoReset = true;
 
-            #region MediaControlViewModel Events
-            _mediaControlViewModel.PlayRequested += (sender, e) =>
+            #region MediaViewModel Events
+            _mediaViewModel.PlayRequested += (sender, e) =>
             {
                 _mediaVideo.Play();
                 _descriptiontimer.Start();
@@ -292,7 +293,7 @@ namespace LiveDescribe.Windows
                 OnPlayRequested(sender, e);
             };
 
-            _mediaControlViewModel.PauseRequested += (sender, e) =>
+            _mediaViewModel.PauseRequested += (sender, e) =>
             {
                 _mediaVideo.Pause();
                 _descriptiontimer.Stop();
@@ -302,16 +303,16 @@ namespace LiveDescribe.Windows
                 OnPauseRequested(sender, e);
             };
 
-            _mediaControlViewModel.OnPausedForExtendedDescription += (sender, e) =>
+            _mediaViewModel.OnPausedForExtendedDescription += (sender, e) =>
             {
                 _mediaVideo.Pause();
                 _descriptiontimer.Stop();
                 CommandManager.InvalidateRequerySuggested();
             };
 
-            _mediaControlViewModel.MuteRequested += OnMuteRequested;
+            _mediaViewModel.MuteRequested += OnMuteRequested;
 
-            _mediaControlViewModel.MediaEndedEvent += (sender, e) =>
+            _mediaViewModel.MediaEndedEvent += (sender, e) =>
             {
                 _descriptiontimer.Stop();
                 _mediaVideo.Stop();
@@ -321,7 +322,7 @@ namespace LiveDescribe.Windows
 
             #region Property Changed Events
 
-            _mediaControlViewModel.PropertyChanged += PropertyChangedHandler;
+            _mediaViewModel.PropertyChanged += PropertyChangedHandler;
 
             //Update window title based on project name
             PropertyChanged += (sender, args) =>
@@ -337,7 +338,7 @@ namespace LiveDescribe.Windows
             {
                 _project = args.Value;
 
-                _mediaControlViewModel.LoadVideo(_project.Files.Video);
+                _mediaViewModel.LoadVideo(_project.Files.Video);
 
                 SetWindowTitle();
             };
@@ -447,9 +448,9 @@ namespace LiveDescribe.Windows
             get { return _projectManager; }
         }
 
-        public MediaControlViewModel MediaControlViewModel
+        public MediaViewModel MediaViewModel
         {
-            get { return _mediaControlViewModel; }
+            get { return _mediaViewModel; }
         }
 
         public PreferencesViewModel PreferencesViewModel
@@ -462,14 +463,14 @@ namespace LiveDescribe.Windows
             get { return _loadingViewModel; }
         }
 
-        public DescriptionInfoTabViewModel DescriptionInfoTabViewModel
+        public IntervalInfoListViewModel IntervalInfoListViewModel
         {
-            get { return _descriptionInfoTabViewModel; }
+            get { return _intervalInfoListViewModel; }
         }
 
-        public MarkingSpacesControlViewModel MarkingSpacesControlViewModel
+        public MarkingSpacesViewModel MarkingSpacesViewModel
         {
-            get { return _markingSpacesControlViewModel; }
+            get { return _markingSpacesViewModel; }
         }
 
         public AudioCanvasViewModel AudioCanvasViewModel
@@ -482,9 +483,9 @@ namespace LiveDescribe.Windows
             get { return _descriptionCanvasViewModel; }
         }
 
-        public DescriptionRecordingControlViewModel DescriptionRecordingControlViewModel
+        public DescriptionRecordingViewModel DescriptionRecordingViewModel
         {
-            get { return _descriptionRecordingControlViewModel; }
+            get { return _descriptionRecordingViewModel; }
         }
 
         public UndoRedoManager UndoRedoManager
@@ -492,9 +493,9 @@ namespace LiveDescribe.Windows
             get { return _undoRedoManager; }
         }
 
-        public NumberLineCanvasViewModel NumberLineCanvasViewModel
+        public NumberLineViewModel NumberLineViewModel
         {
-            get { return _numberLineCanvasViewModel; }
+            get { return _numberLineViewModel; }
         }
 
         #endregion
@@ -548,12 +549,12 @@ namespace LiveDescribe.Windows
             {
                 DispatcherHelper.UIDispatcher.Invoke(() =>
                 {
-                    // _mediaControlViewModel.PauseCommand.Execute(this);
-                    _mediaControlViewModel.PauseForExtendedDescriptionCommand.Execute(this);
+                    // _mediaViewModel.PauseCommand.Execute(this);
+                    _mediaViewModel.PauseForExtendedDescriptionCommand.Execute(this);
                     Log.Info("Playing Extended Description");
                 });
 
-                _descriptionInfoTabViewModel.SelectedExtendedDescription = description;
+                _intervalInfoListViewModel.SelectedExtendedDescription = description;
             }
             else
             {
@@ -561,18 +562,18 @@ namespace LiveDescribe.Windows
                 {
                     Log.Info("Playing Regular Description");
                     //Reduce volume on the graphics thread to avoid an invalid operation exception.
-                    DispatcherHelper.UIDispatcher.Invoke(() => _mediaControlViewModel.ReduceVolume());
+                    DispatcherHelper.UIDispatcher.Invoke(() => _mediaViewModel.ReduceVolume());
                 }
 
                 _lastRegularDescriptionPlayed = description;
-                _descriptionInfoTabViewModel.SelectedRegularDescription = description;
+                _intervalInfoListViewModel.SelectedRegularDescription = description;
             }
         }
 
         private void DescriptionFileNotFound(Description d)
         {
             //Pause from the UI thread.
-            DispatcherHelper.UIDispatcher.Invoke(() => _mediaControlViewModel.PauseCommand.Execute());
+            DispatcherHelper.UIDispatcher.Invoke(() => _mediaViewModel.PauseCommand.Execute());
 
             //TODO: Delete description if not found, or ask for file location?
             Log.ErrorFormat("The description file could not be found at {0}", d.AudioFile);
@@ -655,8 +656,8 @@ namespace LiveDescribe.Windows
         {
             try
             {
-                if (_descriptionRecordingControlViewModel.Recorder.IsRecording)
-                    _descriptionRecordingControlViewModel.Recorder.StopRecording();
+                if (_descriptionRecordingViewModel.Recorder.IsRecording)
+                    _descriptionRecordingViewModel.Recorder.StopRecording();
 
                 _descriptiontimer.Stop();
                 DescriptionPlayer.Dispose();

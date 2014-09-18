@@ -1,9 +1,10 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using LiveDescribe.Controls;
+using LiveDescribe.Controls.UserControls;
 using LiveDescribe.Extensions;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Properties;
-using LiveDescribe.ViewModel.Controls;
 using System;
 using System.ComponentModel;
 using System.Windows.Input;
@@ -19,9 +20,9 @@ namespace LiveDescribe.Windows
 
         #region Instance Variables
         private bool _settingsChanged;
-        private readonly AudioSourceSettingsControlViewModel _audioSourceSettingsControlViewModel;
-        private readonly ColourSchemeSettingsControlViewModel _colourSchemeSettingsControlViewModel;
-        private readonly GeneralSettingsControlViewModel _generalSettingsControlViewModel;
+        private readonly AudioSourceSettingsViewModel _audioSourceSettingsViewModel;
+        private readonly ColourSchemeSettingsViewModel _colourSchemeSettingsViewModel;
+        private readonly GeneralSettingsViewModel _generalSettingsViewModel;
         #endregion
 
         #region Events
@@ -31,14 +32,14 @@ namespace LiveDescribe.Windows
         #region Constructors
         public PreferencesViewModel()
         {
-            _audioSourceSettingsControlViewModel = new AudioSourceSettingsControlViewModel();
-            _audioSourceSettingsControlViewModel.PropertyChanged += CheckForViewModelSettingsChanged;
+            _audioSourceSettingsViewModel = new AudioSourceSettingsViewModel();
+            _audioSourceSettingsViewModel.PropertyChanged += CheckForViewModelSettingsChanged;
 
-            _colourSchemeSettingsControlViewModel = new ColourSchemeSettingsControlViewModel();
-            _colourSchemeSettingsControlViewModel.PropertyChanged += CheckForViewModelSettingsChanged;
+            _colourSchemeSettingsViewModel = new ColourSchemeSettingsViewModel();
+            _colourSchemeSettingsViewModel.PropertyChanged += CheckForViewModelSettingsChanged;
 
-            _generalSettingsControlViewModel = new GeneralSettingsControlViewModel();
-            _generalSettingsControlViewModel.PropertyChanged += CheckForViewModelSettingsChanged;
+            _generalSettingsViewModel = new GeneralSettingsViewModel();
+            _generalSettingsViewModel.PropertyChanged += CheckForViewModelSettingsChanged;
 
             RetrieveApplicationSettings();
 
@@ -87,19 +88,19 @@ namespace LiveDescribe.Windows
             get { return _settingsChanged; }
         }
 
-        public ColourSchemeSettingsControlViewModel ColourSchemeSettingsControlViewModel
+        public ColourSchemeSettingsViewModel ColourSchemeSettingsViewModel
         {
-            get { return _colourSchemeSettingsControlViewModel; }
+            get { return _colourSchemeSettingsViewModel; }
         }
 
-        public AudioSourceSettingsControlViewModel AudioSourceSettingsControlViewModel
+        public AudioSourceSettingsViewModel AudioSourceSettingsViewModel
         {
-            get { return _audioSourceSettingsControlViewModel; }
+            get { return _audioSourceSettingsViewModel; }
         }
 
-        public GeneralSettingsControlViewModel GeneralSettingsControlViewModel
+        public GeneralSettingsViewModel GeneralSettingsViewModel
         {
-            get { return _generalSettingsControlViewModel; }
+            get { return _generalSettingsViewModel; }
         }
 
         #endregion
@@ -112,9 +113,9 @@ namespace LiveDescribe.Windows
         /// </summary>
         public void RetrieveApplicationSettings()
         {
-            AudioSourceSettingsControlViewModel.RetrieveApplicationSettings();
-            ColourSchemeSettingsControlViewModel.RetrieveApplicationSettings();
-            GeneralSettingsControlViewModel.RetrieveApplicationSettings();
+            AudioSourceSettingsViewModel.RetrieveApplicationSettings();
+            ColourSchemeSettingsViewModel.RetrieveApplicationSettings();
+            GeneralSettingsViewModel.RetrieveApplicationSettings();
 
             SettingsChanged = false;
             Log.Info("Application settings loaded");
@@ -122,9 +123,9 @@ namespace LiveDescribe.Windows
 
         public void SetApplicationSettings()
         {
-            AudioSourceSettingsControlViewModel.SetApplicationSettings();
-            ColourSchemeSettingsControlViewModel.SetApplicationSettings();
-            GeneralSettingsControlViewModel.SetApplicationSettings();
+            AudioSourceSettingsViewModel.SetApplicationSettings();
+            ColourSchemeSettingsViewModel.SetApplicationSettings();
+            GeneralSettingsViewModel.SetApplicationSettings();
 
             Settings.Default.Save();
             SettingsChanged = false;
@@ -141,7 +142,7 @@ namespace LiveDescribe.Windows
                     SettingsChanged = true;
                     break;
                 case "ColourScheme":
-                    ColourSchemeSettingsControlViewModel.ColourScheme.PropertyChanged += (csSender, csArgs) =>
+                    ColourSchemeSettingsViewModel.ColourScheme.PropertyChanged += (csSender, csArgs) =>
                     {
                         if (args.PropertyName.Contains("Colour"))
                             SettingsChanged = true;
@@ -153,7 +154,7 @@ namespace LiveDescribe.Windows
 
         public void CloseCleanup()
         {
-            AudioSourceSettingsControlViewModel.StopForClose();
+            AudioSourceSettingsViewModel.StopForClose();
         }
         #endregion
 

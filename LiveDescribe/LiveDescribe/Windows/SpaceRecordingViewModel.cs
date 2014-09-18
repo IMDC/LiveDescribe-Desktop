@@ -1,16 +1,16 @@
-﻿using System;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Windows.Input;
-using System.Windows.Threading;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using LiveDescribe.Controls.UserControls;
 using LiveDescribe.Factories;
 using LiveDescribe.Model;
 using LiveDescribe.Resources.UiStrings;
 using LiveDescribe.Utilities;
-using LiveDescribe.ViewModel;
 using NAudio;
+using System;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace LiveDescribe.Windows
 {
@@ -85,8 +85,8 @@ namespace LiveDescribe.Windows
 
             _stopwatch = new Stopwatch();
 
-            CountdownControlViewModel = new CountdownControlViewModel();
-            CountdownControlViewModel.CountdownFinished += (sender, args) => StartRecording();
+            CountdownViewModel = new CountdownViewModel();
+            CountdownViewModel.CountdownFinished += (sender, args) => StartRecording();
 
             SetWpmValuesBasedOnSpaceText();
         }
@@ -102,7 +102,7 @@ namespace LiveDescribe.Windows
                 {
                     if (_recorder.IsRecording)
                         StopRecording();
-                    else if (CountdownControlViewModel.IsCountingDown)
+                    else if (CountdownViewModel.IsCountingDown)
                         CancelCountdown();
                     else
                         StartCountdown();
@@ -113,7 +113,7 @@ namespace LiveDescribe.Windows
                     Description != null
                         //&& _player.CanPlay(_description)
                     && !_recorder.IsRecording
-                    && !CountdownControlViewModel.IsCountingDown,
+                    && !CountdownViewModel.IsCountingDown,
                 execute: () =>
                 {
                     if (_player.IsPlaying)
@@ -126,7 +126,7 @@ namespace LiveDescribe.Windows
                 canExecute: () =>
                     Description != null
                     && !_recorder.IsRecording
-                    && !CountdownControlViewModel.IsCountingDown,
+                    && !CountdownViewModel.IsCountingDown,
                 execute: () =>
                 {
                     if (SpaceHasText)
@@ -293,7 +293,7 @@ namespace LiveDescribe.Windows
             get { return _player; }
         }
 
-        public CountdownControlViewModel CountdownControlViewModel { private set; get; }
+        public CountdownViewModel CountdownViewModel { private set; get; }
         #endregion
 
         #region Methods
@@ -388,14 +388,14 @@ namespace LiveDescribe.Windows
         private void StartCountdown()
         {
             if (Recorder.MicrophoneAvailable())
-                CountdownControlViewModel.StartCountdown();
+                CountdownViewModel.StartCountdown();
             else
                 MessageBoxFactory.ShowError(UiStrings.MessageBox_NoMicrophoneFoundError);
         }
 
         private void CancelCountdown()
         {
-            CountdownControlViewModel.CancelCountdown();
+            CountdownViewModel.CancelCountdown();
         }
 
         protected override void RaisePropertyChanged([CallerMemberName]string propertyName = null)
@@ -437,8 +437,8 @@ namespace LiveDescribe.Windows
 
         public void StopEverything()
         {
-            if (CountdownControlViewModel.IsCountingDown)
-                CountdownControlViewModel.CancelCountdown();
+            if (CountdownViewModel.IsCountingDown)
+                CountdownViewModel.CancelCountdown();
 
             if (Recorder.IsRecording)
                 Recorder.StopRecording();

@@ -6,9 +6,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:s="clr-namespace:LiveDescribe.Resources.UiStrings"
     xmlns:controls="clr-namespace:LiveDescribe.Controls"
-    xmlns:viewModel="clr-namespace:LiveDescribe.ViewModel"
-    xmlns:controls1="clr-namespace:LiveDescribe.ViewModel.Controls"
     xmlns:windows="clr-namespace:LiveDescribe.Windows"
+    xmlns:userControls="clr-namespace:LiveDescribe.Controls.UserControls"
     mc:Ignorable="d"
     Title="{x:Static s:UiStrings.Window_PreferencesTitle}"
     Height="500"
@@ -58,22 +57,22 @@
             <TabControl>
                 <TabItem
                     Header="{x:Static s:UiStrings.Header_General}">
-                    <controls:GeneralSettingsControl
-                        DataContext="{Binding GeneralSettingsControlViewModel}" />
+                    <userControls:GeneralSettingsControl
+                        DataContext="{Binding GeneralSettingsViewModel}" />
                 </TabItem>
 
                 <!--Colour Tab-->
                 <TabItem
                     Header="{x:Static s:UiStrings.Header_ColourSettings}">
-                    <controls1:ColourSchemeSettingsControl
-                        DataContext="{Binding ColourSchemeSettingsControlViewModel}" />
+                    <userControls:ColourSchemeSettingsControl
+                        DataContext="{Binding ColourSchemeSettingsViewModel}" />
                 </TabItem>
 
                 <!--Mic Tab-->
                 <TabItem
                     Header="{x:Static s:UiStrings.Header_AudioSource}">
-                    <controls:AudioSourceSettingsControl
-                        DataContext="{Binding AudioSourceSettingsControlViewModel}" />
+                    <userControls:AudioSourceSettingsControl
+                        DataContext="{Binding AudioSourceSettingsViewModel}" />
                 </TabItem>
             </TabControl>
         </DockPanel>

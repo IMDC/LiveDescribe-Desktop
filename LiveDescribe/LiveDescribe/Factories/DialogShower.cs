@@ -1,6 +1,7 @@
-﻿using LiveDescribe.Managers;
+﻿using LiveDescribe.Controls;
+using LiveDescribe.Controls.UserControls;
+using LiveDescribe.Managers;
 using LiveDescribe.Model;
-using LiveDescribe.ViewModel;
 using LiveDescribe.Windows;
 using System.Collections.Generic;
 using ExportWindow = LiveDescribe.Windows.ExportWindow;
