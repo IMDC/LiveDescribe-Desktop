@@ -174,8 +174,8 @@ namespace LiveDescribe.Controls
         protected bool IsIntervalVisible(IDescribableInterval interval, double visibleBeginMsec, double visibleEndMsec)
         {
             return (visibleBeginMsec <= interval.StartInVideo && interval.StartInVideo <= visibleEndMsec)
-                   || (visibleBeginMsec <= interval.EndInVideo && interval.EndInVideo <= visibleEndMsec)
-                   || (interval.StartInVideo <= visibleBeginMsec && visibleEndMsec <= interval.EndInVideo);
+                || (visibleBeginMsec <= interval.EndInVideo && interval.EndInVideo <= visibleEndMsec)
+                || (interval.StartInVideo <= visibleBeginMsec && visibleEndMsec <= interval.EndInVideo);
         }
 
         /// <summary>

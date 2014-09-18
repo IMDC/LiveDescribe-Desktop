@@ -203,7 +203,7 @@ namespace LiveDescribe.Controls
 
             if (oldViewModel != null)
             {
-                _viewModel.AllDescriptions.CollectionChanged -= CollectionChanged_TrackPropertyListeners;
+                oldViewModel.AllDescriptions.CollectionChanged -= CollectionChanged_TrackPropertyListeners;
             }
         }
 

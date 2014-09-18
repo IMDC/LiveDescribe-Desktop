@@ -25,7 +25,6 @@ namespace LiveDescribe.Controls
         private Brush _completedSpaceBrush;
         private Brush _spaceBrush;
         private Image _waveformImage;
-        private Image _completedSpaceImage;
         private Image _spaceImage;
         private MenuItem _addSpaceMenuItem;
         private Point _addSpaceMousePoint;
