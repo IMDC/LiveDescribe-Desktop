@@ -1,20 +1,19 @@
 ﻿using LiveDescribe.Utilities;
-using LiveDescribe.ViewModel;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 
-namespace LiveDescribe.View
+namespace LiveDescribe.Windows
 {
     /// <summary>
-    /// Interaction logic for SpaceRecordingView.xaml
+    /// Interaction logic for SpaceRecordingWindow.xaml
     /// </summary>
-    public partial class SpaceRecordingView : Window
+    public partial class SpaceRecordingWindow : Window
     {
         private readonly SpaceRecordingViewModel _viewModel;
         private List<PositionalStringToken>.Enumerator _enumerator;
 
-        public SpaceRecordingView(SpaceRecordingViewModel vm)
+        public SpaceRecordingWindow(SpaceRecordingViewModel vm)
         {
             InitializeComponent();
 

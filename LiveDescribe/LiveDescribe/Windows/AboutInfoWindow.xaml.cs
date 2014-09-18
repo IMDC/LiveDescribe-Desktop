@@ -1,14 +1,13 @@
-﻿using LiveDescribe.ViewModel;
-using System.Windows;
+﻿using System.Windows;
 
-namespace LiveDescribe.View
+namespace LiveDescribe.Windows
 {
     /// <summary>
-    /// Interaction logic for AboutInfoView.xaml
+    /// Interaction logic for AboutInfoWindow.xaml
     /// </summary>
-    public partial class AboutInfoView : Window
+    public partial class AboutInfoWindow : Window
     {
-        public AboutInfoView()
+        public AboutInfoWindow()
         {
             InitializeComponent();
 

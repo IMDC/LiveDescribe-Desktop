@@ -1,13 +1,13 @@
-﻿using System;
-using System.Windows.Input;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Managers;
 using LiveDescribe.Model;
 using Microsoft.Win32;
 using NAudio.Wave;
+using System;
+using System.Windows.Input;
 
-namespace LiveDescribe.ViewModel
+namespace LiveDescribe.Windows
 {
     public class ImportAudioDescriptionViewModel : ViewModelBase
     {
@@ -59,7 +59,7 @@ namespace LiveDescribe.ViewModel
         {
             set
             {
-                if (double.IsNaN(value) || value > _videoDurationMilliseconds || 
+                if (double.IsNaN(value) || value > _videoDurationMilliseconds ||
                     value + DescriptionLengthInMilliseconds > _videoDurationMilliseconds)
                     return;
                 _startInVideo = value;
@@ -122,7 +122,6 @@ namespace LiveDescribe.ViewModel
 
             if (dialogSuccess == true)
             {
-                
                 DescriptionPath = fileChooser.FileName;
                 IsStartInVideoTextBoxEnabled = true;
                 DescriptionLengthInMilliseconds = GetDescriptionLengthInMilliseconds();
@@ -134,7 +133,7 @@ namespace LiveDescribe.ViewModel
         private void ImportAudioDescription()
         {
             var desc = new Description(ProjectFile.FromAbsolutePath(DescriptionPath, _projectManager.Project.Folders.Project),
-                    0, DescriptionLengthInMilliseconds, StartInVideo, false) {Text = Text};
+                    0, DescriptionLengthInMilliseconds, StartInVideo, false) { Text = Text };
 
             _projectManager.AddDescriptionAndTrackForUndo(desc);
             var handler = OnImportDescription;

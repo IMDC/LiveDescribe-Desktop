@@ -140,8 +140,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\AudioSourceSettingsControl.xaml.cs">
+      <DependentUpon>AudioSourceSettingsControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\CanvasMouseSelection.cs" />
     <Compile Include="Controls\DescriptionCanvas.cs" />
+    <Compile Include="Controls\GeneralSettingsControl.xaml.cs">
+      <DependentUpon>GeneralSettingsControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\GeometryImageCanvas.cs" />
     <Compile Include="Controls\IntervalMouseAction.cs" />
     <Compile Include="Controls\AudioCanvas.cs" />
@@ -237,7 +243,6 @@
     <Compile Include="Utilities\PositionalStringTokenizer.cs" />
     <Compile Include="Utilities\ProgressFileCopier.cs" />
     <Compile Include="Utilities\Time.cs" />
-    <Compile Include="ViewModel\AboutInfoViewModel.cs" />
     <Compile Include="ViewModel\AudioCanvasViewModel.cs" />
     <Compile Include="ViewModel\Controls\AudioSourceSettingsControlViewModel.cs" />
     <Compile Include="ViewModel\Controls\ColourSchemeSettingsControl.xaml.cs">
@@ -249,37 +254,41 @@
     <Compile Include="ViewModel\DescriptionCanvasViewModel.cs" />
     <Compile Include="ViewModel\DescriptionInfoTabViewModel.cs" />
     <Compile Include="ViewModel\DescriptionRecordingControlViewModel.cs" />
-    <Compile Include="ViewModel\ExportWindowViewModel.cs" />
-    <Compile Include="ViewModel\ImportAudioDescriptionViewModel.cs" />
     <Compile Include="ViewModel\LoadingViewModel.cs" />
     <Compile Include="ViewModel\MarkingSpacesControlViewModel.cs" />
     <Compile Include="ViewModel\NumberLineCanvasViewModel.cs" />
-    <Compile Include="ViewModel\SpaceRecordingViewModel.cs" />
-    <Compile Include="View\AboutInfoView.xaml.cs">
-      <DependentUpon>AboutInfoView.xaml</DependentUpon>
+    <Compile Include="Windows\AboutInfoWindow.xaml.cs">
+      <DependentUpon>AboutInfoWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\Controls\AudioSourceSettingsControl.xaml.cs">
-      <DependentUpon>AudioSourceSettingsControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\Controls\GeneralSettingsControl.xaml.cs">
-      <DependentUpon>GeneralSettingsControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\ExportWindow.xaml.cs">
+    <Compile Include="Windows\AboutInfoViewModel.cs" />
+    <Compile Include="Windows\ExportWindow.xaml.cs">
       <DependentUpon>ExportWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\ImportAudioDescriptionWindow.xaml.cs">
+    <Compile Include="Windows\ExportViewModel.cs" />
+    <Compile Include="Windows\ImportAudioDescriptionViewModel.cs" />
+    <Compile Include="Windows\ImportAudioDescriptionWindow.xaml.cs">
       <DependentUpon>ImportAudioDescriptionWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\NewProjectView.xaml.cs">
-      <DependentUpon>NewProjectView.xaml</DependentUpon>
+    <Compile Include="Windows\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModel\NewProjectViewModel.cs" />
-    <Compile Include="View\PreferencesWindow.xaml.cs">
+    <Compile Include="Windows\MainViewModel.cs" />
+    <Compile Include="Windows\NewProjectWindow.xaml.cs">
+      <DependentUpon>NewProjectWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\NewProjectViewModel.cs" />
+    <Compile Include="Windows\PreferencesViewModel.cs" />
+    <Compile Include="Windows\PreferencesWindow.xaml.cs">
       <DependentUpon>PreferencesWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\SpaceRecordingView.xaml.cs">
-      <DependentUpon>SpaceRecordingView.xaml</DependentUpon>
+    <Compile Include="Windows\SpaceRecordingWindow.xaml.cs">
+      <DependentUpon>SpaceRecordingWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows\SpaceRecordingViewModel.cs" />
+    <Page Include="Controls\AudioSourceSettingsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\CountdownControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -287,6 +296,10 @@
     <Page Include="Controls\DescriptionRecordingControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\GeneralSettingsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\LoadingControl.xaml">
       <SubType>Designer</SubType>
@@ -312,34 +325,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="View\AboutInfoView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\Controls\AudioSourceSettingsControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\Controls\GeneralSettingsControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\ExportWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\ImportAudioDescriptionWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\NewProjectView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -351,20 +336,34 @@
     <Compile Include="Model\Description.cs" />
     <Compile Include="Converters\TimeConverterFormatter.cs" />
     <Compile Include="Utilities\AudioUtility.cs" />
-    <Compile Include="ViewModel\MainWindowViewModel.cs" />
-    <Compile Include="ViewModel\PreferencesViewModel.cs" />
     <Compile Include="ViewModel\MediaControlViewModel.cs" />
-    <Compile Include="View\MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Page Include="View\PreferencesWindow.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Windows\AboutInfoWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
-    <Page Include="View\SpaceRecordingView.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Windows\ExportWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\ImportAudioDescriptionWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\NewProjectWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\PreferencesWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\SpaceRecordingWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>
@@ -442,6 +441,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -1,28 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using LiveDescribe.ViewModel;
+﻿using System.Windows;
 
-namespace LiveDescribe.View
+namespace LiveDescribe.Windows
 {
     /// <summary>
     /// Interaction logic for ExportWindow.xaml
     /// </summary>
     public partial class ExportWindow : Window
     {
-        private readonly ExportWindowViewModel _viewModel;
+        private readonly ExportViewModel _viewModel;
 
-        public ExportWindow(ExportWindowViewModel dataContext)
+        public ExportWindow(ExportViewModel dataContext)
         {
             InitializeComponent();
             DataContext = dataContext;
@@ -47,7 +34,7 @@ namespace LiveDescribe.View
         private void CompressAudio_OnChecked(object sender, RoutedEventArgs e)
         {
             if (DataContext != null)
-                _viewModel.CompressAudio= YesCompressButton.IsChecked == true;
+                _viewModel.CompressAudio = YesCompressButton.IsChecked == true;
         }
     }
 }

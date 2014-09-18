@@ -1,8 +1,8 @@
-﻿using LiveDescribe.ViewModel.Controls;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
+using LiveDescribe.ViewModel.Controls;
 
-namespace LiveDescribe.View.Controls
+namespace LiveDescribe.Controls
 {
     /// <summary>
     /// Interaction logic for AudioSourceSettingsControl.xaml

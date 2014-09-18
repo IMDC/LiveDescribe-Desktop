@@ -1,16 +1,15 @@
-﻿using LiveDescribe.ViewModel;
-using System.Windows;
+﻿using System.Windows;
 
-namespace LiveDescribe.View
+namespace LiveDescribe.Windows
 {
     /// <summary>
-    /// Interaction logic for NewProjectView.xaml
+    /// Interaction logic for NewProjectWindow.xaml
     /// </summary>
-    public partial class NewProjectView : Window
+    public partial class NewProjectWindow : Window
     {
         private readonly NewProjectViewModel _viewModel;
 
-        public NewProjectView(NewProjectViewModel dataContext)
+        public NewProjectWindow(NewProjectViewModel dataContext)
         {
             InitializeComponent();
             DataContext = dataContext;

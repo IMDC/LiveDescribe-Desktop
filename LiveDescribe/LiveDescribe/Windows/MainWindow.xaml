@@ -1,5 +1,5 @@
 ﻿<Window
-    x:Class="LiveDescribe.View.MainWindow"
+    x:Class="LiveDescribe.Windows.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -7,6 +7,7 @@
     xmlns:s="clr-namespace:LiveDescribe.Resources.UiStrings"
     xmlns:controls="clr-namespace:LiveDescribe.Controls"
     xmlns:viewModel="clr-namespace:LiveDescribe.ViewModel"
+    xmlns:windows="clr-namespace:LiveDescribe.Windows"
     mc:Ignorable="d"
     Title="{Binding WindowTitle}"
     Height="650"
@@ -14,7 +15,7 @@
     MinHeight="650"
     MinWidth="980"
     Closing="MainWindow_OnClosing"
-    d:DataContext="{d:DesignInstance viewModel:MainWindowViewModel}">
+    d:DataContext="{d:DesignInstance windows:MainViewModel}">
 
     <Window.InputBindings>
         <KeyBinding

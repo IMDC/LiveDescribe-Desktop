@@ -10,7 +10,7 @@ using LiveDescribe.Model;
 using LiveDescribe.Properties;
 using LiveDescribe.Resources.UiStrings;
 using LiveDescribe.Utilities;
-using LiveDescribe.View;
+using LiveDescribe.ViewModel;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using System;
@@ -23,9 +23,9 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Input;
 
-namespace LiveDescribe.ViewModel
+namespace LiveDescribe.Windows
 {
-    class MainWindowViewModel : ViewModelBase
+    class MainViewModel : ViewModelBase
     {
         #region Logger
         private static readonly log4net.ILog Log = log4net.LogManager.GetLogger
@@ -69,7 +69,7 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Constructors
-        public MainWindowViewModel(ILiveDescribePlayer mediaVideo)
+        public MainViewModel(ILiveDescribePlayer mediaVideo)
         {
             DispatcherHelper.Initialize();
 
@@ -508,7 +508,7 @@ namespace LiveDescribe.ViewModel
         private void Play_Tick(object sender, ElapsedEventArgs e)
         {
             OnGraphicsTick(sender, e);
-            //I put this method in it's own timer in the MainWindowViewModel for now, because I believe it should be separate from the view
+            //I put this method in it's own timer in the MainViewModel for now, because I believe it should be separate from the view
             foreach (var description in _projectManager.AllDescriptions.ToList())
             {
                 double videoPosition = 0;

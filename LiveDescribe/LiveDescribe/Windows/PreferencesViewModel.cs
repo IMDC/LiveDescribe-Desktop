@@ -2,14 +2,13 @@
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Extensions;
 using LiveDescribe.Interfaces;
-using LiveDescribe.Model;
 using LiveDescribe.Properties;
 using LiveDescribe.ViewModel.Controls;
 using System;
 using System.ComponentModel;
 using System.Windows.Input;
 
-namespace LiveDescribe.ViewModel
+namespace LiveDescribe.Windows
 {
     public class PreferencesViewModel : ViewModelBase, ISettingsViewModel
     {

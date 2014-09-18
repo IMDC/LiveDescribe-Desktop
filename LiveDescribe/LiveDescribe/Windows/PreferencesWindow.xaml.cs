@@ -1,8 +1,7 @@
-﻿using LiveDescribe.ViewModel;
-using System;
+﻿using System;
 using System.Windows;
 
-namespace LiveDescribe.View
+namespace LiveDescribe.Windows
 {
     /// <summary>
     /// Interaction logic for PreferencesWindow.xaml

@@ -1,5 +1,5 @@
 ﻿<Window
-    x:Class="LiveDescribe.View.NewProjectView"
+    x:Class="LiveDescribe.Windows.NewProjectWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:s="clr-namespace:LiveDescribe.Resources.UiStrings"

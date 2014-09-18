@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Factories;
 using LiveDescribe.Model;
 using LiveDescribe.Utilities;
+using LiveDescribe.ViewModel;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
-using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
-using System.ComponentModel;
 
-
-namespace LiveDescribe.ViewModel
+namespace LiveDescribe.Windows
 {
-    public class ExportWindowViewModel  : ViewModelBase
+    public class ExportViewModel : ViewModelBase
     {
         #region Logger
         private static readonly log4net.ILog Log = log4net.LogManager.GetLogger
@@ -35,7 +34,7 @@ namespace LiveDescribe.ViewModel
         #endregion
 
         #region Constructor
-        public ExportWindowViewModel(Project project, string videoPath, double durationSeconds, List<Description> descriptionList, LoadingViewModel loadingViewModel)
+        public ExportViewModel(Project project, string videoPath, double durationSeconds, List<Description> descriptionList, LoadingViewModel loadingViewModel)
         {
             ChoosePathCommand = new RelayCommand(ChoosePath);
             ExportCommand = new RelayCommand(ExportProject, CanExport);
@@ -64,7 +63,7 @@ namespace LiveDescribe.ViewModel
         /// Event is raised when project is finished exporting
         /// </summary>
         public event EventHandler ExportProjectCompleted;
-        
+
         protected virtual void OnExportProjectCompleted()
         {
             EventHandler handler = ExportProjectCompleted;
@@ -157,11 +156,11 @@ namespace LiveDescribe.ViewModel
             };
 
             //Notify subscribers of stripping completion
-            worker.RunWorkerCompleted += (sender, args) => 
+            worker.RunWorkerCompleted += (sender, args) =>
             {
                 OnExportProjectCompleted();
             };
-           
+
             worker.ProgressChanged += (sender, args) => _loadingViewModel.SetProgress("Exporting Project", args.ProgressPercentage);
 
             _loadingViewModel.SetProgress("Exporting Project", 0);

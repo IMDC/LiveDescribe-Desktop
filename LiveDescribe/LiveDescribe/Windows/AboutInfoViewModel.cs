@@ -1,6 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 
-namespace LiveDescribe.ViewModel
+namespace LiveDescribe.Windows
 {
     public class AboutInfoViewModel : ViewModelBase
     {

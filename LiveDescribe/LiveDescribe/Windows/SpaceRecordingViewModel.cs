@@ -1,17 +1,18 @@
-﻿using GalaSoft.MvvmLight;
+﻿using System;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Windows.Input;
+using System.Windows.Threading;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Factories;
 using LiveDescribe.Model;
 using LiveDescribe.Resources.UiStrings;
 using LiveDescribe.Utilities;
+using LiveDescribe.ViewModel;
 using NAudio;
-using System;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Windows.Input;
-using System.Windows.Threading;
 
-namespace LiveDescribe.ViewModel
+namespace LiveDescribe.Windows
 {
     public class SpaceRecordingViewModel : ViewModelBase
     {

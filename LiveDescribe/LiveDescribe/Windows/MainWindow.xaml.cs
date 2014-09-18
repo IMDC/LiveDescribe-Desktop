@@ -16,7 +16,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Shapes;
 
-namespace LiveDescribe.View
+namespace LiveDescribe.Windows
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -50,7 +50,7 @@ namespace LiveDescribe.View
         private readonly MediaControlViewModel _mediaControlViewModel;
         private readonly ProjectManager _projectManager;
         private readonly DescriptionInfoTabViewModel _descriptionInfoTabViewModel;
-        private readonly MainWindowViewModel _mainWindowViewModel;
+        private readonly MainViewModel _mainViewModel;
         private readonly LiveDescribeMediaPlayer _videoMedia;
 
         private readonly Polyline _marker;
@@ -72,10 +72,10 @@ namespace LiveDescribe.View
 
             _videoMedia = MediaControl.VideoMedia;
 
-            var mainWindowViewModel = new MainWindowViewModel(_videoMedia);
+            var mainWindowViewModel = new MainViewModel(_videoMedia);
 
             DataContext = mainWindowViewModel;
-            _mainWindowViewModel = mainWindowViewModel;
+            _mainViewModel = mainWindowViewModel;
 
             _mediaControlViewModel = mainWindowViewModel.MediaControlViewModel;
             _projectManager = mainWindowViewModel.ProjectManager;
@@ -113,7 +113,7 @@ namespace LiveDescribe.View
                 };
             #endregion
 
-            #region Event Listeners For MainWindowViewModel (Pause, Play, Mute)
+            #region Event Listeners For MainViewModel (Pause, Play, Mute)
             //These events are put inside the main control because they will also effect the list
             //of audio descriptions an instance of DescriptionCollectionViewModel is inside the main control
             //and the main control will take care of synchronizing the video, and the descriptions
@@ -567,7 +567,7 @@ namespace LiveDescribe.View
                     {
                         Header = string.Format(UiStrings.MenuItem_Format_RecentProjectItem, counter, namedFilePath.Name),
                         ToolTip = namedFilePath.Path,
-                        Command = _mainWindowViewModel.OpenProjectPath,
+                        Command = _mainViewModel.OpenProjectPath,
                         CommandParameter = namedFilePath.Path,
                     });
                     counter++;
@@ -577,7 +577,7 @@ namespace LiveDescribe.View
                 OpenRecentMenuItem.Items.Add(new MenuItem
                 {
                     Header = UiStrings.MenuItem_ClearList,
-                    Command = _mainWindowViewModel.ClearRecentProjects
+                    Command = _mainViewModel.ClearRecentProjects
                 });
 
                 OpenRecentMenuItem.IsEnabled = true;
@@ -627,7 +627,7 @@ namespace LiveDescribe.View
         #region Control Event Handlers
         private void MainWindow_OnClosing(object sender, CancelEventArgs e)
         {
-            bool success = _mainWindowViewModel.TryExit();
+            bool success = _mainViewModel.TryExit();
 
             if (!success)
                 e.Cancel = true;
