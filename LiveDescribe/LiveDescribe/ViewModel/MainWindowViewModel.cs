@@ -52,6 +52,7 @@ namespace LiveDescribe.ViewModel
         private readonly AudioCanvasViewModel _audioCanvasViewModel;
         private readonly DescriptionCanvasViewModel _descriptionCanvasViewModel;
         private readonly DescriptionRecordingControlViewModel _descriptionRecordingControlViewModel;
+        private readonly NumberLineCanvasViewModel _numberLineCanvasViewModel;
         private readonly UndoRedoManager _undoRedoManager;
         private Project _project;
         private string _windowTitle;
@@ -81,8 +82,9 @@ namespace LiveDescribe.ViewModel
             _preferences = new PreferencesViewModel();
             _descriptionInfoTabViewModel = new DescriptionInfoTabViewModel(_projectManager, _descriptionRecordingControlViewModel);
             _markingSpacesControlViewModel = new MarkingSpacesControlViewModel(_descriptionInfoTabViewModel, mediaVideo, _undoRedoManager);
-            _audioCanvasViewModel = new AudioCanvasViewModel(mediaVideo, _projectManager);
-            _descriptionCanvasViewModel = new DescriptionCanvasViewModel(mediaVideo, _projectManager);
+            _audioCanvasViewModel = new AudioCanvasViewModel(mediaVideo, _projectManager, _undoRedoManager);
+            _descriptionCanvasViewModel = new DescriptionCanvasViewModel(mediaVideo, _projectManager, _undoRedoManager);
+            _numberLineCanvasViewModel = new NumberLineCanvasViewModel(mediaVideo);
 
             _mediaVideo = mediaVideo;
 
@@ -178,7 +180,7 @@ namespace LiveDescribe.ViewModel
                 Settings.Default.RecentProjects.Clear();
                 Settings.Default.Save();
             });
-            
+
             ShowImportAudioDescription = new RelayCommand(
                 canExecute: () => _projectManager.HasProjectLoaded,
                 execute: () =>
@@ -489,6 +491,12 @@ namespace LiveDescribe.ViewModel
         {
             get { return _undoRedoManager; }
         }
+
+        public NumberLineCanvasViewModel NumberLineCanvasViewModel
+        {
+            get { return _numberLineCanvasViewModel; }
+        }
+
         #endregion
 
         #region Methods

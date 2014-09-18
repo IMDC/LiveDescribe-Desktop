@@ -1,42 +1,31 @@
 ﻿using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Managers;
 using LiveDescribe.Model;
-using System;
 using System.Collections.ObjectModel;
-using System.Windows.Input;
 
 namespace LiveDescribe.ViewModel
 {
     public class DescriptionCanvasViewModel : ViewModelBase
     {
         private readonly ProjectManager _projectManager;
+        private readonly UndoRedoManager _undoRedoManager;
         private LiveDescribeVideoStates _currentVideoState;
-        #region Events
-        public EventHandler<MouseEventArgs> DescriptionCanvasMouseUpEvent;
-        public EventHandler<MouseEventArgs> DescriptionCanvasMouseMoveEvent;
-        public EventHandler<MouseEventArgs> DescriptionCanvasMouseDownEvent;
-        #endregion
+        private readonly ILiveDescribePlayer _player;
 
-        public DescriptionCanvasViewModel(ILiveDescribePlayer videoMedia, ProjectManager projectManager)
+        public DescriptionCanvasViewModel(ILiveDescribePlayer videoMedia, ProjectManager projectManager,
+            UndoRedoManager undoRedoManager)
         {
             _projectManager = projectManager;
-            DescriptionCanvasMouseUpCommand = new RelayCommand<MouseEventArgs>(DescriptionCanvasMouseUp, param => true);
-            DescriptionCanvasMouseMoveCommand = new RelayCommand<MouseEventArgs>(DescriptionCanvasMouseMove, param => true);
-            DescriptionCanvasMouseDownCommand = new RelayCommand<MouseEventArgs>(DescriptionCanvasMouseDown, param => true);
+            _undoRedoManager = undoRedoManager;
+            _player = videoMedia;
+
             videoMedia.PropertyChanged += (sender, args) =>
             {
                 if (args.PropertyName.Equals("CurrentState"))
                     CurrentVideoState = videoMedia.CurrentState;
             };
         }
-
-        #region Commands
-        public RelayCommand<MouseEventArgs> DescriptionCanvasMouseUpCommand { private set; get; }
-        public RelayCommand<MouseEventArgs> DescriptionCanvasMouseMoveCommand { private set; get; }
-        public RelayCommand<MouseEventArgs> DescriptionCanvasMouseDownCommand { private set; get; }
-        #endregion
 
         #region Binding Properties
         public ObservableCollection<Description> AllDescriptions
@@ -53,26 +42,17 @@ namespace LiveDescribe.ViewModel
             }
             get { return _currentVideoState; }
         }
-        #endregion
 
-        #region Binding Functions
-        public void DescriptionCanvasMouseUp(MouseEventArgs e)
+        public ILiveDescribePlayer Player
         {
-            EventHandler<MouseEventArgs> handler = DescriptionCanvasMouseUpEvent;
-            if (handler != null) handler(this, e);
+            get { return _player; }
         }
 
-        public void DescriptionCanvasMouseMove(MouseEventArgs e)
+        public UndoRedoManager UndoRedoManager
         {
-            EventHandler<MouseEventArgs> handler = DescriptionCanvasMouseMoveEvent;
-            if (handler != null) handler(this, e);
+            get { return _undoRedoManager; }
         }
 
-        public void DescriptionCanvasMouseDown(MouseEventArgs e)
-        {
-            EventHandler<MouseEventArgs> handler = DescriptionCanvasMouseDownEvent;
-            if (handler != null) handler(this, e);
-        }
         #endregion
     }
 }

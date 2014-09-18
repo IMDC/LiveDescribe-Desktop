@@ -13,11 +13,12 @@ namespace LiveDescribe.ViewModel
     class AudioCanvasViewModel : ViewModelBase
     {
         private readonly ProjectManager _projectManager;
+        private readonly UndoRedoManager _undoRedoManager;
+        private readonly ILiveDescribePlayer _player;
         private LiveDescribeVideoStates _currentState;
+        private Waveform _waveform;
 
         #region Events
-        public EventHandler<MouseEventArgs> AudioCanvasMouseDownEvent;
-        public EventHandler<MouseEventArgs> AudioCanvasMouseRightButtonDownEvent;
         /// <summary>
         /// Requests to a handler what to set the StartInVideo and EndInVideo time values for the
         /// given space.
@@ -25,31 +26,33 @@ namespace LiveDescribe.ViewModel
         public event EventHandler<EventArgs<Space>> RequestSpaceTime;
         #endregion
 
-        public AudioCanvasViewModel(ILiveDescribePlayer mediaPlayer, ProjectManager projectManager)
+        public AudioCanvasViewModel(ILiveDescribePlayer mediaPlayer, ProjectManager projectManager,
+            UndoRedoManager undoRedoManager)
         {
             _projectManager = projectManager;
+            _undoRedoManager = undoRedoManager;
+            _player = mediaPlayer;
 
-            AudioCanvasMouseDownCommand = new RelayCommand<MouseEventArgs>(AudioCanvasMouseDown, param => true);
-            AudioCanvasMouseRightButtonDownCommand = new RelayCommand<MouseEventArgs>(AudioCanvasMouseRightButtonDown, param => true);
+            //TODO: Just refer to MediaPlayer?
             mediaPlayer.PropertyChanged += (sender, args) =>
             {
                 if (args.PropertyName.Equals("CurrentState"))
                     CurrentVideoState = mediaPlayer.CurrentState;
             };
 
+            _projectManager.ProjectLoaded += (sender, args) => Waveform = args.Value.Waveform;
+
             GetNewSpaceTime = new RelayCommand(
-            canExecute: () => CurrentVideoState != LiveDescribeVideoStates.VideoNotLoaded,
-            execute: () =>
-            {
-                var s = new Space();
-                OnRequestSpaceTime(s);
-                projectManager.AddSpaceAndTrackForUndo(s);
-            });
+                canExecute: () => CurrentVideoState != LiveDescribeVideoStates.VideoNotLoaded,
+                execute: () =>
+                {
+                    var s = new Space();
+                    OnRequestSpaceTime(s);
+                    projectManager.AddSpaceAndTrackForUndo(s);
+                });
         }
 
         #region Commands
-        public RelayCommand<MouseEventArgs> AudioCanvasMouseDownCommand { private set; get; }
-        public RelayCommand<MouseEventArgs> AudioCanvasMouseRightButtonDownCommand { private set; get; }
         public ICommand GetNewSpaceTime { get; private set; }
         #endregion
 
@@ -68,21 +71,27 @@ namespace LiveDescribe.ViewModel
             }
             get { return _currentState; }
         }
-        #endregion
 
-        #region Binding Functions
-
-        private void AudioCanvasMouseDown(MouseEventArgs e)
+        public Waveform Waveform
         {
-            EventHandler<MouseEventArgs> handler = AudioCanvasMouseDownEvent;
-            if (handler != null) handler(this, e);
+            get { return _waveform; }
+            set
+            {
+                _waveform = value;
+                RaisePropertyChanged();
+            }
         }
 
-        private void AudioCanvasMouseRightButtonDown(MouseEventArgs e)
+        public ILiveDescribePlayer Player
         {
-            EventHandler<MouseEventArgs> handler = AudioCanvasMouseRightButtonDownEvent;
-            if (handler != null) handler(this, e);
+            get { return _player; }
         }
+
+        public UndoRedoManager UndoRedoManager
+        {
+            get { return _undoRedoManager; }
+        }
+
         #endregion
 
         #region Event Invokation

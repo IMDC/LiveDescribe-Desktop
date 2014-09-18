@@ -64,7 +64,7 @@ namespace LiveDescribe.ViewModel
                 execute: () =>
                 {
                     if (SelectedSpace != null)
-                        SelectedSpace.DeleteSpaceCommand.ExecuteIfCan();
+                        SelectedSpace.DeleteCommand.ExecuteIfCan();
 
                     if (SelectedRegularDescription != null)
                         SelectedRegularDescription.DeleteCommand.ExecuteIfCan();

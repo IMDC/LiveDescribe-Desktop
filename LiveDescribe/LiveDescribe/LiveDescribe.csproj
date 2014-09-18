@@ -140,23 +140,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\CanvasMouseSelection.cs" />
+    <Compile Include="Controls\DescriptionCanvas.cs" />
+    <Compile Include="Controls\GeometryImageCanvas.cs" />
+    <Compile Include="Controls\IntervalMouseAction.cs" />
+    <Compile Include="Controls\AudioCanvas.cs" />
     <Compile Include="Controls\CountdownControl.xaml.cs">
       <DependentUpon>CountdownControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\DescriptionControl.xaml.cs">
-      <DependentUpon>DescriptionControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\ItemCanvas.cs" />
-    <Compile Include="Controls\AudioCanvasControl.xaml.cs">
-      <DependentUpon>AudioCanvasControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\DescriptionCanvasControl.xaml.cs">
-      <DependentUpon>DescriptionCanvasControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\DescriptionRecordingControl.xaml.cs">
       <DependentUpon>DescriptionRecordingControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ItemControl.cs" />
     <Compile Include="Controls\LoadingControl.xaml.cs">
       <DependentUpon>LoadingControl.xaml</DependentUpon>
     </Compile>
@@ -169,11 +163,9 @@
     <Compile Include="Controls\MediaControl.xaml.cs">
       <DependentUpon>MediaControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\NumberLineCanvas.cs" />
     <Compile Include="Controls\SpaceAndDescriptionsTabControl.xaml.cs">
       <DependentUpon>SpaceAndDescriptionsTabControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\SpaceControl.xaml.cs">
-      <DependentUpon>SpaceControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\BoolToContentConverter.cs" />
     <Compile Include="Converters\ColorToSolidBrushConverter.cs" />
@@ -191,6 +183,7 @@
     <Compile Include="Events\TwoTupleEventArgs.cs" />
     <Compile Include="Extensions\ArrayExtentions.cs" />
     <Compile Include="Extensions\CommandExtensions.cs" />
+    <Compile Include="Extensions\GeometryGroupExtensions.cs" />
     <Compile Include="Extensions\ItemsControlExtensions.cs" />
     <Compile Include="Extensions\ObservableCollectionExtensions.cs" />
     <Compile Include="Factories\DialogShower.cs" />
@@ -260,6 +253,7 @@
     <Compile Include="ViewModel\ImportAudioDescriptionViewModel.cs" />
     <Compile Include="ViewModel\LoadingViewModel.cs" />
     <Compile Include="ViewModel\MarkingSpacesControlViewModel.cs" />
+    <Compile Include="ViewModel\NumberLineCanvasViewModel.cs" />
     <Compile Include="ViewModel\SpaceRecordingViewModel.cs" />
     <Compile Include="View\AboutInfoView.xaml.cs">
       <DependentUpon>AboutInfoView.xaml</DependentUpon>
@@ -286,19 +280,7 @@
     <Compile Include="View\SpaceRecordingView.xaml.cs">
       <DependentUpon>SpaceRecordingView.xaml</DependentUpon>
     </Compile>
-    <Page Include="Controls\AudioCanvasControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Controls\CountdownControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\DescriptionCanvasControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\DescriptionControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -323,10 +305,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\SpaceAndDescriptionsTabControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\SpaceControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -42,11 +42,11 @@
         <KeyBinding
             Command="{Binding UndoRedoManager.UndoCommand}"
             Key="Z"
-            Modifiers="Control" />        
+            Modifiers="Control" />
         <KeyBinding
             Command="{Binding UndoRedoManager.RedoCommand}"
             Key="Y"
-            Modifiers="Control"/>
+            Modifiers="Control" />
     </Window.InputBindings>
 
     <Grid>
@@ -83,12 +83,12 @@
                         Command="{Binding SaveProject}"
                         InputGestureText="Ctrl+S" />
                     <Separator />
-                    
+
                     <MenuItem
                         Header="{x:Static s:UiStrings.MenuItem_Import}">
                         <MenuItem
                             Header="{x:Static s:UiStrings.MenuItem_ImportDescription}"
-                            Command="{Binding ShowImportAudioDescription}"/>
+                            Command="{Binding ShowImportAudioDescription}" />
                     </MenuItem>
                     <!--Exporting Options-->
                     <MenuItem
@@ -115,20 +115,20 @@
                         Header="{x:Static s:UiStrings.MenuItem_Exit}"
                         Click="MenuItemExit_Click" />
                 </MenuItem>
-                
+
                 <!--Edit-->
                 <MenuItem
                     Header="{x:Static s:UiStrings.MenuItem_Edit}">
                     <MenuItem
                         Header="{x:Static s:UiStrings.MenuItem_Undo}"
                         Command="{Binding UndoRedoManager.UndoCommand}"
-                        InputGestureText="Ctrl+Z"/>
+                        InputGestureText="Ctrl+Z" />
                     <MenuItem
                         Header="{x:Static s:UiStrings.MenuItem_Redo}"
                         Command="{Binding UndoRedoManager.RedoCommand}"
-                        InputGestureText="Ctrl+Y"/>
+                        InputGestureText="Ctrl+Y" />
                 </MenuItem>
-                
+
                 <!--Project-->
                 <MenuItem
                     Header="{x:Static s:UiStrings.MenuItem_Project}">
@@ -138,9 +138,9 @@
                     <MenuItem
                         Header="{x:Static s:UiStrings.MenuItem_ClearCache}"
                         Command="{Binding ClearCache}" />
-                    <MenuItem 
+                    <MenuItem
                         Header="{x:Static s:UiStrings.MenuItem_ViewDescriptionFolder}"
-                        Command="{Binding ShowDescriptionFolder}"/>
+                        Command="{Binding ShowDescriptionFolder}" />
                 </MenuItem>
 
                 <!--Help-->
@@ -244,24 +244,32 @@
                                 Height="20"
                                 BorderBrush="Black"
                                 BorderThickness="1">
-                                <Canvas
+                                <controls:NumberLineCanvas
                                     HorizontalAlignment="Left"
-                                    Background="White"
                                     MouseDown="NumberTimeline_OnMouseDown"
-                                    Name="NumberTimeline" />
+                                    DataContext="{Binding NumberLineCanvasViewModel}"
+                                    x:Name="NumberLineCanvas" />
                             </Border>
 
-                            <controls:AudioCanvasControl
-                                x:Name="AudioCanvasControl"
+                            <Border
                                 Grid.Row="1"
                                 Grid.RowSpan="2"
-                                DataContext="{Binding AudioCanvasViewModel}" />
+                                BorderThickness="1"
+                                BorderBrush="Black">
+                                <controls:AudioCanvas
+                                    x:Name="AudioCanvas"
+                                    DataContext="{Binding AudioCanvasViewModel}" />
+                            </Border>
 
                             <!--Description Canvas Constrol that holds all the descriptions-->
-                            <controls:DescriptionCanvasControl
-                                x:Name="DescriptionCanvasControl"
+                            <Border
                                 Grid.Row="3"
-                                DataContext="{Binding DescriptionCanvasViewModel}" />
+                                BorderThickness="1"
+                                BorderBrush="Black">
+                                <controls:DescriptionCanvas
+                                    x:Name="DescriptionCanvas"
+                                    DataContext="{Binding DescriptionCanvasViewModel}" />
+                            </Border>
 
                             <controls:MarkerControl
                                 x:Name="MarkerControl"
