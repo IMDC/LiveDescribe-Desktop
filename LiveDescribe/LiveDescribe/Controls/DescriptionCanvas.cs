@@ -1,6 +1,7 @@
 ﻿using LiveDescribe.Extensions;
 using LiveDescribe.Model;
 using LiveDescribe.Properties;
+using LiveDescribe.Resources.UiStrings;
 using LiveDescribe.ViewModel;
 using System;
 using System.Collections.Specialized;
@@ -20,6 +21,7 @@ namespace LiveDescribe.Controls
         private Brush _extendedDescriptionBrush;
         private Image _regularDescriptionImage;
         private Image _extendedDescriptionImage;
+        private Point _addDescriptionMousePoint;
 
         #endregion
 
@@ -184,6 +186,46 @@ namespace LiveDescribe.Controls
 
                 MouseSelection.CompleteModificationAction();
                 Mouse.Capture(null);
+            }
+        }
+
+        protected override void OnContextMenuOpening(ContextMenuEventArgs e)
+        {
+            base.OnContextMenuOpening(e);
+
+            if (_viewModel == null)
+                return;
+
+            ContextMenu.Items.Clear();
+
+            bool descriptionFound = false;
+
+            var point = Mouse.GetPosition(this);
+
+            foreach (var description in _viewModel.AllDescriptions)
+            {
+                if (IsBetweenBounds(description.X - SelectionPixelWidth, point.X,
+                    description.X + description.Width + SelectionPixelWidth))
+                {
+                    ContextMenu.Items.Add(new MenuItem
+                    {
+                        Header = UiStrings.Command_GoToDescription,
+                        Command = description.NavigateToCommand,
+                    });
+                    ContextMenu.Items.Add(new MenuItem
+                    {
+                        Header = UiStrings.Command_DeleteDescription,
+                        Command = description.DeleteCommand,
+                    });
+
+                    descriptionFound = true;
+                }
+            }
+
+            if (!descriptionFound)
+            {
+                _addDescriptionMousePoint = point;
+                e.Handled = true;
             }
         }
 
