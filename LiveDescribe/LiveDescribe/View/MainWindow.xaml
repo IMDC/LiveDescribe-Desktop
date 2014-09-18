@@ -91,11 +91,17 @@
                             Command="{Binding ShowImportAudioDescription}"/>
                     </MenuItem>
                     <!--Exporting Options-->
-                    <MenuItem
-                        Header="Export">
+                    <MenuItem Header="Export">
                         <MenuItem
                             Header="Export Video With Descriptions"
-                            Command="{Binding ExportWithDescriptions}" />
+                            Command="{Binding ExportWithDescriptions}"
+                            x:Name="ExportWithVideo"/>
+
+                        <MenuItem
+                            Header="Export Project Audio"
+                            Command="{Binding ExportWithDescriptions}"
+                            x:Name="ExportAudioOnly"/>
+
                         <MenuItem
                             Header="{x:Static s:UiStrings.Export_DescriptionSrtTitle}"
                             Command="{Binding ExportDescriptionsTextToSrt}" />

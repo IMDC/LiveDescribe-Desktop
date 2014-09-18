@@ -90,6 +90,47 @@ namespace LiveDescribe.Utilities
         }
 
         /// <summary>
+        /// Exports the recorded descriptions (extended and regular) and adds them to the video associated with 
+        /// the project. This method is called from a Relay Command(ExportWithDescriptions) 
+        /// in MainWindowViewModel.cs
+        /// </summary>
+        /// <param name="compressAudio"></param>
+        /// <param name="exportName"></param>
+        /// <param name="exportPath"></param>
+        public void exportAudioWithExtendedDescriptions(bool compressAudio, string exportName, string exportPath)
+        {
+            if (_descriptionList.Count > 0)
+            {
+                string audioTrack = createDescriptionTrack();
+                string videoAudio = stripVideoAudio(_videoFile);
+
+                audioTrack = muxAudioFiles(videoAudio, audioTrack); //audio with non-extended descriptions
+
+                string finalTrack = addExtendedDescriptionsToAudio(audioTrack, exportName, exportPath);
+
+                if (compressAudio)
+                {
+                    convertAudioToMP3(finalTrack);
+                }
+
+                #region Remove Temp Files
+                try
+                {
+                    File.Delete(audioTrack);
+                }
+                catch (DirectoryNotFoundException ex)
+                {
+                    Log.Error("Error removing files: " + ex);
+                }
+                #endregion
+            }
+            else
+            {
+                Log.Warn("No descriptions to be exported");
+            }
+        }
+
+        /// <summary>
         /// Creates a single file that contains all description tracks
         /// </summary>
         /// <returns>Absolute path to the file created</returns>
@@ -103,36 +144,55 @@ namespace LiveDescribe.Utilities
            
             descriptions.Sort((x, y) => x.StartInVideo.CompareTo(y.StartInVideo));
 
-            if (descriptions[0].StartInVideo > 0)
-            { 
-                init_silence = createBlankAudio(descriptions[0].StartInVideo / 1000); //create silence track for the begining of the description track
+            int firstDescriptionIndex;
+            //find the first non-extended description
+            for ( firstDescriptionIndex = 0; firstDescriptionIndex < descriptions.Count; firstDescriptionIndex++ )
+            {
+                if (!descriptions[firstDescriptionIndex].IsExtendedDescription)
+                    break;
+            }
+
+            if (descriptions[firstDescriptionIndex].StartInVideo > 0)
+            {
+                init_silence = createBlankAudio(descriptions[firstDescriptionIndex].StartInVideo / 1000); //create silence track for the begining of the description track
                 concat_list.Add(init_silence);
             }
            
             for ( int i = 0; i < descriptions.Count; i++ )
             {
-                double delta;
-
-                if (i != descriptions.Count - 1) //not the last item
+                if (!descriptions[i].IsExtendedDescription)
                 {
-                    delta = (descriptions[i + 1].StartInVideo - descriptions[i].EndInVideo) / 1000;
-                    
-                }
-                else
-                {
-                    delta = 0; // _videoDurationSeconds - (descriptions[i].StartInVideo / 1000);
-                }
+                    double delta;
 
-                concat_list.Add(appendSilence(descriptions[i].AudioFile, delta));
-                
-                #region progress update
-                double local_progress = (( (i + 1) * 100 )/ descriptions.Count) / _operations;
-                _progressWorker.ReportProgress((int)Math.Round(_progress + local_progress));
-                #endregion
+                    if (i != descriptions.Count - 1) //not the last item
+                    {
+                        delta = (descriptions[i + 1].StartInVideo - descriptions[i].EndInVideo) / 1000;
+
+                    }
+                    else
+                    {
+                        delta = 0; // _videoDurationSeconds - (descriptions[i].StartInVideo / 1000);
+                    }
+
+                    concat_list.Add(appendSilence(descriptions[i].AudioFile, delta));
+
+                    #region progress update
+                    double local_progress = (((i + 1) * 100) / descriptions.Count) / _operations;
+                    _progressWorker.ReportProgress((int)Math.Round(_progress + local_progress));
+                    #endregion
+                }
+                else //update origress anyway so that no jumping occurs in the progress bar
+                {
+                    #region progress update
+                    double local_progress = (((i + 1) * 100) / descriptions.Count) / _operations;
+                    _progressWorker.ReportProgress((int)Math.Round(_progress + local_progress));
+                    #endregion
+                }
             }
 
             _progress += (100 / _operations);
 
+            #region Prepare FFMPEG Command
             string command = "";
             string sub_command = "";
             int j = 0;
@@ -147,11 +207,101 @@ namespace LiveDescribe.Utilities
             command += " -filter_complex " + sub_command + "concat=n=" + concat_list.Count + ":v=0:a=1[out] -map [out] -y " + "\""
                         + outFileName + "\"";
             ffmpegCommand(command, true);
+            #endregion
 
             #region Delete temp files
             try
             {
                 foreach (string file in concat_list)
+                {
+                    File.Delete(file);
+                }
+
+            }
+            catch (DirectoryNotFoundException ex)
+            {
+                Log.Error("Error removing temp files: " + ex);
+            }
+            #endregion
+
+            return outFileName;
+        }
+
+        /// <summary>
+        /// Adds the extended descriptions of the project to the audio file which has the
+        /// regular descriptions already mixed in
+        /// </summary>
+        /// <param name="audioTrack"></param>
+        /// <param name="exportName"></param>
+        /// <param name="exportPath"></param>
+        private string addExtendedDescriptionsToAudio(string audioTrack, string exportName, string exportPath)
+        {
+            List<string> concat_list = new List<string>();
+            List<string> temp_file_list = new List<string>();
+            List<Description> descriptions = new List<Description>(_descriptionList); 
+            descriptions.Sort((x, y) => x.StartInVideo.CompareTo(y.StartInVideo));
+
+            string outFileName = string.Format("{0}\\{1}.wav", exportPath, exportName);
+
+            //divide the audio track into sections between the extended descriptions
+            for (int i = 0; i < descriptions.Count; i++)
+            {
+                if (descriptions[i].IsExtendedDescription)
+                {
+                    double startTime = descriptions[i].StartInVideo / 1000;
+                    double descriptionDuration = descriptions[i].Duration / 1000;
+                    string chunkName = _project.Folders.Project + "\\descriptions\\partial_track_" + i + ".wav";
+                    concat_list.Add(chunkName);
+                    temp_file_list.Add(chunkName);
+                    concat_list.Add(descriptions[i].AudioFile);
+                    string sliceCommand = String.Format(" -i {0} -ss {1} -t {2} -c copy -map 0 {3}",
+                                        audioTrack, startTime, descriptionDuration, chunkName);
+                    ffmpegCommand(sliceCommand, false);
+                }
+
+                if ( i == descriptions.Count - 1 ) //if it is the last one, slice the last bit of audio
+                {
+                    double startTime = descriptions[i].StartInVideo / 1000;
+                    double remainingTime = _videoDurationSeconds - startTime;
+                    string chunkName = _project.Folders.Project + "\\descriptions\\partial_track_" + (i + 1) + ".wav";
+                    concat_list.Add(chunkName);
+                    temp_file_list.Add(chunkName);
+                    string sliceCommand = String.Format(" -i {0} -ss {1} -t {2} -c copy -map 0 {3}",
+                                        audioTrack, startTime, remainingTime, chunkName);
+                    ffmpegCommand(sliceCommand, false);
+                }
+
+                #region progress update
+                double local_progress = (((i + 1) * 100) / descriptions.Count) / _operations;
+                _progressWorker.ReportProgress((int)Math.Round(_progress + local_progress));
+                #endregion
+            }
+
+            _progress += (100 / _operations);
+
+
+            #region Prepare FFMPEG Command
+            string command = "";
+            string sub_command = "";
+            int j = 0;
+
+            foreach (String file in concat_list)
+            {
+                command = String.Format("{0} -i {1} ", command, file);
+                sub_command += "[" + j + ":0]";
+                sub_command = String.Format("{0} [{1}:0] ", sub_command, j);
+                j++;
+            }
+
+            command += " -filter_complex " + sub_command + "concat=n=" + concat_list.Count + ":v=0:a=1[out] -map [out] -y " + "\""
+                        + outFileName + "\"";
+            ffmpegCommand(command, true);
+            #endregion
+
+            #region Delete temp files
+            try
+            {
+                foreach (string file in temp_file_list)
                 {
                     File.Delete(file);
                 }

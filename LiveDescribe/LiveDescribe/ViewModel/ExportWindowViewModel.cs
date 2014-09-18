@@ -153,7 +153,11 @@ namespace LiveDescribe.ViewModel
             worker.DoWork += (sender, args) =>
             {
                 var exportOperator = new DescriptionExportUtility(worker, _project, _videoPath, _durationSeconds, _descriptionList);
-                exportOperator.exportVideoWithDescriptions(_compressAudio, _exportName, _exportPath);
+
+                if (Properties.Defines.Zagga)
+                    exportOperator.exportVideoWithDescriptions(_compressAudio, _exportName, _exportPath);
+                else
+                    exportOperator.exportAudioWithExtendedDescriptions(_compressAudio, _exportName, _exportPath);
             };
 
             //Notify subscribers of stripping completion

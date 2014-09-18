@@ -76,6 +76,18 @@ namespace LiveDescribe.View
 
             InitializeComponent();
 
+            //check which exporting options are available, depending on build
+            if (!Properties.Defines.Zagga)
+            {
+                ExportWithVideo.Visibility = Visibility.Collapsed;
+                ExportAudioOnly.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                ExportWithVideo.Visibility = Visibility.Visible;
+                ExportAudioOnly.Visibility = Visibility.Collapsed;
+            }
+
             Settings.Default.Upgrade();
             Settings.Default.InitializeDefaultValuesIfNull();
 
