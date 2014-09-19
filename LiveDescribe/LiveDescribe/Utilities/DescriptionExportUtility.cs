@@ -101,16 +101,19 @@ namespace LiveDescribe.Utilities
         {
             if (_descriptionList.Count > 0)
             {
-                string audioTrack = createDescriptionTrack();
-                string videoAudio = stripVideoAudio(_videoFile);
+                _operations = compressAudio == true ? 7 : 6;
+                _progress = 0;
 
-                audioTrack = muxAudioFiles(videoAudio, audioTrack); //audio with non-extended descriptions
+                string audioTrack = createDescriptionTrack(); //2 ops
+                string videoAudio = stripVideoAudio(_videoFile); //1 op
 
-                string finalTrack = addExtendedDescriptionsToAudio(audioTrack, exportName, exportPath);
+                audioTrack = muxAudioFiles(videoAudio, audioTrack); //audio with non-extended descriptions (1 op)
+
+                string finalTrack = addExtendedDescriptionsToAudio(audioTrack, exportName, exportPath); //2 ops
 
                 if (compressAudio)
                 {
-                    convertAudioToMP3(finalTrack);
+                    convertAudioToMP3(finalTrack); //1 op
                 }
 
                 #region Remove Temp Files
@@ -249,7 +252,7 @@ namespace LiveDescribe.Utilities
                 if (descriptions[i].IsExtendedDescription)
                 {
                     double startTime = descriptions[i].StartInVideo / 1000;
-                    double descriptionDuration = descriptions[i].Duration / 1000;
+                    double descriptionDuration = descriptions[i].WaveFileDuration / 1000;
                     string chunkName = _project.Folders.Project + "\\descriptions\\partial_track_" + i + ".wav";
                     concat_list.Add(chunkName);
                     temp_file_list.Add(chunkName);
@@ -288,8 +291,8 @@ namespace LiveDescribe.Utilities
             foreach (String file in concat_list)
             {
                 command = String.Format("{0} -i {1} ", command, file);
-                sub_command += "[" + j + ":0]";
-                sub_command = String.Format("{0} [{1}:0] ", sub_command, j);
+                //sub_command += "[" + j + ":0]";
+                sub_command = String.Format("{0}[{1}:0]", sub_command, j);
                 j++;
             }
 
@@ -455,6 +458,7 @@ namespace LiveDescribe.Utilities
             string command = string.Format(" -i \"{0}\" -f mp3 \"{1}\"", audioPath, outFileName);
             ffmpegCommand(command, true);
 
+            #region Remove Temp Files
             try
             {
                File.Delete(audioPath); 
@@ -463,6 +467,7 @@ namespace LiveDescribe.Utilities
             {
                 Log.Error("Error removing files: " + ex);
             }
+            #endregion
 
             return outFileName;
         }

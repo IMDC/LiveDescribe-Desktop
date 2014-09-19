@@ -197,7 +197,7 @@ namespace LiveDescribe.ViewModel
                 execute: () =>
                 {
                     var viewModel = DialogShower.SpawnExportWindowView(_project, _mediaVideo.Path,
-                        _mediaVideo.DurationSeconds, _projectManager.RegularDescriptions.ToList(),
+                        _mediaVideo.DurationSeconds, _projectManager.AllDescriptions.ToList(),
                         _loadingViewModel);
 
                     if (viewModel.DialogResult != true)
