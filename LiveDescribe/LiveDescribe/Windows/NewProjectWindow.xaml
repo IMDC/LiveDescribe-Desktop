@@ -1,0 +1,194 @@
+﻿<Window
+    x:Class="LiveDescribe.Windows.NewProjectWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:s="clr-namespace:LiveDescribe.Resources.UiStrings"
+    Title="{x:Static s:UiStrings.Window_NewProjectTitle}"
+    SizeToContent="Height"
+    MinWidth="500"
+    Width="500"
+    ResizeMode="NoResize">
+    <Window.Resources>
+        <Style
+            x:Key="LabelStyle"
+            TargetType="TextBlock">
+            <Setter
+                Property="Grid.Column"
+                Value="0" />
+            <Setter
+                Property="Margin"
+                Value="5" />
+            <Setter
+                Property="VerticalAlignment"
+                Value="Center" />
+        </Style>
+        <Style
+            x:Key="TextBoxStyle"
+            TargetType="TextBox">
+            <Setter
+                Property="Grid.Column"
+                Value="1" />
+            <Setter
+                Property="Margin"
+                Value="5" />
+        </Style>
+        <Style
+            x:Key="OpenButtonStyle"
+            TargetType="Button">
+            <Setter
+                Property="Content"
+                Value="{x:Static s:UiStrings.Command_OpenBrowserDialog}" />
+            <Setter
+                Property="Grid.Column"
+                Value="2" />
+            <Setter
+                Property="Margin"
+                Value="5" />
+            <Setter
+                Property="Padding"
+                Value="2" />
+        </Style>
+        <Style
+            x:Key="ButtonStyle"
+            TargetType="Button">
+            <Setter
+                Property="Margin"
+                Value="5" />
+            <Setter
+                Property="Padding"
+                Value="5" />
+        </Style>
+        <Style
+            x:Key="RadioButtonStyle"
+            TargetType="RadioButton">
+            <Setter
+                Property="Margin"
+                Value="5" />
+            <Setter
+                Property="Padding"
+                Value="5" />
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition
+                Height="Auto" />
+            <RowDefinition
+                Height="Auto" />
+            <RowDefinition
+                Height="Auto" />
+            <RowDefinition
+                Height="Auto" />
+            <RowDefinition
+                Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition
+                Width="Auto" />
+            <ColumnDefinition
+                Width="45*" />
+            <ColumnDefinition Width="68*"/>
+            <ColumnDefinition
+                Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <!--Controls for Project Name-->
+        <TextBlock
+            Text="{x:Static s:UiStrings.Label_ProjectName}"
+            Grid.Row="0"
+            Style="{StaticResource LabelStyle}" Margin="5,8" />
+        <TextBox
+            x:Name="ProjectNameTextBox"
+            Grid.Row="0"
+            Style="{StaticResource TextBoxStyle}" Grid.ColumnSpan="2">
+            <TextBox.Text>
+                <Binding
+                    Path="ProjectName"
+                    UpdateSourceTrigger="PropertyChanged" />
+            </TextBox.Text>
+        </TextBox>
+
+        <!--Controls for video-->
+        <TextBlock
+            Text="{x:Static s:UiStrings.Label_Video}"
+            Grid.Row="1"
+            Style="{StaticResource LabelStyle}" Margin="5,9" />
+        <TextBox
+            x:Name="VideoTextBox"
+            Grid.Row="1"
+            Style="{StaticResource TextBoxStyle}" Grid.ColumnSpan="2">
+            <TextBox.Text>
+                <Binding
+                    Path="VideoPath"
+                    UpdateSourceTrigger="PropertyChanged" />
+            </TextBox.Text>
+        </TextBox>
+        <Button
+            Grid.Row="1"
+            Style="{StaticResource OpenButtonStyle}"
+            Command="{Binding ChooseVideoCommand}" Grid.Column="3" />
+
+        <!--Controls for Copy Confirmation-->
+        <TextBlock
+            Text="{x:Static s:UiStrings.Label_MakeCopy}"
+            Grid.Row="2"
+            Style="{StaticResource LabelStyle}" />
+        <StackPanel
+            Grid.Row="2"
+            Grid.Column="1"
+            HorizontalAlignment="Left"
+            Orientation="Horizontal">
+            <RadioButton
+                x:Name="YesCopyButton"
+                GroupName="CopyVideo"
+                Content="{x:Static s:UiStrings.Label_Yes}"
+                IsChecked="True"
+                Checked="CopyVideo_OnChecked"
+                Style="{StaticResource RadioButtonStyle}" />
+            <RadioButton
+                x:Name="NoCopyButton"
+                GroupName="CopyVideo"
+                Content="{x:Static s:UiStrings.Label_No}"
+                IsChecked="False"
+                Checked="CopyVideo_OnChecked"
+                Style="{StaticResource RadioButtonStyle}" />
+        </StackPanel>
+
+        <!--Controls for Project Folder-->
+        <TextBlock
+            Text="{x:Static s:UiStrings.Label_ProjectLocation}"
+            Grid.Row="3"
+            Style="{StaticResource LabelStyle}" Margin="5,9" />
+        <TextBox
+            x:Name="ProjectPathTextBox"
+            Grid.Row="3"
+            Style="{StaticResource TextBoxStyle}" Grid.ColumnSpan="2">
+            <TextBox.Text>
+                <Binding
+                    Path="ProjectPath"
+                    UpdateSourceTrigger="PropertyChanged" />
+            </TextBox.Text>
+        </TextBox>
+        <Button
+            Grid.Row="3"
+            Style="{StaticResource OpenButtonStyle}"
+            Command="{Binding ChoosePathCommand}" Grid.Column="3" />
+
+        <!--Controls for Creating/Cancelling-->
+        <StackPanel
+            Orientation="Horizontal"
+            Grid.Row="4"
+            Grid.Column="2"
+            Grid.ColumnSpan="2"
+            HorizontalAlignment="Right">
+            <Button
+                Style="{StaticResource ButtonStyle}"
+                Content="{x:Static s:UiStrings.Command_CreateProject}"
+                Command="{Binding CreateProjectCommand}" />
+            <Button
+                Style="{StaticResource ButtonStyle}"
+                Content="{x:Static s:UiStrings.Command_Cancel}"
+                Click="Cancel_OnClick" />
+        </StackPanel>
+    </Grid>
+</Window>

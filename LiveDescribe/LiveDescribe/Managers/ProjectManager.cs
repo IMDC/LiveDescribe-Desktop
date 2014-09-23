@@ -1,9 +1,9 @@
-﻿using LiveDescribe.Events;
+﻿using LiveDescribe.Controls.UserControls;
+using LiveDescribe.Events;
 using LiveDescribe.Extensions;
 using LiveDescribe.Model;
 using LiveDescribe.Properties;
 using LiveDescribe.Utilities;
-using LiveDescribe.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

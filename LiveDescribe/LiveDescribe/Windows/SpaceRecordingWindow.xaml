@@ -1,0 +1,241 @@
+﻿<Window
+    x:Class="LiveDescribe.Windows.SpaceRecordingWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:LiveDescribe.Converters"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:s="clr-namespace:LiveDescribe.Resources.UiStrings"
+    xmlns:controls="clr-namespace:LiveDescribe.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:windows="clr-namespace:LiveDescribe.Windows"
+    xmlns:userControls="clr-namespace:LiveDescribe.Controls.UserControls"
+    mc:Ignorable="d"
+    Title="{x:Static s:UiStrings.Window_SpaceRecordingTitle}"
+    Height="500"
+    Width="450"
+    ResizeMode="NoResize"
+    d:DataContext="{d:DesignInstance windows:SpaceRecordingViewModel}"
+    Closing="SpaceRecordingView_OnClosing">
+    <Window.Resources>
+        <converters:MillisecondsToTimeLeftStringConverter
+            x:Key="MillisecondsToTimeLeftStringConverter" />
+        <converters:MillisecondsTimeConverterFormatter
+            x:Key="MillisecondsTimeFormatter" />
+        <converters:RecordingAndCountdownConverter
+            x:Key="RecordingAndCountdownConverter" />
+        <converters:NotRecordingAndHasTextToBoolConverter
+            x:Key="NotRecordingAndHasTextToBoolConverter" />
+        <converters:BoolToContentConverter
+            x:Key="IsPlayingConverter"
+            TrueContent="{x:Static s:UiStrings.Command_StopPlaying}"
+            FalseContent="{x:Static s:UiStrings.Command_Play}" />
+
+        <Style
+            x:Key="PlayRecordStyle"
+            TargetType="Button">
+            <Setter
+                Property="Margin"
+                Value="1" />
+        </Style>
+
+        <Style
+            x:Key="SaveCancelStyle"
+            TargetType="Button">
+            <Setter
+                Property="Margin"
+                Value="5,10" />
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <userControls:CountdownControl
+            x:Name="CountdownControl"
+            DataContext="{Binding CountdownViewModel}"
+            Grid.ZIndex="-1"
+            Grid.ColumnSpan="6"
+            Grid.RowSpan="7" />
+
+        <TextBox
+            x:Name="SpaceTextBox"
+            TextWrapping="Wrap"
+            Grid.Row="0"
+            Grid.RowSpan="4"
+            Grid.Column="0"
+            Grid.ColumnSpan="6"
+            IsInactiveSelectionHighlightEnabled="True"
+            LostFocus="SpaceTextBox_OnLostFocus"
+            VerticalScrollBarVisibility="Auto"
+            FontSize="16"
+            VerticalContentAlignment="Center"
+            HorizontalContentAlignment="Center">
+            <TextBox.Text>
+                <Binding
+                    Path="Text"
+                    UpdateSourceTrigger="PropertyChanged" />
+            </TextBox.Text>
+        </TextBox>
+
+        <TextBlock
+            Grid.Row="4"
+            Grid.Column="0"
+            Grid.ColumnSpan="6"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            FontSize="28"
+            Text="{Binding Path=TimeLeft, Converter={StaticResource MillisecondsToTimeLeftStringConverter}}"
+            Margin="13,0,12,0" />
+
+        <StackPanel
+            Orientation="Vertical"
+            Grid.Row="5"
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center">
+            <StackPanel.IsEnabled>
+                <MultiBinding
+                    Converter="{StaticResource NotRecordingAndHasTextToBoolConverter}">
+                    <!--NOTE: IsRecording must be the first binding given for the converter to work properly-->
+                    <Binding
+                        Path="Recorder.IsRecording" />
+                    <Binding
+                        Path="SpaceHasText" />
+                </MultiBinding>
+            </StackPanel.IsEnabled>
+
+            <Slider
+                HorizontalAlignment="Center"
+                Minimum="{Binding MinWordsPerMinute}"
+                Maximum="{Binding MaxWordsPerMinute}"
+                Value="{Binding WordsPerMinute, Mode=TwoWay}"
+                Width="200"
+                Margin="0,5,0,0" />
+
+            <StackPanel
+                Orientation="Horizontal"
+                HorizontalAlignment="Center">
+                <TextBlock
+                    Text="{x:Static s:UiStrings.Label_WordsPerMinute}"
+                    Margin="5" />
+
+                <TextBox
+                    VerticalAlignment="Center"
+                    Width="60">
+                    <TextBox.Text>
+                        <Binding
+                            Path="WordsPerMinute"
+                            Mode="TwoWay"
+                            UpdateSourceTrigger="PropertyChanged"
+                            StringFormat="{}{0:#.##}">
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel
+            Orientation="Vertical"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center"
+            Grid.Row="5"
+            Grid.Column="3"
+            Grid.ColumnSpan="3">
+            <StackPanel.IsEnabled>
+                <MultiBinding
+                    Converter="{StaticResource NotRecordingAndHasTextToBoolConverter}">
+                    <!--NOTE: IsRecording must be the first binding given for the converter to work properly-->
+                    <Binding
+                        Path="Recorder.IsRecording" />
+                    <Binding
+                        Path="SpaceHasText" />
+                </MultiBinding>
+            </StackPanel.IsEnabled>
+
+            <TextBlock
+                VerticalAlignment="Center"
+                Margin="5">
+                <Run
+                    Text="{x:Static s:UiStrings.Label_TimeToRecord}" />
+                <Run
+                    Text="{Binding WpmDuration, Converter={StaticResource MillisecondsTimeFormatter}}" />
+            </TextBlock>
+
+            <CheckBox
+                Content="{x:Static s:UiStrings.Label_UseWpm}"
+                VerticalAlignment="Center"
+                Margin="5"
+                IsChecked="{Binding SetDurationBasedOnWpm, Mode=TwoWay}"
+                HorizontalAlignment="Left"
+                FlowDirection="RightToLeft" />
+        </StackPanel>
+
+        <ProgressBar
+            Grid.Row="6"
+            Grid.Column="0"
+            Grid.ColumnSpan="6"
+            Minimum="0"
+            Maximum="{Binding RecordDuration}"
+            Value="{Binding ElapsedTime}"
+            Margin="1" />
+
+        <Button
+            Grid.Row="7"
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
+            Style="{StaticResource PlayRecordStyle}"
+            Content="{Binding Player.IsPlaying, Converter={StaticResource IsPlayingConverter}}"
+            Command="{Binding PlayRecordedDescription}" />
+
+        <Button
+            Grid.Row="7"
+            Grid.Column="3"
+            Grid.ColumnSpan="3"
+            Style="{StaticResource PlayRecordStyle}"
+            Command="{Binding RecordDescription}">
+            <Button.Content>
+                <MultiBinding
+                    Converter="{StaticResource RecordingAndCountdownConverter}">
+                    <!--NOTE: IsRecording must be the first binding given for the converter to work properly-->
+                    <Binding
+                        Path="Recorder.IsRecording" />
+                    <Binding
+                        Path="CountdownViewModel.IsCountingDown" />
+                </MultiBinding>
+            </Button.Content>
+        </Button>
+
+        <Button
+            Grid.Row="8"
+            Grid.Column="4"
+            Style="{StaticResource SaveCancelStyle}"
+            Content="{x:Static s:UiStrings.Command_Save}"
+            Command="{Binding SaveDescription}" />
+
+        <Button
+            Grid.Row="8"
+            Grid.Column="5"
+            Style="{StaticResource SaveCancelStyle}"
+            Content="{x:Static s:UiStrings.Command_Cancel}"
+            Click="Cancel_OnClick" />
+    </Grid>
+</Window>

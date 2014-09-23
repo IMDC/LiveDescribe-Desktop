@@ -1,30 +1,33 @@
-﻿using LiveDescribe.Managers;
+﻿using LiveDescribe.Controls;
+using LiveDescribe.Controls.UserControls;
+using LiveDescribe.Managers;
 using LiveDescribe.Model;
-using LiveDescribe.View;
-using LiveDescribe.ViewModel;
+using LiveDescribe.Windows;
 using System.Collections.Generic;
+using ExportWindow = LiveDescribe.Windows.ExportWindow;
+using ImportAudioDescriptionWindow = LiveDescribe.Windows.ImportAudioDescriptionWindow;
 
 namespace LiveDescribe.Factories
 {
     public static class DialogShower
     {
-        private static AboutInfoView _aboutInfoView;
+        private static AboutInfoWindow _aboutInfoWindow;
 
         /// <summary>
-        /// Creates a NewProjectView and attaches an instance of NewProjectViewModel to it.
+        /// Creates a NewProjectWindow and attaches an instance of NewProjectViewModel to it.
         /// </summary>
         /// <returns>The ViewModel of the Window.</returns>
         public static NewProjectViewModel SpawnNewProjectView()
         {
             var viewModel = new NewProjectViewModel();
-            var view = new NewProjectView(viewModel);
+            var view = new NewProjectWindow(viewModel);
             viewModel.DialogResult = view.ShowDialog();
 
             return viewModel;
         }
 
         /// <summary>
-        /// Creates a SpaceRecordingView and attaches an instance of SpaceRecordingViewModel to it.
+        /// Creates a SpaceRecordingWindow and attaches an instance of SpaceRecordingViewModel to it.
         /// </summary>
         /// <param name="selectedSpace">Space to record in.</param>
         /// <param name="project">The current LiveDescribe Project.</param>
@@ -32,7 +35,7 @@ namespace LiveDescribe.Factories
         public static SpaceRecordingViewModel SpawnSpaceRecordingView(Space selectedSpace, Project project)
         {
             var viewModel = new SpaceRecordingViewModel(selectedSpace, project);
-            var view = new SpaceRecordingView(viewModel);
+            var view = new SpaceRecordingWindow(viewModel);
             viewModel.DialogResult = view.ShowDialog();
 
             return viewModel;
@@ -44,23 +47,23 @@ namespace LiveDescribe.Factories
         /// </summary>
         public static void SpawnAboutInfoView()
         {
-            if (_aboutInfoView == null)
+            if (_aboutInfoWindow == null)
             {
-                _aboutInfoView = new AboutInfoView();
-                _aboutInfoView.Closed += (sender, args) => _aboutInfoView = null;
-                _aboutInfoView.Show();
+                _aboutInfoWindow = new AboutInfoWindow();
+                _aboutInfoWindow.Closed += (sender, args) => _aboutInfoWindow = null;
+                _aboutInfoWindow.Show();
             }
 
-            _aboutInfoView.Focus();
+            _aboutInfoWindow.Focus();
         }
 
         /// <summary>
-        /// Creates a ExportWindowView and attaches an instance of ExportWindowViewModel to it.
+        /// Creates a ExportWindowView and attaches an instance of ExportViewModel to it.
         /// </summary>
         /// <returns>The ViewModel of the Window.</returns>
-        public static ExportWindowViewModel SpawnExportWindowView(Project project, string videoPath, double durationSeconds,  List<Description> descriptionList, LoadingViewModel loadingViewModel)
+        public static ExportViewModel SpawnExportWindowView(Project project, string videoPath, double durationSeconds, List<Description> descriptionList, LoadingViewModel loadingViewModel)
         {
-            var viewModel = new ExportWindowViewModel(project, videoPath, durationSeconds, descriptionList, loadingViewModel);
+            var viewModel = new ExportViewModel(project, videoPath, durationSeconds, descriptionList, loadingViewModel);
             var view = new ExportWindow(viewModel);
             viewModel.DialogResult = view.ShowDialog();
 

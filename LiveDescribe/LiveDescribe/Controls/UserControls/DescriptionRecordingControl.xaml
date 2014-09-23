@@ -1,0 +1,52 @@
+﻿<UserControl
+    x:Class="LiveDescribe.Controls.UserControls.DescriptionRecordingControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    mc:Ignorable="d"
+    xmlns:converters="clr-namespace:LiveDescribe.Converters"
+    xmlns:s="clr-namespace:LiveDescribe.Resources.UiStrings"
+    xmlns:u="clr-namespace:LiveDescribe.Utilities"
+    xmlns:resources="clr-namespace:LiveDescribe.Resources"
+    xmlns:controls="clr-namespace:LiveDescribe.Controls"
+    xmlns:userControls="clr-namespace:LiveDescribe.Controls.UserControls"
+    d:DataContext="{d:DesignInstance userControls:DescriptionRecordingViewModel}">
+    <UserControl.Resources>
+        <Style
+            x:Key="ControlPanelStyle"
+            TargetType="Control">
+            <Setter
+                Property="Margin"
+                Value="5" />
+        </Style>
+        <converters:BoolToContentConverter
+            x:Key="IsRecordingConverter"
+            TrueContent="{x:Static resources:CustomResources.StopRecord}"
+            FalseContent="{x:Static resources:CustomResources.Record}" />
+    </UserControl.Resources>
+
+    <Grid>
+        <StackPanel>
+            <CheckBox
+                Name="ExtendedDescriptionCheckBox"
+                IsChecked="{Binding RecordExtendedDescription}"
+                Style="{StaticResource ControlPanelStyle}"
+                HorizontalAlignment="Center">
+                <TextBlock
+                    Text="{x:Static s:UiStrings.Command_ToggleRecordExtended}"
+                    TextWrapping="Wrap" />
+            </CheckBox>
+
+            <Button
+                Name="RecordButton"
+                Command="{Binding RecordButtonClickCommand}"
+                Style="{StaticResource ControlPanelStyle}"
+                Content="{Binding Path=Recorder.IsRecording, Converter={StaticResource IsRecordingConverter}}"
+                HorizontalAlignment="Center"
+                HorizontalContentAlignment="Center"
+                Width="60"
+                Height="35" />
+        </StackPanel>
+    </Grid>
+</UserControl>

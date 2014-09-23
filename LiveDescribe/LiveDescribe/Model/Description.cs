@@ -88,7 +88,7 @@ namespace LiveDescribe.Model
              * on the length of the audio file. This might be changed later with description audio
              * trimming.
              */
-            set { throw new NotImplementedException(); }
+            protected set { throw new NotImplementedException(); }
         }
 
         /// <summary>
