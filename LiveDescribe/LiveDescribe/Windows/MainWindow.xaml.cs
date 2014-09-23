@@ -66,22 +66,22 @@ namespace LiveDescribe.Windows
             if (!Defines.Debug)
                 System.Threading.Thread.Sleep(2000);
 
+            Settings.Default.Upgrade();
+            Settings.Default.InitializeDefaultValuesIfNull();
+
             InitializeComponent();
 
             //check which exporting options are available, depending on build
-            if (!Properties.Defines.Zagga)
-            {
-                ExportWithVideo.Visibility = Visibility.Collapsed;
-                ExportAudioOnly.Visibility = Visibility.Visible;
-            }
-            else
+            if (Defines.Zagga)
             {
                 ExportWithVideo.Visibility = Visibility.Visible;
                 ExportAudioOnly.Visibility = Visibility.Collapsed;
             }
-
-            Settings.Default.Upgrade();
-            Settings.Default.InitializeDefaultValuesIfNull();
+            else
+            {
+                ExportWithVideo.Visibility = Visibility.Collapsed;
+                ExportAudioOnly.Visibility = Visibility.Visible;
+            }
 
             _videoMedia = MediaControl.VideoMedia;
 
