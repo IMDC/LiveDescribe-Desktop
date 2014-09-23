@@ -186,10 +186,10 @@ namespace LiveDescribe.Windows
                     SetTimeline();
 
                     foreach (var desc in _projectManager.AllDescriptions)
-                        SetIntervalLocation(desc);
+                        SetDescriptionLocation(desc);
 
                     foreach (var space in _projectManager.Spaces)
-                        SetIntervalLocation(space);
+                        SetSpaceLocation(space);
                 };
 
             //captures the mouse when a mousedown request is sent to the Marker
@@ -378,7 +378,7 @@ namespace LiveDescribe.Windows
              * opened project.
              */
             if (_videoMedia.CurrentState != LiveDescribeVideoStates.VideoNotLoaded)
-                SetIntervalLocation(description);
+                SetDescriptionLocation(description);
 
             description.MouseDown += (sender1, e1) =>
             {
@@ -424,7 +424,13 @@ namespace LiveDescribe.Windows
                     Dispatcher.Invoke(() => DescriptionCanvas.Draw());
             };
 
-            AddIntervalEventHandlers(description);
+            description.PropertyChanged += (o, e) =>
+            {
+                if (e.PropertyName == "StartInVideo"
+                    || e.PropertyName == "EndInVideo"
+                    || e.PropertyName == "SetStartAndEndInVideo")
+                    SetDescriptionLocation(description);
+            };
         }
 
         private void AddSpaceEventHandlers(Space space)
@@ -432,7 +438,7 @@ namespace LiveDescribe.Windows
             //Adding a space depends on where you right clicked so we create and add it in the view
             //Set space only if the video is loaded/playing/recording/etc
             if (_videoMedia.CurrentState != LiveDescribeVideoStates.VideoNotLoaded)
-                SetIntervalLocation(space);
+                SetSpaceLocation(space);
 
             space.MouseDown += (sender1, e1) =>
             {
@@ -461,17 +467,12 @@ namespace LiveDescribe.Windows
                     Dispatcher.Invoke(() => AudioCanvas.DrawSpaces());
             };
 
-            AddIntervalEventHandlers(space);
-        }
-
-        private void AddIntervalEventHandlers(IDescribableInterval interval)
-        {
-            interval.PropertyChanged += (o, e) =>
+            space.PropertyChanged += (o, e) =>
             {
                 if (e.PropertyName == "StartInVideo"
                     || e.PropertyName == "EndInVideo"
                     || e.PropertyName == "SetStartAndEndInVideo")
-                    SetIntervalLocation(interval);
+                    SetSpaceLocation(space);
             };
         }
 
@@ -599,18 +600,28 @@ namespace LiveDescribe.Windows
 
         #endregion
 
-        #region graphics Functions
+        #region Location, Sizing, and Drawing Methods
 
-        private void SetIntervalLocation(IDescribableInterval interval)
+        private void SetSpaceLocation(Space space)
         {
-            interval.X = (AudioCanvas.Width / _videoDuration) * interval.StartInVideo;
+            SetIntervalLocation(space, AudioCanvas);
+        }
+
+        private void SetDescriptionLocation(Description description)
+        {
+            SetIntervalLocation(description, DescriptionCanvas);
+        }
+
+        private void SetIntervalLocation(IDescribableInterval interval, Canvas containingCanvas)
+        {
+            interval.X = (containingCanvas.Width / _videoDuration) * interval.StartInVideo;
             interval.Y = 0;
-            interval.Height = AudioCanvas.ActualHeight;
+            interval.Height = containingCanvas.ActualHeight;
             /* Set interval to a minimum width so that all descriptions, even those with 0 duration
              * (ie extended descriptions) are still visible.
              */
             interval.Width = Math.Max(MinIntervalWidth,
-                (AudioCanvas.Width / _videoDuration) * (interval.EndInVideo - interval.StartInVideo));
+                (containingCanvas.Width / _videoDuration) * (interval.EndInVideo - interval.StartInVideo));
         }
 
         /// <summary>

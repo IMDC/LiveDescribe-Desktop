@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 
 namespace LiveDescribe.Model
 {
@@ -23,6 +24,7 @@ namespace LiveDescribe.Model
         private bool _isPlaying;
         private double _startwavefiletime;
         private double _endwavefiletime;
+        private RenderTargetBitmap _waveformImage;
         #endregion
 
         #region Constructors
@@ -163,6 +165,17 @@ namespace LiveDescribe.Model
         {
             get { return _endwavefiletime - _startwavefiletime; }
         }
+
+        public RenderTargetBitmap WaveformImage
+        {
+            get { return _waveformImage; }
+            set
+            {
+                _waveformImage = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         #endregion
 
         #region Methods

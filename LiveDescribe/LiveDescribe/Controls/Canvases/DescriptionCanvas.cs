@@ -1,4 +1,5 @@
 ﻿using LiveDescribe.Extensions;
+using LiveDescribe.Factories;
 using LiveDescribe.Model;
 using LiveDescribe.Properties;
 using LiveDescribe.Resources.UiStrings;
@@ -90,6 +91,11 @@ namespace LiveDescribe.Controls.Canvases
                             rectBrush = _extendedDescriptionBrush;
                         else
                             rectBrush = _regularDescriptionBrush;
+
+                        //if (description.WaveformImage == null)
+                        description.WaveformImage = RenderTargetBitmapFactory.CreateDescriptionWaveForm(description, rect);
+
+                        dc.DrawImage(description.WaveformImage, rect);
 
                         dc.DrawRectangle(rectBrush, LinePen, rect);
                     }
