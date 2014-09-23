@@ -1,4 +1,10 @@
-﻿using System;
+﻿using LiveDescribe.Events;
+using LiveDescribe.Extensions;
+using LiveDescribe.Model;
+using LiveDescribe.Properties;
+using LiveDescribe.Resources.UiStrings;
+using LiveDescribe.Utilities;
+using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
@@ -6,12 +12,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using LiveDescribe.Events;
-using LiveDescribe.Extensions;
-using LiveDescribe.Model;
-using LiveDescribe.Properties;
-using LiveDescribe.Resources.UiStrings;
-using LiveDescribe.Utilities;
 
 namespace LiveDescribe.Controls.Canvases
 {

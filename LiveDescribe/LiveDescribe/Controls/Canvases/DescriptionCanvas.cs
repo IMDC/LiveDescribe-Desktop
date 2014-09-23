@@ -18,9 +18,7 @@ namespace LiveDescribe.Controls.Canvases
         private DescriptionCanvasViewModel _canvasViewModel;
         private Brush _regularDescriptionBrush;
         private Brush _extendedDescriptionBrush;
-        private Image _regularDescriptionImage;
-        private Image _extendedDescriptionImage;
-        private Point _addDescriptionMousePoint;
+        private Image _descriptionImage;
 
         #endregion
 
@@ -69,36 +67,42 @@ namespace LiveDescribe.Controls.Canvases
                 || _canvasViewModel.Player.CurrentState == LiveDescribeVideoStates.VideoNotLoaded)
                 return;
 
-            Children.Remove(_regularDescriptionImage);
-            Children.Remove(_extendedDescriptionImage);
-            Children.Remove(SelectedImage);
+            Children.Remove(_descriptionImage);
 
-            var regularDescriptionGroup = new GeometryGroup { FillRule = FillRule.Nonzero };
-            var extendedDescriptionGroup = new GeometryGroup { FillRule = FillRule.Nonzero };
-            var selectedItemGroup = new GeometryGroup();
+            var drawingVisual = new DrawingVisual();
 
-            double beginTimeMsec = XPosToMilliseconds(VisibleX);
-            double endTimeMsec = XPosToMilliseconds(VisibleX + VisibleWidth);
-
-            foreach (var description in _canvasViewModel.AllDescriptions)
+            using (DrawingContext dc = drawingVisual.RenderOpen())
             {
-                if (IsIntervalVisible(description, beginTimeMsec, endTimeMsec))
-                {
-                    var rect = new RectangleGeometry(new Rect(description.X, description.Y, description.Width,
-                            description.Height));
+                double beginTimeMsec = XPosToMilliseconds(VisibleX);
+                double endTimeMsec = XPosToMilliseconds(VisibleX + VisibleWidth);
 
-                    if (description.IsSelected)
-                        selectedItemGroup.Children.Add(rect);
-                    else if (description.IsExtendedDescription)
-                        extendedDescriptionGroup.Children.Add(rect);
-                    else
-                        regularDescriptionGroup.Children.Add(rect);
+                foreach (var description in _canvasViewModel.AllDescriptions)
+                {
+                    if (IsIntervalVisible(description, beginTimeMsec, endTimeMsec))
+                    {
+                        var rect = new Rect(description.X, description.Y, description.Width, description.Height);
+
+                        Brush rectBrush;
+
+                        if (description.IsSelected)
+                            rectBrush = SelectedItemBrush;
+                        else if (description.IsExtendedDescription)
+                            rectBrush = _extendedDescriptionBrush;
+                        else
+                            rectBrush = _regularDescriptionBrush;
+
+                        dc.DrawRectangle(rectBrush, LinePen, rect);
+                    }
                 }
             }
 
-            AddImageToCanvas(ref _regularDescriptionImage, regularDescriptionGroup, _regularDescriptionBrush);
-            AddImageToCanvas(ref _extendedDescriptionImage, extendedDescriptionGroup, _extendedDescriptionBrush);
-            AddImageToCanvas(ref SelectedImage, selectedItemGroup, SelectedItemBrush);
+            AddImageToCanvas(ref _descriptionImage, drawingVisual);
+        }
+
+        public override void DrawMouseSelection()
+        {
+            //TODO: Replace this logic.
+            Draw();
         }
 
         protected override sealed void SetBrushes()
@@ -222,10 +226,7 @@ namespace LiveDescribe.Controls.Canvases
             }
 
             if (!descriptionFound)
-            {
-                _addDescriptionMousePoint = point;
                 e.Handled = true;
-            }
         }
 
         #endregion
