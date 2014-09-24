@@ -92,7 +92,6 @@ namespace LiveDescribe.Controls.Canvases
                         else
                             rectBrush = _regularDescriptionBrush;
 
-                        //if (description.WaveformImage == null)
                         description.WaveformImage = RenderTargetBitmapFactory.CreateDescriptionWaveForm(description, rect);
 
                         dc.DrawImage(description.WaveformImage, rect);

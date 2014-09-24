@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Properties;
+using LiveDescribe.Utilities;
 using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
@@ -24,6 +25,7 @@ namespace LiveDescribe.Model
         private bool _isPlaying;
         private double _startwavefiletime;
         private double _endwavefiletime;
+        private Waveform _waveform;
         private RenderTargetBitmap _waveformImage;
         #endregion
 
@@ -166,6 +168,7 @@ namespace LiveDescribe.Model
             get { return _endwavefiletime - _startwavefiletime; }
         }
 
+        [JsonIgnore]
         public RenderTargetBitmap WaveformImage
         {
             get { return _waveformImage; }
@@ -176,9 +179,26 @@ namespace LiveDescribe.Model
             }
         }
 
+        [JsonIgnore]
+        public Waveform Waveform
+        {
+            get { return _waveform; }
+            set
+            {
+                _waveform = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         #endregion
 
         #region Methods
+
+        public void GenerateWaveForm()
+        {
+            var sampler = new AudioWaveFormSampler(AudioFile);
+            Waveform = sampler.CreateWaveform();
+        }
 
         public override void SetColour()
         {

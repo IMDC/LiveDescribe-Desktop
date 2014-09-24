@@ -157,7 +157,7 @@ namespace LiveDescribe.Managers
                 audioOperator.StripAudio(worker);
                 var waveFormData = audioOperator.ReadWavData(worker);
                 var audioHeader = audioOperator.Header;
-                waveform = new Waveform(audioHeader, waveFormData);
+                waveform = new Waveform(audioHeader, waveFormData, 40); //TODO remove magic number
                 Log.Info("Audio stripped");
             };
 
@@ -193,7 +193,7 @@ namespace LiveDescribe.Managers
         {
             var header = FileReader.ReadWaveFormHeader(project);
             var audioData = FileReader.ReadWaveFormFile(project);
-            project.Waveform = new Waveform(header, audioData);
+            project.Waveform = new Waveform(header, audioData, 40); //TODO remove magic number
             Log.InfoFormat("Waveform loaded from {0}", project.Files.WaveForm);
         }
 

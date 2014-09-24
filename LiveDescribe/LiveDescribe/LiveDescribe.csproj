@@ -261,6 +261,7 @@
       <DependentUpon>UiStrings.resx</DependentUpon>
     </Compile>
     <Compile Include="Utilities\AudioAnalyzer.cs" />
+    <Compile Include="Utilities\AudioWaveFormSampler.cs" />
     <Compile Include="Utilities\DescriptionExportUtility.cs" />
     <Compile Include="Utilities\DescriptionPlayer.cs" />
     <Compile Include="Utilities\DescriptionRecorder.cs" />
