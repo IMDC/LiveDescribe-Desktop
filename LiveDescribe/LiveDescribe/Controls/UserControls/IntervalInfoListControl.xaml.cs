@@ -26,5 +26,10 @@ namespace LiveDescribe.Controls.UserControls
             if (item != null)
                 item.NavigateToCommand.Execute();
         }
+
+        private void SpacesListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }

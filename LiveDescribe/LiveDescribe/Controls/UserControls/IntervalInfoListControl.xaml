@@ -149,8 +149,8 @@
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.View>
-                        <GridView>
-                            <GridViewColumn
+                        <GridView >
+                            <GridViewColumn 
                                 Header="{x:Static s:UiStrings.Header_NumberColumn}"
                                 CellTemplate="{StaticResource ItemIndexTemplate}" />
                             <GridViewColumn

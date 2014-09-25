@@ -187,7 +187,6 @@ namespace LiveDescribe.Windows
 
                     foreach (var desc in _projectManager.AllDescriptions)
                         SetIntervalLocation(desc);
-
                     foreach (var space in _projectManager.Spaces)
                         SetIntervalLocation(space);
                 };
