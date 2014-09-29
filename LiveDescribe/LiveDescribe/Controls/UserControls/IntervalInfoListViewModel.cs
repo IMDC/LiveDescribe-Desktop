@@ -63,8 +63,10 @@ namespace LiveDescribe.Controls.UserControls
                     || SelectedRegularDescription != null,
                 execute: () =>
                 {
-                    if (SelectedSpace != null)
+                    while (SelectedSpace != null)
+                    {
                         SelectedSpace.DeleteCommand.ExecuteIfCan();
+                    }
 
                     if (SelectedRegularDescription != null)
                         SelectedRegularDescription.DeleteCommand.ExecuteIfCan();
