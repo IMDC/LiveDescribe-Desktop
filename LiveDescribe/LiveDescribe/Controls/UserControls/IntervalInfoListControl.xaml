@@ -363,7 +363,7 @@
             Grid.RowSpan="2">
 
             <userControls:DescriptionRecordingControl
-                DataContext="{Binding DescriptionRecordingControlViewModel}" />
+                DataContext="{Binding DescriptionRecordingViewModel}" />
 
             <Button
                 Margin="5,20,5,20"

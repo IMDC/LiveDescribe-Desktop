@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Windows.Input;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Extensions;
 using LiveDescribe.Factories;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Managers;
 using LiveDescribe.Model;
+using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Windows.Input;
 
 namespace LiveDescribe.Controls.UserControls
 {
@@ -29,6 +29,8 @@ namespace LiveDescribe.Controls.UserControls
         private IDescribableInterval _selectedItem;
         #endregion
 
+
+        #region Constructor
         public IntervalInfoListViewModel(ProjectManager projectManager, DescriptionRecordingViewModel descriptionRecordingViewModel)
         {
             _projectManager = projectManager;
@@ -40,7 +42,9 @@ namespace LiveDescribe.Controls.UserControls
             SelectedSpace = null;
             _selectedItem = null;
         }
+        #endregion
 
+        #region Init Commands
         private void InitCommands()
         {
             ClearSelectedItemText = new RelayCommand(
@@ -74,6 +78,7 @@ namespace LiveDescribe.Controls.UserControls
                 }
             );
         }
+        #endregion
 
         #region Commands
 
@@ -84,7 +89,7 @@ namespace LiveDescribe.Controls.UserControls
         public ICommand DeleteSelectedSpaceOrDescription { private set; get; }
         #endregion
 
-        #region Binding Properties
+        #region Properties
 
         public DescriptionRecordingViewModel DescriptionRecordingViewModel { get; private set; }
 
