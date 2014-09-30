@@ -2,7 +2,7 @@
 
 namespace LiveDescribe.Factories
 {
-    public class PenFactory
+    public static class PenFactory
     {
         public static Pen LinePen(Brush lineBrush)
         {

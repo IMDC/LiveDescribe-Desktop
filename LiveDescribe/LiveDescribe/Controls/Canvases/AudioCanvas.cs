@@ -194,14 +194,9 @@ namespace LiveDescribe.Controls.Canvases
         /// </summary>
         protected override sealed void SetBrushes()
         {
-            _spaceBrush = new SolidColorBrush(Settings.Default.ColourScheme.SpaceColour);
-            _spaceBrush.Freeze();
-
-            SelectedItemBrush = new SolidColorBrush(Settings.Default.ColourScheme.SelectedItemColour);
-            SelectedItemBrush.Freeze();
-
-            _completedSpaceBrush = new SolidColorBrush(Settings.Default.ColourScheme.CompletedSpaceColour);
-            _completedSpaceBrush.Freeze();
+            _spaceBrush = BrushFactory.SolidColour(Settings.Default.ColourScheme.SpaceColour);
+            SelectedItemBrush = BrushFactory.SolidColour(Settings.Default.ColourScheme.SelectedItemColour);
+            _completedSpaceBrush = BrushFactory.SolidColour(Settings.Default.ColourScheme.CompletedSpaceColour);
 
             Draw();
         }

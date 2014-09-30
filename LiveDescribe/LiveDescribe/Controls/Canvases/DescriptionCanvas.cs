@@ -117,14 +117,10 @@ namespace LiveDescribe.Controls.Canvases
 
         protected override sealed void SetBrushes()
         {
-            _regularDescriptionBrush = new SolidColorBrush(Settings.Default.ColourScheme.RegularDescriptionColour);
-            _regularDescriptionBrush.Freeze();
-
-            _extendedDescriptionBrush = new SolidColorBrush(Settings.Default.ColourScheme.ExtendedDescriptionColour);
-            _extendedDescriptionBrush.Freeze();
-
-            SelectedItemBrush = new SolidColorBrush(Settings.Default.ColourScheme.SelectedItemColour);
-            SelectedItemBrush.Freeze();
+            _regularDescriptionBrush = BrushFactory.SolidColour(Settings.Default.ColourScheme.RegularDescriptionColour);
+            _extendedDescriptionBrush = BrushFactory.SolidColour(
+                Settings.Default.ColourScheme.ExtendedDescriptionColour);
+            SelectedItemBrush = BrushFactory.SolidColour(Settings.Default.ColourScheme.SelectedItemColour);
 
             Draw();
         }
