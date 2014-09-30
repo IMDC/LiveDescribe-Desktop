@@ -15,7 +15,7 @@ namespace LiveDescribe.Factories
         /// </summary>
         private const int DefaultDpi = 96;
 
-        private static readonly Pen LinePen = PenFactory.BlackLinePen();
+        private static readonly Pen LinePen = PenFactory.LinePen(Brushes.Black);
 
         /// <summary>
         /// Creates a waveform image from a description's audio file. Uses the description.Waveform

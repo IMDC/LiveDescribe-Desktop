@@ -1,5 +1,6 @@
 ﻿using LiveDescribe.Events;
 using LiveDescribe.Extensions;
+using LiveDescribe.Factories;
 using LiveDescribe.Model;
 using LiveDescribe.Properties;
 using LiveDescribe.Resources.UiStrings;
@@ -170,6 +171,9 @@ namespace LiveDescribe.Controls.Canvases
                             rectBrush = _completedSpaceBrush;
                         else
                             rectBrush = _spaceBrush;
+
+                        dc.DrawText(FormattedTextFactory.IntervalText(space, Brushes.Black),
+                            new Point(space.X, space.Y));
 
                         dc.DrawRectangle(rectBrush, LinePen, rect);
                     }

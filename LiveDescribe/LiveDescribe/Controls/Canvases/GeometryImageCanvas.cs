@@ -16,7 +16,7 @@ namespace LiveDescribe.Controls.Canvases
         /// <summary>
         /// The pen used to draw the borders of descriptions, spaces, etc.
         /// </summary>
-        protected static readonly Pen LinePen = PenFactory.BlackLinePen();
+        protected static readonly Pen LinePen = PenFactory.LinePen(Brushes.Black);
 
         /// <summary>
         /// The distance away from the beginning or ending of an interval in pixels that the user

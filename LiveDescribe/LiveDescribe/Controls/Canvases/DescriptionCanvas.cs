@@ -96,6 +96,9 @@ namespace LiveDescribe.Controls.Canvases
                             description.WaveformImage = RenderTargetBitmapFactory.CreateDescriptionWaveForm(description,
                                 rect, Width);
 
+                        dc.DrawText(FormattedTextFactory.IntervalText(description, Brushes.Black),
+                            new Point(description.X, description.Y));
+
                         dc.DrawImage(description.WaveformImage, rect);
 
                         dc.DrawRectangle(rectBrush, LinePen, rect);

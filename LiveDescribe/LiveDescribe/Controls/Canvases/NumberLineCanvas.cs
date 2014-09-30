@@ -1,5 +1,6 @@
 ﻿using LiveDescribe.Converters;
 using LiveDescribe.Extensions;
+using LiveDescribe.Factories;
 using LiveDescribe.Utilities;
 using System.Globalization;
 using System.Windows;
@@ -32,17 +33,12 @@ namespace LiveDescribe.Controls.Canvases
             Background = Brushes.White;
 
             _millisecondsTimeConverter = new MillisecondsTimeConverterFormatter();
-            _shortLinePen = new Pen(Brushes.Black, 1);
-            _shortLinePen.Freeze();
 
-            _longLinePen = new Pen(Brushes.Blue, 1);
-            _longLinePen.Freeze();
+            _shortLinePen = PenFactory.LinePen(Brushes.Black);
+            _longLinePen = PenFactory.LinePen(Brushes.Blue);
 
-            _shortLineBrush = new SolidColorBrush(Colors.Black);
-            _shortLineBrush.Freeze();
-
-            _longLineBrush = new SolidColorBrush(Colors.Black);
-            _longLineBrush.Freeze();
+            _shortLineBrush = Brushes.Black;
+            _longLineBrush = Brushes.Black;
 
             DataContextChanged += OnDataContextChanged;
         }

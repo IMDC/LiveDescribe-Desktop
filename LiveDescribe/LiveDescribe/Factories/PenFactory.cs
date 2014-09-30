@@ -4,9 +4,9 @@ namespace LiveDescribe.Factories
 {
     public class PenFactory
     {
-        public static Pen BlackLinePen()
+        public static Pen LinePen(Brush lineBrush)
         {
-            var pen = new Pen(Brushes.Black, 1);
+            var pen = new Pen(lineBrush, 1);
             pen.Freeze();
             return pen;
         }
