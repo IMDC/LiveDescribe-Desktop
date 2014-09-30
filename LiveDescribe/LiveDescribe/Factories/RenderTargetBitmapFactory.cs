@@ -14,7 +14,8 @@ namespace LiveDescribe.Factories
 
         private static readonly Pen LinePen = new Pen(Brushes.Black, 1);
 
-        public static RenderTargetBitmap CreateDescriptionWaveForm(Description description, Rect bounds)
+        public static RenderTargetBitmap CreateDescriptionWaveForm(Description description, Rect bounds,
+            double canvasWidth)
         {
             if (bounds.Width <= 1 || bounds.Height <= 1)
                 return null;
@@ -33,7 +34,7 @@ namespace LiveDescribe.Factories
 
                 var data = description.Waveform.Data;
 
-                double samplesPerPixel = Math.Max(data.Count / bounds.Width, 1);
+                double samplesPerPixel = Math.Max(data.Count / canvasWidth, 1);
                 double middle = bounds.Height / 2;
                 double yscale = middle;
 
@@ -42,11 +43,6 @@ namespace LiveDescribe.Factories
 
                 var waveformLineGroup = new GeometryGroup();
 
-                double absMin = 0;
-
-                /*int endPixel = (int)bounds.X + (int)bounds.Width;
-
-                for (int pixel = (int)bounds.X; pixel <= endPixel; pixel++)*/
                 int endPixel = (int)bounds.Width;
 
                 for (int pixel = 0; pixel <= endPixel; pixel++)
@@ -67,8 +63,6 @@ namespace LiveDescribe.Factories
                             StartPoint = new Point(pixel, middle + max * yscale),
                             EndPoint = new Point(pixel, middle + min * yscale),
                         });
-
-                        absMin = Math.Min(absMin, min);
                     }
                 }
 
