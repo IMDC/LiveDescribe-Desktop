@@ -31,6 +31,5 @@ namespace LiveDescribe.Interfaces
 
         void SetStartAndEndInVideo(double startInVideo, double endInVideo);
         void MoveInterval(double startInVideo);
-        void SetColour();
     }
 }

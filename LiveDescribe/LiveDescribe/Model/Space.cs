@@ -1,5 +1,4 @@
 ﻿using GalaSoft.MvvmLight.Command;
-using LiveDescribe.Properties;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
@@ -58,16 +57,6 @@ namespace LiveDescribe.Model
         private void UpdateDuration()
         {
             Duration = EndInVideo - StartInVideo;
-        }
-
-        public override void SetColour()
-        {
-            if (IsSelected)
-                Colour = Settings.Default.ColourScheme.SelectedItemColour;
-            else if (IsRecordedOver)
-                Colour = Settings.Default.ColourScheme.CompletedSpaceColour;
-            else
-                Colour = Settings.Default.ColourScheme.SpaceColour;
         }
         #endregion
 

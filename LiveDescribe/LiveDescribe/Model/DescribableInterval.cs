@@ -230,7 +230,6 @@ namespace LiveDescribe.Model
         #endregion
 
         #region Methods
-        public abstract void SetColour();
 
         /// <summary>
         /// Moves the interval to a new start time while maintaining the same duration.

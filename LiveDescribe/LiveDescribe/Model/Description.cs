@@ -1,5 +1,4 @@
 ﻿using GalaSoft.MvvmLight.Command;
-using LiveDescribe.Properties;
 using LiveDescribe.Utilities;
 using Newtonsoft.Json;
 using System;
@@ -70,12 +69,6 @@ namespace LiveDescribe.Model
                     var pfi = new ProcessStartInfo("Explorer.exe", args);
                     Process.Start(pfi);
                 });
-
-            Settings.Default.PropertyChanged += (sender, args) =>
-            {
-                if (args.PropertyName == "ColourScheme")
-                    SetColour();
-            };
         }
         #endregion
 
@@ -199,25 +192,12 @@ namespace LiveDescribe.Model
             var sampler = new AudioWaveFormSampler(AudioFile);
             Waveform = sampler.CreateWaveform();
         }
-
-        public override void SetColour()
-        {
-            if (IsSelected)
-                Colour = Settings.Default.ColourScheme.SelectedItemColour;
-            else if (IsExtendedDescription)
-                Colour = Settings.Default.ColourScheme.ExtendedDescriptionColour;
-            else
-                Colour = Settings.Default.ColourScheme.RegularDescriptionColour;
-        }
         #endregion
 
         #region Property Changed
         protected override void NotifyPropertyChanged([CallerMemberName]string propertyName = "")
         {
             base.NotifyPropertyChanged(propertyName);
-
-            if (propertyName == "IsExtendedDescription" || propertyName == "IsSelected")
-                SetColour();
         }
         #endregion
     }
