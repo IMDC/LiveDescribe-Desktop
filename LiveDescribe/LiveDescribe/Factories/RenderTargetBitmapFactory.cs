@@ -10,18 +10,26 @@ namespace LiveDescribe.Factories
 {
     public static class RenderTargetBitmapFactory
     {
+        /// <summary>
+        /// The dpi used to render the bitmap.
+        /// </summary>
         private const int DefaultDpi = 96;
 
-        private static readonly Pen LinePen = new Pen(Brushes.Black, 1);
+        private static readonly Pen LinePen = PenFactory.BlackLinePen();
 
+        /// <summary>
+        /// Creates a waveform image from a description's audio file. Uses the description.Waveform
+        /// property to obtain the data for the waveform.
+        /// </summary>
+        /// <param name="description">Description to create waveform for.</param>
+        /// <param name="bounds">Size of the image to create.</param>
+        /// <param name="canvasWidth">The width of the canvas that will contain this image.</param>
+        /// <returns>A bitmap of the description's waveform.</returns>
         public static RenderTargetBitmap CreateDescriptionWaveForm(Description description, Rect bounds,
             double canvasWidth)
         {
             if (bounds.Width <= 1 || bounds.Height <= 1)
                 return null;
-
-            /*if (description.WaveformImage != null)
-                return description.WaveformImage;*/
 
             if (description.Waveform == null)
                 description.GenerateWaveForm();
@@ -30,8 +38,6 @@ namespace LiveDescribe.Factories
 
             using (var dc = drawingVisual.RenderOpen())
             {
-                dc.DrawLine(LinePen, new Point(0, 0), new Point(bounds.Width, bounds.Height));
-
                 var data = description.Waveform.Data;
 
                 double samplesPerPixel = Math.Max(data.Count / canvasWidth, 1);

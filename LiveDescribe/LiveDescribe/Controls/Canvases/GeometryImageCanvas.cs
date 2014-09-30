@@ -1,11 +1,12 @@
+using LiveDescribe.Extensions;
+using LiveDescribe.Factories;
+using LiveDescribe.Interfaces;
 using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using LiveDescribe.Extensions;
-using LiveDescribe.Interfaces;
 
 namespace LiveDescribe.Controls.Canvases
 {
@@ -15,7 +16,7 @@ namespace LiveDescribe.Controls.Canvases
         /// <summary>
         /// The pen used to draw the borders of descriptions, spaces, etc.
         /// </summary>
-        protected static readonly Pen LinePen = CreateLinePen();
+        protected static readonly Pen LinePen = PenFactory.BlackLinePen();
 
         /// <summary>
         /// The distance away from the beginning or ending of an interval in pixels that the user
@@ -69,13 +70,6 @@ namespace LiveDescribe.Controls.Canvases
         }
 
         #endregion
-
-        private static Pen CreateLinePen()
-        {
-            var linePen = new Pen(Brushes.Black, 1);
-            linePen.Freeze();
-            return linePen;
-        }
 
         #region Drawing Methods
         /// <summary>

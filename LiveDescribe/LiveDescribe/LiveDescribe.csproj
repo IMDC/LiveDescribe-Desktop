@@ -222,6 +222,7 @@
     <Compile Include="Extensions\ObservableCollectionExtensions.cs" />
     <Compile Include="Factories\DialogShower.cs" />
     <Compile Include="Factories\MessageBoxFactory.cs" />
+    <Compile Include="Factories\PenFactory.cs" />
     <Compile Include="Factories\RenderTargetBitmapFactory.cs" />
     <Compile Include="HistoryItems\DeleteDescriptionHistoryItem.cs" />
     <Compile Include="HistoryItems\InsertDescriptionHistoryItem.cs" />
