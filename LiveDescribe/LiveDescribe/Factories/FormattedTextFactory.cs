@@ -22,5 +22,15 @@ namespace LiveDescribe.Factories
                 10,
                 textBrush);
         }
+
+        public static FormattedText Text(string text, Brush textBrush)
+        {
+            return new FormattedText(text,
+                CultureInfo.GetCultureInfo("en-us"),
+                FlowDirection.LeftToRight,
+                new Typeface("Segoe UI"),
+                10,
+                textBrush);
+        }
     }
 }

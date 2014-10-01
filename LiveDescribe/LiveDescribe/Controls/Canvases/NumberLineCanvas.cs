@@ -1,5 +1,4 @@
 ﻿using LiveDescribe.Converters;
-using LiveDescribe.Extensions;
 using LiveDescribe.Factories;
 using LiveDescribe.Utilities;
 using System.Globalization;
@@ -25,8 +24,6 @@ namespace LiveDescribe.Controls.Canvases
         private readonly MillisecondsTimeConverterFormatter _millisecondsTimeConverter;
         private readonly Pen _shortLinePen;
         private readonly Pen _longLinePen;
-        private readonly Brush _shortLineBrush;
-        private readonly Brush _longLineBrush;
 
         public NumberLineCanvas()
         {
@@ -37,9 +34,6 @@ namespace LiveDescribe.Controls.Canvases
             _shortLinePen = PenFactory.LinePen(Brushes.Black);
             _longLinePen = PenFactory.LinePen(Brushes.Blue);
 
-            _shortLineBrush = Brushes.Black;
-            _longLineBrush = Brushes.Black;
-
             DataContextChanged += OnDataContextChanged;
         }
 
@@ -49,8 +43,7 @@ namespace LiveDescribe.Controls.Canvases
                 || Width == 0)
                 return;
 
-            var shortLineGroup = new GeometryGroup();
-            var longLineGroup = new GeometryGroup();
+            var drawingVisual = new DrawingVisual();
 
             //Number of lines in the amount of time that the video plays for
             int numLines = (int)(VideoDurationMsec / (LineTimeSeconds * Milliseconds.PerSecond));
@@ -66,56 +59,41 @@ namespace LiveDescribe.Controls.Canvases
             int firstShortLine = -1;
             int firstLongLine = -1;
 
-            for (int i = beginLine; i <= endLine; i++)
+            using (var drawingContext = drawingVisual.RenderOpen())
             {
-                double xPos = widthPerLine * i;
-
-                if (i % LongLineDivisor == 0)
+                for (int i = beginLine; i <= endLine; i++)
                 {
-                    if (firstLongLine == -1)
-                        firstLongLine = i;
+                    double xPos = widthPerLine * i;
 
-                    longLineGroup.Children.Add(new LineGeometry
+                    if (i % LongLineDivisor == 0)
                     {
-                        StartPoint = new Point(xPos, 0),
-                        EndPoint = new Point(xPos, ActualHeight * LongLineLengthPercent),
-                    });
+                        if (firstLongLine == -1)
+                            firstLongLine = i;
 
-                    //TODO put into image?
-                    var timestamp = new TextBlock
-                    {
-                        Text = (string)_millisecondsTimeConverter.Convert((i * LineTimeSeconds) * 1000, typeof(int),
-                        null, CultureInfo.CurrentCulture)
-                    };
-                    SetLeft(timestamp, ((widthPerLine * i) - 24));
-                    Children.Add(timestamp);
-                }
-                else
-                {
-                    if (firstShortLine == -1)
-                        firstShortLine = i;
+                        drawingContext.DrawLine(_longLinePen,
+                            new Point(xPos, 0),
+                            new Point(xPos, ActualHeight * LongLineLengthPercent));
 
-                    shortLineGroup.Children.Add(new LineGeometry
+                        var timestamp = (string)_millisecondsTimeConverter.Convert((i * LineTimeSeconds) * 1000, typeof(int),
+                            null, CultureInfo.CurrentCulture);
+                        var ft = FormattedTextFactory.Text(timestamp, Brushes.Black);
+
+                        drawingContext.DrawText(ft, new Point(xPos - ft.Width / 2, 0));
+                    }
+                    else
                     {
-                        StartPoint = new Point(xPos, 0),
-                        EndPoint = new Point(xPos, ActualHeight * ShortLineLengthPercent),
-                    });
+                        if (firstShortLine == -1)
+                            firstShortLine = i;
+
+                        drawingContext.DrawLine(_shortLinePen,
+                            new Point(xPos, 0),
+                            new Point(xPos, ActualHeight * ShortLineLengthPercent));
+                    }
                 }
             }
 
-            var shortLineImage = shortLineGroup.CreateImage(_shortLineBrush, _shortLinePen);
-
-            SetLeft(shortLineImage, widthPerLine * firstShortLine);
-            SetTop(shortLineImage, 0);
-
-            Children.Add(shortLineImage);
-
-            var longLineImage = longLineGroup.CreateImage(_longLineBrush, _longLinePen);
-
-            SetLeft(longLineImage, widthPerLine * firstLongLine);
-            SetTop(longLineImage, 0);
-
-            Children.Add(longLineImage);
+            Image image = null;
+            AddImageToCanvas(ref image, drawingVisual);
         }
 
         protected override void SetBrushes()
