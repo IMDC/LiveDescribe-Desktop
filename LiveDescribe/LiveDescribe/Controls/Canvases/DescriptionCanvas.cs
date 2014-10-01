@@ -19,7 +19,7 @@ namespace LiveDescribe.Controls.Canvases
         private DescriptionCanvasViewModel _canvasViewModel;
         private Brush _regularDescriptionBrush;
         private Brush _extendedDescriptionBrush;
-        private Image _descriptionImage;
+        private readonly Image _descriptionImage;
 
         #endregion
 
@@ -35,6 +35,9 @@ namespace LiveDescribe.Controls.Canvases
             MouseSelection = CanvasMouseSelection.NoSelection;
 
             ContextMenu = new ContextMenu();
+
+            _descriptionImage = new Image();
+            Children.Add(_descriptionImage);
 
             InitEventHandlers();
         }
@@ -67,8 +70,6 @@ namespace LiveDescribe.Controls.Canvases
             if (_canvasViewModel == null || Width == 0 || VisibleWidth == 0
                 || _canvasViewModel.Player.CurrentState == LiveDescribeVideoStates.VideoNotLoaded)
                 return;
-
-            Children.Remove(_descriptionImage);
 
             var drawingVisual = new DrawingVisual();
 
@@ -106,7 +107,7 @@ namespace LiveDescribe.Controls.Canvases
                 }
             }
 
-            AddImageToCanvas(ref _descriptionImage, drawingVisual);
+            DisplayVisualOnCanvas(_descriptionImage, drawingVisual);
         }
 
         public override void DrawMouseSelection()

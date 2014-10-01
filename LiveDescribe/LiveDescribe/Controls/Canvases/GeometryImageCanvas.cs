@@ -106,42 +106,27 @@ namespace LiveDescribe.Controls.Canvases
         }
 
         /// <summary>
-        /// Adds a geometryGroup-based image to this canvas if it is not an empty shape.
+        /// Draws a DrawingVisual object to the canvas by setting it as the given image's source.
+        /// In order to be seen, the image must already be a child of the canvas that is being
+        /// displayed to.
         /// </summary>
-        /// <param name="image">Image to add and then later reference.</param>
-        /// <param name="geometryGroup">GeometryGroup to turn into an image.</param>
-        /// <param name="geometryBrush">The colour of the GeometryImage.</param>
-        protected void AddImageToCanvas(ref Image image, GeometryGroup geometryGroup, Brush geometryBrush)
-        {
-            if (geometryGroup.Children.Count < 1)
-                return;
-
-            image = geometryGroup.CreateImage(geometryBrush, LinePen);
-
-            //The Image has to be set to the smallest X value of the visible spaces.
-            double minX = geometryGroup.Children[0].Bounds.X;
-            for (int i = 1; i < geometryGroup.Children.Count; i++)
-            {
-                minX = Math.Min(minX, geometryGroup.Children[i].Bounds.X);
-            }
-
-            Children.Add(image);
-
-            SetLeft(image, minX);
-            SetTop(image, 0);
-        }
-
-        protected void AddImageToCanvas(ref Image image, DrawingVisual drawingVisual)
+        /// <param name="image">Image to set the source of.</param>
+        /// <param name="drawingVisual">Drawing visual to display.</param>
+        /// <param name="topPos">The y position that the image will be set to.</param>
+        protected void DisplayVisualOnCanvas(Image image, DrawingVisual drawingVisual, double topPos = 0)
         {
             if (drawingVisual == null || drawingVisual.Drawing == null || drawingVisual.Drawing.Children.Count < 1)
+            {
+                image.Source = null;
                 return;
+            }
 
             drawingVisual.Drawing.Freeze();
 
             var drawingImage = new DrawingImage(drawingVisual.Drawing);
             drawingImage.Freeze();
 
-            image = new Image { Source = drawingImage };
+            image.Source = drawingImage;
 
             //The Image has to be set to the smallest X value of the visible spaces.
             double minX = drawingVisual.Drawing.Children[0].Bounds.X;
@@ -150,10 +135,8 @@ namespace LiveDescribe.Controls.Canvases
                 minX = Math.Min(minX, drawingVisual.Drawing.Children[i].Bounds.X);
             }
 
-            Children.Add(image);
-
             SetLeft(image, minX);
-            SetTop(image, 0);
+            SetTop(image, topPos);
         }
 
         /// <summary>

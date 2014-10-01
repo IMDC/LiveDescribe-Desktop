@@ -24,8 +24,8 @@ namespace LiveDescribe.Controls.Canvases
         private AudioCanvasViewModel _viewModel;
         private Brush _completedSpaceBrush;
         private Brush _spaceBrush;
-        private Image _waveformImage;
-        private Image _spaceImage;
+        private readonly Image _waveformImage;
+        private readonly Image _spaceImage;
         private MenuItem _addSpaceMenuItem;
         private Point _addSpaceMousePoint;
 
@@ -48,6 +48,13 @@ namespace LiveDescribe.Controls.Canvases
             MouseSelection = CanvasMouseSelection.NoSelection;
 
             ContextMenu = new ContextMenu();
+
+            _spaceImage = new Image();
+            _waveformImage = new Image();
+
+            //Add the two images in this over so that _space image is drawn over _waveformImage
+            Children.Add(_waveformImage);
+            Children.Add(_spaceImage);
 
             InitEventHandlers();
         }
@@ -91,8 +98,6 @@ namespace LiveDescribe.Controls.Canvases
                 || _viewModel.Player.CurrentState == LiveDescribeVideoStates.VideoNotLoaded)
                 return;
 
-            Children.Remove(_waveformImage);
-
             var data = _viewModel.Waveform.Data;
             double samplesPerPixel = Math.Max(data.Count / Width, 1);
             double middle = ActualHeight / 2;
@@ -131,12 +136,15 @@ namespace LiveDescribe.Controls.Canvases
                 }
             }
 
-            _waveformImage = waveformLineGroup.CreateImage(Brushes.Black, LinePen);
+            waveformLineGroup.Freeze();
 
-            SetLeft(_waveformImage, (int)VisibleX);
-            SetTop(_waveformImage, middle + absMin * yscale);
+            var dv = new DrawingVisual();
+            using (var drawingContext = dv.RenderOpen())
+            {
+                drawingContext.DrawGeometry(Brushes.Black, LinePen, waveformLineGroup);
+            }
 
-            Children.Add(_waveformImage);
+            DisplayVisualOnCanvas(_waveformImage, dv, middle + absMin * yscale);
         }
 
         /// <summary>
@@ -147,8 +155,6 @@ namespace LiveDescribe.Controls.Canvases
             if (_viewModel == null || _viewModel.Spaces == null || Width == 0 || VisibleWidth == 0
                 || _viewModel.Player.CurrentState == LiveDescribeVideoStates.VideoNotLoaded)
                 return;
-
-            Children.Remove(_spaceImage);
 
             var drawingVisual = new DrawingVisual();
 
@@ -180,7 +186,7 @@ namespace LiveDescribe.Controls.Canvases
                 }
             }
 
-            AddImageToCanvas(ref _spaceImage, drawingVisual);
+            DisplayVisualOnCanvas(_spaceImage, drawingVisual);
         }
 
         public override void DrawMouseSelection()

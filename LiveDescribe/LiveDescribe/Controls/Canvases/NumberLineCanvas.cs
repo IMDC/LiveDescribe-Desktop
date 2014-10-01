@@ -24,6 +24,7 @@ namespace LiveDescribe.Controls.Canvases
         private readonly MillisecondsTimeConverterFormatter _millisecondsTimeConverter;
         private readonly Pen _shortLinePen;
         private readonly Pen _longLinePen;
+        private readonly Image _drawingImage;
 
         public NumberLineCanvas()
         {
@@ -33,6 +34,9 @@ namespace LiveDescribe.Controls.Canvases
 
             _shortLinePen = PenFactory.LinePen(Brushes.Black);
             _longLinePen = PenFactory.LinePen(Brushes.Blue);
+
+            _drawingImage = new Image();
+            Children.Add(_drawingImage);
 
             DataContextChanged += OnDataContextChanged;
         }
@@ -49,9 +53,6 @@ namespace LiveDescribe.Controls.Canvases
             int numLines = (int)(VideoDurationMsec / (LineTimeSeconds * Milliseconds.PerSecond));
             int beginLine = (int)((numLines / Width) * VisibleX);
             int endLine = beginLine + (int)((numLines / Width) * VisibleWidth) + 1;
-            //Clear the canvas because we don't want the remaining lines due to importing a new video
-            //or resizing the window
-            Children.Clear();
 
             double widthPerLine = Width / numLines;
 
@@ -83,8 +84,7 @@ namespace LiveDescribe.Controls.Canvases
                 }
             }
 
-            Image image = null;
-            AddImageToCanvas(ref image, drawingVisual);
+            DisplayVisualOnCanvas(_drawingImage, drawingVisual);
         }
 
         protected override void SetBrushes()
