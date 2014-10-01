@@ -39,6 +39,14 @@ namespace LiveDescribe.Controls.Canvases
              */
             Background = Brushes.Transparent;
 
+            _spaceImage = new Image();
+            _waveformImage = new Image();
+
+            //Add the two images in this over so that _space image is drawn over _waveformImage
+            Children.Add(_waveformImage);
+            Children.Add(_spaceImage);
+
+
             /* This method contains a null reference in the designer, causing an exception and not
              * rendering the canvas. This check guards against it.
              */
@@ -48,13 +56,6 @@ namespace LiveDescribe.Controls.Canvases
             MouseSelection = CanvasMouseSelection.NoSelection;
 
             ContextMenu = new ContextMenu();
-
-            _spaceImage = new Image();
-            _waveformImage = new Image();
-
-            //Add the two images in this over so that _space image is drawn over _waveformImage
-            Children.Add(_waveformImage);
-            Children.Add(_spaceImage);
 
             InitEventHandlers();
         }
@@ -96,7 +97,10 @@ namespace LiveDescribe.Controls.Canvases
         {
             if (_viewModel == null || _viewModel.Waveform == null || Width == 0 || VisibleWidth == 0
                 || _viewModel.Player.CurrentState == LiveDescribeVideoStates.VideoNotLoaded)
+            {
+                ResetImageOnCanvas(_waveformImage);
                 return;
+            }
 
             var data = _viewModel.Waveform.Data;
             double samplesPerPixel = Math.Max(data.Count / Width, 1);
@@ -154,7 +158,10 @@ namespace LiveDescribe.Controls.Canvases
         {
             if (_viewModel == null || _viewModel.Spaces == null || Width == 0 || VisibleWidth == 0
                 || _viewModel.Player.CurrentState == LiveDescribeVideoStates.VideoNotLoaded)
+            {
+                ResetImageOnCanvas(_spaceImage);
                 return;
+            }
 
             var drawingVisual = new DrawingVisual();
 

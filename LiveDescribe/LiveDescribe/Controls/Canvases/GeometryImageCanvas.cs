@@ -140,6 +140,15 @@ namespace LiveDescribe.Controls.Canvases
         }
 
         /// <summary>
+        /// Resets an image by removing its source.
+        /// </summary>
+        /// <param name="image">Image to reset.</param>
+        protected void ResetImageOnCanvas(Image image)
+        {
+            image.Source = null;
+        }
+
+        /// <summary>
         /// Tests whether the interval would be visible on the current canvas or not. It will be
         /// visible IFF the interval either starts or ends in the visible area, or covers the
         /// entire visible area.

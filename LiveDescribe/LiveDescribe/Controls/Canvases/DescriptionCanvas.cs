@@ -29,15 +29,15 @@ namespace LiveDescribe.Controls.Canvases
         {
             Background = Brushes.Transparent;
 
+            _descriptionImage = new Image();
+            Children.Add(_descriptionImage);
+
             if (!DesignerProperties.GetIsInDesignMode(this))
                 SetBrushes();
 
             MouseSelection = CanvasMouseSelection.NoSelection;
 
             ContextMenu = new ContextMenu();
-
-            _descriptionImage = new Image();
-            Children.Add(_descriptionImage);
 
             InitEventHandlers();
         }
@@ -69,7 +69,10 @@ namespace LiveDescribe.Controls.Canvases
         {
             if (_canvasViewModel == null || Width == 0 || VisibleWidth == 0
                 || _canvasViewModel.Player.CurrentState == LiveDescribeVideoStates.VideoNotLoaded)
+            {
+                ResetImageOnCanvas(_descriptionImage);
                 return;
+            }
 
             var drawingVisual = new DrawingVisual();
 

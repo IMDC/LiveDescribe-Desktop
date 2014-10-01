@@ -289,8 +289,7 @@ namespace LiveDescribe.Windows
 
             _projectManager.ProjectClosed += (sender, e) =>
             {
-                AudioCanvas.Children.Clear();
-                NumberLineCanvas.Children.Clear();
+                DrawTimeline();
 
                 UpdateMarkerPosition(-MarkerOffset);
                 _marker.IsEnabled = false;

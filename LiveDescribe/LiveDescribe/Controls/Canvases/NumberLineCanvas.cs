@@ -21,22 +21,22 @@ namespace LiveDescribe.Controls.Canvases
         private const double LongLineLengthPercent = 0.2;
 
         private NumberLineViewModel _viewModel;
-        private readonly MillisecondsTimeConverterFormatter _millisecondsTimeConverter;
+        private readonly MillisecondsTimeConverterFormatter _timestampConverter;
         private readonly Pen _shortLinePen;
         private readonly Pen _longLinePen;
-        private readonly Image _drawingImage;
+        private readonly Image _lineImage;
 
         public NumberLineCanvas()
         {
             Background = Brushes.White;
 
-            _millisecondsTimeConverter = new MillisecondsTimeConverterFormatter();
+            _lineImage = new Image();
+            Children.Add(_lineImage);
+
+            _timestampConverter = new MillisecondsTimeConverterFormatter();
 
             _shortLinePen = PenFactory.LinePen(Brushes.Black);
             _longLinePen = PenFactory.LinePen(Brushes.Blue);
-
-            _drawingImage = new Image();
-            Children.Add(_drawingImage);
 
             DataContextChanged += OnDataContextChanged;
         }
@@ -45,7 +45,10 @@ namespace LiveDescribe.Controls.Canvases
         {
             if (_viewModel == null || _viewModel.Player.CurrentState == LiveDescribeVideoStates.VideoNotLoaded
                 || Width == 0)
+            {
+                ResetImageOnCanvas(_lineImage);
                 return;
+            }
 
             var drawingVisual = new DrawingVisual();
 
@@ -69,7 +72,7 @@ namespace LiveDescribe.Controls.Canvases
 
                         drawingContext.DrawLine(_longLinePen, p0, p1);
 
-                        var timestamp = (string)_millisecondsTimeConverter.Convert((i * LineTimeSeconds) * 1000, typeof(int),
+                        var timestamp = (string)_timestampConverter.Convert((i * LineTimeSeconds) * 1000, typeof(int),
                             null, CultureInfo.CurrentCulture);
                         var ft = FormattedTextFactory.Text(timestamp, 11, Brushes.Black);
 
@@ -84,7 +87,7 @@ namespace LiveDescribe.Controls.Canvases
                 }
             }
 
-            DisplayVisualOnCanvas(_drawingImage, drawingVisual);
+            DisplayVisualOnCanvas(_lineImage, drawingVisual);
         }
 
         protected override void SetBrushes()
