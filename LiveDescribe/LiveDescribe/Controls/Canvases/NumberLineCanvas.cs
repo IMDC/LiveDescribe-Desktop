@@ -18,7 +18,7 @@ namespace LiveDescribe.Controls.Canvases
         /// <summary>The length of a short line as a percent of the height of the canvas.</summary>
         private const double ShortLineLengthPercent = 0.5;
         /// <summary>The length of a long line as a percent of the height of the canvas.</summary>
-        private const double LongLineLengthPercent = 0.8;
+        private const double LongLineLengthPercent = 0.2;
 
         private NumberLineViewModel _viewModel;
         private readonly MillisecondsTimeConverterFormatter _millisecondsTimeConverter;
@@ -55,10 +55,6 @@ namespace LiveDescribe.Controls.Canvases
 
             double widthPerLine = Width / numLines;
 
-            //Keep track of which line each group begins on
-            int firstShortLine = -1;
-            int firstLongLine = -1;
-
             using (var drawingContext = drawingVisual.RenderOpen())
             {
                 for (int i = beginLine; i <= endLine; i++)
@@ -67,24 +63,19 @@ namespace LiveDescribe.Controls.Canvases
 
                     if (i % LongLineDivisor == 0)
                     {
-                        if (firstLongLine == -1)
-                            firstLongLine = i;
+                        var p0 = new Point(xPos, 0);
+                        var p1 = new Point(xPos, ActualHeight * LongLineLengthPercent);
 
-                        drawingContext.DrawLine(_longLinePen,
-                            new Point(xPos, 0),
-                            new Point(xPos, ActualHeight * LongLineLengthPercent));
+                        drawingContext.DrawLine(_longLinePen, p0, p1);
 
                         var timestamp = (string)_millisecondsTimeConverter.Convert((i * LineTimeSeconds) * 1000, typeof(int),
                             null, CultureInfo.CurrentCulture);
-                        var ft = FormattedTextFactory.Text(timestamp, Brushes.Black);
+                        var ft = FormattedTextFactory.Text(timestamp, 11, Brushes.Black);
 
-                        drawingContext.DrawText(ft, new Point(xPos - ft.Width / 2, 0));
+                        drawingContext.DrawText(ft, new Point(xPos - ft.Width / 2, p1.Y - 1));
                     }
                     else
                     {
-                        if (firstShortLine == -1)
-                            firstShortLine = i;
-
                         drawingContext.DrawLine(_shortLinePen,
                             new Point(xPos, 0),
                             new Point(xPos, ActualHeight * ShortLineLengthPercent));

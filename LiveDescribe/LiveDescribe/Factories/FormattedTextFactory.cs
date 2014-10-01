@@ -23,13 +23,13 @@ namespace LiveDescribe.Factories
                 textBrush);
         }
 
-        public static FormattedText Text(string text, Brush textBrush)
+        public static FormattedText Text(string text, int fontSize, Brush textBrush)
         {
             return new FormattedText(text,
                 CultureInfo.GetCultureInfo("en-us"),
                 FlowDirection.LeftToRight,
                 new Typeface("Segoe UI"),
-                10,
+                fontSize,
                 textBrush);
         }
     }
