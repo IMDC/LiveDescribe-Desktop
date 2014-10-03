@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Windows.Input;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Events;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Managers;
 using LiveDescribe.Model;
+using System;
+using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 namespace LiveDescribe.Controls.Canvases
 {
-    class AudioCanvasViewModel : ViewModelBase
+    public class AudioCanvasViewModel : ViewModelBase
     {
         private readonly ProjectManager _projectManager;
         private readonly UndoRedoManager _undoRedoManager;

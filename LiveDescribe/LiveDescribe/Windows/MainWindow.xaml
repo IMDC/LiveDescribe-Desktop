@@ -93,16 +93,17 @@
                             Command="{Binding ShowImportAudioDescription}" />
                     </MenuItem>
                     <!--Exporting Options-->
-                    <MenuItem Header="Export">
+                    <MenuItem
+                        Header="Export">
                         <MenuItem
                             Header="Export Video With Descriptions"
                             Command="{Binding ExportWithDescriptions}"
-                            x:Name="ExportWithVideo"/>
+                            x:Name="ExportWithVideo" />
 
                         <MenuItem
                             Header="Export Project Audio"
                             Command="{Binding ExportWithDescriptions}"
-                            x:Name="ExportAudioOnly"/>
+                            x:Name="ExportAudioOnly" />
 
                         <MenuItem
                             Header="{x:Static s:UiStrings.Export_DescriptionSrtTitle}"
@@ -223,7 +224,14 @@
                     Grid.RowSpan="8" />
 
                 <!--Timeline-->
+                <userControls:TimelineControl
+                    DataContext="{Binding TimelineViewModel}"
+                    Grid.Column="1"
+                    Grid.ColumnSpan="6"
+                    Grid.Row="8"
+                    Grid.RowSpan="5" />
                 <Border
+                    Visibility="Hidden"
                     Grid.Column="1"
                     BorderBrush="Black"
                     Grid.ColumnSpan="6"

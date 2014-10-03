@@ -1,0 +1,59 @@
+﻿<UserControl
+    x:Class="LiveDescribe.Controls.UserControls.TimelineControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:canvases="clr-namespace:LiveDescribe.Controls.Canvases"
+    xmlns:userControls="clr-namespace:LiveDescribe.Controls.UserControls"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition
+                Height="20" />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <Border
+            Grid.Row="0"
+            Background="White"
+            Height="20"
+            BorderBrush="Black"
+            BorderThickness="1">
+            <canvases:NumberLineCanvas
+                HorizontalAlignment="Left"
+                DataContext="{Binding NumberLineViewModel}"
+                x:Name="NumberLineCanvas" />
+        </Border>
+
+        <Border
+            Grid.Row="1"
+            Grid.RowSpan="2"
+            BorderThickness="1"
+            BorderBrush="Black">
+            <canvases:AudioCanvas
+                x:Name="AudioCanvas"
+                DataContext="{Binding AudioCanvasViewModel}" />
+        </Border>
+
+        <!--Description Canvas Constrol that holds all the descriptions-->
+        <Border
+            Grid.Row="3"
+            BorderThickness="1"
+            BorderBrush="Black">
+            <canvases:DescriptionCanvas
+                x:Name="DescriptionCanvas"
+                DataContext="{Binding DescriptionCanvasViewModel}" />
+        </Border>
+
+        <userControls:MarkerControl
+            x:Name="MarkerControl"
+            Grid.Row="0"
+            Grid.RowSpan="4"
+            DataContext="{Binding MediaViewModel}" />
+    </Grid>
+</UserControl>

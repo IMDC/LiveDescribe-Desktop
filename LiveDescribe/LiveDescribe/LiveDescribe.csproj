@@ -201,6 +201,10 @@
       <DependentUpon>MediaControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\UserControls\MediaViewModel.cs" />
+    <Compile Include="Controls\UserControls\TimelineControl.xaml.cs">
+      <DependentUpon>TimelineControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\UserControls\TimelineViewModel.cs" />
     <Compile Include="Converters\BoolToContentConverter.cs" />
     <Compile Include="Converters\ColorToSolidBrushConverter.cs" />
     <Compile Include="Converters\DebugConverter.cs" />
@@ -354,6 +358,10 @@
     <Page Include="Controls\UserControls\MediaControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\UserControls\TimelineControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\AboutInfoWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

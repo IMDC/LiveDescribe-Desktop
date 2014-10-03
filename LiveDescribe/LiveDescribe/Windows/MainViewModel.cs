@@ -41,7 +41,7 @@ namespace LiveDescribe.Windows
         public const double PlayDescriptionThreshold = 0.8;
         #endregion
 
-        #region Instance Variables
+        #region Fields
         private readonly ProjectManager _projectManager;
         private readonly Timer _descriptiontimer;
         private readonly MediaViewModel _mediaViewModel;
@@ -55,6 +55,7 @@ namespace LiveDescribe.Windows
         private readonly DescriptionRecordingViewModel _descriptionRecordingViewModel;
         private readonly NumberLineViewModel _numberLineViewModel;
         private readonly UndoRedoManager _undoRedoManager;
+        private readonly TimelineViewModel _timelineViewModel;
         private Project _project;
         private string _windowTitle;
         private Description _lastRegularDescriptionPlayed;
@@ -86,6 +87,8 @@ namespace LiveDescribe.Windows
             _audioCanvasViewModel = new AudioCanvasViewModel(mediaVideo, _projectManager, _undoRedoManager);
             _descriptionCanvasViewModel = new DescriptionCanvasViewModel(mediaVideo, _projectManager, _undoRedoManager);
             _numberLineViewModel = new NumberLineViewModel(mediaVideo);
+            _timelineViewModel = new TimelineViewModel(_audioCanvasViewModel, _descriptionCanvasViewModel, _mediaViewModel,
+                _numberLineViewModel);
 
             _mediaVideo = mediaVideo;
 
