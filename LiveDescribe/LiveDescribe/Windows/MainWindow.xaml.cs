@@ -176,20 +176,27 @@ namespace LiveDescribe.Windows
                     AudioCanvas.VideoDurationMsec = _videoDuration;
                     DescriptionCanvas.VideoDurationMsec = _videoDuration;
                     NumberLineCanvas.VideoDurationMsec = _videoDuration;
-                    _canvasWidth = CalculateWidth();
                     _marker.IsEnabled = true;
 
                     //Video gets played and paused so you can seek initially when the video gets loaded
                     _videoMedia.Play();
                     _videoMedia.Pause();
 
-                    SetTimeline();
+                    /* The descriptions and timeline are set and drawn when the video is loaded, as
+                     * opposed to when the project is loaded because it is only at this time that
+                     * we know the actual duration of the video, and therefore can calculate
+                     * interval positions and canvas widths.
+                     */
+                    _canvasWidth = CalculateWidth();
+                    SetTimelineWidth();
 
                     foreach (var desc in _projectManager.AllDescriptions)
                         SetDescriptionLocation(desc);
 
                     foreach (var space in _projectManager.Spaces)
                         SetSpaceLocation(space);
+
+                    DrawTimeline();
                 };
 
             //captures the mouse when a mousedown request is sent to the Marker
@@ -285,8 +292,6 @@ namespace LiveDescribe.Windows
                 }
             };
 
-            _projectManager.ProjectLoaded += (sender, e) => SetTimeline();
-
             _projectManager.ProjectClosed += (sender, e) =>
             {
                 DrawTimeline();
@@ -341,7 +346,7 @@ namespace LiveDescribe.Windows
         {
             //Video is loaded
             if (_videoMedia.CurrentState != LiveDescribeVideoStates.VideoNotLoaded)
-                SetTimeline();
+                SetTimelineWidthAndDraw();
 
             //update marker to fit the entire AudioCanvas even when there's no video loaded
             _marker.Points[4] = new Point(_marker.Points[4].X, TimeLineScrollViewer.ActualHeight);
@@ -629,13 +634,17 @@ namespace LiveDescribe.Windows
         /// timeline width it automatically overflows and scrolls due to the scrollview then update
         /// the width of the marker to match the audio canvas
         /// </summary>
-        private void SetTimeline()
+        private void SetTimelineWidthAndDraw()
+        {
+            SetTimelineWidth();
+            DrawTimeline();
+        }
+
+        private void SetTimelineWidth()
         {
             NumberLineCanvas.Width = _canvasWidth;
             DescriptionCanvas.Width = _canvasWidth;
             AudioCanvas.Width = _canvasWidth;
-
-            DrawTimeline();
         }
 
         private void DrawTimeline()
