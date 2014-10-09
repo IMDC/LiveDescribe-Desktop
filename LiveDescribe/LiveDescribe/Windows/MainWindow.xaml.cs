@@ -98,21 +98,6 @@ namespace LiveDescribe.Windows
 
             SetRecentDocumentsList();
 
-            #region TimeLineScrollViewer Event Listeners
-            TimeLineScrollViewer.ScrollChanged += (sender, e) =>
-            {
-                //Update visible canvas boundaries
-                AudioCanvas.SetVisibleBoundaries(TimeLineScrollViewer.HorizontalOffset,
-                    TimeLineScrollViewer.ActualWidth);
-                DescriptionCanvas.SetVisibleBoundaries(TimeLineScrollViewer.HorizontalOffset,
-                    TimeLineScrollViewer.ActualWidth);
-                NumberLineCanvas.SetVisibleBoundaries(TimeLineScrollViewer.HorizontalOffset,
-                    TimeLineScrollViewer.ActualWidth);
-
-                DrawTimeline();
-            };
-            #endregion
-
             #region Event Listeners for VideoMedia
             //if the videomedia's path changes (a video is added)
             //then play and stop the video to load the video so the VideoOpenedRequest event gets fired
@@ -167,77 +152,12 @@ namespace LiveDescribe.Windows
 
             #region Event Listeners For MediaViewModel
 
-            //listens for VideoOpenedRequested event
-            //this event only gets thrown when if the MediaFailed event doesn't occur
-            //and as soon as the video is loaded when play is pressed
             mainWindowViewModel.MediaViewModel.VideoOpenedRequested += (sender, e) =>
-                {
-                    _videoDuration = _videoMedia.NaturalDuration.TimeSpan.TotalMilliseconds;
-                    AudioCanvas.VideoDurationMsec = _videoDuration;
-                    DescriptionCanvas.VideoDurationMsec = _videoDuration;
-                    NumberLineCanvas.VideoDurationMsec = _videoDuration;
-                    _marker.IsEnabled = true;
-
-                    //Video gets played and paused so you can seek initially when the video gets loaded
-                    _videoMedia.Play();
-                    _videoMedia.Pause();
-
-                    /* The descriptions and timeline are set and drawn when the video is loaded, as
-                     * opposed to when the project is loaded because it is only at this time that
-                     * we know the actual duration of the video, and therefore can calculate
-                     * interval positions and canvas widths.
-                     */
-                    _canvasWidth = CalculateWidth();
-                    SetTimelineWidth();
-
-                    foreach (var desc in _projectManager.AllDescriptions)
-                        SetDescriptionLocation(desc);
-
-                    foreach (var space in _projectManager.Spaces)
-                        SetSpaceLocation(space);
-
-                    DrawTimeline();
-                };
-
-            //captures the mouse when a mousedown request is sent to the Marker
-            mainWindowViewModel.MediaViewModel.OnMarkerMouseDownRequested += (sender, e) => _marker.CaptureMouse();
-
-            //updates the video position when the mouse is released on the Marker
-            mainWindowViewModel.MediaViewModel.OnMarkerMouseUpRequested += (sender, e) => _marker.ReleaseMouseCapture();
-
-            //updates the canvas and video position when the Marker is moved
-            mainWindowViewModel.MediaViewModel.OnMarkerMouseMoveRequested += (sender, e) =>
-                {
-                    if (!_marker.IsMouseCaptured) return;
-
-                    if (ScrollRightIfCanForGraphicsThread(Canvas.GetLeft(_marker)))
-                        return;
-
-                    if (ScrollLeftIfCanForGraphicsThread(Canvas.GetLeft(_marker)))
-                        return;
-
-                    var xPosition = Mouse.GetPosition(AudioCanvas).X;
-                    var middleOfMarker = xPosition - MarkerOffset;
-
-                    //make sure the middle of the marker doesn't go below the beginning of the canvas
-                    if (xPosition < -MarkerOffset)
-                    {
-                        Canvas.SetLeft(_marker, -MarkerOffset);
-                        UpdateVideoPosition(0);
-                        return;
-                    }
-
-                    var newPositionInVideo = (xPosition / _canvasWidth) * _videoDuration;
-                    if (newPositionInVideo >= _videoDuration)
-                    {
-                        var newPositionOfMarker = (_canvasWidth / _videoDuration) * (_videoDuration);
-                        Canvas.SetLeft(_marker, newPositionOfMarker - MarkerOffset);
-                        UpdateVideoPosition((int)(_videoDuration));
-                        return;
-                    }
-                    Canvas.SetLeft(_marker, middleOfMarker);
-                    UpdateVideoPosition((int)newPositionInVideo);
-                };
+            {
+                //Video gets played and paused so you can seek initially when the video gets loaded
+                _videoMedia.Play();
+                _videoMedia.Pause();
+            };
 
             #endregion
 
@@ -291,14 +211,6 @@ namespace LiveDescribe.Windows
                         AddSpaceEventHandlers(space);
                 }
             };
-
-            _projectManager.ProjectClosed += (sender, e) =>
-            {
-                DrawTimeline();
-
-                UpdateMarkerPosition(-MarkerOffset);
-                _marker.IsEnabled = false;
-            };
             #endregion
 
             #region Event Handlers for Settings
@@ -314,62 +226,7 @@ namespace LiveDescribe.Windows
         /// <param name="e">e</param>
         private void Play_Tick(object sender, EventArgs e)
         {
-            try
-            {
-                //This method runs on a separate thread therefore all calls to get values or set
-                //values that are located on the UI thread must be gotten with Dispatcher.Invoke
-                double canvasLeft = 0;
-                DispatcherHelper.UIDispatcher.Invoke(() => { canvasLeft = Canvas.GetLeft(_marker); });
-                ScrollRightIfCan(canvasLeft);
-                DispatcherHelper.UIDispatcher.Invoke(() =>
-                {
-                    double position = (_videoMedia.Position.TotalMilliseconds / _videoDuration) * (AudioCanvas.Width);
-                    UpdateMarkerPosition(position - MarkerOffset);
-                });
-            }
-            catch (System.Threading.Tasks.TaskCanceledException exception)
-            {
-                //do nothing this exception is thrown when the application is exited
-                Log.Warn("Task Cancelled exception", exception);
-            }
-        }
-        #endregion
-
-        #region View Listeners
-
-        /// <summary>
-        /// Updates TimlineScrollViewer's childrens' size.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void TimeLineScrollViewer_OnSizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            //Video is loaded
-            if (_videoMedia.CurrentState != LiveDescribeVideoStates.VideoNotLoaded)
-                SetTimelineWidthAndDraw();
-
-            //update marker to fit the entire AudioCanvas even when there's no video loaded
-            _marker.Points[4] = new Point(_marker.Points[4].X, TimeLineScrollViewer.ActualHeight);
-        }
-
-        /// <summary>
-        /// Gets executed when the area in the NumberLineCanvas canvas gets clicked It changes the
-        /// position of the video then redraws the marker in the correct spot
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void NumberTimeline_OnMouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if (e.LeftButton == MouseButtonState.Pressed)
-            {
-                //execute the pause command because we want to pause the video when someone is clicking through the video
-                _mediaViewModel.PauseCommand.Execute();
-                var xPosition = e.GetPosition(NumberLineCanvas).X;
-                var newValue = (xPosition / _canvasWidth) * _videoDuration;
-
-                UpdateMarkerPosition(xPosition - MarkerOffset);
-                UpdateVideoPosition((int)newValue);
-            }
+            TimelineControl.UpdateTimelinePosition();
         }
         #endregion
 
@@ -498,74 +355,6 @@ namespace LiveDescribe.Windows
         {
             _videoMedia.Position = new TimeSpan(0, 0, 0, 0, vidPos);
             _mediaViewModel.PositionTimeLabel = _videoMedia.Position;
-        }
-
-        /// <summary>
-        /// This method is called inside the Play_Tick method which runs on a separate thread
-        /// Scrolls the scrollviewer to the right as much as the PageScrollPercent when the marker
-        /// reaches the PageScrollPercent of the width of the page
-        /// </summary>
-        /// <returns>true if it can scroll right</returns>
-        private bool ScrollRightIfCan(double xPos)
-        {
-            //all calls to dispatcher.Invoke are to get or set values that are located in the UI thread
-            //because this method is located in the Play_Tick method which runs in a separate thread
-            //that is how you must get/set the values
-
-            double singlePageWidth = 0;
-            double scrolledAmount = 0;
-
-            DispatcherHelper.UIDispatcher.Invoke(() =>
-            {
-                singlePageWidth = TimeLineScrollViewer.ActualWidth;
-                scrolledAmount = TimeLineScrollViewer.HorizontalOffset;
-            });
-            double scrollOffsetRight = PageScrollPercentLimit * singlePageWidth;
-            if (!((xPos - scrolledAmount) >= scrollOffsetRight)) return false;
-            DispatcherHelper.UIDispatcher.Invoke(() => TimeLineScrollViewer.ScrollToHorizontalOffset(scrollOffsetRight + scrolledAmount));
-            return true;
-        }
-
-        private bool ScrollRightIfCanForGraphicsThread(double xPos)
-        {
-            double singlePageWidth = 0;
-            double scrolledAmount = 0;
-            singlePageWidth = TimeLineScrollViewer.ActualWidth;
-            scrolledAmount = TimeLineScrollViewer.HorizontalOffset;
-            double scrollOffsetRight = PageScrollPercentLimit * singlePageWidth;
-
-            if (scrolledAmount >= TimeLineScrollViewer.ScrollableWidth)
-                return false;
-
-            if (!((xPos - scrolledAmount) >= scrollOffsetRight)) return false;
-            TimeLineScrollViewer.ScrollToHorizontalOffset((PageScrollPercentAmount * singlePageWidth) + scrolledAmount);
-            return true;
-        }
-
-        private bool ScrollLeftIfCanForGraphicsThread(double xPos)
-        {
-            double singlePageWidth = TimeLineScrollViewer.ActualWidth;
-            double scrolledAmount = TimeLineScrollViewer.HorizontalOffset;
-
-            //we can't scroll left cause we already scrolled as far left as possible
-            if (scrolledAmount == 0)
-                return false;
-
-            double scrollOffsetLeft = (1 - PageScrollPercentLimit) * singlePageWidth;
-            if (!((xPos - scrolledAmount) <= scrollOffsetLeft)) return false;
-            TimeLineScrollViewer.ScrollToHorizontalOffset(scrolledAmount - (PageScrollPercentAmount * singlePageWidth));
-            return true;
-        }
-
-        /// <summary>
-        /// Calculates the width required for the audioCanvas and then sets _canvasWidth to this value
-        /// </summary>
-        private double CalculateWidth()
-        {
-            double screenWidth = SystemParameters.PrimaryScreenWidth;
-            double staticCanvasWidth = (_videoDuration / (PageTimeBeforeCanvasScrolls * 1000)) * screenWidth;
-            AudioCanvas.MaxWidth = staticCanvasWidth;
-            return staticCanvasWidth;
         }
 
         private void SetRecentDocumentsList()

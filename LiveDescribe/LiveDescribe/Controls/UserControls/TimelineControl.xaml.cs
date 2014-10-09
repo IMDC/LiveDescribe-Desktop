@@ -1,4 +1,5 @@
-﻿using LiveDescribe.Controls.Canvases;
+﻿using GalaSoft.MvvmLight.Threading;
+using LiveDescribe.Extensions;
 using LiveDescribe.Interfaces;
 using LiveDescribe.Model;
 using System;
@@ -13,6 +14,11 @@ namespace LiveDescribe.Controls.UserControls
     /// </summary>
     public partial class TimelineControl : UserControl
     {
+        #region Logger
+        private static readonly log4net.ILog Log = log4net.LogManager.GetLogger
+            (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        #endregion
+
         #region Constants
         private const double MarkerOffset = 10.0;
         /// <summary>
@@ -129,6 +135,22 @@ namespace LiveDescribe.Controls.UserControls
 
             #endregion
 
+            #region NumberLineCanvas Events
+            NumberLineCanvas.MouseDown += (sender, e) =>
+            {
+                if (e.LeftButton == MouseButtonState.Pressed)
+                {
+                    //execute the pause command because we want to pause the video when someone is clicking through the video
+                    _viewmodel.MediaViewModel.PauseCommand.Execute();
+                    var xPosition = e.GetPosition(NumberLineCanvas).X;
+                    var newValue = (xPosition / _canvasWidth) * _videoDurationMsec;
+
+                    UpdateMarkerPosition(xPosition - MarkerOffset);
+                    UpdateVideoPosition((int)newValue);
+                }
+            };
+            #endregion
+
             #region ProjectManager Events
 
             _viewmodel.ProjectManager.ProjectClosed += (sender, args) =>
@@ -141,7 +163,21 @@ namespace LiveDescribe.Controls.UserControls
 
             #endregion
 
-            SizeChanged += (sender, args) =>
+            #region TimelineScrollViewer Events
+            TimeLineScrollViewer.ScrollChanged += (sender, args) =>
+                {
+                    //Update visible canvas boundaries
+                    AudioCanvas.SetVisibleBoundaries(TimeLineScrollViewer.HorizontalOffset,
+                        TimeLineScrollViewer.ActualWidth);
+                    DescriptionCanvas.SetVisibleBoundaries(TimeLineScrollViewer.HorizontalOffset,
+                        TimeLineScrollViewer.ActualWidth);
+                    NumberLineCanvas.SetVisibleBoundaries(TimeLineScrollViewer.HorizontalOffset,
+                        TimeLineScrollViewer.ActualWidth);
+
+                    DrawTimeline();
+                };
+
+            TimeLineScrollViewer.SizeChanged += (sender, args) =>
             {
                 //Video is loaded
                 if (_viewmodel.MediaViewModel.MediaVideo.CurrentState != LiveDescribeVideoStates.VideoNotLoaded)
@@ -151,7 +187,51 @@ namespace LiveDescribe.Controls.UserControls
                 MarkerControl.Marker.Points[4] = new Point(MarkerControl.Marker.Points[4].X,
                     TimeLineScrollViewer.ActualHeight);
             };
+            #endregion
         }
+
+        public void UpdateTimelinePosition()
+        {
+            try
+            {
+                //This method runs on a separate thread therefore all calls to get values or set
+                //values that are located on the UI thread must be gotten with Dispatcher.Invoke
+                double canvasLeft = 0;
+                DispatcherHelper.UIDispatcher.Invoke(() => { canvasLeft = Canvas.GetLeft(MarkerControl.Marker); });
+                ScrollRightIfCan(canvasLeft);
+                DispatcherHelper.UIDispatcher.Invoke(() =>
+                {
+                    double position = (_viewmodel.MediaViewModel.MediaVideo.Position.TotalMilliseconds / _videoDurationMsec) * (AudioCanvas.Width);
+                    UpdateMarkerPosition(position - MarkerOffset);
+                });
+            }
+            catch (System.Threading.Tasks.TaskCanceledException exception)
+            {
+                //do nothing this exception is thrown when the application is exited
+                Log.Warn("Task Cancelled exception", exception);
+            }
+        }
+
+        private bool ScrollRightIfCan(double xPos)
+        {
+            //all calls to dispatcher.Invoke are to get or set values that are located in the UI thread
+            //because this method is located in the Play_Tick method which runs in a separate thread
+            //that is how you must get/set the values
+
+            double singlePageWidth = 0;
+            double scrolledAmount = 0;
+
+            DispatcherHelper.UIDispatcher.Invoke(() =>
+            {
+                singlePageWidth = TimeLineScrollViewer.ActualWidth;
+                scrolledAmount = TimeLineScrollViewer.HorizontalOffset;
+            });
+            double scrollOffsetRight = PageScrollPercentLimit * singlePageWidth;
+            if (!((xPos - scrolledAmount) >= scrollOffsetRight)) return false;
+            DispatcherHelper.UIDispatcher.Invoke(() => TimeLineScrollViewer.ScrollToHorizontalOffset(scrollOffsetRight + scrolledAmount));
+            return true;
+        }
+
 
         private bool ScrollRightIfCanForGraphicsThread(double xPos)
         {

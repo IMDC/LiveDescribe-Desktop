@@ -244,7 +244,6 @@
                         Name="TimeLineScrollViewer"
                         HorizontalScrollBarVisibility="Visible"
                         VerticalScrollBarVisibility="Auto"
-                        SizeChanged="TimeLineScrollViewer_OnSizeChanged"
                         VirtualizingPanel.IsVirtualizing="True">
                         <Grid>
                             <Grid.RowDefinitions>
@@ -263,7 +262,6 @@
                                 BorderThickness="1">
                                 <canvases:NumberLineCanvas
                                     HorizontalAlignment="Left"
-                                    MouseDown="NumberTimeline_OnMouseDown"
                                     DataContext="{Binding NumberLineViewModel}"
                                     x:Name="NumberLineCanvas" />
                             </Border>
