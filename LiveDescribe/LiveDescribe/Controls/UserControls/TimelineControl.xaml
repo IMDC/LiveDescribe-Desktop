@@ -9,7 +9,6 @@
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="300"
-    DataContextChanged="TimelineControl_OnDataContextChanged"
     d:DataContext="{d:DesignInstance userControls:TimelineViewModel}">
     <Border
         BorderBrush="Black"

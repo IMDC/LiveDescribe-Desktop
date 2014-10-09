@@ -32,34 +32,29 @@ namespace LiveDescribe.Controls.UserControls
         private const double MinIntervalWidth = 8;
         #endregion
 
+        #region Field
         private double _canvasWidth;
         private double _videoDurationMsec;
         private TimelineViewModel _viewmodel;
+        #endregion
 
+        #region Constructor and Initializers
         public TimelineControl()
         {
             InitializeComponent();
-        }
 
-        private void TimelineControl_OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            /* The timeline should only be assigned to once. A readonly instance variable is not
-             * used here because C# will not allow for it, so instead a single assignment of the
-             * correct type has to be checked here
-             */
-            /*if (_viewmodel != null)
-                throw new InvalidOperationException("Timeline can only be assigned datacontext once");
-            if (!(e.NewValue is TimelineViewModel))
-                throw new InvalidOperationException("DataContext can only be of type TimelineViewModel, type given is actually ");
+            DataContextChanged += (sender, args) =>
+            {
+                _viewmodel = args.NewValue as TimelineViewModel;
 
-            _viewmodel = (TimelineViewModel)e.NewValue;*/
+                if (_viewmodel == null)
+                    return;
 
-            _viewmodel = e.NewValue as TimelineViewModel;
-
-            if (_viewmodel == null)
-                return;
-
-            InitEventHandlers();
+                /* The UI events are initialized here because they can not be passed in by the
+                 * constructor.
+                 */
+                InitEventHandlers();
+            };
         }
 
         private void InitEventHandlers()
@@ -189,29 +184,9 @@ namespace LiveDescribe.Controls.UserControls
             };
             #endregion
         }
+        #endregion
 
-        public void UpdateTimelinePosition()
-        {
-            try
-            {
-                //This method runs on a separate thread therefore all calls to get values or set
-                //values that are located on the UI thread must be gotten with Dispatcher.Invoke
-                double canvasLeft = 0;
-                DispatcherHelper.UIDispatcher.Invoke(() => { canvasLeft = Canvas.GetLeft(MarkerControl.Marker); });
-                ScrollRightIfCan(canvasLeft);
-                DispatcherHelper.UIDispatcher.Invoke(() =>
-                {
-                    double position = (_viewmodel.MediaViewModel.MediaVideo.Position.TotalMilliseconds / _videoDurationMsec) * (AudioCanvas.Width);
-                    UpdateMarkerPosition(position - MarkerOffset);
-                });
-            }
-            catch (System.Threading.Tasks.TaskCanceledException exception)
-            {
-                //do nothing this exception is thrown when the application is exited
-                Log.Warn("Task Cancelled exception", exception);
-            }
-        }
-
+        #region Scrolling
         private bool ScrollRightIfCan(double xPos)
         {
             //all calls to dispatcher.Invoke are to get or set values that are located in the UI thread
@@ -263,18 +238,72 @@ namespace LiveDescribe.Controls.UserControls
             TimeLineScrollViewer.ScrollToHorizontalOffset(scrolledAmount - (PageScrollPercentAmount * singlePageWidth));
             return true;
         }
+        #endregion
 
-        /// <summary>
-        /// Updates the video position to a spot in the video
-        /// </summary>
-        /// <param name="vidPos">the new position in the video</param>
-        private void UpdateVideoPosition(int vidPos)
+        #region Interval Interaction and Modification
+        public void AddDescriptionEventHandlers(Description description)
         {
-            _viewmodel.MediaViewModel.MediaVideo.Position = new TimeSpan(0, 0, 0, 0, vidPos);
-            _viewmodel.MediaViewModel.PositionTimeLabel = _viewmodel.MediaViewModel.MediaVideo.Position;
+            /* Draw the description only if the video is loaded, because there is currently
+             * an issue with the video loading after the descriptions are added from an
+             * opened project.
+             */
+            if (_viewmodel.MediaViewModel.MediaVideo.CurrentState != LiveDescribeVideoStates.VideoNotLoaded)
+                SetDescriptionLocation(description);
+
+            description.NavigateToRequested += (sender1, e1) =>
+            {
+                UpdateMarkerPosition((description.StartInVideo / _videoDurationMsec) * (AudioCanvas.Width) - MarkerOffset);
+                UpdateVideoPosition((int)description.StartInVideo);
+                //Scroll 1 second before the start in video of the space
+                TimeLineScrollViewer.ScrollToHorizontalOffset((AudioCanvas.Width / _videoDurationMsec) *
+                    (description.StartInVideo - 1000));
+            };
+
+            description.PropertyChanged += (sender, args) =>
+            {
+                if (args.PropertyName == "IsSelected")
+                    Dispatcher.Invoke(() => DescriptionCanvas.Draw());
+            };
+
+            description.PropertyChanged += (o, e) =>
+            {
+                if (e.PropertyName == "StartInVideo"
+                    || e.PropertyName == "EndInVideo"
+                    || e.PropertyName == "SetStartAndEndInVideo")
+                    SetDescriptionLocation(description);
+            };
         }
 
-        #region Location, Sizing, and Drawing Methods
+        public void AddSpaceEventHandlers(Space space)
+        {
+            //Adding a space depends on where you right clicked so we create and add it in the view
+            //Set space only if the video is loaded/playing/recording/etc
+            if (_viewmodel.MediaViewModel.MediaVideo.CurrentState != LiveDescribeVideoStates.VideoNotLoaded)
+                SetSpaceLocation(space);
+
+            space.NavigateToRequested += (o, args) =>
+            {
+                UpdateMarkerPosition((space.StartInVideo / _videoDurationMsec) * (AudioCanvas.Width) - MarkerOffset);
+                UpdateVideoPosition((int)space.StartInVideo);
+                //Scroll 1 second before the start in video of the space
+                TimeLineScrollViewer.ScrollToHorizontalOffset(
+                    (AudioCanvas.Width / _videoDurationMsec) * (space.StartInVideo - 1000));
+            };
+
+            space.PropertyChanged += (sender, args) =>
+            {
+                if (args.PropertyName == "IsSelected" || args.PropertyName == "IsRecordedOver")
+                    Dispatcher.Invoke(() => AudioCanvas.DrawSpaces());
+            };
+
+            space.PropertyChanged += (o, e) =>
+            {
+                if (e.PropertyName == "StartInVideo"
+                    || e.PropertyName == "EndInVideo"
+                    || e.PropertyName == "SetStartAndEndInVideo")
+                    SetSpaceLocation(space);
+            };
+        }
 
         private void SetSpaceLocation(Space space)
         {
@@ -297,17 +326,9 @@ namespace LiveDescribe.Controls.UserControls
             interval.Width = Math.Max(MinIntervalWidth,
                 (containingCanvas.Width / _videoDurationMsec) * (interval.EndInVideo - interval.StartInVideo));
         }
+        #endregion
 
-        /// <summary>
-        /// Updates the Marker Position in the timeline and sets the corresponding time in the timelabel
-        /// </summary>
-        /// <param name="xPos">the x position in which the marker is supposed to move</param>
-        private void UpdateMarkerPosition(double xPos)
-        {
-            Canvas.SetLeft(MarkerControl.Marker, xPos);
-            _viewmodel.MediaViewModel.PositionTimeLabel = _viewmodel.MediaViewModel.MediaVideo.Position;
-        }
-
+        #region Timeline Updating and Drawing
         private void CalculateCanvasWidth()
         {
             double screenWidth = SystemParameters.PrimaryScreenWidth;
@@ -340,6 +361,52 @@ namespace LiveDescribe.Controls.UserControls
             NumberLineCanvas.Draw();
         }
 
+        public void UpdateTimelinePosition()
+        {
+            try
+            {
+                //This method runs on a separate thread therefore all calls to get values or set
+                //values that are located on the UI thread must be gotten with Dispatcher.Invoke
+                double canvasLeft = 0;
+                DispatcherHelper.UIDispatcher.Invoke(() => { canvasLeft = Canvas.GetLeft(MarkerControl.Marker); });
+                ScrollRightIfCan(canvasLeft);
+                DispatcherHelper.UIDispatcher.Invoke(() =>
+                {
+                    double position = (_viewmodel.MediaViewModel.MediaVideo.Position.TotalMilliseconds / _videoDurationMsec) * (AudioCanvas.Width);
+                    UpdateMarkerPosition(position - MarkerOffset);
+                });
+            }
+            catch (System.Threading.Tasks.TaskCanceledException exception)
+            {
+                //do nothing this exception is thrown when the application is exited
+                Log.Warn("Task Cancelled exception", exception);
+            }
+        }
+
+        public void ResetMarkerPosition()
+        {
+            UpdateMarkerPosition(-MarkerOffset);
+        }
+
+        /// <summary>
+        /// Updates the Marker Position in the timeline and sets the corresponding time in the timelabel
+        /// </summary>
+        /// <param name="xPos">the x position in which the marker is supposed to move</param>
+        private void UpdateMarkerPosition(double xPos)
+        {
+            Canvas.SetLeft(MarkerControl.Marker, xPos);
+            _viewmodel.MediaViewModel.PositionTimeLabel = _viewmodel.MediaViewModel.MediaVideo.Position;
+        }
+
+        /// <summary>
+        /// Updates the video position to a spot in the video
+        /// </summary>
+        /// <param name="vidPos">the new position in the video</param>
+        private void UpdateVideoPosition(int vidPos)
+        {
+            _viewmodel.MediaViewModel.MediaVideo.Position = new TimeSpan(0, 0, 0, 0, vidPos);
+            _viewmodel.MediaViewModel.PositionTimeLabel = _viewmodel.MediaViewModel.MediaVideo.Position;
+        }
         #endregion
     }
 }

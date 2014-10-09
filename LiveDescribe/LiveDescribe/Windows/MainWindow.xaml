@@ -231,69 +231,7 @@
                     Grid.ColumnSpan="6"
                     Grid.Row="8"
                     Grid.RowSpan="5" />
-                <Border
-                    Visibility="Hidden"
-                    Grid.Column="1"
-                    BorderBrush="Black"
-                    Grid.ColumnSpan="6"
-                    Grid.Row="8"
-                    Grid.RowSpan="5"
-                    BorderThickness="1"
-                    VerticalAlignment="Stretch">
-                    <ScrollViewer
-                        Name="TimeLineScrollViewer"
-                        HorizontalScrollBarVisibility="Visible"
-                        VerticalScrollBarVisibility="Auto"
-                        VirtualizingPanel.IsVirtualizing="True">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition
-                                    Height="20" />
-                                <RowDefinition />
-                                <RowDefinition />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
 
-                            <Border
-                                Grid.Row="0"
-                                Background="White"
-                                Height="20"
-                                BorderBrush="Black"
-                                BorderThickness="1">
-                                <canvases:NumberLineCanvas
-                                    HorizontalAlignment="Left"
-                                    DataContext="{Binding NumberLineViewModel}"
-                                    x:Name="NumberLineCanvas" />
-                            </Border>
-
-                            <Border
-                                Grid.Row="1"
-                                Grid.RowSpan="2"
-                                BorderThickness="1"
-                                BorderBrush="Black">
-                                <canvases:AudioCanvas
-                                    x:Name="AudioCanvas"
-                                    DataContext="{Binding AudioCanvasViewModel}" />
-                            </Border>
-
-                            <!--Description Canvas Constrol that holds all the descriptions-->
-                            <Border
-                                Grid.Row="3"
-                                BorderThickness="1"
-                                BorderBrush="Black">
-                                <canvases:DescriptionCanvas
-                                    x:Name="DescriptionCanvas"
-                                    DataContext="{Binding DescriptionCanvasViewModel}" />
-                            </Border>
-
-                            <userControls:MarkerControl
-                                x:Name="MarkerControl"
-                                Grid.Row="0"
-                                Grid.RowSpan="4"
-                                DataContext="{Binding MediaViewModel}" />
-                        </Grid>
-                    </ScrollViewer>
-                </Border>
             </Grid>
         </DockPanel>
     </Grid>
