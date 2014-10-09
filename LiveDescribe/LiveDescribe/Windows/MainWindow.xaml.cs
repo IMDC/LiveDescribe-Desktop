@@ -241,29 +241,29 @@ namespace LiveDescribe.Windows
 
             #endregion
 
-            #region Event Handlers for DescriptionCanvas
+            #region DescriptionCanvas Events
             //If one canvas is clicked, we want to unselect the other canvas' selection
-            DescriptionCanvas.MouseLeftButtonDown += (sender, args) =>
+            TimelineControl.DescriptionCanvas.MouseLeftButtonDown += (sender, args) =>
             {
                 if (AudioCanvas.MouseAction == IntervalMouseAction.ItemSelected)
                     AudioCanvas.ClearMouseSelection();
             };
 
-            DescriptionCanvas.MouseLeftButtonUp += (sender, args) =>
+            TimelineControl.DescriptionCanvas.MouseLeftButtonUp += (sender, args) =>
             {
                 if (DescriptionCanvas.MouseAction == IntervalMouseAction.None)
                     _intervalInfoListViewModel.ClearSelection();
             };
             #endregion
 
-            #region Event Handlers for AudioCanvas
-            AudioCanvas.MouseLeftButtonDown += (sender, args) =>
+            #region AudioCanvas Events
+            TimelineControl.AudioCanvas.MouseLeftButtonDown += (sender, args) =>
                 {
                     if (DescriptionCanvas.MouseAction == IntervalMouseAction.ItemSelected)
                         DescriptionCanvas.ClearMouseSelection();
                 };
 
-            AudioCanvas.MouseLeftButtonUp += (sender, args) =>
+            TimelineControl.AudioCanvas.MouseLeftButtonUp += (sender, args) =>
             {
                 if (AudioCanvas.MouseAction == IntervalMouseAction.None)
                     _intervalInfoListViewModel.ClearSelection();

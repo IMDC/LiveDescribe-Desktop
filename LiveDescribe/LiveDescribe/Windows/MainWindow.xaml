@@ -225,6 +225,7 @@
 
                 <!--Timeline-->
                 <userControls:TimelineControl
+                    x:Name="TimelineControl"
                     DataContext="{Binding TimelineViewModel}"
                     Grid.Column="1"
                     Grid.ColumnSpan="6"

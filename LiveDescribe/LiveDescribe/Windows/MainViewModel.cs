@@ -88,7 +88,7 @@ namespace LiveDescribe.Windows
             _descriptionCanvasViewModel = new DescriptionCanvasViewModel(mediaVideo, _projectManager, _undoRedoManager);
             _numberLineViewModel = new NumberLineViewModel(mediaVideo);
             _timelineViewModel = new TimelineViewModel(_audioCanvasViewModel, _descriptionCanvasViewModel, _mediaViewModel,
-                _numberLineViewModel);
+                _numberLineViewModel, _projectManager);
 
             _mediaVideo = mediaVideo;
 
@@ -499,6 +499,11 @@ namespace LiveDescribe.Windows
         public NumberLineViewModel NumberLineViewModel
         {
             get { return _numberLineViewModel; }
+        }
+
+        public TimelineViewModel TimelineViewModel
+        {
+            get { return _timelineViewModel; }
         }
 
         #endregion

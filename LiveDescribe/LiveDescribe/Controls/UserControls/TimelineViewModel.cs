@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Controls.Canvases;
+using LiveDescribe.Managers;
 using System.Windows.Input;
 
 namespace LiveDescribe.Controls.UserControls
@@ -11,17 +12,20 @@ namespace LiveDescribe.Controls.UserControls
         private readonly DescriptionCanvasViewModel _descriptionCanvasViewModel;
         private readonly MediaViewModel _mediaViewModel;
         private readonly NumberLineViewModel _numberLineViewModel;
+        private readonly ProjectManager _projectManager;
 
         #region Constructor
         public TimelineViewModel(AudioCanvasViewModel audioCanvasViewModel,
             DescriptionCanvasViewModel descriptionCanvasViewModel,
             MediaViewModel mediaViewModel,
-            NumberLineViewModel numberLineViewModel)
+            NumberLineViewModel numberLineViewModel,
+            ProjectManager projectManager)
         {
             _audioCanvasViewModel = audioCanvasViewModel;
             _descriptionCanvasViewModel = descriptionCanvasViewModel;
             _mediaViewModel = mediaViewModel;
             _numberLineViewModel = numberLineViewModel;
+            _projectManager = projectManager;
 
             InitCommands();
         }
@@ -69,6 +73,12 @@ namespace LiveDescribe.Controls.UserControls
         {
             get { return _audioCanvasViewModel; }
         }
+
+        public ProjectManager ProjectManager
+        {
+            get { return _projectManager; }
+        }
+
         #endregion
     }
 }
