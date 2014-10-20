@@ -1,11 +1,12 @@
-﻿using GalaSoft.MvvmLight.Command;
+﻿using System;
+using GalaSoft.MvvmLight.Command;
 using LiveDescribe.Properties;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
 namespace LiveDescribe.Model
 {
-    public class Space : DescribableInterval
+    public class Space : DescribableInterval, IComparable
     {
         #region Logger
         private static readonly log4net.ILog Log = log4net.LogManager.GetLogger
@@ -78,6 +79,14 @@ namespace LiveDescribe.Model
 
             if (propertyName == "EndInVideo" || propertyName == "StartInVideo")
                 UpdateDuration();
+        }
+        #endregion
+
+        #region Compare Property
+        public int CompareTo(object obj)
+        {
+            var tempSpace = (Space)obj;
+            return this.StartInVideo.CompareTo(tempSpace.StartInVideo);
         }
         #endregion
     }

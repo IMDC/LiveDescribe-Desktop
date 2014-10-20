@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LiveDescribe.Model
 {
-    public class SortableObservableCollection<T> : ObservableCollection<T>
+    public class SortableObservableCollection<T> : ObservableCollection<T> where T : IComparable
     {
         public SortableObservableCollection(IEnumerable<T> collection) : base(collection) { }
 
@@ -25,5 +25,26 @@ namespace LiveDescribe.Model
                 Items[i] = sortedItemsList[i];
             }
         }
+
+        protected override void InsertItem(int index, T item)
+        {
+            for (int i = 0; i < this.Count; i++)
+            {
+                switch (Math.Sign(this[i].CompareTo(item)))
+                {
+                    case 0:
+                    //throw new InvalidOperationException("Cannot insert duplicated items");
+                    case 1:
+                        base.InsertItem(i, item);
+                        return;
+                    case -1:
+                        break;
+                }
+            }
+
+            base.InsertItem(this.Count, item);
+        }
+
     }
+
 }

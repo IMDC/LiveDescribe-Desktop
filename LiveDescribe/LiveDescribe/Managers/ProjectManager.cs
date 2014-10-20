@@ -211,6 +211,7 @@ namespace LiveDescribe.Managers
         #region public methods
         public void AddSpaceAndTrackForUndo(Space space)
         {
+
             Spaces.Add(space);
             _undoRedoManager.InsertSpaceForInsertUndoRedo(Spaces, space);
         }
