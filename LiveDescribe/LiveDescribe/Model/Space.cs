@@ -28,7 +28,6 @@ namespace LiveDescribe.Model
         public Space()
         {
             IsSelected = false;
-            LockedInPlace = false;
             DeleteCommand = new RelayCommand(OnDeleteRequested, () => true);
             NavigateToCommand = new RelayCommand(OnNavigateToDescriptionRequested, () => true);
 
@@ -52,6 +51,7 @@ namespace LiveDescribe.Model
             }
             get { return _isRecordedOver; }
         }
+
         #endregion
 
         #region Methods

@@ -359,6 +359,7 @@ namespace LiveDescribe.Managers
                 case "AudioData":
                 case "Header":
                 case "IsRecordedOver":
+                case "LockedInPlace":
                     IsProjectModified = true;
                     break;
             }
