@@ -1,0 +1,40 @@
+LiveDescribe/LiveDescribe/Controls/LiveDescribeMediaPlayer.cs:        public new bool IsMuted
+LiveDescribe/LiveDescribe/Controls/LiveDescribeMediaPlayer.cs:                return base.IsMuted;
+LiveDescribe/LiveDescribe/Controls/LiveDescribeMediaPlayer.cs:                base.IsMuted = value;
+LiveDescribe/LiveDescribe/Controls/UserControls/MediaControl.xaml:            x:Key="IsMutedConverter"
+LiveDescribe/LiveDescribe/Controls/UserControls/MediaControl.xaml:                Content="{Binding Path=MediaVideo.IsMuted, Converter={StaticResource IsMutedConverter}}"
+LiveDescribe/LiveDescribe/Controls/UserControls/MediaControl.xaml:                IsEnabled="{Binding MediaVideo.IsMuted, Converter={StaticResource InvertBool}}" />
+LiveDescribe/LiveDescribe/Controls/UserControls/MediaViewModel.cs:            Log.Info(_mediaVideo.IsMuted ? "Video UnMuted" : "Video Muted");
+LiveDescribe/LiveDescribe/Controls/UserControls/MediaViewModel.cs:            _mediaVideo.IsMuted = !_mediaVideo.IsMuted;
+LiveDescribe/LiveDescribe/Interfaces/ILiveDescribePlayer.cs:        bool IsMuted { set; get; }
+
+
+        private void PlayAtOffset(Description description, double offset)
+        {
+            lock (_playLock)
+            {
+                var reader = new WaveFileReader(description.AudioFile);
+                //reader.WaveFormat.AverageBytesPerSecond/ 1000 = Average Bytes Per Millisecond
+                //AverageBytesPerMillisecond * (offset + StartWaveFileTime) = amount to play from
+                reader.Seek((long)((reader.WaveFormat.AverageBytesPerSecond / 1000)
+                                    * (offset + description.StartWaveFileTime)), SeekOrigin.Begin);
+                WaveChannel32 volumeStream = new WaveChannel32(reader);
+                volumeStream.Volume = 0.5F;
+                var descriptionStream = new WaveOutEvent();
+                descriptionStream.PlaybackStopped += DescriptionStream_PlaybackStopped;
+                descriptionStream.Init(volumeStream);
+
+                DescriptionStream = descriptionStream;
+                _playingDescription = description;
+
+                IsPlaying = true;
+                _playingDescription.IsPlaying = true;
+
+                descriptionStream.Play();
+            }
+        }
+		
+		
+		Got it muting/unmute
+		
+		

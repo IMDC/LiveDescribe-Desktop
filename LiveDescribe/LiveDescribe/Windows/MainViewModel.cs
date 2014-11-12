@@ -309,8 +309,13 @@ namespace LiveDescribe.Windows
                 _descriptiontimer.Stop();
                 CommandManager.InvalidateRequerySuggested();
             };
+            //_mediaViewModel.MuteRequested += OnMuteRequested;
+            _mediaViewModel.MuteRequested += (sender, e) =>
+            {
+                DescriptionPlayer.IsMuted = mediaVideo.IsMuted;
+                _mediaViewModel.MuteRequested += OnMuteRequested;
+            };
 
-            _mediaViewModel.MuteRequested += OnMuteRequested;
 
             _mediaViewModel.MediaEndedEvent += (sender, e) =>
             {
@@ -528,6 +533,7 @@ namespace LiveDescribe.Windows
                         PrepareForDescription(description);
                         DescriptionPlayer.PlayInVideo(description, videoPosition);
                         OnPlayingDescription(description);
+                        
                     }
                 }
                 catch (Exception ex)
