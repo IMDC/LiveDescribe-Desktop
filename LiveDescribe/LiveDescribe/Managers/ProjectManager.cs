@@ -26,7 +26,7 @@ namespace LiveDescribe.Managers
         private readonly ObservableCollection<Description> _allDescriptions;
         private readonly ObservableCollection<Description> _extendedDescriptions;
         private readonly ObservableCollection<Description> _regularDescriptions;
-        private readonly ObservableCollection<Space> _spaces;
+        private readonly SortableObservableCollection<Space> _spaces;
         private readonly UndoRedoManager _undoRedoManager;
         #endregion
 
@@ -55,7 +55,7 @@ namespace LiveDescribe.Managers
                 ObservableCollectionIndexer<Description>.CollectionChangedListener;
             _regularDescriptions.CollectionChanged += ObservableCollection_ProjectModifiedHandler;
 
-            _spaces = new ObservableCollection<Space>();
+            _spaces = new SortableObservableCollection<Space>();
             _spaces.CollectionChanged += ObservableCollectionIndexer<Space>.CollectionChangedListener;
             _spaces.CollectionChanged += SpacesOnCollectionChanged;
             _spaces.CollectionChanged += ObservableCollection_ProjectModifiedHandler;
@@ -119,7 +119,7 @@ namespace LiveDescribe.Managers
             get { return _regularDescriptions; }
         }
 
-        public ObservableCollection<Space> Spaces
+        public SortableObservableCollection<Space> Spaces
         {
             get { return _spaces; }
         }
@@ -145,6 +145,7 @@ namespace LiveDescribe.Managers
             FileWriter.WriteWaveFormHeader(Project, Project.Waveform.Header);
             FileWriter.WriteWaveFormFile(Project, Project.Waveform.Data);
             FileWriter.WriteDescriptionsFile(Project, AllDescriptions);
+            Spaces.Sort(c => c.StartInVideo);
             FileWriter.WriteSpacesFile(Project, Spaces);
 
             IsProjectModified = false;
@@ -210,6 +211,7 @@ namespace LiveDescribe.Managers
         #region public methods
         public void AddSpaceAndTrackForUndo(Space space)
         {
+
             Spaces.Add(space);
             _undoRedoManager.InsertSpaceForInsertUndoRedo(Spaces, space);
         }
@@ -357,6 +359,7 @@ namespace LiveDescribe.Managers
                 case "AudioData":
                 case "Header":
                 case "IsRecordedOver":
+                case "LockedInPlace":
                     IsProjectModified = true;
                     break;
             }

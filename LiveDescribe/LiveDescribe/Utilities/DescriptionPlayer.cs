@@ -12,8 +12,9 @@ namespace LiveDescribe.Utilities
     {
         #region Fields
         private bool _isPlaying;
+        private bool _isMuted;
         private Description _playingDescription;
-        private WaveOutEvent _descriptionStream;
+        private WaveOut _descriptionStream;
         private readonly object _playLock = new object();
 
         public event EventHandler<EventArgs<Description>> DescriptionFinishedPlaying;
@@ -30,7 +31,16 @@ namespace LiveDescribe.Utilities
             get { return _isPlaying; }
         }
 
-        public WaveOutEvent DescriptionStream
+        public bool IsMuted
+        {
+            set
+            {
+                _isMuted = value;
+            }
+            get { return _isMuted; }
+        }
+
+        public WaveOut DescriptionStream
         {
             private set
             {
@@ -63,7 +73,7 @@ namespace LiveDescribe.Utilities
             lock (_playLock)
             {
                 double offset = videoPositionMilliseconds - description.StartInVideo;
-
+                CheckMute();
                 //if it is equal then the video time matches when the description should start dead on
                 return
                     CanPlay(description)
@@ -116,7 +126,7 @@ namespace LiveDescribe.Utilities
                 //AverageBytesPerMillisecond * (offset + StartWaveFileTime) = amount to play from
                 reader.Seek((long)((reader.WaveFormat.AverageBytesPerSecond / 1000)
                                     * (offset + description.StartWaveFileTime)), SeekOrigin.Begin);
-                var descriptionStream = new WaveOutEvent();
+                var descriptionStream = new WaveOut();
                 descriptionStream.PlaybackStopped += DescriptionStream_PlaybackStopped;
                 descriptionStream.Init(reader);
 
@@ -127,6 +137,24 @@ namespace LiveDescribe.Utilities
                 _playingDescription.IsPlaying = true;
 
                 descriptionStream.Play();
+            }
+        }
+
+        /// <summary>
+        /// If isMuted property is true, description volume goes to 0, or if false back to original volume.
+        /// </summary>
+        /// 
+        public void CheckMute()
+        {
+            lock (_playLock)
+            {
+                if (!IsPlaying)
+                    return;
+
+                if (_descriptionStream != null && _isMuted)
+                    _descriptionStream.Volume = 0;
+                else if (_descriptionStream != null && !_isMuted)
+                    _descriptionStream.Volume = 1f;
             }
         }
 

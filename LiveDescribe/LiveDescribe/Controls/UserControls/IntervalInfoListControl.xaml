@@ -149,7 +149,7 @@
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.View>
-                        <GridView>
+                        <GridView >
                             <GridViewColumn
                                 Header="{x:Static s:UiStrings.Header_NumberColumn}"
                                 CellTemplate="{StaticResource ItemIndexTemplate}" />
@@ -175,6 +175,7 @@
                                 Header="{x:Static s:UiStrings.Header_LockMovement}"
                                 CellTemplate="{StaticResource LockMovementCheckBoxTemplate}" />
                         </GridView>
+
                     </ListView.View>
                 </ListView>
             </TabItem>
