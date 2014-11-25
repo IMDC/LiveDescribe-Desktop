@@ -46,6 +46,7 @@
                     BorderThickness="1"
                     BorderBrush="Black">
                     <canvases:AudioCanvas
+                        HorizontalAlignment="Left"
                         x:Name="AudioCanvas"
                         DataContext="{Binding AudioCanvasViewModel}" />
                 </Border>
@@ -56,6 +57,7 @@
                     BorderThickness="1"
                     BorderBrush="Black">
                     <canvases:DescriptionCanvas
+                        HorizontalAlignment="Left"
                         x:Name="DescriptionCanvas"
                         DataContext="{Binding DescriptionCanvasViewModel}" />
                 </Border>

@@ -1,4 +1,6 @@
-﻿using GalaSoft.MvvmLight.Threading;
+﻿using System.Linq;
+using System.Windows.Data;
+using GalaSoft.MvvmLight.Threading;
 using LiveDescribe.Controls;
 using LiveDescribe.Controls.Canvases;
 using LiveDescribe.Controls.UserControls;
@@ -14,6 +16,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Xceed.Wpf.AvalonDock.Layout;
 
 namespace LiveDescribe.Windows
 {
@@ -33,6 +36,7 @@ namespace LiveDescribe.Windows
         private readonly IntervalInfoListViewModel _intervalInfoListViewModel;
         private readonly MainViewModel _mainViewModel;
         private readonly LiveDescribeMediaPlayer _videoMedia;
+        private bool fullScreen = false;
 
         #endregion
 
@@ -61,6 +65,8 @@ namespace LiveDescribe.Windows
                 ExportWithVideo.Visibility = Visibility.Collapsed;
                 ExportAudioOnly.Visibility = Visibility.Visible;
             }
+
+            
 
             _videoMedia = MediaControl.VideoMedia;
 
@@ -189,6 +195,22 @@ namespace LiveDescribe.Windows
                 }
             };
             #endregion
+
+            var tempMediaControl = MediaControl;
+            MediaControl.MouseDoubleClick += delegate
+            {
+                if (!fullScreen)
+                {
+                    this.WindowStyle = WindowStyle.None;
+                    this.WindowState = WindowState.Maximized;
+                }
+                else
+                {
+                    this.WindowStyle = WindowStyle.SingleBorderWindow;
+                    this.WindowState = WindowState.Normal;
+                }
+                fullScreen = !fullScreen;
+            };
 
             #region Event Handlers for Settings
             Settings.Default.RecentProjects.CollectionChanged += (sender, args) => SetRecentDocumentsList();

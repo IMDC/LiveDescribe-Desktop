@@ -51,7 +51,7 @@
             Modifiers="Control" />
     </Window.InputBindings>
 
-    <Grid>
+    <Grid x:Name="LayoutRoot">
         <userControls:LoadingControl
             x:Name="LoadingControl"
             DataContext="{Binding LoadingViewModel}"
@@ -60,6 +60,7 @@
         <DockPanel>
             <!--Top Menu Bar-->
             <Menu
+                x:Name="layoutRootTop"
                 DockPanel.Dock="Top"
                 HorizontalAlignment="Stretch">
                 <MenuItem
@@ -165,6 +166,7 @@
 
             <!--Main Grid -->
             <Grid
+                x:Name="layoutRootBottom"
                 DockPanel.Dock="Bottom"
                 Background="White">
 
